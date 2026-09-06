@@ -3602,6 +3602,7 @@ function addToCart(slug, format, qty = 1) {
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
   saveCart(); syncCart();
   toast(`Added — ${albumText(p)}, ${v.label}`);
+  Sound.tick();
   const badge = $('#cartcount'); if (badge && !RM()) { badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); }
   if (window.matchMedia('(max-width:1023px)').matches) openDrawer();
 }
@@ -3775,17 +3776,105 @@ function initPre() {
   })(t0);
 }
 
-/* ---------- sound: off by default, and it stays off unless asked ---------- */
+/* ---------- sound: procedural vinyl audio, off by default, and it stays off unless asked.
+   Nothing here is a licensed sample — every sound is synthesized at runtime with the
+   Web Audio API (noise buffers + filters + envelopes), so there's no external audio
+   file, no licensing question, and it costs nothing in page weight. ---------- */
+const Sound = (() => {
+  let ctx = null, enabled = false, crackle = null, popTimer = null;
+
+  function ensureCtx() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function noiseBuffer(seconds) {
+    const rate = ctx.sampleRate, buf = ctx.createBuffer(1, Math.max(1, Math.floor(rate * seconds)), rate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return buf;
+  }
+  /* a single short "pop" — the crackle you hear between grooves */
+  function pop(peak) {
+    const t = ctx.currentTime;
+    const src = ctx.createBufferSource(); src.buffer = noiseBuffer(0.03);
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass'; band.frequency.value = 1600 + Math.random() * 2600; band.Q.value = 2.4;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(peak, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045 + Math.random() * 0.03);
+    src.connect(band); band.connect(g); g.connect(ctx.destination);
+    src.start(t); src.stop(t + 0.09);
+  }
+  /* the continuous surface hiss underneath, plus randomly-timed pops layered on top */
+  function startCrackle() {
+    if (!ctx || crackle) return;
+    const src = ctx.createBufferSource(); src.buffer = noiseBuffer(3); src.loop = true;
+    const band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 3400; band.Q.value = 0.6;
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    src.connect(band); band.connect(gain); gain.connect(ctx.destination); src.start();
+    gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 1.4);
+    crackle = { src, gain };
+    (function schedule() {
+      if (!crackle) return;
+      pop(0.04 + Math.random() * 0.045);
+      popTimer = setTimeout(schedule, 240 + Math.random() * 950);
+    })();
+  }
+  function stopCrackle() {
+    if (popTimer) { clearTimeout(popTimer); popTimer = null; }
+    if (crackle) {
+      const { src, gain } = crackle, t = ctx.currentTime;
+      gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t);
+      gain.gain.linearRampToValueAtTime(0, t + 0.4);
+      setTimeout(() => { try { src.stop(); } catch (e) {} }, 450);
+      crackle = null;
+    }
+  }
+  /* the needle touching down: a soft low thump plus a brief touchdown scratch */
+  function needleDrop() {
+    if (!enabled || !ctx) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(190, t); osc.frequency.exponentialRampToValueAtTime(65, t + 0.2);
+    const og = ctx.createGain();
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.exponentialRampToValueAtTime(0.16, t + 0.012);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+    osc.connect(og); og.connect(ctx.destination); osc.start(t); osc.stop(t + 0.26);
+    const n = ctx.createBufferSource(); n.buffer = noiseBuffer(0.14);
+    const band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 2500; band.Q.value = 1.1;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.0001, t);
+    ng.gain.exponentialRampToValueAtTime(0.07, t + 0.01);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+    n.connect(band); band.connect(ng); ng.connect(ctx.destination); n.start(t); n.stop(t + 0.16);
+  }
+  /* a small, dry tick for UI moments — placing something into the crate */
+  function tick() {
+    if (!enabled || !ctx) return;
+    const t = ctx.currentTime;
+    const n = ctx.createBufferSource(); n.buffer = noiseBuffer(0.02);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1100;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.05, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+    n.connect(hp); hp.connect(g); g.connect(ctx.destination); n.start(t); n.stop(t + 0.04);
+  }
+  function enable() { if (!ensureCtx()) return false; enabled = true; startCrackle(); needleDrop(); return true; }
+  function disable() { enabled = false; stopCrackle(); }
+  return { enable, disable, needleDrop, tick, get enabled() { return enabled; } };
+})();
+
 function initSound() {
   const btn = document.getElementById('soundtgl');
   if (!btn) return;
-  let on = false, ctx = null;
   btn.addEventListener('click', () => {
-    on = !on;
-    btn.setAttribute('aria-pressed', String(on));
-    btn.innerHTML = 'SOUND <b>' + (on ? 'ON' : 'OFF') + '</b>';
-    if (on && !ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
-    window.__sound = on ? ctx : null;
+    const turningOn = !Sound.enabled;
+    if (turningOn) { if (!Sound.enable()) return; } else { Sound.disable(); }
+    btn.setAttribute('aria-pressed', String(Sound.enabled));
+    btn.innerHTML = 'SOUND <b>' + (Sound.enabled ? 'ON' : 'OFF') + '</b>';
+    window.__sound = Sound.enabled;
   });
 }
 
@@ -5267,9 +5356,11 @@ function mountProduct(p, params) {
   if (!p) return;
   playFlip($('#stagemedia'));
   let qty = 1, sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
+  if (sel === 'vinyl') setTimeout(() => Sound.needleDrop(), 260);
   const setFmt = f => {
     if (!variant(p, f)) return; sel = f;
     const v = variant(p, f);
+    if (f === 'vinyl') Sound.needleDrop();
     $('#stagemedia').innerHTML = stageMedia(p, f);
     $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     $('#barprice').textContent = money(v.price);
