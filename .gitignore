@@ -1,0 +1,9 @@
+# QA screenshots and raw incoming assets - not part of source of truth
+qa/
+incoming/
+ref/
+# build outputs (we ship a curated copy in docs/ for GitHub Pages instead)
+dist/
+node_modules/
+.DS_Store
+*.log
