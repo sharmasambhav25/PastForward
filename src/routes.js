@@ -132,6 +132,7 @@ function viewHome() {
     </div>
 
     <div class="fdisc" id="fdisc">
+      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
       <div class="fdisc__spin" id="fdiscspin">
         <div class="fdisc__gr"></div>
         <div class="fdisc__gr2"></div>
@@ -269,7 +270,7 @@ function viewHome() {
                            [18, -22, 40, -10, 26, -34, 6],
                            [-14, 30, -30, 12, -6, 38, -20]][i];
             return `<a class="wall__item" href="#/product/${p.slug}" data-cursor="VIEW" data-card="${p.slug}"
-                       style="transform:translateY(${drop[j]}px)">
+                       data-drop="${drop[j]}" style="transform:translateY(${drop[j]}px)">
             <div data-media>${recordHTML(p, { size: sizes[j], style: `--bright:${[.42, .72, 1][i]};--dblur:${i === 0 ? 2 : 0}px` })}</div>
             ${i === 2 ? `<div class="wall__meta"><div class="card__artist">${esc(p.artist)}</div><div class="mono-xs">${albumOf(p)}</div></div>` : ''}
           </a>`; }).join('')}
@@ -662,8 +663,8 @@ function viewCollection(slug) {
 /* ============================== CUSTOM ============================== */
 function viewCustom() {
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
-    <div style="display:grid;gap:56px;grid-template-columns:1fr" id="customgrid">
-      <style>@media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
+    <div style="display:grid;gap:56px" id="customgrid">
+      <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
         <h1 class="d-l" style="max-width:14ch">Not in the catalogue? Say the word.</h1>
         <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Tell us what it is and we'll quote you.</p>
@@ -693,7 +694,11 @@ function viewCustom() {
         </div>
       </div>
       <aside>
-        <figure class="shot offright" style="margin:0 0 8px">
+        <div style="max-width:280px;margin:0 auto 8px">
+          <div id="customlabel"></div>
+          <p class="mono-xs dim" style="text-align:center;margin-top:12px">A PREVIEW OF YOUR LABEL — UPDATES AS YOU TYPE</p>
+        </div>
+        <figure class="shot offright" style="margin:32px 0 8px">
           <img src="${photo('printer')}" alt="Artwork printing to order" loading="lazy">
           <figcaption class="mono-xs dim">EVERY ORDER IS PRINTED TO ORDER</figcaption></figure>
         <h4 class="mono dim" style="margin:26px 0 14px">Formats we can make</h4>
@@ -701,6 +706,19 @@ function viewCustom() {
         <p class="body-s dim" style="margin-top:20px">Custom pricing depends on the artwork and the format. We quote before anything is made.</p>
       </aside>
     </div></div>`;
+}
+function mountCustom() {
+  const host = $('#customlabel');
+  if (!host || !window.mountVinylLabel) return;
+  const form = document.querySelector('form[data-form="custom"]');
+  if (!form) return;
+  const artistInput = form.querySelector('[name="artist"]'), titleInput = form.querySelector('[name="album"]');
+  let label;
+  try { label = window.mountVinylLabel(host, { artist: artistInput?.value, title: titleInput?.value }); }
+  catch (e) { return; }
+  const sync = () => label.update(artistInput?.value, titleInput?.value);
+  artistInput?.addEventListener('input', sync);
+  titleInput?.addEventListener('input', sync);
 }
 
 /* ============================== STORY ============================== */
@@ -885,6 +903,7 @@ window.__mount = function (seg, params) {
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
   if (page === 'collections') mountCollection();
   if (page === 'search') mountSearchPage();
+  if (page === 'custom') mountCustom();
   mountAccordions();
 };
 
@@ -914,11 +933,24 @@ function mountHome() {
   addSpin('pickrec', 6);
   addSpin('droprec', 12, { boost: true, stopper: true });
 
-  /* the flex hero disc: same loop, but the element IS the disc */
+  /* the flex hero disc: same drag/momentum/scratch-sound loop as every other record —
+     rendered in WebGL when available (a real lit, physical disc), falling back to the
+     original CSS-composited disc if WebGL can't be created for any reason. */
   (function () {
     const host = document.getElementById('fdisc');
-    const el = document.getElementById('fdiscspin');
-    if (host && el) spins.push({ host, el, rate: 9, base: 9, angle: 0, kick: 0, mom: 0, boost: true });
+    if (!host) return;
+    const glHost = document.getElementById('fdiscgl');
+    let vinylApi = null;
+    if (glHost && window.mountVinyl) {
+      try { vinylApi = window.mountVinyl(glHost); } catch (e) { vinylApi = null; }
+    }
+    if (vinylApi) {
+      host.classList.add('is-gl');
+      spins.push({ host, vinylApi, rate: 9, base: 9, angle: 0, kick: 0, mom: 0, boost: true });
+    } else {
+      const el = document.getElementById('fdiscspin');
+      if (el) spins.push({ host, el, rate: 9, base: 9, angle: 0, kick: 0, mom: 0, boost: true });
+    }
   })();
 
   let boost = 0, last = performance.now(), lastY = scrollY;
@@ -933,12 +965,13 @@ function mountHome() {
           s.rate = s.stopFrom * Math.pow(1 - k, 2.6);
           if (k === 1) { s.stopping = false; s.stopped = true; s.base = 0; s.rate = 0; }
         }
-        if (s.dragging) { s.el.style.transform = `rotate(${s.angle}deg)`; continue; }
+        const paint = () => s.vinylApi ? s.vinylApi.setAngleDeg(s.angle) : (s.el.style.transform = `rotate(${s.angle}deg)`);
+        if (s.dragging) { paint(); continue; }
         let rate = s.rate + (s.boost && !s.stopped ? boost : 0) + s.mom;
         s.angle += rate * dt / 1000;
         if (s.mom) { s.mom *= 0.93; if (Math.abs(s.mom) < 1) s.mom = 0; }
         if (s.kick) { const step = s.kick * 0.12; s.kick -= step; s.angle += step; if (Math.abs(s.kick) < 0.2) s.kick = 0; }
-        s.el.style.transform = `rotate(${s.angle}deg)`;
+        paint();
       }
       requestAnimationFrame(loop);
     })(performance.now());
@@ -962,6 +995,7 @@ function mountHome() {
       s.lastA = s.grabAngle; s.lastT = performance.now(); s.vel = 0;
       s.host.style.cursor = 'grabbing';
       s.host.setPointerCapture(e.pointerId);
+      Sound.scratchStart();
     });
     s.host.addEventListener('pointermove', e => {
       if (!s.dragging) return;
@@ -971,6 +1005,7 @@ function mountHome() {
       const now = performance.now(), dt = Math.max(8, now - s.lastT);
       s.vel = Math.max(-1400, Math.min(1400, d / (dt / 1000)));
       s.angle += d; s.lastA = cur; s.lastT = now;
+      Sound.scratchUpdate(s.vel);
     });
     const release = () => {
       if (!s.dragging) return;
@@ -978,6 +1013,7 @@ function mountHome() {
       s.host.style.cursor = 'grab';
       s.mom = s.vel;                                // flick carries through
       if (!s.stopper) { s.stopped = false; s.rate = s.base; }
+      Sound.scratchStop();
     };
     s.host.addEventListener('pointerup', release);
     s.host.addEventListener('pointercancel', release);
@@ -1018,10 +1054,20 @@ function mountHome() {
       const r0 = wall.getBoundingClientRect();
       const total = wall.offsetHeight - innerHeight;
       const p = Math.max(0, Math.min(1, -r0.top / total));
-      rows.forEach(row => {
+      rows.forEach((row, ri) => {
         const speed = parseFloat(row.dataset.speed);
         const travel = Math.max(0, row.scrollWidth - innerWidth + 120);
         row.style.transform = `translate3d(${-p * travel * speed}px,0,0)`;
+        // depth: each item drifts through its own near/far arc as the row scrolls past,
+        // so records feel like they're flying through space, not just sliding sideways
+        const items = row.__items || (row.__items = $$('.wall__item', row));
+        items.forEach((el, ii) => {
+          const phase = p * 7 + ii * 0.9 + ri * 1.7;
+          const z = Math.sin(phase) * 130;
+          const ry = Math.cos(phase * 0.6) * 10;
+          const drop = +el.dataset.drop || 0;
+          el.style.transform = `translate3d(0,${drop}px,${z.toFixed(1)}px) rotateY(${ry.toFixed(2)}deg)`;
+        });
       });
     }
     if (!RM() && innerWidth >= 768) {
@@ -1168,10 +1214,26 @@ function mountProduct(p, params) {
   if (!p) return;
   playFlip($('#stagemedia'));
   let qty = 1, sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
+  if (sel === 'vinyl') setTimeout(() => Sound.needleDrop(), 260);
+  /* a subtle WebGL ripple on the framed/polaroid stage photo — vinyl stays a real
+     composited record, not an <img>, so it's untouched */
+  let rippleCleanup = null;
+  const mountRipple = () => {
+    if (rippleCleanup) { try { rippleCleanup(); } catch (e) {} rippleCleanup = null; }
+    // vinyl's own <img> is the label art inside a composited, draggable, sound-wired
+    // record — wrapping it for the ripple shader would fight that, so skip it there.
+    if (sel === 'vinyl') return;
+    const img = $('#stagemedia img');
+    if (!img || !window.mountImageRipple) return;
+    try { rippleCleanup = window.mountImageRipple(img); } catch (e) { rippleCleanup = null; }
+  };
+  if (!RM()) mountRipple();
   const setFmt = f => {
     if (!variant(p, f)) return; sel = f;
     const v = variant(p, f);
+    if (f === 'vinyl') Sound.needleDrop(); else Sound.tick();
     $('#stagemedia').innerHTML = stageMedia(p, f);
+    if (!RM()) mountRipple();
     $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     $('#barprice').textContent = money(v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'

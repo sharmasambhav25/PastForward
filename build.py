@@ -10,9 +10,25 @@ os.makedirs(DIST, exist_ok=True)
 
 css   = open(f'{SRC}/style.css').read()
 core  = open(f'{SRC}/core.js').read()
+ripple = open(f'{SRC}/ripple.js').read()
+vinyllabel = open(f'{SRC}/vinyllabel.js').read()
 routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
 cat   = open(f'{ROOT}/catalogue.json').read()
+
+def vinyl3d_module():
+    """The WebGL hero disc, with Three.js self-hosted as a data: URI import —
+    no CDN, so the module works identically offline, on GitHub Pages, or here."""
+    src_path = os.path.join(SRC, 'vinyl3d.js')
+    three_path = os.path.join(ROOT, 'vendor', 'three.module.min.js')
+    if not os.path.exists(src_path) or not os.path.exists(three_path):
+        return ''
+    three_b64 = base64.b64encode(open(three_path, 'rb').read()).decode()
+    three_uri = 'data:text/javascript;base64,' + three_b64
+    js = open(src_path).read().replace('__THREE_IMPORT__', three_uri)
+    return f'<script type="module">{js}</script>'
+
+VINYL3D = vinyl3d_module()
 
 FONT_FACES = [
     ('bodoni-moda-latin-400-normal.woff2', 'Bodoni Moda', 400, 'normal'),
@@ -81,8 +97,11 @@ def assemble(payload, standalone):
 <style>{css}</style>'''
     body = f'''<script>{payload}</script>
 <script>{core}</script>
+<script>{ripple}</script>
+<script>{vinyllabel}</script>
 <script>{routes}</script>
-<script>{boot}</script>'''
+<script>{boot}</script>
+{VINYL3D}'''
     if standalone:
         return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
