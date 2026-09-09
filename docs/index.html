@@ -165,9 +165,12 @@ html[data-light] #field{opacity:.22; filter:invert(1)}
   transition:background var(--d-micro) var(--e-ui),transform var(--d-micro) var(--e-weight),box-shadow var(--d-std) var(--e-ui)}
 .btn--primary{background:var(--oxblood); color:var(--cream); box-shadow:var(--sh-card)}
 .btn--primary:hover{background:var(--ember); transform:translateY(-2px); box-shadow:var(--sh-lift)}
+.btn--primary:active{background:var(--crimson); transform:translateY(-1px) scale(.965); box-shadow:var(--sh-card)}
 .btn--secondary{background:transparent; color:var(--cream); box-shadow:inset 0 0 0 1px var(--border-2)}
 .btn--secondary:hover{box-shadow:inset 0 0 0 1px var(--cream); transform:translateY(-2px)}
+.btn--secondary:active{transform:translateY(-1px) scale(.965)}
 .btn--ghost{background:none; height:auto; padding:6px 0; color:var(--cream)}
+.btn--ghost:active{opacity:.6}
 .btn--ghost::after{content:""; display:block; position:absolute; left:0; right:0; bottom:0; height:1px;
   background:var(--oxblood); transform:scaleX(0); transform-origin:0 50%; transition:transform 220ms var(--e-ui)}
 .btn--ghost:hover::after{transform:scaleX(1)}
@@ -201,6 +204,7 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 .navlink{position:relative; font-family:var(--mono); font-size:.68rem; letter-spacing:.16em;
   text-transform:uppercase; color:var(--muted); padding:6px 0; transition:color var(--d-micro) var(--e-ui)}
 .navlink:hover,.navlink.is-active{color:var(--cream)}
+.navlink:active{opacity:.6}
 .navlink svg{position:absolute; left:0; right:0; bottom:-2px; width:100%; height:8px; opacity:0;
   transition:opacity 220ms var(--e-ui)}
 .navlink:hover svg,.navlink.is-active svg{opacity:1}
@@ -278,6 +282,7 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 .card{position:relative; cursor:pointer; display:flex; flex-direction:column; gap:14px;
   transition:transform var(--d-std) var(--e-weight)}
 .card:hover{transform:translateY(-6px)}
+.card:active{transform:translateY(-3px) scale(.985)}
 .card__media{position:relative; background:var(--elevated); border:1px solid var(--border);
   display:grid; place-items:center; padding:16px; overflow:hidden; aspect-ratio:1;
   box-shadow:var(--sh-card); transition:box-shadow var(--d-std) var(--e-ui)}
@@ -333,7 +338,8 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .pdp__thumb{width:66px; height:66px; border:1px solid var(--border); background:var(--elevated);
   display:grid; place-items:center; cursor:pointer; padding:5px; overflow:hidden}
 .pdp__thumb.is-on{border-color:var(--oxblood)}
-.pdp__thumb{position:relative; flex-direction:column}
+.pdp__thumb{position:relative; flex-direction:column; transition:transform var(--d-micro) var(--e-ui)}
+.pdp__thumb:active{transform:scale(.93)}
 .pdp__thumb img{width:100%; height:100%; object-fit:contain}
 .pdp__thumb span{position:absolute; left:0; right:0; bottom:0; font-family:var(--mono); font-size:.46rem;
   letter-spacing:.1em; background:rgba(10,7,8,.82); color:var(--muted); padding:2px 0; text-align:center}
@@ -342,6 +348,7 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .fmt button{background:var(--elevated); border:1px solid var(--border); padding:12px 13px; cursor:pointer;
   text-align:left; display:flex; flex-direction:column; gap:3px; transition:border-color var(--d-micro) var(--e-ui),background var(--d-micro) var(--e-ui)}
 .fmt button:hover{border-color:var(--border-2)}
+.fmt button:active{border-color:var(--oxblood); background:var(--elevated-2)}
 .fmt button.is-on{background:var(--elevated-2); border-color:var(--oxblood)}
 .fmt button[disabled]{opacity:.4; cursor:not-allowed; text-decoration:line-through}
 .fmt .f-name{font-family:var(--mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase}
@@ -352,11 +359,15 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   font-size:.63rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
 .acc{border-bottom:1px solid var(--border)}
 .acc button{width:100%; background:none; border:0; padding:15px 0; display:flex; justify-content:space-between;
-  align-items:center; cursor:pointer; font-family:var(--mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase}
+  align-items:center; cursor:pointer; font-family:var(--mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase;
+  transition:opacity var(--d-micro) var(--e-ui)}
+.acc button:active{opacity:.6}
 .acc .panel{overflow:hidden; height:0; transition:height var(--d-std) var(--e-out-expo)}
 .acc .panel__in{padding-bottom:16px; color:var(--muted); font-size:.92rem}
 .qty{display:inline-flex; align-items:center; border:1px solid var(--border)}
-.qty button{width:40px; height:46px; background:none; border:0; cursor:pointer; color:var(--cream); font-size:1rem}
+.qty button{width:40px; height:46px; background:none; border:0; cursor:pointer; color:var(--cream); font-size:1rem;
+  transition:background var(--d-micro) var(--e-ui)}
+.qty button:active{background:var(--elevated)}
 .qty span{width:40px; text-align:center; font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:.8rem}
 .buybar{position:fixed; left:0; right:0; bottom:0; z-index:180; background:rgba(10,7,8,.94);
   backdrop-filter:blur(12px); border-top:1px solid var(--border); padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
@@ -404,11 +415,16 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .wall__item .record__disc{transition:transform 220ms var(--e-weight)}
 .wall__bg{position:absolute; inset:-10%; z-index:0; opacity:.10; filter:blur(50px); pointer-events:none}
 .wall__bg img{width:100%; height:100%; object-fit:cover}
-.wall__scroller{display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:12px}
+.wall__scroller{display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:12px; cursor:grab}
 .wall__scroller>*{scroll-snap-align:center; flex:none}
 .picker{display:grid; gap:36px; align-items:center; grid-template-columns:1fr}
 @media(min-width:900px){.picker{grid-template-columns:1fr 1fr; gap:64px}}
-.thumbs{display:flex; gap:12px; overflow-x:auto; padding:6px 2px 12px}
+/* drag-to-scroll (mountDragScroll, core.js): the strip itself carries the rubber-band
+   overshoot as a transform, so it must never transition that property on its own —
+   the JS drives every frame of it directly. */
+.thumbs,.wall__scroller{transition:none}
+.thumbs.is-dragging,.wall__scroller.is-dragging{cursor:grabbing!important; user-select:none}
+.thumbs{display:flex; gap:12px; overflow-x:auto; padding:6px 2px 12px; cursor:grab}
 .thumbs button{flex:none; width:62px; height:62px; border-radius:50%; border:2px solid transparent;
   cursor:pointer; padding:0; background:none; overflow:hidden; opacity:.55; transition:opacity var(--d-micro) var(--e-ui)}
 .thumbs button:hover{opacity:.85}
@@ -912,6 +928,24 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 @media(max-width:520px){
   .shelf{grid-template-columns:repeat(2,1fr); gap:8px}
   .shelf > .hw:nth-child(n+3){display:none}
+}
+
+/* ---------- glass surfaces: accessibility fallbacks ----------
+   The header, mega menu and mobile buy bar float as translucent, blurred
+   "material" over content (see the WWDC materials-&-depth guidance this
+   site's chrome follows). Two OS-level settings ask for something else:
+   someone who has turned off transparency effects should get a plain
+   solid surface instead of a blur; someone who has asked for more
+   contrast should get a defined, high-contrast edge. Both are handled
+   here rather than by touching the blur rules themselves, since they
+   only apply under their respective media query. */
+@media(prefers-reduced-transparency:reduce){
+  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#0a0708}
+  .badge{backdrop-filter:none; background:#0a0708}
+}
+@media(prefers-contrast:more){
+  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
+  .badge{backdrop-filter:none; background:#050405; border-color:var(--cream)}
 }
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
@@ -3950,6 +3984,88 @@ function initGrain() {
   setInterval(() => { i = (i + 1) % 4; g.style.backgroundImage = `url(${tiles[i]})`; }, 83);
 }
 
+/* ------------------------------------------------------------------
+   Mouse drag-to-scroll for a horizontal strip (the home picker's
+   thumbnail rail, the mobile "wall" fallback): grab anywhere on the
+   strip and it tracks the pointer 1:1; let go and it keeps going at
+   the release velocity, decelerating like a flick-scroll; overshoot
+   past either end resists with the same rubber-band curve Apple uses
+   for scroll bounce, then eases back. Never fights native touch
+   scrolling (it bails on touch pointers immediately) and sits out
+   entirely under reduced motion, where the plain overflow-x scrollbar
+   is left to do the job. */
+function mountDragScroll(el) {
+  if (!el || el.__dragScroll || RM()) return;
+  el.__dragScroll = true;
+  const BAND = 0.55; // resistance constant — higher = softer edge
+  const rubber = (over, dim) => (over * dim * BAND) / (dim + BAND * Math.abs(over));
+  const maxScroll = () => Math.max(0, el.scrollWidth - el.clientWidth);
+  let dragging = false, moved = false, pid = null;
+  let startX = 0, startScroll = 0, lastX = 0, lastT = 0, vel = 0;
+  let over = 0, raf = 0, tickT = 0;
+
+  function setOver(px) { over = px; el.style.transform = px ? `translate3d(${px.toFixed(1)}px,0,0)` : ''; }
+
+  function frame(t) {
+    const dt = Math.min(.048, Math.max(.001, (t - tickT) / 1000)); tickT = t;
+    const f = dt * 60; // elapsed time in 60fps-frame units, so decay is refresh-rate independent
+    let alive = false;
+    if (!dragging && Math.abs(vel) > 3) {
+      const max = maxScroll(), next = el.scrollLeft - vel * dt;
+      if (next < 0) { setOver(rubber(-next, el.clientWidth || 1)); el.scrollLeft = 0; vel *= Math.pow(0.05, f); }
+      else if (next > max) { setOver(-rubber(next - max, el.clientWidth || 1)); el.scrollLeft = max; vel *= Math.pow(0.05, f); }
+      else { el.scrollLeft = next; vel *= Math.pow(0.9, f); if (over) setOver(0); }
+      if (Math.abs(vel) < 3) vel = 0;
+      alive = true;
+    } else if (!dragging) {
+      vel = 0;
+    }
+    if (!dragging && !vel && over) {
+      const next = over * Math.pow(0.001, f);
+      setOver(Math.abs(next) < .4 ? 0 : next);
+      alive = true;
+    }
+    raf = alive ? requestAnimationFrame(frame) : 0;
+  }
+  function wake() { if (!raf) { tickT = performance.now(); raf = requestAnimationFrame(frame); } }
+
+  el.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch') return;      // never fight native touch scrolling
+    cancelAnimationFrame(raf); raf = 0;
+    dragging = true; moved = false; pid = e.pointerId;
+    startX = e.clientX; startScroll = el.scrollLeft;
+    lastX = e.clientX; lastT = performance.now(); vel = 0;
+    el.setPointerCapture(pid);
+    el.classList.add('is-dragging');
+  });
+  el.addEventListener('pointermove', e => {
+    if (!dragging || e.pointerId !== pid) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 3) moved = true;
+    const max = maxScroll(), target = startScroll - dx;
+    if (target < 0) { setOver(rubber(-target, el.clientWidth || 1)); el.scrollLeft = 0; }
+    else if (target > max) { setOver(-rubber(target - max, el.clientWidth || 1)); el.scrollLeft = max; }
+    else { el.scrollLeft = target; if (over) setOver(0); }
+    const now = performance.now(), mdt = Math.max(8, now - lastT);
+    vel = (e.clientX - lastX) / (mdt / 1000);
+    lastX = e.clientX; lastT = now;
+  });
+  function release(e) {
+    if (!dragging || (e && e.pointerId !== pid)) return;
+    dragging = false;
+    el.classList.remove('is-dragging');
+    if (moved) {
+      // swallow the click a drag-release generates on whatever's under the pointer,
+      // so letting go over a thumbnail doesn't also select it
+      const swallow = ev => { ev.preventDefault(); ev.stopPropagation(); };
+      el.addEventListener('click', swallow, { capture: true, once: true });
+    }
+    wake();
+  }
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
+}
+
 function initCursor() {
   const cur = $('#cursor'); if (!cur || !window.matchMedia('(hover:hover) and (pointer:fine)').matches || RM()) { if (cur) cur.style.display = 'none'; return; }
   const dot = $('.cursor__dot', cur), ring = $('.cursor__ring', cur), lbl = $('.cursor__lbl', cur);
@@ -5667,7 +5783,11 @@ function mountHome() {
   if (!RM() && spins.length) {
     (function loop(t) {
       const dt = Math.min(64, t - last); last = t;
-      boost *= 0.94;
+      // decay is defined per 60fps frame below (0.93, 0.94, 0.88 all assume a ~16.7ms
+      // tick) — raise each factor to the number of 60fps frames actually elapsed so a
+      // flick dies at the same real-world speed on a 120Hz screen as on a 60Hz one.
+      const f = dt / 16.6667;
+      boost *= Math.pow(0.94, f);
       for (const s of spins) {
         if (s.stopping) {
           const k = Math.min(1, (t - s.stopAt) / 1800);
@@ -5678,8 +5798,8 @@ function mountHome() {
         if (s.dragging) { paint(); continue; }
         let rate = s.rate + (s.boost && !s.stopped ? boost : 0) + s.mom;
         s.angle += rate * dt / 1000;
-        if (s.mom) { s.mom *= 0.93; if (Math.abs(s.mom) < 1) s.mom = 0; }
-        if (s.kick) { const step = s.kick * 0.12; s.kick -= step; s.angle += step; if (Math.abs(s.kick) < 0.2) s.kick = 0; }
+        if (s.mom) { s.mom *= Math.pow(0.93, f); if (Math.abs(s.mom) < 1) s.mom = 0; }
+        if (s.kick) { const step = s.kick * (1 - Math.pow(0.88, f)); s.kick -= step; s.angle += step; if (Math.abs(s.kick) < 0.2) s.kick = 0; }
         paint();
       }
       requestAnimationFrame(loop);
@@ -5808,6 +5928,7 @@ function mountHome() {
     $('#wallrows').style.cssText = 'height:auto;display:flex;flex-direction:column;gap:24px';
     rows.forEach(x => { x.style.cssText = 'position:static'; x.classList.add('wall__scroller'); });
   }
+  $$('.wall__scroller').forEach(mountDragScroll);
 
   /* ---- marquees: two lines, opposite directions, driven by scroll + drift ---- */
   const marqs = $$('[data-marq]').map(m => ({
@@ -5859,6 +5980,7 @@ function mountHome() {
 
   // picker
   const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
+  mountDragScroll($('#pickthumbs'));
   $$('#pickthumbs button').forEach(btn => btn.addEventListener('click', () => {
     const p = bySlug[btn.dataset.pick]; if (!p || !prec) return;
     $$('#pickthumbs button').forEach(x => { x.classList.toggle('is-on', x === btn); x.setAttribute('aria-selected', String(x === btn)); });

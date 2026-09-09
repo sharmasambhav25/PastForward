@@ -114,6 +114,7 @@ function addToCart(slug, format, qty = 1) {
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
   saveCart(); syncCart();
   toast(`Added — ${albumText(p)}, ${v.label}`);
+  Sound.tick();
   const badge = $('#cartcount'); if (badge && !RM()) { badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); }
   if (window.matchMedia('(max-width:1023px)').matches) openDrawer();
 }
@@ -287,17 +288,96 @@ function initPre() {
   })(t0);
 }
 
-/* ---------- sound: off by default, and it stays off unless asked ---------- */
+/* ---------- sound: procedural, reactive, off by default, and it stays off unless asked.
+   No ambient bed, no drone — nothing plays on its own. Every sound here fires in
+   direct response to something the visitor does: spinning a record, clicking a
+   control, adding something to the crate. All synthesized at runtime with the
+   Web Audio API — no external audio file, no licensing question. ---------- */
+const Sound = (() => {
+  let ctx = null, enabled = false, scratch = null;
+
+  function ensureCtx() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function noiseBuffer(seconds) {
+    const rate = ctx.sampleRate, buf = ctx.createBuffer(1, Math.max(1, Math.floor(rate * seconds)), rate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return buf;
+  }
+  /* the needle touching down: a soft low thump plus a brief touchdown scratch —
+     plays once when a vinyl format lands on screen, never on a loop */
+  function needleDrop() {
+    if (!enabled || !ctx) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(190, t); osc.frequency.exponentialRampToValueAtTime(65, t + 0.2);
+    const og = ctx.createGain();
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.exponentialRampToValueAtTime(0.16, t + 0.012);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+    osc.connect(og); og.connect(ctx.destination); osc.start(t); osc.stop(t + 0.26);
+    const n = ctx.createBufferSource(); n.buffer = noiseBuffer(0.14);
+    const band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 2500; band.Q.value = 1.1;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.0001, t);
+    ng.gain.exponentialRampToValueAtTime(0.07, t + 0.01);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+    n.connect(band); band.connect(ng); ng.connect(ctx.destination); n.start(t); n.stop(t + 0.16);
+  }
+  /* a small, dry tick for UI moments — a button, a tab, placing something in the crate */
+  function tick() {
+    if (!enabled || !ctx) return;
+    const t = ctx.currentTime;
+    const n = ctx.createBufferSource(); n.buffer = noiseBuffer(0.02);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1100;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.05, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+    n.connect(hp); hp.connect(g); g.connect(ctx.destination); n.start(t); n.stop(t + 0.04);
+  }
+  /* live turntable scratch, wired to how fast/which way the visitor is actually
+     dragging a record — starts on grab, tracks velocity in real time, stops on release */
+  function scratchStart() {
+    if (!enabled || !ctx || scratch) return;
+    const src = ctx.createBufferSource(); src.buffer = noiseBuffer(2); src.loop = true;
+    const band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 500; band.Q.value = 5;
+    const gain = ctx.createGain(); gain.gain.value = 0.0001;
+    src.connect(band); band.connect(gain); gain.connect(ctx.destination); src.start();
+    scratch = { src, band, gain };
+  }
+  function scratchUpdate(vel) {
+    if (!enabled || !ctx || !scratch) return;
+    const speed = Math.min(1, Math.abs(vel) / 900);
+    const t = ctx.currentTime;
+    scratch.band.frequency.setTargetAtTime(400 + speed * 2600, t, 0.03);
+    scratch.band.Q.setTargetAtTime(6 - speed * 3.5, t, 0.03);
+    scratch.gain.gain.setTargetAtTime(speed > 0.03 ? 0.03 + speed * 0.05 : 0.0001, t, 0.04);
+  }
+  function scratchStop() {
+    if (!scratch) return;
+    const { src, gain } = scratch, t = ctx.currentTime;
+    gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t);
+    gain.gain.linearRampToValueAtTime(0, t + 0.09);
+    setTimeout(() => { try { src.stop(); } catch (e) {} }, 120);
+    scratch = null;
+  }
+  function enable() { if (!ensureCtx()) return false; enabled = true; tick(); return true; }
+  function disable() { enabled = false; scratchStop(); }
+  return { enable, disable, needleDrop, tick, scratchStart, scratchUpdate, scratchStop, get enabled() { return enabled; } };
+})();
+
 function initSound() {
   const btn = document.getElementById('soundtgl');
   if (!btn) return;
-  let on = false, ctx = null;
   btn.addEventListener('click', () => {
-    on = !on;
-    btn.setAttribute('aria-pressed', String(on));
-    btn.innerHTML = 'SOUND <b>' + (on ? 'ON' : 'OFF') + '</b>';
-    if (on && !ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
-    window.__sound = on ? ctx : null;
+    const turningOn = !Sound.enabled;
+    if (turningOn) { if (!Sound.enable()) return; } else { Sound.disable(); }
+    btn.setAttribute('aria-pressed', String(Sound.enabled));
+    btn.innerHTML = 'SOUND <b>' + (Sound.enabled ? 'ON' : 'OFF') + '</b>';
+    window.__sound = Sound.enabled;
   });
 }
 
@@ -371,6 +451,88 @@ function initGrain() {
   if (RM()) return;
   let i = 0;
   setInterval(() => { i = (i + 1) % 4; g.style.backgroundImage = `url(${tiles[i]})`; }, 83);
+}
+
+/* ------------------------------------------------------------------
+   Mouse drag-to-scroll for a horizontal strip (the home picker's
+   thumbnail rail, the mobile "wall" fallback): grab anywhere on the
+   strip and it tracks the pointer 1:1; let go and it keeps going at
+   the release velocity, decelerating like a flick-scroll; overshoot
+   past either end resists with the same rubber-band curve Apple uses
+   for scroll bounce, then eases back. Never fights native touch
+   scrolling (it bails on touch pointers immediately) and sits out
+   entirely under reduced motion, where the plain overflow-x scrollbar
+   is left to do the job. */
+function mountDragScroll(el) {
+  if (!el || el.__dragScroll || RM()) return;
+  el.__dragScroll = true;
+  const BAND = 0.55; // resistance constant — higher = softer edge
+  const rubber = (over, dim) => (over * dim * BAND) / (dim + BAND * Math.abs(over));
+  const maxScroll = () => Math.max(0, el.scrollWidth - el.clientWidth);
+  let dragging = false, moved = false, pid = null;
+  let startX = 0, startScroll = 0, lastX = 0, lastT = 0, vel = 0;
+  let over = 0, raf = 0, tickT = 0;
+
+  function setOver(px) { over = px; el.style.transform = px ? `translate3d(${px.toFixed(1)}px,0,0)` : ''; }
+
+  function frame(t) {
+    const dt = Math.min(.048, Math.max(.001, (t - tickT) / 1000)); tickT = t;
+    const f = dt * 60; // elapsed time in 60fps-frame units, so decay is refresh-rate independent
+    let alive = false;
+    if (!dragging && Math.abs(vel) > 3) {
+      const max = maxScroll(), next = el.scrollLeft - vel * dt;
+      if (next < 0) { setOver(rubber(-next, el.clientWidth || 1)); el.scrollLeft = 0; vel *= Math.pow(0.05, f); }
+      else if (next > max) { setOver(-rubber(next - max, el.clientWidth || 1)); el.scrollLeft = max; vel *= Math.pow(0.05, f); }
+      else { el.scrollLeft = next; vel *= Math.pow(0.9, f); if (over) setOver(0); }
+      if (Math.abs(vel) < 3) vel = 0;
+      alive = true;
+    } else if (!dragging) {
+      vel = 0;
+    }
+    if (!dragging && !vel && over) {
+      const next = over * Math.pow(0.001, f);
+      setOver(Math.abs(next) < .4 ? 0 : next);
+      alive = true;
+    }
+    raf = alive ? requestAnimationFrame(frame) : 0;
+  }
+  function wake() { if (!raf) { tickT = performance.now(); raf = requestAnimationFrame(frame); } }
+
+  el.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch') return;      // never fight native touch scrolling
+    cancelAnimationFrame(raf); raf = 0;
+    dragging = true; moved = false; pid = e.pointerId;
+    startX = e.clientX; startScroll = el.scrollLeft;
+    lastX = e.clientX; lastT = performance.now(); vel = 0;
+    el.setPointerCapture(pid);
+    el.classList.add('is-dragging');
+  });
+  el.addEventListener('pointermove', e => {
+    if (!dragging || e.pointerId !== pid) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 3) moved = true;
+    const max = maxScroll(), target = startScroll - dx;
+    if (target < 0) { setOver(rubber(-target, el.clientWidth || 1)); el.scrollLeft = 0; }
+    else if (target > max) { setOver(-rubber(target - max, el.clientWidth || 1)); el.scrollLeft = max; }
+    else { el.scrollLeft = target; if (over) setOver(0); }
+    const now = performance.now(), mdt = Math.max(8, now - lastT);
+    vel = (e.clientX - lastX) / (mdt / 1000);
+    lastX = e.clientX; lastT = now;
+  });
+  function release(e) {
+    if (!dragging || (e && e.pointerId !== pid)) return;
+    dragging = false;
+    el.classList.remove('is-dragging');
+    if (moved) {
+      // swallow the click a drag-release generates on whatever's under the pointer,
+      // so letting go over a thumbnail doesn't also select it
+      const swallow = ev => { ev.preventDefault(); ev.stopPropagation(); };
+      el.addEventListener('click', swallow, { capture: true, once: true });
+    }
+    wake();
+  }
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
 }
 
 function initCursor() {

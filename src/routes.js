@@ -958,7 +958,11 @@ function mountHome() {
   if (!RM() && spins.length) {
     (function loop(t) {
       const dt = Math.min(64, t - last); last = t;
-      boost *= 0.94;
+      // decay is defined per 60fps frame below (0.93, 0.94, 0.88 all assume a ~16.7ms
+      // tick) — raise each factor to the number of 60fps frames actually elapsed so a
+      // flick dies at the same real-world speed on a 120Hz screen as on a 60Hz one.
+      const f = dt / 16.6667;
+      boost *= Math.pow(0.94, f);
       for (const s of spins) {
         if (s.stopping) {
           const k = Math.min(1, (t - s.stopAt) / 1800);
@@ -969,8 +973,8 @@ function mountHome() {
         if (s.dragging) { paint(); continue; }
         let rate = s.rate + (s.boost && !s.stopped ? boost : 0) + s.mom;
         s.angle += rate * dt / 1000;
-        if (s.mom) { s.mom *= 0.93; if (Math.abs(s.mom) < 1) s.mom = 0; }
-        if (s.kick) { const step = s.kick * 0.12; s.kick -= step; s.angle += step; if (Math.abs(s.kick) < 0.2) s.kick = 0; }
+        if (s.mom) { s.mom *= Math.pow(0.93, f); if (Math.abs(s.mom) < 1) s.mom = 0; }
+        if (s.kick) { const step = s.kick * (1 - Math.pow(0.88, f)); s.kick -= step; s.angle += step; if (Math.abs(s.kick) < 0.2) s.kick = 0; }
         paint();
       }
       requestAnimationFrame(loop);
@@ -1099,6 +1103,7 @@ function mountHome() {
     $('#wallrows').style.cssText = 'height:auto;display:flex;flex-direction:column;gap:24px';
     rows.forEach(x => { x.style.cssText = 'position:static'; x.classList.add('wall__scroller'); });
   }
+  $$('.wall__scroller').forEach(mountDragScroll);
 
   /* ---- marquees: two lines, opposite directions, driven by scroll + drift ---- */
   const marqs = $$('[data-marq]').map(m => ({
@@ -1150,6 +1155,7 @@ function mountHome() {
 
   // picker
   const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
+  mountDragScroll($('#pickthumbs'));
   $$('#pickthumbs button').forEach(btn => btn.addEventListener('click', () => {
     const p = bySlug[btn.dataset.pick]; if (!p || !prec) return;
     $$('#pickthumbs button').forEach(x => { x.classList.toggle('is-on', x === btn); x.setAttribute('aria-selected', String(x === btn)); });
