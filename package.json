@@ -1,0 +1,21 @@
+{
+  "name": "pastforward",
+  "version": "1.0.0",
+  "description": "PastForward — upcycled vinyl wall decor, posters, prints and polaroids. Single-file site assembled by build.py.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "python3 build.py",
+    "build:all": "python3 build.py --all",
+    "catalogue": "python3 build_catalogue.py",
+    "preview": "python3 -m http.server 8080 --directory docs",
+    "preview:root": "python3 -m http.server 8080",
+    "test": "node verify.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

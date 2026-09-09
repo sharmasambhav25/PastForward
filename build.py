@@ -1,12 +1,29 @@
 #!/usr/bin/env python3
-"""Assemble the PastForward site into two single-file builds."""
-import json, os, base64, mimetypes
+"""Assemble the PastForward site into shippable single-file builds.
 
-ROOT = '/home/claude/pf'
+Usage:
+    python3 build.py            rebuild docs/index.html (the file GitHub
+                                Pages serves; fully embedded, standalone)
+    python3 build.py --local    also write dist/index.html, which loads
+                                product art from ../img/ instead of
+                                embedding it (preview with a static server
+                                on the repo root)
+    python3 build.py --all      also write dist/artifact.html (embed
+                                fragment) and dist/qa.html (embedded
+                                standalone copy for QA runs)
+
+Default output must be byte-identical when inputs are unchanged.
+"""
+import argparse
+import base64
+import json
+import os
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, 'src')
 IMG = os.path.join(ROOT, 'img')
+DOCS = os.path.join(ROOT, 'docs')
 DIST = os.path.join(ROOT, 'dist')
-os.makedirs(DIST, exist_ok=True)
 
 css   = open(f'{SRC}/style.css').read()
 core  = open(f'{SRC}/core.js').read()
@@ -61,8 +78,6 @@ def font_css():
             "src:url(data:font/woff2;base64,%s) format('woff2')}" % (fam, st, wt, b64))
     return ''.join(out)
 
-FONTS = ''
-
 TITLE = 'PastForward'
 DESC  = 'Real 12-inch records with the album pressed into the centre label, made to hang. Posters, prints and polaroids of the albums that mattered.'
 
@@ -79,6 +94,15 @@ for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r
         if _keep is not None and _k not in _keep:
             continue
         PHOTOS[_k] = 'data:image/webp;base64,' + base64.b64encode(open(os.path.join(_dir, _f), 'rb').read()).decode()
+
+def embedded_images():
+    data = {}
+    for f in sorted(os.listdir(IMG)):
+        if not f.endswith('.webp'):
+            continue
+        with open(os.path.join(IMG, f), 'rb') as fh:
+            data[f] = 'data:image/webp;base64,' + base64.b64encode(fh.read()).decode()
+    return data
 
 def js_payload(img_data=None, base=None, base_lg=None):
     parts = [f'window.__CATALOGUE__ = {cat};', f'window.__WORDMARK__ = {json.dumps(WORDMARK)};', f'window.__PHOTOS__ = {json.dumps(PHOTOS)};']
@@ -110,24 +134,41 @@ def assemble(payload, standalone):
                 f'{head}</head><body>{body}</body></html>')
     return head + '\n' + body
 
-# ---------- local build: relative paths to the real archive ----------
-local = assemble(js_payload(base='07-web-optimized/thumb/', base_lg='07-web-optimized/large/'), True)
-open(f'{DIST}/index.html', 'w').write(local)
+def write(path, content):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as fh:
+        fh.write(content)
+    print(f'{os.path.relpath(path, ROOT):24} {os.path.getsize(path)/1048576:.2f} MB')
 
-# ---------- artifact build: images embedded ----------
-data = {}
-for f in sorted(os.listdir(IMG)):
-    if not f.endswith('.webp'):
-        continue
-    with open(os.path.join(IMG, f), 'rb') as fh:
-        data[f] = 'data:image/webp;base64,' + base64.b64encode(fh.read()).decode()
-art = assemble(js_payload(img_data=data), False)
-open(f'{DIST}/artifact.html', 'w').write(art)
+def main():
+    ap = argparse.ArgumentParser(description='Build the PastForward site.')
+    ap.add_argument('--local', action='store_true',
+                    help='also write dist/index.html with external image paths')
+    ap.add_argument('--all', action='store_true',
+                    help='also write dist/ variants (local, artifact fragment, qa copy)')
+    args = ap.parse_args()
 
-# ---------- qa build: standalone doc using the same embedded data ----------
-qa = assemble(js_payload(img_data=data), True)
-open(f'{DIST}/qa.html', 'w').write(qa)
+    data = embedded_images()
 
-for n in ('index.html', 'artifact.html', 'qa.html'):
-    print(f'{n:16} {os.path.getsize(f"{DIST}/{n}")/1048576:.2f} MB')
-print('images embedded:', len(data))
+    # ---------- shippable build: embedded standalone -> docs/ ----------
+    write(os.path.join(DOCS, 'index.html'),
+          assemble(js_payload(img_data=data), True))
+    print('images embedded:', len(data))
+
+    if args.local or args.all:
+        # ---------- local dev build: product art served from img/ ----------
+        # Preview by serving the repo root: python3 -m http.server, then
+        # open /dist/index.html so ../img/ resolves to the real archive.
+        write(os.path.join(DIST, 'index.html'),
+              assemble(js_payload(base='../img/', base_lg='../img/'), True))
+
+    if args.all:
+        # ---------- artifact fragment: embedded, head+body only ----------
+        write(os.path.join(DIST, 'artifact.html'),
+              assemble(js_payload(img_data=data), False))
+        # ---------- qa copy: embedded standalone for test runs ----------
+        write(os.path.join(DIST, 'qa.html'),
+              assemble(js_payload(img_data=data), True))
+
+if __name__ == '__main__':
+    main()
