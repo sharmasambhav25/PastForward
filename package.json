@@ -10,7 +10,8 @@
     "catalogue": "python3 build_catalogue.py",
     "preview": "python3 -m http.server 8080 --directory docs",
     "preview:root": "python3 -m http.server 8080",
-    "test": "node verify.js"
+    "test": "node verify.js",
+    "test:urls": "node dev/check-urls.js"
   },
   "engines": {
     "node": ">=18"

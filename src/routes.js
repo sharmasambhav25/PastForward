@@ -1,7 +1,10 @@
 /* ============================================================
    PastForward — route views
    ============================================================ */
-const photo = (k) => (window.__PHOTOS__ || {})[k] || '';
+/* size 'thumb' (320px) is for the 66px PDP photo thumbnail only — every other
+   photograph on the site is displayed large. Standalone builds ignore it. */
+const photo = (k, size) => size === 'thumb' && (window.__PHOTOS_THUMB__ || {})[k]
+  ? window.__PHOTOS_THUMB__[k] : (window.__PHOTOS__ || {})[k] || '';
 const hasPhotos = () => Object.keys(window.__PHOTOS__ || {}).length > 0;
 const figure = (k, cap, cls = '') => photo(k) ? `<figure class="shot ${cls}">
   <img src="${photo(k)}" alt="${esc(cap)}" loading="lazy" decoding="async">
@@ -38,7 +41,7 @@ const hangShelf = (items, cls = '') => `<div class="shelf ${cls}">
     if (!v) return '';
     const inner = kind === 'rec'
       ? recordHTML(p, { size: 300, style: 'width:100%' })
-      : kind === 'pola' ? polaroidHTML(v) : frameHTML(v);
+      : kind === 'pola' ? polaroidHTML(v, { thumb: true }) : frameHTML(v, { thumb: true });
     return `<a class="hw hw--${kind} ${i > 2 ? 'hw--hide' : ''}" href="#/product/${p.slug}"
        data-cursor="VIEW" style="width:${w}%;--rot:${rot || 0}deg;--dy:${dy || 0}px;--d:${i * 60}ms">
       ${inner}<span class="hw__t">${esc(p.artist)}</span></a>`;
@@ -230,7 +233,7 @@ function viewHome() {
       <div id="beat3" style="display:grid;gap:clamp(32px,6vw,72px);align-items:center">
         <div class="reveal" style="position:relative">
           <div style="position:relative;z-index:2;width:90%;margin-left:-6%">
-            ${recordHTML(objectRec, { size: 300, big: true, id: 'beat3rec', style: 'width:100%' })}
+            ${recordHTML(objectRec, { size: 300, id: 'beat3rec', style: 'width:100%' })}
           </div>
           ${plate('board-display', 'HUNG, NOT SPUN', 'f-m', 'position:relative;z-index:1;width:52%;margin:-14% 0 0 auto')}
         </div>
@@ -250,7 +253,7 @@ function viewHome() {
   <!-- 5 ============ THE WALL (pinned) ============ -->
   <section class="wall" id="wall" data-section="THE CATALOGUE" style="height:210vh">
     <div class="wall__sticky">
-      <div class="wall__bg"><img src="${imgSrc(variant(posters[0], 'poster-a3').image)}" alt="" loading="lazy"></div>
+      <div class="wall__bg"><img src="${imgSrc(variant(posters[0], 'poster-a3').image, 'thumb')}" alt="" loading="lazy"></div>
       <div class="wrap" style="position:relative;z-index:2">
         <div class="cap">THE CATALOGUE</div>
         <h2 class="d-m reveal" style="margin:12px 0 8px;max-width:22ch">Every era. Every genre. Every 3&nbsp;a.m. playlist.</h2>
@@ -299,7 +302,7 @@ function viewHome() {
     ${col('r', 'col--soft col--mask')}
     <div class="wrap picker">
       <div style="display:grid;place-items:center;order:2">
-        ${recordHTML(pickStart, { size: 400, big: true, id: 'pickrec' })}
+        ${recordHTML(pickStart, { size: 400, id: 'pickrec' })}
       </div>
       <div style="order:1">
         <div class="cap">MAKE IT YOURS</div>
@@ -311,7 +314,7 @@ function viewHome() {
         </div>
         <div class="thumbs" role="listbox" aria-label="Choose a record" id="pickthumbs">
           ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} — ${esc(albumText(p))}">
-            <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy"></button>`).join('')}
+            <img src="${imgSrc(variant(p, 'vinyl').image, 'thumb')}" alt="" loading="lazy"></button>`).join('')}
         </div>
         <div style="display:flex;gap:22px;align-items:center;margin-top:20px;flex-wrap:wrap">
           <span class="num mono">FROM ₹899</span>
@@ -350,7 +353,7 @@ function viewHome() {
                        'right:10%;top:52%;width:13.5%;--rot:-4.5deg;--par:.22',
                        'left:40%;top:58%;width:12%;--rot:8deg;--par:.42'][i];
           return `<a class="wb wb--pola" href="#/product/${p.slug}" style="${pos}" data-cursor="VIEW" data-par>
-            ${polaroidHTML(v, { style: 'width:100%' })}
+            ${polaroidHTML(v, { style: 'width:100%', thumb: true })}
             <span class="wb__tag mono-xs">${esc(p.artist)}</span></a>`;
         }).join('')}
       </div>
@@ -417,7 +420,7 @@ function viewHome() {
   <section class="sec ground" data-section="THE DROP" style="text-align:center;position:relative;overflow:hidden">
     ${split()}
     <div class="wrap" style="display:flex;flex-direction:column;align-items:center;gap:26px;position:relative;z-index:2">
-      ${recordHTML(closeRec, { size: 300, big: true, id: 'droprec' })}
+      ${recordHTML(closeRec, { size: 300, id: 'droprec' })}
       <h2 class="d-l reveal" style="margin-top:10px">Be first to the next drop.</h2>
       <p class="body-l dim reveal">New records, limited runs, no spam.</p>
       <form data-form="newsletter" class="reveal" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:460px;width:100%">
@@ -536,10 +539,10 @@ function viewProduct(p, params) {
         </div>
         <div class="pdp__thumbs">
           ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}" aria-label="${esc(x.label)}">
-            <img src="${imgSrc(x.image)}" alt=""><span>${esc(x.badge)}</span></button>`).join('')}
-          ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt=""></button>`).join('')}
+            <img src="${imgSrc(x.image, 'thumb')}" alt=""><span>${esc(x.badge)}</span></button>`).join('')}
+          ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image, 'thumb')}" alt=""></button>`).join('')}
           ${photo(FORMAT_PHOTO[sel]) ? `<button class="pdp__thumb pdp__thumb--photo" data-shot aria-label="Photograph of the real thing">
-            <img src="${photo(FORMAT_PHOTO[sel])}" alt=""><span>PHOTO</span></button>` : ''}
+            <img src="${photo(FORMAT_PHOTO[sel], 'thumb')}" alt=""><span>PHOTO</span></button>` : ''}
         </div>
       </div>
       <div>
@@ -601,9 +604,9 @@ function viewProduct(p, params) {
 }
 function stageMedia(p, fmt) {
   const v = variant(p, fmt);
-  if (fmt === 'vinyl') return recordHTML(p, { size: 400, sheen: true, big: true, cls: 'pdp-record' });
-  if (fmt === 'polaroid') return polaroidHTML(v, { big: true, style: 'width:min(300px,72vw)' });
-  return frameHTML(v, { big: true, style: `width:min(${fmt === 'print-10' ? 380 : 330}px,72vw);aspect-ratio:${v.ratio}` });
+  if (fmt === 'vinyl') return recordHTML(p, { size: 400, sheen: true, cls: 'pdp-record' });
+  if (fmt === 'polaroid') return polaroidHTML(v, { style: 'width:min(300px,72vw)' });
+  return frameHTML(v, { style: `width:min(${fmt === 'print-10' ? 380 : 330}px,72vw);aspect-ratio:${v.ratio}` });
 }
 function scaleSVG(sel) {
   const O = { 'poster-a3': [297, 420, 'A3 POSTER', '297 × 420 MM'], 'poster-a5': [148, 210, 'A5 POSTER', '148 × 210 MM'],
@@ -647,7 +650,7 @@ function viewCollection(slug) {
           <p class="body-l dim" style="margin-top:16px">${esc(c.desc)}</p>
           <div class="mono-xs dim num" style="margin-top:14px">${list.length} ARTWORKS</div></div>
         <div id="sleeve" style="position:absolute;right:0;bottom:0;width:22vmin;opacity:.9;pointer-events:none;clip-path:inset(0 0 100% 0)">
-          ${hero && variant(hero, 'poster-a3') ? frameHTML(variant(hero, 'poster-a3'), { style: 'width:100%;aspect-ratio:.707' }) : ''}
+          ${hero && variant(hero, 'poster-a3') ? frameHTML(variant(hero, 'poster-a3'), { style: 'width:100%;aspect-ratio:.707', thumb: true }) : ''}
         </div>
       </div></div>
     <div class="wrap sec">
@@ -1160,7 +1163,7 @@ function mountHome() {
     const p = bySlug[btn.dataset.pick]; if (!p || !prec) return;
     $$('#pickthumbs button').forEach(x => { x.classList.toggle('is-on', x === btn); x.setAttribute('aria-selected', String(x === btn)); });
     const img = $('.record__art', prec);
-    const src = imgSrc(variant(p, 'vinyl').image, true);
+    const src = imgSrc(variant(p, 'vinyl').image, 'thumb');
     if (RM()) { img.src = src; }
     else {
       if (pspin) { pspin.kick = 120; pspin.stopped = false; pspin.rate = pspin.base; }
@@ -1247,7 +1250,7 @@ function mountProduct(p, params) {
       : '300gsm matte poster stock ' + CONFIRM('Paper stock not confirmed with the printer');
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
-    const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f]); }
+    const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f], 'thumb'); }
     $('#scaleview').innerHTML = scaleSVG(f);
     drawScale();
     setParams(pp => pp.set('format', f));

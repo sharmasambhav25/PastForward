@@ -33,21 +33,30 @@ npm run preview          # serves docs/ on :8080 — open http://localhost:8080
 | `build_catalogue.py` | Parses `img/*.webp` filenames → `catalogue.json` + `audit.txt` |
 | `catalogue.json` | Generated. 66 products / 128 variants / 53 artists — never hand-edit |
 | `build.py` | Assembles `docs/index.html` from `src/` + data + assets |
-| `docs/index.html` | Generated. The shipped site (fully embedded, works offline) |
+| `docs/index.html` | Generated. The shipped site (~0.4 MB shell, assets lazy) |
+| `docs/assets/` | Generated. Served product art, photos, fonts, Three.js |
+| `dev/check-urls.js` | No-browser URL check: renders views, asserts every asset URL resolves |
 | `verify.js` | Playwright QA: 15 routes × 3 viewports, cart maths, copy rules |
 | `img/`, `photos/`, `brand/`, `fonts/` | Product art, photography, brand assets, self-hosted type |
 
 ## Builds
 
 ```bash
-python3 build.py          # docs/index.html (embedded standalone — ships)
-python3 build.py --local  # + dist/index.html (loads art from img/, for dev;
-                          #   serve the repo root and open /dist/index.html)
-python3 build.py --all    # + dist/artifact.html and dist/qa.html variants
+pip install pillow        # one-time: thumbnail generation for the build
+python3 build.py          # docs/index.html + docs/assets/ (ships to Pages)
+python3 build.py --standalone  # + dist/standalone.html (fully embedded
+                               #   single file, ~5.5 MB, for offline use)
 python3 build_catalogue.py  # regenerate catalogue.json + audit.txt from img/
+npm run test:urls         # verify every rendered image URL resolves on disk
 ```
 
-Builds are deterministic: unchanged inputs produce byte-identical outputs.
+The default build keeps `docs/index.html` small (~0.4 MB: scripts, styles,
+catalogue, embedded wordmark) and serves everything else as cacheable files
+under `docs/assets/` with relative URLs — first paint fetches ~0.5 MB
+instead of ~5.5 MB, and repeat visits are nearly free. Product art ships at
+<=480px as-is (no thumb layer needed); photos get 320px thumbs for the PDP
+thumbnail. Builds are deterministic: unchanged inputs produce byte-identical
+`docs/index.html` (thumbnail bytes may vary by Pillow version).
 `dist/` is gitignored scratch; `docs/` is the curated shipped copy.
 
 ## QA
