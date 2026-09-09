@@ -12,6 +12,7 @@ css   = open(f'{SRC}/style.css').read()
 core  = open(f'{SRC}/core.js').read()
 ripple = open(f'{SRC}/ripple.js').read()
 vinyllabel = open(f'{SRC}/vinyllabel.js').read()
+albumscrub = open(f'{SRC}/albumscrub.js').read()
 routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
 cat   = open(f'{ROOT}/catalogue.json').read()
@@ -99,6 +100,7 @@ def assemble(payload, standalone):
 <script>{core}</script>
 <script>{ripple}</script>
 <script>{vinyllabel}</script>
+<script>{albumscrub}</script>
 <script>{routes}</script>
 <script>{boot}</script>
 {VINYL3D}'''

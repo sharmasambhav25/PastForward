@@ -90,11 +90,15 @@ export function mountVinyl(container) {
     return { map: textureFrom(colorCanvas, true), bumpMap: textureFrom(bumpCanvas), roughnessMap: textureFrom(roughCanvas) };
   }
 
-  /* the printed centre label — PastForward's own microcopy only, no invented track listing */
+  /* the printed centre label — PastForward's own microcopy only, no invented track listing.
+     Built once onto `defaultLabelCanvas` (the procedural grain/text render is deterministic,
+     so there's no reason to redo it later); `liveCanvas` starts as a copy of that and is the
+     canvas actually mapped onto the mesh — the hover "album scrub" feature below repaints
+     liveCanvas and can always crossfade back to defaultLabelCanvas without recomputing it. */
   function makeLabelMaps() {
     // PastForward's real label is crimson, not paper — match the CSS disc elsewhere on the site.
-    const c = makeCanvas(1024);
-    const ctx = c.getContext("2d");
+    const defaultLabelCanvas = makeCanvas(1024);
+    const ctx = defaultLabelCanvas.getContext("2d");
     const grad = ctx.createRadialGradient(390, 330, 60, 512, 512, 620);
     grad.addColorStop(0, "#9C2A36"); grad.addColorStop(0.56, "#83202B"); grad.addColorStop(1, "#611420");
     ctx.fillStyle = grad; ctx.fillRect(0, 0, 1024, 1024);
@@ -126,7 +130,15 @@ export function mountVinyl(container) {
     ctx.fillStyle = "#f3efe8";
     ctx.font = "17px sans-serif";
     ctx.fillText("33⅓ RPM  ·  NOT FOR PLAYBACK", 512, 580);
-    return { map: textureFrom(c, true), bumpMap: textureFrom(height) };
+
+    const liveCanvas = makeCanvas(1024);
+    liveCanvas.getContext("2d").drawImage(defaultLabelCanvas, 0, 0);
+
+    return {
+      maps: { map: textureFrom(liveCanvas, true), bumpMap: textureFrom(height) },
+      liveCanvas,
+      defaultLabelCanvas
+    };
   }
 
   const record = new THREE.Group();
@@ -155,11 +167,43 @@ export function mountVinyl(container) {
   surface.position.z = 0.030;
   record.add(surface);
 
+  const labelBuild = makeLabelMaps();
   const label = new THREE.Mesh(new THREE.RingGeometry(0.085, 0.965, 192), new THREE.MeshStandardMaterial({
-    ...makeLabelMaps(), roughness: 0.92, metalness: 0, bumpScale: 0.0012
+    ...labelBuild.maps, roughness: 0.92, metalness: 0, bumpScale: 0.0012
   }));
   label.position.z = 0.034;
   record.add(label);
+
+  /* hover "album scrub" — moving the pointer across the disc scrubs through real
+     PastForward catalogue albums (their actual cover art + real artist/album name)
+     on the centre label, fading back to the default PASTFORWARD label on pointer-leave.
+     Built from the site's own catalogue data — never fabricated. Falls back to doing
+     nothing (the disc just shows its default label, as before) if either the catalogue
+     or the mountAlbumScrub module isn't available for any reason. */
+  const ALBUMS = (() => {
+    const products = (window.__CATALOGUE__ && window.__CATALOGUE__.products) || [];
+    const out = [];
+    for (const p of products) {
+      if (!p.artist || !p.album || p.album === "[CONFIRM]") continue;
+      const variant = p.variants.find(v => v.format === "vinyl");
+      if (!variant || !variant.image) continue;
+      const imageUrl = window.imgSrc ? window.imgSrc(variant.image) : "";
+      if (!imageUrl) continue;
+      out.push({ artist: p.artist, album: p.album, imageUrl });
+    }
+    return out;
+  })();
+  let albumScrub = null;
+  if (window.mountAlbumScrub && ALBUMS.length) {
+    try {
+      albumScrub = window.mountAlbumScrub(container, labelBuild.liveCanvas, labelBuild.liveCanvas.getContext("2d"), {
+        albums: ALBUMS,
+        drawDefaultLabel: (tgt, w, h) => tgt.drawImage(labelBuild.defaultLabelCanvas, 0, 0, w, h),
+        onNeedsRedraw: () => { label.material.map.needsUpdate = true; },
+        fadeDuration: 320
+      });
+    } catch (e) { albumScrub = null; }
+  }
 
   const light = new THREE.PointLight("#fff1da", 95, 40, 2);
   light.position.set(-1.8, 2.2, 4.5);
@@ -210,6 +254,7 @@ export function mountVinyl(container) {
     previousTime = now;
     record.rotation.z = -angleRad;
     light.position.lerp(lightTarget, 1 - Math.exp(-9 * dt));
+    if (albumScrub) albumScrub.update();
     renderer.render(scene, camera);
     frame = requestAnimationFrame(animate);
   }
@@ -222,6 +267,7 @@ export function mountVinyl(container) {
     resizeObserver.disconnect();
     window.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("pointerleave", onPointerLeave);
+    if (albumScrub) albumScrub.cleanup();
     const geometries = new Set(), materials = new Set();
     scene.traverse(o => {
       if (o.geometry) geometries.add(o.geometry);
