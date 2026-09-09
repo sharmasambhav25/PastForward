@@ -259,7 +259,7 @@ function chromeHTML() {
   <div id="overlays">
   <div class="scrim" id="scrim"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-label="Cart" aria-modal="true">
-    <div class="drawer__hd"><span class="mono">The crate</span><button class="iconbtn" data-close aria-label="Close cart">×</button></div>
+    <div class="drawer__hd"><span class="drawer__title">The crate</span><button class="iconbtn" data-close aria-label="Close cart">×</button></div>
     <div class="drawer__body" id="drawerbody"></div>
     <div class="drawer__ft" id="drawerft"></div>
   </aside>
