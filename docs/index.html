@@ -4573,32 +4573,6 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
     tgt.fillStyle = '#000';
     tgt.fill();
 
-    tgt.textAlign = 'center';
-    tgt.textBaseline = 'middle';
-    var maxTW = R * 1.4;
-
-    var aPx = Math.round(R * 0.14);
-    tgt.font = 'small-caps bold ' + aPx + 'px Georgia, "Palatino Linotype", "Book Antiqua", serif';
-    tgt.fillStyle = '#ffffff';
-    tgt.fillText(entry.artist, CX, CY - R * 0.17, maxTW);
-
-    var ry = CY - R * 0.015;
-    var gap = R * 0.06;
-    var half = R * 0.28;
-    tgt.strokeStyle = 'rgba(255,255,255,0.35)';
-    tgt.lineWidth = 1;
-    tgt.beginPath();
-    tgt.moveTo(CX - half, ry);
-    tgt.lineTo(CX - gap, ry);
-    tgt.moveTo(CX + gap, ry);
-    tgt.lineTo(CX + half, ry);
-    tgt.stroke();
-
-    var tPx = Math.round(R * 0.115);
-    tgt.font = 'italic ' + tPx + 'px Georgia, "Palatino Linotype", "Book Antiqua", serif';
-    tgt.fillStyle = 'rgba(255,255,255,0.88)';
-    tgt.fillText(entry.album, CX, CY + R * 0.15, maxTW);
-
     tgt.restore();
   }
 
