@@ -229,29 +229,47 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
   font-size:.55rem; display:grid; place-items:center; line-height:1}
 .hdr__prog{position:absolute; left:0; bottom:0; height:1px; background:var(--oxblood);
   transform-origin:0 50%; transform:scaleX(0); width:100%}
-.mega{position:fixed; top:var(--nav-h); left:0; right:0; z-index:199; background:rgba(10,7,8,.97);
-  backdrop-filter:blur(18px); border-bottom:1px solid var(--border); visibility:hidden; pointer-events:none;
+/* Solid, high-contrast takeover instead of a blurred glass panel — over
+   this site's dark, low-contrast collage backdrop, backdrop-filter never
+   read as "glass" (nothing light/colourful behind it to refract), it just
+   looked like a flatter black box. A confident opaque panel with real
+   type scale and a real shadow reads the way the reference site's
+   full-screen nav does, without borrowing its (sans-serif, colourless) look. */
+.mega{position:fixed; top:var(--nav-h); left:0; right:0; z-index:199; background:var(--ink);
+  border-bottom:2px solid var(--oxblood); visibility:hidden; pointer-events:none;
+  box-shadow:0 48px 96px -24px rgba(0,0,0,.65);
   opacity:0; transform:translateY(-14px) scaleY(.96); transform-origin:50% 0;
   transition:opacity 220ms var(--e-ui), transform 460ms var(--e-spring), visibility 0s 460ms}
 .mega.is-open{visibility:visible; pointer-events:auto; opacity:1; transform:none; transition:opacity 220ms var(--e-ui), transform 460ms var(--e-spring)}
-.mega__grid{display:grid; grid-template-columns:1.2fr 1.2fr .8fr 1fr; gap:40px; padding-block:36px}
-.mega a{display:block; padding:7px 0; color:var(--muted); font-size:.95rem; transition:color var(--d-micro) var(--e-ui)}
+.mega__grid{display:grid; grid-template-columns:1.3fr 1.3fr .9fr 1fr; gap:48px; padding-block:56px}
+.mega a{display:block; padding:9px 0; font-family:var(--display); font-size:1.5rem; letter-spacing:-.01em;
+  color:var(--muted); transition:color 200ms var(--e-ui), opacity 200ms var(--e-ui)}
 .mega a:hover{color:var(--cream)}
-.mega h4{font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; color:var(--muted);
-  text-transform:uppercase; margin:0 0 12px}
+/* hovering one link dims its neighbours, so the panel always has one
+   confident focal point instead of a wall of equal-weight links */
+.mega__grid:has(a:hover) a:not(:hover){opacity:.4}
+.mega h4{font-family:var(--mono); font-size:.64rem; letter-spacing:.2em; color:var(--ember);
+  text-transform:uppercase; margin:0 0 18px}
 
 /* ---------- mobile menu / drawers ---------- */
 .scrim{position:absolute; inset:0; background:var(--overlay); z-index:290; opacity:0; pointer-events:none;
   transition:opacity var(--d-std) var(--e-ui)}
 .scrim.is-open{opacity:1; pointer-events:auto}
-.drawer{position:absolute; top:0; right:0; bottom:0; width:min(420px,100%); background:var(--elevated);
+/* --elevated is #121011 against an #060506 page — a 6-point difference in
+   luminance that's essentially invisible, so the drawer used to read as a
+   flat black rectangle with a hard seam rather than a floating sheet. A
+   real cast shadow and a lit top-left edge do the "this is a separate,
+   physical layer" job that the missing contrast couldn't. */
+.drawer{position:absolute; top:0; right:0; bottom:0; width:min(460px,100%); background:var(--ink);
   z-index:300; transform:translateX(100%); transition:transform 480ms var(--e-spring);
-  display:flex; flex-direction:column; border-left:1px solid var(--border)}
+  display:flex; flex-direction:column; border-left:1px solid rgba(243,233,222,.14);
+  box-shadow:-56px 0 110px -28px rgba(0,0,0,.7)}
 .drawer.is-open{transform:none; visibility:visible}
 .drawer:not(.is-open){visibility:hidden}
-.drawer__hd{display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border)}
-.drawer__body{flex:1; overflow-y:auto; padding:8px 24px}
-.drawer__ft{padding:20px 24px; border-top:1px solid var(--border)}
+.drawer__hd{display:flex; align-items:center; justify-content:space-between; padding:26px 28px; border-bottom:1px solid var(--border)}
+.drawer__title{font-family:var(--display); font-size:1.35rem; color:var(--cream)}
+.drawer__body{flex:1; overflow-y:auto; padding:8px 28px}
+.drawer__ft{padding:24px 28px 30px; border-top:1px solid var(--border)}
 .menu{position:absolute; inset:0; z-index:300; background:var(--ink); transform:translateY(-100%);
   transition:transform 520ms var(--e-spring); display:flex; flex-direction:column; padding:var(--nav-h) var(--gutter) 32px}
 .menu.is-open{transform:none; visibility:visible}
@@ -565,7 +583,7 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .receipt .row{display:flex; justify-content:space-between; gap:12px; padding:9px 0; position:relative}
 .receipt .row::after{content:""; position:absolute; left:0; right:0; bottom:0;
   border-bottom:1px dotted var(--border-2)}
-.receipt .row.total{border-top:1px solid var(--border-2); margin-top:8px; padding-top:14px; font-size:.9rem}
+.receipt .row.total{border-top:1px solid rgba(243,233,222,.5); margin-top:8px; padding-top:14px; font-size:1.05rem}
 .receipt .row.total::after{display:none}
 .line{display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--border)}
 .line__img{width:72px; flex:none; background:var(--elevated); display:grid; place-items:center; padding:6px; align-self:start}
@@ -948,20 +966,25 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 }
 
 /* ---------- glass surfaces: accessibility fallbacks ----------
-   The header, mega menu and mobile buy bar float as translucent, blurred
-   "material" over content (see the WWDC materials-&-depth guidance this
-   site's chrome follows). Two OS-level settings ask for something else:
+   The header and mobile buy bar float as translucent, blurred "material"
+   over content (see the WWDC materials-&-depth guidance this site's chrome
+   follows). The mega menu and cart drawer used to as well, but backdrop-
+   filter never read as glass against this site's dark, low-contrast
+   backdrop — it just looked like a flatter black box — so they're solid,
+   confident panels now (see .mega / .drawer above) and don't need a
+   fallback here. Two OS-level settings still ask for something else from
+   the surfaces that ARE glass:
    someone who has turned off transparency effects should get a plain
    solid surface instead of a blur; someone who has asked for more
    contrast should get a defined, high-contrast edge. Both are handled
    here rather than by touching the blur rules themselves, since they
    only apply under their respective media query. */
 @media(prefers-reduced-transparency:reduce){
-  .hdr,.mega,.buybar{backdrop-filter:none; background:#0a0708}
+  .hdr,.buybar{backdrop-filter:none; background:#0a0708}
   .badge{backdrop-filter:none; background:#0a0708}
 }
 @media(prefers-contrast:more){
-  .hdr,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
+  .hdr,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
   .badge{backdrop-filter:none; background:#050405; border-color:var(--cream)}
 }
 </style></head><body><script>window.__CATALOGUE__ = {
@@ -3807,7 +3830,7 @@ function chromeHTML() {
   <div id="overlays">
   <div class="scrim" id="scrim"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-label="Cart" aria-modal="true">
-    <div class="drawer__hd"><span class="mono">The crate</span><button class="iconbtn" data-close aria-label="Close cart">×</button></div>
+    <div class="drawer__hd"><span class="drawer__title">The crate</span><button class="iconbtn" data-close aria-label="Close cart">×</button></div>
     <div class="drawer__body" id="drawerbody"></div>
     <div class="drawer__ft" id="drawerft"></div>
   </aside>
