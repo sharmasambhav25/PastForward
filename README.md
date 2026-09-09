@@ -62,10 +62,14 @@ thumbnail. Builds are deterministic: unchanged inputs produce byte-identical
 ## QA
 
 ```bash
-npm install               # installs Playwright (Chromium downloads on first run)
-npx playwright install chromium
-npm test                  # runs verify.js — screenshots to qa/ (gitignored)
+npm install
+npx playwright install --with-deps chromium   # sudo needed for --with-deps on Linux
+npm test                  # verify.js: serves docs/, runs 15 routes x 3 viewports,
+                          # cart maths, copy rules; screenshots to qa/ (gitignored)
 ```
+
+CI (`.github/workflows/ci.yml`) runs the same on every push/PR: catalogue
+parity check, full build, `test:urls`, `npm test`, screenshots as artifacts.
 
 ## House rules (enforced by `verify.js` — read before touching copy or UI)
 

@@ -1,0 +1,23 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pillow
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # generated data must match its generator
+      - run: python3 build_catalogue.py && git diff --exit-code catalogue.json audit.txt
+      - run: python3 build.py --standalone
+      - run: npm run test:urls
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: qa-screenshots, path: qa/ }
