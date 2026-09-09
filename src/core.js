@@ -13,9 +13,14 @@ const P = CAT.products, FMT = CAT.formats, COLS = CAT.collections, COUNTS = CAT.
 const bySlug = Object.fromEntries(P.map(p => [p.slug, p]));
 const withVinyl = P.filter(p => p.variants.some(v => v.format === 'vinyl'));
 
-function imgSrc(file, big) {
+/* size 'thumb' marks art displayed small (cards, rails, label art, blurred
+   backgrounds). Product art ships at <=480px as-is, so no thumb layer is
+   built and 'thumb' resolves to the full file — one cache entry shared by
+   card and PDP instead of two. (Photos have real thumbs; see photo().) */
+function imgSrc(file, size) {
   if (window.__IMG_DATA__) return window.__IMG_DATA__[file] || '';
-  const base = (big && window.__IMG_BASE_LG__) || window.__IMG_BASE__ || '';
+  if (size === 'thumb' && window.__IMG_THUMB__) return window.__IMG_THUMB__ + encodeURIComponent(file);
+  const base = window.__IMG_BASE__ || '';
   return base + encodeURIComponent(file);
 }
 const variant = (p, f) => p.variants.find(v => v.format === f);
@@ -40,7 +45,9 @@ function recordHTML(p, o = {}) {
   const uid = ++__uid;
   const size = o.size || 320;
   const v = p ? variant(p, 'vinyl') : null;
-  const src = o.src || (v ? imgSrc(v.image, o.big) : '');
+  /* label art is 33% of the record and the largest record on the site is
+     400px, so the art never exceeds ~135px — the thumbnail always suffices */
+  const src = o.src || (v ? imgSrc(v.image, 'thumb') : '');
   const alt = o.alt !== undefined ? o.alt : (v ? v.alt : '');
   const lg = size >= 300 ? ' record--lg' : '';
   return `<div class="record${lg} ${o.cls || ''}" style="--size:${size}px${o.style ? ';' + o.style : ''}" ${o.id ? `id="${o.id}"` : ''}>
@@ -68,12 +75,12 @@ function recordHTML(p, o = {}) {
 }
 function frameHTML(v, o = {}) {
   return `<div class="frame ${o.cls || ''}" style="${o.style || ''}">
-    <img src="${imgSrc(v.image, o.big)}" alt="${esc(v.alt)}" loading="lazy" decoding="async">
+    <img src="${imgSrc(v.image, o.thumb ? 'thumb' : undefined)}" alt="${esc(v.alt)}" loading="lazy" decoding="async">
     ${o.badge === false ? '' : ''}</div>`;
 }
 function polaroidHTML(v, o = {}) {
   return `<div class="polaroid ${o.cls || ''}" style="${o.style || ''}">
-    <img src="${imgSrc(v.image, o.big)}" alt="${esc(v.alt)}" loading="lazy" decoding="async"></div>`;
+    <img src="${imgSrc(v.image, o.thumb ? 'thumb' : undefined)}" alt="${esc(v.alt)}" loading="lazy" decoding="async"></div>`;
 }
 function mediaHTML(p, size) {
   const v = primary(p);
@@ -90,8 +97,8 @@ function cardHTML(p) {
     <div class="card__media" style="aspect-ratio:${ar}" data-media>
       <span class="card__badge badge">${esc(v.badge)}</span>
       ${v.format === 'vinyl' ? recordHTML(p, { size: 210 })
-        : v.format === 'polaroid' ? polaroidHTML(v, { style: 'width:78%' })
-        : frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + v.ratio })}
+        : v.format === 'polaroid' ? polaroidHTML(v, { style: 'width:78%', thumb: true })
+        : frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + v.ratio, thumb: true })}
       <button class="card__add" data-add="${p.slug}|${v.format}" aria-label="Quick add ${esc(albumText(p))}">Quick add · ${money(v.price)}</button>
     </div>
     <div class="card__meta">
@@ -164,7 +171,7 @@ function cartLinesHTML() {
   return cart.map((l, i) => {
     const p = bySlug[l.slug], v = variant(p, l.format);
     return `<div class="line">
-      <div class="line__img">${v.format === 'vinyl' ? recordHTML(p, { size: 60 }) : `<img src="${imgSrc(v.image)}" alt="">`}</div>
+      <div class="line__img">${v.format === 'vinyl' ? recordHTML(p, { size: 60 }) : `<img src="${imgSrc(v.image, 'thumb')}" alt="">`}</div>
       <div style="flex:1;min-width:0">
         <div class="card__artist">${esc(p.artist)}</div>
         <div style="font-family:var(--display);font-size:1rem;line-height:1.25">${albumOf(p)}</div>

@@ -187,7 +187,9 @@ export function mountVinyl(container) {
       if (!p.artist || !p.album || p.album === "[CONFIRM]") continue;
       const variant = p.variants.find(v => v.format === "vinyl");
       if (!variant || !variant.image) continue;
-      const imageUrl = window.imgSrc ? window.imgSrc(variant.image) : "";
+      /* thumbnails: the scrub preloads every vinyl cover eagerly on home, and a
+         mid-motion label under stage lighting never needs full resolution */
+      const imageUrl = window.imgSrc ? window.imgSrc(variant.image, "thumb") : "";
       if (!imageUrl) continue;
       out.push({ artist: p.artist, album: p.album, imageUrl });
     }
