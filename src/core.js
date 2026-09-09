@@ -108,15 +108,40 @@ let cart = [];
 try { const raw = localStorage.getItem(CART_KEY); if (raw) cart = JSON.parse(raw).filter(l => bySlug[l.slug] && FMT[l.format]); } catch (e) { cart = []; }
 function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} }
 function cartCount() { return cart.reduce((n, l) => n + l.qty, 0); }
-function addToCart(slug, format, qty = 1) {
+function addToCart(slug, format, qty = 1, originEl) {
   const p = bySlug[slug], v = variant(p, format); if (!v) return;
   const line = cart.find(l => l.slug === slug && l.format === format);
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
   saveCart(); syncCart();
   toast(`Added — ${albumText(p)}, ${v.label}`);
   Sound.tick();
-  const badge = $('#cartcount'); if (badge && !RM()) { badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); }
+  const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM()) badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); };
+  flyToCart(originEl, bounceBadge);
   if (window.matchMedia('(max-width:1023px)').matches) openDrawer();
+}
+/* Flies a small ghost from the clicked element to the cart icon — the
+   visual "causality" link between pressing Add and the cart updating.
+   Falls back to firing onLand immediately when there's nothing to
+   animate from, under reduced motion, or if either rect is empty. */
+function flyToCart(originEl, onLand) {
+  const cartBtn = $('#cartbtn');
+  if (RM() || !originEl || !cartBtn) { if (onLand) onLand(); return; }
+  const from = originEl.getBoundingClientRect(), to = cartBtn.getBoundingClientRect();
+  if (!from.width || !to.width) { if (onLand) onLand(); return; }
+  const ghost = document.createElement('div');
+  ghost.className = 'fly-ghost'; ghost.setAttribute('aria-hidden', 'true');
+  ghost.style.left = (from.left + from.width / 2 - 8) + 'px';
+  ghost.style.top = (from.top + from.height / 2 - 8) + 'px';
+  document.body.appendChild(ghost);
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  const arc = -Math.max(60, Math.abs(dy) * .6);
+  const anim = ghost.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1, offset: 0 },
+    { transform: `translate(${dx * .55}px, ${dy * .55 + arc}px) scale(.65)`, opacity: 1, offset: .6 },
+    { transform: `translate(${dx}px, ${dy}px) scale(.15)`, opacity: 0, offset: 1 }
+  ], { duration: 620, easing: 'cubic-bezier(.32,.8,.42,1)' });
+  anim.onfinish = () => { ghost.remove(); if (onLand) onLand(); };
 }
 function cartMaths() {
   let sub = 0; cart.forEach(l => sub += l.price * l.qty);
@@ -165,11 +190,32 @@ function cartFootHTML() {
 /* ---------- toast ---------- */
 function toast(msg) {
   const wrap = $('#toasts'); if (!wrap) return;
-  while (wrap.children.length >= 2) wrap.firstElementChild.remove();
+  while (wrap.children.length >= 2) removeToast(wrap.firstElementChild, true);
   const t = document.createElement('div');
   t.className = 'toast'; t.setAttribute('role', 'status');
   t.innerHTML = `${esc(msg)}<span class="toast__bar"></span>`;
-  wrap.appendChild(t); setTimeout(() => t.remove(), 4000);
+  wrap.appendChild(t); setTimeout(() => removeToast(t), 4000);
+}
+/* Removes a toast with a spring-out instead of just vanishing, then lets
+   any sibling left in the stack slide smoothly into its new spot (a small
+   FLIP) rather than snapping up when the gap closes. `instant` skips the
+   exit animation for the forced eviction when a third toast arrives. */
+function removeToast(t, instant) {
+  if (!t || !t.parentNode) return;
+  const wrap = t.parentNode;
+  const settle = () => {
+    const siblings = Array.from(wrap.children).filter(c => c !== t);
+    const before = siblings.map(c => c.getBoundingClientRect().top);
+    t.remove();
+    if (RM()) return;
+    siblings.forEach((c, i) => {
+      const dy = before[i] - c.getBoundingClientRect().top;
+      if (Math.abs(dy) > .5) c.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+    });
+  };
+  if (instant || RM()) { settle(); return; }
+  t.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(6px) scale(.96)' }],
+    { duration: 220, easing: 'cubic-bezier(.4,0,1,1)' }).onfinish = settle;
 }
 
 /* ---------- drawer / overlays ---------- */
@@ -563,9 +609,11 @@ function initScroll() {
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
     const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
-    const solid = home ? y > innerHeight * .78 : true;
-    hdr.classList.toggle('is-solid', solid);
-    hdr.classList.toggle('is-hero', home && !solid);
+    const threshold = innerHeight * .78;
+    const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
+    hdr.style.setProperty('--hdrp', hp.toFixed(3));
+    hdr.classList.toggle('is-solid', hp >= 1);
+    hdr.classList.toggle('is-hero', home && hp < .98);
     let name = '';
     $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
     if (lab && name && lab.textContent !== name) { lab.textContent = name; }
@@ -712,7 +760,7 @@ document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
   const add = e.target.closest('[data-add]');
-  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f); return; }
+  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add); return; }
   if (e.target.closest('[data-close]') || e.target.id === 'scrim') { closeAll(); return; }
   const q = e.target.closest('[data-q]');
   if (q) { const [i, d] = q.dataset.q.split('|').map(Number); cart[i].qty += d; if (cart[i].qty < 1) cart.splice(i, 1); saveCart(); syncCart(); return; }

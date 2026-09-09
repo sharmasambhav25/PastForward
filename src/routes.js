@@ -1267,7 +1267,7 @@ function mountProduct(p, params) {
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
     qty = Math.max(1, qty + (+b.dataset.pq)); $('#pdpqty').textContent = qty;
   }));
-  const add = () => addToCart(p.slug, sel, qty);
+  const add = e => addToCart(p.slug, sel, qty, e.currentTarget);
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
   const bar = $('#buybar');

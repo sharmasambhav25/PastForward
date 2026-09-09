@@ -2,12 +2,18 @@
    PastForward — boot
    ============================================================ */
 function initChrome() {
-  $('#cartbtn').addEventListener('click', openDrawer);
-  $('#menubtn').addEventListener('click', () => { lastFocus = document.activeElement; $('#menu').classList.add('is-open'); document.body.style.overflow = 'hidden'; });
-  $('#searchbtn').addEventListener('click', openSearch);
+  $('#cartbtn').addEventListener('click', () => { Sound.tick(); openDrawer(); });
+  $('#menubtn').addEventListener('click', () => { Sound.tick(); lastFocus = document.activeElement; $('#menu').classList.add('is-open'); document.body.style.overflow = 'hidden'; });
+  $('#searchbtn').addEventListener('click', () => { Sound.tick(); openSearch(); });
   const mb = $('#megabtn'), mega = $('#mega');
   let t;
-  const open = () => { mega.classList.add('is-open'); mb.setAttribute('aria-expanded', 'true'); };
+  const open = () => {
+    // Anchor the spring pop-open to the button that actually triggered it,
+    // instead of always blooming from dead-center — spatial consistency.
+    const r = mb.getBoundingClientRect();
+    mega.style.transformOrigin = `${r.left + r.width / 2}px 0`;
+    mega.classList.add('is-open'); mb.setAttribute('aria-expanded', 'true');
+  };
   const shut = () => { mega.classList.remove('is-open'); mb.setAttribute('aria-expanded', 'false'); };
   mb.addEventListener('click', () => mega.classList.contains('is-open') ? shut() : open());
   mb.addEventListener('pointerenter', () => { clearTimeout(t); t = setTimeout(open, 120); });

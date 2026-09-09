@@ -192,12 +192,18 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 
 /* ---------- header ---------- */
 .hdr{position:fixed; inset:0 0 auto; z-index:200; height:var(--nav-h);
-  display:flex; align-items:center; transition:background var(--d-std) var(--e-ui),transform var(--d-std) var(--e-ui)}
-.hdr.is-solid{background:rgba(10,7,8,.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--border)}
+  display:flex; align-items:center; transition:transform var(--d-std) var(--e-ui);
+  /* --hdrp (0-1) is driven straight from scroll position in initScroll() —
+     the header's material tracks the input directly instead of snapping
+     to solid at a fixed threshold. Falls back to fully-solid pre-JS. */
+  background:rgba(10,7,8,calc(var(--hdrp,1) * .82));
+  backdrop-filter:blur(calc(var(--hdrp,1) * 14px));
+  border-bottom:1px solid rgba(243,233,222,calc(var(--hdrp,1) * .10))}
 .hdr__in{display:flex; align-items:center; gap:28px; width:100%}
-.hdr__mark{margin-right:auto; display:block; line-height:0;
+.hdr__mark{margin-right:auto; display:block; line-height:0; opacity:var(--hdrp,1);
+  transform:translateY(calc((1 - var(--hdrp,1)) * -9px));
   transition:opacity 320ms var(--e-ui), transform 320ms var(--e-out-expo)}
-.hdr.is-hero .hdr__mark{opacity:0; transform:translateY(-9px); pointer-events:none}
+.hdr.is-hero .hdr__mark{pointer-events:none}
 .hdr__mark img{height:16px; width:auto; display:block}
 .hdr__mark--ftr{margin:0}
 .hdr__mark--ftr img{height:26px}
@@ -275,10 +281,13 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 .toasts{position:fixed; left:24px; bottom:24px; z-index:500; display:flex; flex-direction:column; gap:10px}
 .toast{background:var(--elevated); border:1px solid var(--border); width:320px; max-width:calc(100vw - 48px);
   padding:14px 16px; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
-  position:relative; box-shadow:var(--sh-card); animation:toastin 260ms var(--e-weight)}
-@keyframes toastin{from{opacity:0; transform:translateY(10px)}}
+  position:relative; box-shadow:var(--sh-card); animation:toastin 380ms var(--e-spring)}
+@keyframes toastin{from{opacity:0; transform:translateY(14px) scale(.96)}}
 .toast__bar{position:absolute; left:0; bottom:0; height:1px; background:var(--oxblood); animation:drain 4s linear forwards}
 @keyframes drain{from{width:100%}to{width:0}}
+/* the add-to-cart "flight" ghost — see flyToCart() in core.js */
+.fly-ghost{position:fixed; width:16px; height:16px; border-radius:50%; background:var(--oxblood);
+  box-shadow:0 2px 10px rgba(0,0,0,.35); z-index:650; pointer-events:none; will-change:transform,opacity}
 
 /* ---------- product card ---------- */
 .grid{display:grid; gap:24px; grid-template-columns:repeat(2,1fr)}
@@ -945,10 +954,10 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    here rather than by touching the blur rules themselves, since they
    only apply under their respective media query. */
 @media(prefers-reduced-transparency:reduce){
-  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#0a0708}
+  .hdr,.mega,.buybar{backdrop-filter:none; background:#0a0708}
   .badge{backdrop-filter:none; background:#0a0708}
 }
 @media(prefers-contrast:more){
-  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
+  .hdr,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
   .badge{backdrop-filter:none; background:#050405; border-color:var(--cream)}
 }

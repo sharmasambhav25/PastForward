@@ -195,12 +195,18 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 
 /* ---------- header ---------- */
 .hdr{position:fixed; inset:0 0 auto; z-index:200; height:var(--nav-h);
-  display:flex; align-items:center; transition:background var(--d-std) var(--e-ui),transform var(--d-std) var(--e-ui)}
-.hdr.is-solid{background:rgba(10,7,8,.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--border)}
+  display:flex; align-items:center; transition:transform var(--d-std) var(--e-ui);
+  /* --hdrp (0-1) is driven straight from scroll position in initScroll() —
+     the header's material tracks the input directly instead of snapping
+     to solid at a fixed threshold. Falls back to fully-solid pre-JS. */
+  background:rgba(10,7,8,calc(var(--hdrp,1) * .82));
+  backdrop-filter:blur(calc(var(--hdrp,1) * 14px));
+  border-bottom:1px solid rgba(243,233,222,calc(var(--hdrp,1) * .10))}
 .hdr__in{display:flex; align-items:center; gap:28px; width:100%}
-.hdr__mark{margin-right:auto; display:block; line-height:0;
+.hdr__mark{margin-right:auto; display:block; line-height:0; opacity:var(--hdrp,1);
+  transform:translateY(calc((1 - var(--hdrp,1)) * -9px));
   transition:opacity 320ms var(--e-ui), transform 320ms var(--e-out-expo)}
-.hdr.is-hero .hdr__mark{opacity:0; transform:translateY(-9px); pointer-events:none}
+.hdr.is-hero .hdr__mark{pointer-events:none}
 .hdr__mark img{height:16px; width:auto; display:block}
 .hdr__mark--ftr{margin:0}
 .hdr__mark--ftr img{height:26px}
@@ -278,10 +284,13 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 .toasts{position:fixed; left:24px; bottom:24px; z-index:500; display:flex; flex-direction:column; gap:10px}
 .toast{background:var(--elevated); border:1px solid var(--border); width:320px; max-width:calc(100vw - 48px);
   padding:14px 16px; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
-  position:relative; box-shadow:var(--sh-card); animation:toastin 260ms var(--e-weight)}
-@keyframes toastin{from{opacity:0; transform:translateY(10px)}}
+  position:relative; box-shadow:var(--sh-card); animation:toastin 380ms var(--e-spring)}
+@keyframes toastin{from{opacity:0; transform:translateY(14px) scale(.96)}}
 .toast__bar{position:absolute; left:0; bottom:0; height:1px; background:var(--oxblood); animation:drain 4s linear forwards}
 @keyframes drain{from{width:100%}to{width:0}}
+/* the add-to-cart "flight" ghost — see flyToCart() in core.js */
+.fly-ghost{position:fixed; width:16px; height:16px; border-radius:50%; background:var(--oxblood);
+  box-shadow:0 2px 10px rgba(0,0,0,.35); z-index:650; pointer-events:none; will-change:transform,opacity}
 
 /* ---------- product card ---------- */
 .grid{display:grid; gap:24px; grid-template-columns:repeat(2,1fr)}
@@ -948,11 +957,11 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    here rather than by touching the blur rules themselves, since they
    only apply under their respective media query. */
 @media(prefers-reduced-transparency:reduce){
-  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#0a0708}
+  .hdr,.mega,.buybar{backdrop-filter:none; background:#0a0708}
   .badge{backdrop-filter:none; background:#0a0708}
 }
 @media(prefers-contrast:more){
-  .hdr.is-solid,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
+  .hdr,.mega,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
   .badge{backdrop-filter:none; background:#050405; border-color:var(--cream)}
 }
 </style></head><body><script>window.__CATALOGUE__ = {
@@ -3647,15 +3656,40 @@ let cart = [];
 try { const raw = localStorage.getItem(CART_KEY); if (raw) cart = JSON.parse(raw).filter(l => bySlug[l.slug] && FMT[l.format]); } catch (e) { cart = []; }
 function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} }
 function cartCount() { return cart.reduce((n, l) => n + l.qty, 0); }
-function addToCart(slug, format, qty = 1) {
+function addToCart(slug, format, qty = 1, originEl) {
   const p = bySlug[slug], v = variant(p, format); if (!v) return;
   const line = cart.find(l => l.slug === slug && l.format === format);
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
   saveCart(); syncCart();
   toast(`Added — ${albumText(p)}, ${v.label}`);
   Sound.tick();
-  const badge = $('#cartcount'); if (badge && !RM()) { badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); }
+  const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM()) badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); };
+  flyToCart(originEl, bounceBadge);
   if (window.matchMedia('(max-width:1023px)').matches) openDrawer();
+}
+/* Flies a small ghost from the clicked element to the cart icon — the
+   visual "causality" link between pressing Add and the cart updating.
+   Falls back to firing onLand immediately when there's nothing to
+   animate from, under reduced motion, or if either rect is empty. */
+function flyToCart(originEl, onLand) {
+  const cartBtn = $('#cartbtn');
+  if (RM() || !originEl || !cartBtn) { if (onLand) onLand(); return; }
+  const from = originEl.getBoundingClientRect(), to = cartBtn.getBoundingClientRect();
+  if (!from.width || !to.width) { if (onLand) onLand(); return; }
+  const ghost = document.createElement('div');
+  ghost.className = 'fly-ghost'; ghost.setAttribute('aria-hidden', 'true');
+  ghost.style.left = (from.left + from.width / 2 - 8) + 'px';
+  ghost.style.top = (from.top + from.height / 2 - 8) + 'px';
+  document.body.appendChild(ghost);
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  const arc = -Math.max(60, Math.abs(dy) * .6);
+  const anim = ghost.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1, offset: 0 },
+    { transform: `translate(${dx * .55}px, ${dy * .55 + arc}px) scale(.65)`, opacity: 1, offset: .6 },
+    { transform: `translate(${dx}px, ${dy}px) scale(.15)`, opacity: 0, offset: 1 }
+  ], { duration: 620, easing: 'cubic-bezier(.32,.8,.42,1)' });
+  anim.onfinish = () => { ghost.remove(); if (onLand) onLand(); };
 }
 function cartMaths() {
   let sub = 0; cart.forEach(l => sub += l.price * l.qty);
@@ -3704,11 +3738,32 @@ function cartFootHTML() {
 /* ---------- toast ---------- */
 function toast(msg) {
   const wrap = $('#toasts'); if (!wrap) return;
-  while (wrap.children.length >= 2) wrap.firstElementChild.remove();
+  while (wrap.children.length >= 2) removeToast(wrap.firstElementChild, true);
   const t = document.createElement('div');
   t.className = 'toast'; t.setAttribute('role', 'status');
   t.innerHTML = `${esc(msg)}<span class="toast__bar"></span>`;
-  wrap.appendChild(t); setTimeout(() => t.remove(), 4000);
+  wrap.appendChild(t); setTimeout(() => removeToast(t), 4000);
+}
+/* Removes a toast with a spring-out instead of just vanishing, then lets
+   any sibling left in the stack slide smoothly into its new spot (a small
+   FLIP) rather than snapping up when the gap closes. `instant` skips the
+   exit animation for the forced eviction when a third toast arrives. */
+function removeToast(t, instant) {
+  if (!t || !t.parentNode) return;
+  const wrap = t.parentNode;
+  const settle = () => {
+    const siblings = Array.from(wrap.children).filter(c => c !== t);
+    const before = siblings.map(c => c.getBoundingClientRect().top);
+    t.remove();
+    if (RM()) return;
+    siblings.forEach((c, i) => {
+      const dy = before[i] - c.getBoundingClientRect().top;
+      if (Math.abs(dy) > .5) c.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+    });
+  };
+  if (instant || RM()) { settle(); return; }
+  t.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(6px) scale(.96)' }],
+    { duration: 220, easing: 'cubic-bezier(.4,0,1,1)' }).onfinish = settle;
 }
 
 /* ---------- drawer / overlays ---------- */
@@ -4102,9 +4157,11 @@ function initScroll() {
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
     const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
-    const solid = home ? y > innerHeight * .78 : true;
-    hdr.classList.toggle('is-solid', solid);
-    hdr.classList.toggle('is-hero', home && !solid);
+    const threshold = innerHeight * .78;
+    const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
+    hdr.style.setProperty('--hdrp', hp.toFixed(3));
+    hdr.classList.toggle('is-solid', hp >= 1);
+    hdr.classList.toggle('is-hero', home && hp < .98);
     let name = '';
     $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
     if (lab && name && lab.textContent !== name) { lab.textContent = name; }
@@ -4251,7 +4308,7 @@ document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
   const add = e.target.closest('[data-add]');
-  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f); return; }
+  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add); return; }
   if (e.target.closest('[data-close]') || e.target.id === 'scrim') { closeAll(); return; }
   const q = e.target.closest('[data-q]');
   if (q) { const [i, d] = q.dataset.q.split('|').map(Number); cart[i].qty += d; if (cart[i].qty < 1) cart.splice(i, 1); saveCart(); syncCart(); return; }
@@ -6100,7 +6157,7 @@ function mountProduct(p, params) {
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
     qty = Math.max(1, qty + (+b.dataset.pq)); $('#pdpqty').textContent = qty;
   }));
-  const add = () => addToCart(p.slug, sel, qty);
+  const add = e => addToCart(p.slug, sel, qty, e.currentTarget);
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
   const bar = $('#buybar');
@@ -6144,7 +6201,13 @@ function initChrome() {
   $('#searchbtn').addEventListener('click', () => { Sound.tick(); openSearch(); });
   const mb = $('#megabtn'), mega = $('#mega');
   let t;
-  const open = () => { mega.classList.add('is-open'); mb.setAttribute('aria-expanded', 'true'); };
+  const open = () => {
+    // Anchor the spring pop-open to the button that actually triggered it,
+    // instead of always blooming from dead-center — spatial consistency.
+    const r = mb.getBoundingClientRect();
+    mega.style.transformOrigin = `${r.left + r.width / 2}px 0`;
+    mega.classList.add('is-open'); mb.setAttribute('aria-expanded', 'true');
+  };
   const shut = () => { mega.classList.remove('is-open'); mb.setAttribute('aria-expanded', 'false'); };
   mb.addEventListener('click', () => mega.classList.contains('is-open') ? shut() : open());
   mb.addEventListener('pointerenter', () => { clearTimeout(t); t = setTimeout(open, 120); });
