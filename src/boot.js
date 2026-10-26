@@ -32,6 +32,8 @@ function pfStart() {
   main.id = 'main'; main.setAttribute('tabindex', '-1');
   document.body.appendChild(main);
   document.body.insertAdjacentHTML('beforeend', footerHTML());
+  const ftr = document.querySelector('[data-footer-reveal]');
+  if (ftr && window.PFFooterReveal) ftr._rv = PFFooterReveal(ftr);
   initChrome(); initGrain(); initCursor(); initScroll(); grooveField(); initSound(); initGrounds(); initPre();
   syncCart();
   if (!location.hash) location.hash = '/';
