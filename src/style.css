@@ -984,3 +984,44 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   .hdr,.buybar{backdrop-filter:none; background:#050405; border-color:var(--cream)}
   .badge{backdrop-filter:none; background:#050405; border-color:var(--cream)}
 }
+
+/* ---------- footer reveal ---------- */
+/* PastForward — footer reveal (pairs with footer-reveal.js) */
+[data-footer-reveal] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  --rv-cw: 176px;
+  --rv-ch: 48px;
+}
+
+/* the resting state: a barely-there grid, same hairline register as the annotation leaders */
+[data-footer-reveal]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(243, 239, 232, .05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(243, 239, 232, .05) 1px, transparent 1px);
+  background-size: var(--rv-cw) var(--rv-ch);
+}
+
+.rv-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* content sits above the canvas; pointer events bubble up to the footer, so there are no dead zones */
+.rv-content { position: relative; z-index: 2; }
+
+/* PastForward footer: the reveal gets its own clear band at the top of the footer, so it never sits behind text */
+.ftr__reveal{height:208px; margin:-56px 0 48px;
+  --rv-accent:var(--ember); --rv-fill:var(--oxblood); --rv-cream:var(--cream); --rv-ink:var(--ink);
+  -webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent); mask-image:linear-gradient(to bottom,#000 62%,transparent)}
+@media(max-width:640px){.ftr__reveal{height:176px; --rv-ch:44px}}

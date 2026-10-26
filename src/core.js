@@ -445,7 +445,7 @@ function initGrounds() {
 }
 
 function footerHTML() {
-  return `<footer class="ftr"><div class="wrap">
+  return `<footer class="ftr"><div class="ftr__reveal" data-footer-reveal aria-hidden="true"></div><div class="wrap">
     <div class="ftr__grid">
       <div>
         <div class="hdr__mark hdr__mark--ftr"><img src="${window.__WORDMARK__}" alt="PastForward"></div>
