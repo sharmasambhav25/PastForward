@@ -22,7 +22,7 @@ export function mountVinyl(container) {
   renderer.toneMappingExposure = 1.15;
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
-  canvas.style.cssText = "display:block;width:100%;height:100%;";
+  canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:pan-y;";
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "A slowly rotating vinyl record, lit by a light that follows the pointer");
   container.appendChild(canvas);
@@ -125,11 +125,6 @@ export function mountVinyl(container) {
     ctx.fillText("PASTFORWARD", 512, 470);
     ctx.font = "18px Georgia, serif";
     ctx.fillText("ESTD 2025", 512, 508);
-    ctx.fillStyle = "rgba(243,239,232,.55)";
-    ctx.fillRect(392, 540, 240, 4);
-    ctx.fillStyle = "#f3efe8";
-    ctx.font = "17px sans-serif";
-    ctx.fillText("33⅓ RPM  ·  NOT FOR PLAYBACK", 512, 580);
 
     const liveCanvas = makeCanvas(1024);
     liveCanvas.getContext("2d").drawImage(defaultLabelCanvas, 0, 0);
@@ -174,24 +169,27 @@ export function mountVinyl(container) {
   label.position.z = 0.034;
   record.add(label);
 
-  /* hover "album scrub" — moving the pointer across the disc scrubs through real
-     PastForward catalogue albums (their actual cover art + real artist/album name)
-     on the centre label, fading back to the default PASTFORWARD label on pointer-leave.
-     Built from the site's own catalogue data — never fabricated. Falls back to doing
-     nothing (the disc just shows its default label, as before) if either the catalogue
-     or the mountAlbumScrub module isn't available for any reason. */
+  /* hover/auto "album scrub" — cycles through real PastForward catalogue albums
+     (their actual cover art + real artist/album name) on the centre label every 2
+     seconds with smooth crossfades, while also supporting interactive pointer scrubbing.
+     Built from the site's own catalogue data — never fabricated. */
   const ALBUMS = (() => {
     const products = (window.__CATALOGUE__ && window.__CATALOGUE__.products) || [];
-    const out = [];
+    const getImg = typeof window.imgSrc === "function" ? window.imgSrc : (typeof imgSrc === "function" ? imgSrc : null);
+    const featured = [];
+    const rest = [];
     for (const p of products) {
       if (!p.artist || !p.album || p.album === "[CONFIRM]") continue;
       const variant = p.variants.find(v => v.format === "vinyl");
       if (!variant || !variant.image) continue;
-      const imageUrl = window.imgSrc ? window.imgSrc(variant.image) : "";
+      const imageUrl = getImg ? getImg(variant.image) : "";
       if (!imageUrl) continue;
-      out.push({ artist: p.artist, album: p.album, imageUrl });
+      const item = { artist: p.artist, album: p.album, imageUrl, rank: p.rank || 99 };
+      if (p.featured) featured.push(item);
+      else rest.push(item);
     }
-    return out;
+    featured.sort((a, b) => a.rank - b.rank);
+    return featured.concat(rest);
   })();
   let albumScrub = null;
   if (window.mountAlbumScrub && ALBUMS.length) {
@@ -200,31 +198,39 @@ export function mountVinyl(container) {
         albums: ALBUMS,
         drawDefaultLabel: (tgt, w, h) => tgt.drawImage(labelBuild.defaultLabelCanvas, 0, 0, w, h),
         onNeedsRedraw: () => { label.material.map.needsUpdate = true; },
-        fadeDuration: 320
+        fadeDuration: 480,
+        autoInterval: 2000
       });
     } catch (e) { albumScrub = null; }
   }
 
-  const light = new THREE.PointLight("#fff1da", 95, 40, 2);
+  const light = new THREE.PointLight("#fff1da", 100, 40, 2);
   light.position.set(-1.8, 2.2, 4.5);
   scene.add(light);
-  scene.add(new THREE.AmbientLight("#3a3d46", 1.1));
+  scene.add(new THREE.AmbientLight("#3a3d46", 1.15));
 
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
   const interactionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const hit = new THREE.Vector3();
   const lightTarget = light.position.clone();
+  const pointerTarget = light.position.clone();
+
+  let pointerActive = false;
+  let lastPointerMoveTime = 0;
+
   function onPointerMove(event) {
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     if (raycaster.ray.intersectPlane(interactionPlane, hit)) {
-      lightTarget.set(THREE.MathUtils.clamp(hit.x, -5, 5), THREE.MathUtils.clamp(hit.y, -5, 5), 4.5);
+      pointerActive = true;
+      lastPointerMoveTime = performance.now();
+      pointerTarget.set(THREE.MathUtils.clamp(hit.x, -5, 5), THREE.MathUtils.clamp(hit.y, -5, 5), 4.5);
     }
   }
-  function onPointerLeave() { lightTarget.set(-1.8, 2.2, 4.5); }
+  function onPointerLeave() { pointerActive = false; }
   window.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("pointerleave", onPointerLeave);
 
@@ -245,16 +251,46 @@ export function mountVinyl(container) {
   /* rotation is driven from outside — the page's existing drag-to-spin/momentum/
      scratch-sound system (routes.js mountHome()) computes one angle per frame for
      every record on the page, CSS or WebGL alike, and calls setAngleDeg() with it.
-     This mount never spins on its own, so it never fights that system. */
+     This mount also includes a smooth fallback internal spin if not driven externally. */
   let angleRad = 0;
-  function setAngleDeg(deg) { angleRad = deg * Math.PI / 180; }
+  let hasExternalSpin = false;
+  function setAngleDeg(deg) {
+    hasExternalSpin = true;
+    angleRad = deg * Math.PI / 180;
+  }
   function animate(now) {
     if (disposed) return;
     const dt = Math.min((now - previousTime) / 1000, 0.05);
     previousTime = now;
+
+    // The vinyl continues to spin smoothly
+    if (!hasExternalSpin) {
+      angleRad += (9 * Math.PI / 180) * dt;
+    }
     record.rotation.z = -angleRad;
-    light.position.lerp(lightTarget, 1 - Math.exp(-9 * dt));
-    if (albumScrub) albumScrub.update();
+
+    // Dynamic light effect movement:
+    // When pointer is not actively being moved, the light sweeps in a continuous,
+    // organic orbital trajectory across the vinyl grooves, creating a dynamic moving sheen.
+    if (pointerActive && (now - lastPointerMoveTime > 1800)) {
+      pointerActive = false;
+    }
+
+    if (pointerActive) {
+      lightTarget.copy(pointerTarget);
+    } else {
+      const tSec = now * 0.001;
+      const speed = 0.85; // rad/s (sweeps across a quadrant every ~1.85s)
+      const sweepRadius = 2.25 + 0.35 * Math.sin(tSec * 0.45);
+      const lx = Math.cos(tSec * speed) * sweepRadius;
+      const ly = Math.sin(tSec * speed) * (sweepRadius * 0.85);
+      const lz = 4.3 + 0.6 * Math.sin(tSec * speed * 1.4);
+      lightTarget.set(lx, ly, lz);
+    }
+
+    light.position.lerp(lightTarget, 1 - Math.exp(-6 * dt));
+
+    if (albumScrub) albumScrub.update(now);
     renderer.render(scene, camera);
     frame = requestAnimationFrame(animate);
   }

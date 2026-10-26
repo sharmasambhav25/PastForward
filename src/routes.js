@@ -84,37 +84,13 @@ const TAGLINE = `<span class="tagline">designed from <em>memory,</em> made for <
 /* ============================== HOME ============================== */
 function viewHome() {
   const feat = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
-  const wallItems = feat.concat(withVinyl.filter(p => !p.featured)).slice(0, 21);
-  const rows = [wallItems.slice(0, 7), wallItems.slice(7, 14), wallItems.slice(14, 21)];
   const pickers = feat.slice(0, 8);
-  const posters = [], polas = [];   /* filled after the artwork wall claims its pieces */
+  const posters = [], polas = [];   /* filled for the catalogue wall */
   const objectRec = pickers.find(p => p.slug === 'travis-scott-utopia') || pickers[1];
   const pickStart = pickers.find(p => p.slug === 'pink-floyd-the-dark-side-of-the-moon-1973') || pickers[2];
   const closeRec  = pickers.find(p => p.slug === 'karan-aujla-at-peace') || pickers[3];
 
-  /* the artwork wall, hung on three shelves.
-     [product, kind, width%, rotation, vertical nudge] */
-  const posterPool = P.filter(p => variant(p, 'poster-a3') || variant(p, 'poster-a5'));
-  const printPool  = P.filter(p => variant(p, 'print-10'));
-  const polaPool   = P.filter(p => variant(p, 'polaroid'));
   const seenArt = new Set();
-  const pickArt = (pool, n) => { const out = [];
-    for (const q of pool) { if (out.length >= n) break; if (seenArt.has(q.artist)) continue;
-      seenArt.add(q.artist); out.push(q); } return out; };
-  const WP = pickArt(posterPool, 10), WL = pickArt(polaPool, 5),
-        WR = pickArt(withVinyl, 2),  WQ = pickArt(printPool, 3);
-  const wallArt = [
-    [[WP[0], 'poster', 13, -1.4, 0], [WL[0], 'pola', 8, -5, -22], [WP[1], 'poster', 16, .9, 0],
-     [WR[0], 'rec', 14, 0, -12],     [WP[2], 'poster', 12, -.7, 0], [WQ[0], 'print', 10, 1.2, -18],
-     [WP[3], 'poster', 13, 1.5, 0]],
-    [[WQ[1], 'print', 11, -1, 0],    [WP[4], 'poster', 15, .8, 0],  [WL[1], 'pola', 8, 4, -20],
-     [WP[5], 'poster', 17, -1.2, 0], [WL[2], 'pola', 8, -6, -16],   [WR[1], 'rec', 13, 0, -9],
-     [WP[6], 'poster', 12, 1.1, 0]],
-    [[WP[7], 'poster', 15, .6, 0],   [WL[3], 'pola', 8, 5, -18],    [WP[8], 'poster', 18, -1.3, 0],
-     [WL[4], 'pola', 8, -4, -20],    [WP[9], 'poster', 14, 1.4, 0], [WQ[2], 'print', 11, -.9, -14]],
-  ].map(row => row.filter(x => x[0]));
-
-  /* the companions chapter shows what the wall above did not */
   P.filter(p => variant(p, 'poster-a3') && !seenArt.has(p.artist))
    .slice(0, 3).forEach(p => { posters.push(p); seenArt.add(p.artist); });
   P.filter(p => variant(p, 'polaroid') && p.artist !== 'The Weeknd' && !seenArt.has(p.artist))
@@ -152,21 +128,18 @@ function viewHome() {
       <!-- igloo-style annotation over the object -->
       <div class="annot" id="heroannot">
         <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
-          <div class="annot__dot"></div><div class="annot__lab"><b>01</b>SPINDLE HOLE</div></div>
+          <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
         <div class="annot__pt annot__pt--r" style="left:70.5%;top:50%;--ad:260ms">
-          <div class="annot__dot"></div><div class="annot__lab"><b>02</b>PRINTED CENTRE LABEL</div></div>
+          <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
         <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
-          <div class="annot__dot"></div><div class="annot__lab"><b>03</b>ORIGINAL GROOVES, UNTOUCHED</div></div>
-        <div class="annot__pt annot__pt--l" style="left:12%;top:72%;--ad:540ms">
-          <div class="annot__dot"></div><div class="annot__lab"><b>04</b>⌀305MM · 33⅓ RPM</div></div>
+          <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
       </div>
     </div>
 
     <div class="fhero__hint cap">A record that already had a life</div>
-    <div class="fhero__hint2 cap">Upcycled · Not for playback</div>
+    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
-      <a class="btn btn--primary" href="#/shop/vinyl"><span class="btn__mag">From ₹899</span></a>
-      <a class="btn--ghost mono" href="#/shop" style="position:relative">SEE ALL ${COUNTS.products} →</a>
+      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
     </div>
   </section>
 
@@ -181,141 +154,63 @@ function viewHome() {
     </div>
   </section>
 
-  ${seam('in-ink')}
-
-  <!-- 3 ============ THE THESIS — the cut to paper ============
-       The wall, made of the actual catalogue rather than photographs of it. -->
-  <section class="ground g-paper" data-section="THE THESIS"
-           style="padding-block:clamp(48px,6.5vw,92px) clamp(34px,4.5vw,64px)">
-    <div class="wrap">
-      <div style="display:grid;gap:clamp(20px,4vw,64px)" id="thesisgrid">
-        <style>#thesisgrid{grid-template-columns:1fr}
-          @media(min-width:900px){#thesisgrid{grid-template-columns:1.3fr .7fr;align-items:end}}</style>
-        <p class="d-m lines hang" style="max-width:17ch;margin:0">
-          <span><i>You've curated your playlists</i></span>
-          <span><i>for a decade. Your walls</i></span>
-          <span><i>never got the same attention.</i></span>
-        </p>
-        <div class="isle" style="align-self:end">
-          <span class="cap">WHAT GOES UP</span>
-          <div class="isle__list">
-            <div><span>Records</span><span class="num">${COUNTS.vinyl}</span></div>
-            <div><span>Posters &amp; prints</span><span class="num">${COUNTS.posters + COUNTS.prints}</span></div>
-            <div><span>Polaroids</span><span class="num">${COUNTS.polaroids}</span></div>
-            <div><span>From</span><span>₹149</span></div>
-          </div>
-        </div>
-      </div>
-
-      ${hangWall(wallArt)}
-
-      <div class="field" style="margin-top:clamp(40px,6vw,80px)">
-        <div class="field__row">
-          ${plate('record-in-hand', 'THE FINISHED OBJECT', 'f-m edge-l')}
-          ${isle('HOW IT IS MADE', `<p class="isle__q">Every record we sell already spent
-            a life somewhere else. We don't press new ones. We <em>rescue</em> old ones —
-            clean them by hand, print the label, and send them ready to hang.</p>`, 'push f-m')}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  ${seam('to-ink')}
-
-  <!-- 4 ============ THE OBJECT ============ -->
+  <!-- 3 ============ THE OBJECT ============ -->
   <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
     ${col('g', 'col--soft col--mask')}
-    <div class="wrap" style="display:grid;gap:clamp(32px,6vw,80px);grid-template-columns:1fr;align-items:center">
-      <style>@media(min-width:900px){#beat3{grid-template-columns:44fr 56fr}}</style>
-      <div id="beat3" style="display:grid;gap:clamp(32px,6vw,72px);align-items:center">
-        <div class="reveal" style="position:relative">
-          <div style="position:relative;z-index:2;width:90%;margin-left:-6%">
+    <div class="wrap beat3-wrap">
+      <div id="beat3">
+        <div class="reveal beat3__visual" style="position:relative">
+          <div class="beat3__discwrap">
             ${recordHTML(objectRec, { size: 300, big: true, id: 'beat3rec', style: 'width:100%' })}
           </div>
           ${plate('board-display', 'HUNG, NOT SPUN', 'f-m', 'position:relative;z-index:1;width:52%;margin:-14% 0 0 auto')}
         </div>
-        <div>
+        <div class="beat3__copy">
           <div class="cap">THE OBJECT</div>
           <h2 class="d-l reveal" style="margin:14px 0 20px">A record you don't play.</h2>
-          <p class="body-l dim reveal measure">A real 12-inch record that already had a life — pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.</p>
-          <div class="spec reveal" style="margin-top:32px;max-width:440px">
-            <div>12-inch diameter · ⌀305mm</div><div>Upcycled record, printed centre label</div><div>Ready to hang</div>
-            <div style="color:var(--muted);opacity:.75">33⅓ RPM · Not for playback</div>
+          <p class="body-l dim reveal measure">A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.</p>
+          <div class="spec-retro reveal" role="list">
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">12-INCH DIAMETER</span>
+            </div>
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">UPCYCLED RECORD<span class="spec-retro__dot">·</span>PRINTED CENTRE LABEL</span>
+            </div>
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">READY TO HANG</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 5 ============ THE WALL (pinned) ============ -->
-  <section class="wall" id="wall" data-section="THE CATALOGUE" style="height:210vh">
-    <div class="wall__sticky">
-      <div class="wall__bg"><img src="${imgSrc(variant(posters[0], 'poster-a3').image)}" alt="" loading="lazy"></div>
-      <div class="wrap" style="position:relative;z-index:2">
-        <div class="cap">THE CATALOGUE</div>
-        <h2 class="d-m reveal" style="margin:12px 0 8px;max-width:22ch">Every era. Every genre. Every 3&nbsp;a.m. playlist.</h2>
-        <div class="mono-xs dim" style="margin-top:14px;display:flex;gap:20px;flex-wrap:wrap">
-          <span class="num">${COUNTS.vinyl} RECORDS</span><span class="num">${COUNTS.posters + COUNTS.prints} PRINTS</span><span class="num">${COUNTS.polaroids} POLAROIDS</span>
-          <span style="opacity:.6">DRAG OR SCROLL →</span>
-        </div>
-      </div>
-      <div class="wall__rows" id="wallrows">
-        ${rows.map((row, i) => `<div class="wall__row wall__row--${['back', 'mid', 'front'][i]}" data-speed="${[.35, .62, 1][i]}">
-          ${row.map((p, j) => {
-            /* three size classes, alternating — a composition, not a contact sheet */
-            const sizes = [[104, 150, 122, 168, 110, 144, 128],
-                           [176, 224, 158, 240, 190, 206, 168],
-                           [252, 320, 226, 300, 268, 236, 288]][i];
-            const drop  = [[0, 34, -18, 46, 10, -26, 22],
-                           [18, -22, 40, -10, 26, -34, 6],
-                           [-14, 30, -30, 12, -6, 38, -20]][i];
-            return `<a class="wall__item" href="#/product/${p.slug}" data-cursor="VIEW" data-card="${p.slug}"
-                       data-drop="${drop[j]}" style="transform:translateY(${drop[j]}px)">
-            <div data-media>${recordHTML(p, { size: sizes[j], style: `--bright:${[.42, .72, 1][i]};--dblur:${i === 0 ? 2 : 0}px` })}</div>
-            ${i === 2 ? `<div class="wall__meta"><div class="card__artist">${esc(p.artist)}</div><div class="mono-xs">${albumOf(p)}</div></div>` : ''}
-          </a>`; }).join('')}
-        </div>`).join('')}
-      </div>
-      <div class="wrap" style="position:relative;z-index:2"></div>
-    </div>
-  </section>
-
-  <!-- 6 ============ THE AD CARD, AS A SECTION ============
-       Script over didone caps over grotesque, white, on a darkened
-       photograph of the real wall. Straight out of the brand's own ads. -->
-  <section class="stage" data-section="WALL DECOR">
-    <div class="stage__img"><img src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
-    <div class="stage__in">
-      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
-      <div style="text-align:center;margin-top:34px">
-        <a class="btn btn--primary" href="#/shop/vinyl"><span class="btn__mag">Build your wall</span></a>
-      </div>
-      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND — NOT A RENDER</div>
-    </div>
-  </section>
-
-  <!-- 7 ============ PICKER ============ -->
+  <!-- 4 ============ MAKE IT YOURS (PICKER) ============ -->
   <section class="beat sec ground" id="picker" data-section="MAKE IT YOURS" style="overflow:hidden">
     ${col('r', 'col--soft col--mask')}
     <div class="wrap picker">
-      <div style="display:grid;place-items:center;order:2">
+      <div class="picker__disc" style="display:grid;place-items:center">
         ${recordHTML(pickStart, { size: 400, big: true, id: 'pickrec' })}
       </div>
-      <div style="order:1">
-        <div class="cap">MAKE IT YOURS</div>
-        <h2 class="d-l reveal" style="margin:14px 0 18px">Pick the one that's yours.</h2>
-        <p class="body-l dim reveal measure">Tap through. Watch it change. That's the whole point — this isn't decor somebody else chose for you.</p>
-        <div style="margin-top:26px">
+      <div class="picker__info">
+        <div class="picker__head">
+          <div class="cap">MAKE IT YOURS</div>
+          <h2 class="d-l reveal" style="margin:14px 0 18px">Pick the one that's yours.</h2>
+          <p class="body-l dim reveal measure">Tap through. Watch it change. That's the whole point. This isn't decor somebody else chose for you.</p>
+        </div>
+        <div class="picker__active" style="margin-top:24px">
           <div class="card__artist" id="pickartist">${esc(pickStart.artist)}</div>
           <div class="d-s" id="pickalbum" style="margin-top:2px">${albumOf(pickStart)}</div>
         </div>
         <div class="thumbs" role="listbox" aria-label="Choose a record" id="pickthumbs">
-          ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} — ${esc(albumText(p))}">
+          ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} · ${esc(albumText(p))}">
             <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy"></button>`).join('')}
         </div>
-        <div style="display:flex;gap:22px;align-items:center;margin-top:20px;flex-wrap:wrap">
-          <span class="num mono">FROM ₹899</span>
-          <a class="btn--ghost mono" href="#/shop" style="position:relative">SEE ALL ${COUNTS.products} →</a>
+        <div class="picker__cta" style="display:flex;align-items:center;margin-top:24px">
+          <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
         </div>
       </div>
     </div>
@@ -323,7 +218,7 @@ function viewHome() {
 
   ${seam('in-ink')}
 
-  <!-- 8 ============ COMPANIONS ============ -->
+  <!-- 5 ============ COMPANIONS ============ -->
   <section class="sec ground g-paper" data-section="THE REST OF THE WALL" style="padding-bottom:clamp(56px,7vw,96px)">
     <div class="wrap">
       <div class="cap">THE REST OF THE WALL</div>
@@ -358,58 +253,29 @@ function viewHome() {
     </div>
   </section>
 
-  ${seam('to-crimson')}
+  ${seam('to-ink')}
 
-  <!-- 9 ============ THE MANIFESTO ============
+  <!-- 6 ============ THE AD CARD, AS A SECTION ============
+       Script over didone caps over grotesque, white, on a darkened
+       photograph of the real wall. Straight out of the brand's own ads. -->
+  <section class="stage" data-section="WALL DECOR">
+    <div class="stage__img"><img src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
+    <div class="stage__in">
+      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
+      <div style="text-align:center;margin-top:34px">
+        <a class="btn btn--primary" href="#/shop/vinyl"><span class="btn__mag">Build your wall</span></a>
+      </div>
+      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
+    </div>
+  </section>
+
+  <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
   <section class="ground g-crimson" data-section="WHY" style="padding-block:clamp(72px,11vw,150px);overflow:hidden">
     ${col('r', 'col--soft')}
     <div class="wrap" style="text-align:center">
       <p class="manifesto reveal">Giving forgotten things a <b>future.</b> What once played the soundtrack to someone's youth now hangs on a <b>wall.</b></p>
       <div class="cap" style="margin-top:40px">EST. 2025 · MASTERS' UNION</div>
-    </div>
-  </section>
-
-  ${seam('from-crimson')}
-
-  <!-- 10 ============ PRICING — paper ============ -->
-  <section class="sec ground g-paper" data-section="PRICING">
-    <div class="wrap">
-      <div class="cap">PRICING</div>
-      <h2 class="d-l reveal" style="margin:14px 0 0">One record, or a wall of them.</h2>
-      <div class="price4" style="margin-top:44px">
-        <div class="pricecard reveal"><div class="card__artist">Single vinyl</div><div class="d-s num" style="margin-top:8px">₹899</div><div class="mono-xs dim" style="margin-top:8px">12-INCH · ⌀305MM</div></div>
-        <div class="pricecard pricecard--hero reveal"><div class="card__artist" style="color:var(--ember)">Best for a full wall</div><div class="card__artist" style="margin-top:10px">Set of three</div><div class="d-m num" style="margin-top:6px">₹2,199</div><div class="mono-xs dim" style="margin-top:8px">THREE DIFFERENT RECORDS · SAVE ₹498</div></div>
-        <div class="pricecard reveal"><div class="card__artist">Poster</div><div class="d-s num" style="margin-top:8px">from ₹199</div><div class="mono-xs dim" style="margin-top:8px">A5 148×210MM · A3 297×420MM</div></div>
-        <div class="pricecard reveal"><div class="card__artist">Polaroid pack of three</div><div class="d-s num" style="margin-top:8px">₹149</div><div class="mono-xs dim" style="margin-top:8px">SIZE ${CONFIRM('Polaroid card dimensions not measured yet')}</div></div>
-      </div>
-    </div>
-  </section>
-
-  ${seam('to-ink')}
-
-  <!-- 11 ============ THE COMEBACK ============ -->
-  <section class="sec ground" data-section="THE STORY" style="position:relative;overflow:hidden">
-    ${col('g', 'col--soft col--mask')}
-    <div class="wrap" style="position:relative">
-      <div class="cap">THE STORY</div>
-      <h2 class="d-l reveal" style="margin:14px 0 24px;max-width:16ch">We built this once. It worked. Then we stopped.</h2>
-      <p class="body-l dim reveal col-720">PastForward started in 2025 as a dropshipping challenge at Masters' Union. We thought we were doing a college project. Two and a half months later we'd done ₹1.5L+ in sales and reached 400,000 people who'd never heard of us. Then the semester ended and the store went quiet. This is us doing it properly.</p>
-
-      <div class="field">
-        <div class="field__row field__row--end">
-          ${plate('stall-red', 'THE TABLE ON D-DAY — MASTERS’ UNION, 2025', 'f-l edge-l')}
-          ${isle('WHAT WE LEARNED', `<p class="isle__q">People didn't buy a record.
-            They bought the <em>one</em> album they'd defend in an argument.</p>`, 'push f-m')}
-        </div>
-      </div>
-
-      <div class="figs" style="margin-top:clamp(40px,6vw,72px)">
-        <div class="fig"><b><span data-count="1.5" data-pre="₹" data-suffix="L+">₹0</span></b><span>Revenue</span></div>
-        <div class="fig"><b><span data-count="400" data-suffix="K+">0</span></b><span>Reach</span></div>
-        <div class="fig"><b class="num">EST. 2025</b><span>Masters' Union</span></div>
-      </div>
-      <a class="btn--ghost mono" href="#/story" style="position:relative;display:inline-block;margin-top:34px">THE WHOLE STORY →</a>
     </div>
   </section>
 
@@ -470,11 +336,20 @@ function viewShop(routeKey, params) {
     <div class="masthead" style="border:0;padding-bottom:32px">
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
-      <div class="mono-xs dim" style="margin-top:18px;display:flex;gap:18px;flex-wrap:wrap">
+      <div class="shop__formats-desktop mono-xs dim" style="margin-top:18px;display:flex;gap:18px;flex-wrap:wrap">
         <a href="#/shop/vinyl">VINYL <span class="num">${cnt('vinyl')}</span></a>
         <a href="#/shop/posters">POSTERS <span class="num">${cnt('poster-a3') + cnt('poster-a5')}</span></a>
         <a href="#/shop/prints">PRINTS <span class="num">${cnt('print-10')}</span></a>
         <a href="#/shop/polaroids">POLAROIDS <span class="num">${cnt('polaroid')}</span></a>
+      </div>
+      <div class="shop__formats-mobile" style="margin-top:16px">
+        <select class="format-select" onchange="if(this.value)location.hash=this.value" aria-label="Select format">
+          <option value="#/shop" ${!routeKey ? 'selected' : ''}>ALL FORMATS (${COUNTS.products})</option>
+          <option value="#/shop/vinyl" ${routeKey === 'vinyl' ? 'selected' : ''}>VINYL (${cnt('vinyl')})</option>
+          <option value="#/shop/posters" ${routeKey === 'posters' ? 'selected' : ''}>POSTERS (${cnt('poster-a3') + cnt('poster-a5')})</option>
+          <option value="#/shop/prints" ${routeKey === 'prints' ? 'selected' : ''}>PRINTS (${cnt('print-10')})</option>
+          <option value="#/shop/polaroids" ${routeKey === 'polaroids' ? 'selected' : ''}>POLAROIDS (${cnt('polaroid')})</option>
+        </select>
       </div>
     </div>
     <div class="shop">
@@ -492,7 +367,13 @@ function viewShop(routeKey, params) {
       </aside>
       <div>
         <div class="shop__bar">
-          <span class="mono dim num">${list.length} piece${list.length === 1 ? '' : 's'}</span>
+          <div style="display:flex;align-items:center;gap:12px">
+            <button class="btn btn--secondary filterbtn" id="filtertgl" aria-expanded="false" aria-controls="rail">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              <span>Filter</span>
+            </button>
+            <span class="mono dim num">${list.length} piece${list.length === 1 ? '' : 's'}</span>
+          </div>
           <select class="sort" id="sort" aria-label="Sort">
             ${[['featured', 'Featured'], ['price-asc', 'Price low→high'], ['price-desc', 'Price high→low'], ['artist', 'Artist A→Z']]
               .map(([v, l]) => `<option value="${v}" ${(params.get('sort') || 'featured') === v ? 'selected' : ''}>${l}</option>`).join('')}
@@ -525,7 +406,7 @@ function viewProduct(p, params) {
   const col = COLS.find(c => p.tags.includes(c.slug));
   const related = P.filter(x => x.slug !== p.slug && (col ? x.tags.includes(col.slug) : x.artist === p.artist)).slice(0, 4);
   const rel2 = related.length ? related : P.filter(x => x.slug !== p.slug).slice(0, 4);
-  return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 32px)">
+  return `<div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
     <div class="mono-xs dim" style="margin-bottom:24px">
       <a href="#/shop">SHOP</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
     </div>
@@ -607,7 +488,7 @@ function stageMedia(p, fmt) {
 }
 function scaleSVG(sel) {
   const O = { 'poster-a3': [297, 420, 'A3 POSTER', '297 × 420 MM'], 'poster-a5': [148, 210, 'A5 POSTER', '148 × 210 MM'],
-    'print-10': [254, 254, '10×10 PRINT', '254 × 254 MM'], vinyl: [305, 305, '12-INCH RECORD', '⌀ 305 MM'],
+    'print-10': [254, 254, '10×10 PRINT', '254 × 254 MM'], vinyl: [305, 305, '12-INCH RECORD', '12-INCH'],
     polaroid: [100, 162, 'POLAROID', 'SIZE [CONFIRM]'] };
   const baseline = 470, order = [];
   if (sel !== 'vinyl' && sel !== 'poster-a3') order.push(sel);
@@ -797,7 +678,7 @@ function viewStory() {
 /* ============================== FAQ / CONTACT ============================== */
 function viewFaq() {
   const qs = [
-    ['Is it a real vinyl record?', `Yes. A real 12-inch record, ⌀305mm — an upcycled one. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor.`],
+    ['Is it a real vinyl record?', `Yes. A real 12-inch upcycled record. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor.`],
     ['Can I play it?', `It's sold to hang, not to play. These are real records, so the grooves are real — but we make no promise about what's on them or how it sounds, and the label carries our artwork rather than the original. Treat it as a wall piece.`],
     ['Why upcycled and not new?', `Because a record that already had a life is the whole point of the name. It also means no two are identical, and nothing new gets pressed just to hang on a wall.`],
     ['What sizes do you make?', `<div class="spec" style="margin-top:6px">${Object.values(FMT).map(f => `<div>${esc(f.label)} · ${f.size === '[CONFIRM]' ? CONFIRM('Polaroid card dimensions not measured yet') : esc(f.size)}</div>`).join('')}</div>`],
@@ -1038,15 +919,117 @@ function mountHome() {
     });
   });
 
-  const wall = $('#wall'), rows = $$('.wall__row'), hint = $('#scrollhint');
+  const hint = $('#scrollhint');
   const build = $('#wallbuild');
   const parallaxEls = $$('[data-par]');
   if (build) {
+    if (window.__wbSwapTimer) {
+      clearInterval(window.__wbSwapTimer);
+      window.__wbSwapTimer = null;
+    }
+
+    const posterEls = Array.from(build.querySelectorAll('.wb--poster'));
+    const polaEls = Array.from(build.querySelectorAll('.wb--pola'));
+
+    const DESKTOP_POSTER_SLOTS = [
+      { left: '1%', top: '8%', width: '27%', rot: -1.4, par: 0.10, z: 1 },
+      { left: '31%', top: '0%', width: '31%', rot: 0.8, par: 0.20, z: 2 },
+      { left: '75%', top: '14%', width: '23%', rot: -0.6, par: 0.05, z: 1 }
+    ];
+
+    const DESKTOP_POLA_SLOTS = [
+      { left: '22%', top: '47%', width: '14%', rot: -7, par: 0.30, z: 10 },
+      { left: '57%', top: '41%', width: '13%', rot: 5, par: 0.26, z: 11 },
+      { left: '7%', top: '55%', width: '12.5%', rot: 3, par: 0.36, z: 12 },
+      { left: '76.5%', top: '52%', width: '13.5%', rot: -4.5, par: 0.22, z: 13 },
+      { left: '40%', top: '58%', width: '12%', rot: 8, par: 0.42, z: 14 }
+    ];
+
+    const MOBILE_POSTER_SLOTS = [
+      { left: '1%', top: '4%', width: '48%', rot: -2, z: 1 },
+      { left: '25%', top: '0%', width: '52%', rot: 1, z: 2 },
+      { left: '51%', top: '6%', width: '48%', rot: -1.5, z: 1 }
+    ];
+
+    const MOBILE_POLA_SLOTS = [
+      { left: '2%', top: '48%', width: '29%', rot: -6, z: 10 },
+      { left: '23%', top: '40%', width: '28%', rot: 5, z: 11 },
+      { left: '45%', top: '47%', width: '29%', rot: -3, z: 13 },
+      { left: '69%', top: '42%', width: '28%', rot: 6, z: 12 },
+      { left: '32%', top: '58%', width: '32%', rot: 2, z: 15 }
+    ];
+
+    let posterStep = 0;
+    let polaStep = 0;
+    let isPaused = false;
+
+    const applySlots = () => {
+      if (!document.getElementById('wallbuild')) {
+        clearInterval(window.__wbSwapTimer);
+        window.__wbSwapTimer = null;
+        return;
+      }
+      const isMob = window.innerWidth < 768;
+      const pSlots = isMob ? MOBILE_POSTER_SLOTS : DESKTOP_POSTER_SLOTS;
+      const oSlots = isMob ? MOBILE_POLA_SLOTS : DESKTOP_POLA_SLOTS;
+
+      posterEls.forEach((el, i) => {
+        const slotIdx = (i + posterStep) % pSlots.length;
+        const slot = pSlots[slotIdx];
+        el.style.left = slot.left;
+        el.style.right = 'auto';
+        el.style.top = slot.top;
+        el.style.width = slot.width;
+        el.style.zIndex = slot.z;
+        el.style.setProperty('--rot', slot.rot + 'deg');
+        if (slot.par !== undefined) el.style.setProperty('--par', slot.par);
+        el.style.transform = `rotate(${slot.rot}deg) translateY(var(--py,0px))`;
+      });
+
+      polaEls.forEach((el, i) => {
+        const slotIdx = (i + polaStep) % oSlots.length;
+        const slot = oSlots[slotIdx];
+        el.style.left = slot.left;
+        el.style.right = 'auto';
+        el.style.top = slot.top;
+        el.style.width = slot.width;
+        el.style.zIndex = slot.z;
+        el.style.setProperty('--rot', slot.rot + 'deg');
+        if (slot.par !== undefined) el.style.setProperty('--par', slot.par);
+        el.style.transform = `rotate(${slot.rot}deg) translateY(var(--py,0px))`;
+      });
+    };
+
+    applySlots();
+
     $$('.wb', build).forEach((el, i) => el.style.setProperty('--d', (i * 70) + 'ms'));
-    if (RM()) build.classList.add('is-in');
+    const onEnter = () => {
+      build.classList.add('is-in');
+      setTimeout(() => {
+        $$('.wb', build).forEach(el => el.style.setProperty('--d', '0ms'));
+      }, 900);
+    };
+
+    if (RM()) onEnter();
     else new IntersectionObserver((es, io) => es.forEach(e => {
-      if (e.isIntersecting) { build.classList.add('is-in'); io.disconnect(); }
+      if (e.isIntersecting) { onEnter(); io.disconnect(); }
     }), { threshold: 0.12 }).observe(build);
+
+    build.addEventListener('pointerenter', () => { isPaused = true; });
+    build.addEventListener('pointerleave', () => { isPaused = false; });
+    window.addEventListener('resize', applySlots, { passive: true });
+
+    window.__wbSwapTimer = setInterval(() => {
+      if (isPaused) return;
+      if (!document.getElementById('wallbuild')) {
+        clearInterval(window.__wbSwapTimer);
+        window.__wbSwapTimer = null;
+        return;
+      }
+      posterStep = (posterStep + 1) % 3;
+      polaStep = (polaStep + 1) % 5;
+      applySlots();
+    }, 2000);
   }
 
   window.__onScroll = (y) => {
@@ -1054,26 +1037,6 @@ function mountHome() {
     boost = Math.min(220, boost + dy * 0.5);
     if (hint && y > 40) hint.style.opacity = '0';
 
-    if (wall && rows.length && !RM() && innerWidth >= 768) {
-      const r0 = wall.getBoundingClientRect();
-      const total = wall.offsetHeight - innerHeight;
-      const p = Math.max(0, Math.min(1, -r0.top / total));
-      rows.forEach((row, ri) => {
-        const speed = parseFloat(row.dataset.speed);
-        const travel = Math.max(0, row.scrollWidth - innerWidth + 120);
-        row.style.transform = `translate3d(${-p * travel * speed}px,0,0)`;
-        // depth: each item drifts through its own near/far arc as the row scrolls past,
-        // so records feel like they're flying through space, not just sliding sideways
-        const items = row.__items || (row.__items = $$('.wall__item', row));
-        items.forEach((el, ii) => {
-          const phase = p * 7 + ii * 0.9 + ri * 1.7;
-          const z = Math.sin(phase) * 130;
-          const ry = Math.cos(phase * 0.6) * 10;
-          const drop = +el.dataset.drop || 0;
-          el.style.transform = `translate3d(0,${drop}px,${z.toFixed(1)}px) rotateY(${ry.toFixed(2)}deg)`;
-        });
-      });
-    }
     if (!RM() && innerWidth >= 768) {
       parallaxEls.forEach(el => {
         const f = parseFloat(getComputedStyle(el).getPropertyValue('--par')) || 0;
@@ -1091,19 +1054,6 @@ function mountHome() {
       drop.boost = false;
     }
   };
-
-  if (RM() && rows.length) {
-    $('#wall').style.height = 'auto';
-    $('.wall__sticky').style.cssText = 'position:static;height:auto;padding-block:48px';
-    $('#wallrows').style.cssText = 'height:auto;display:flex;flex-direction:column;gap:28px';
-    rows.forEach(x => { x.style.cssText = 'position:static'; x.classList.add('wall__scroller'); });
-  } else if (innerWidth < 768 && rows.length) {
-    $('#wall').style.height = 'auto';
-    $('.wall__sticky').style.cssText = 'position:static;height:auto;padding-block:40px';
-    $('#wallrows').style.cssText = 'height:auto;display:flex;flex-direction:column;gap:24px';
-    rows.forEach(x => { x.style.cssText = 'position:static'; x.classList.add('wall__scroller'); });
-  }
-  $$('.wall__scroller').forEach(mountDragScroll);
 
   /* ---- marquees: two lines, opposite directions, driven by scroll + drift ---- */
   const marqs = $$('[data-marq]').map(m => ({
@@ -1153,25 +1103,70 @@ function mountHome() {
     else setTimeout(() => annot.classList.add('is-in'), 900);
   }
 
-  // picker
+  // Preload all picker vinyl images for instant switching
+  const featList = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
+  const pickersList = featList.slice(0, 8);
+  pickersList.forEach(p => {
+    const v = variant(p, 'vinyl');
+    if (v) { const pre = new Image(); pre.src = imgSrc(v.image, true); }
+  });
+
+  // picker interaction: click options to switch the vinyl album
   const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
-  mountDragScroll($('#pickthumbs'));
-  $$('#pickthumbs button').forEach(btn => btn.addEventListener('click', () => {
-    const p = bySlug[btn.dataset.pick]; if (!p || !prec) return;
-    $$('#pickthumbs button').forEach(x => { x.classList.toggle('is-on', x === btn); x.setAttribute('aria-selected', String(x === btn)); });
+  const thumbsContainer = $('#pickthumbs');
+  if (thumbsContainer) mountDragScroll(thumbsContainer);
+
+  const selectRecord = (slug) => {
+    const p = bySlug[slug];
+    if (!p || !prec) return;
+    $$('#pickthumbs button').forEach(x => {
+      const isSel = x.dataset.pick === slug;
+      x.classList.toggle('is-on', isSel);
+      x.setAttribute('aria-selected', String(isSel));
+    });
     const img = $('.record__art', prec);
-    const src = imgSrc(variant(p, 'vinyl').image, true);
-    if (RM()) { img.src = src; }
-    else {
-      if (pspin) { pspin.kick = 120; pspin.stopped = false; pspin.rate = pspin.base; }
-      img.animate([{ opacity: 1 }, { opacity: .12 }, { opacity: 1 }], { duration: 460, easing: 'cubic-bezier(.4,0,.2,1)' });
-      setTimeout(() => { img.src = src; }, 180);
+    const v = variant(p, 'vinyl');
+    const src = v ? imgSrc(v.image, true) : '';
+    if (img && src) {
+      if (RM()) {
+        img.src = src;
+      } else {
+        if (pspin) { pspin.kick = 140; pspin.stopped = false; pspin.rate = pspin.base; }
+        img.animate(
+          [{ opacity: 1, transform: 'scale(1)' }, { opacity: .12, transform: 'scale(.92)' }, { opacity: 1, transform: 'scale(1)' }],
+          { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)' }
+        );
+        setTimeout(() => { img.src = src; }, 160);
+      }
     }
     const ar = $('#pickartist'), al = $('#pickalbum');
-    ar.textContent = p.artist; al.innerHTML = albumOf(p);
-    if (!RM()) [ar, al].forEach(el => el.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
-      { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' }));
-  }));
+    if (ar) ar.textContent = p.artist;
+    if (al) al.innerHTML = albumOf(p);
+    if (!RM() && ar && al) {
+      [ar, al].forEach(el => el.animate(
+        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 320, easing: 'cubic-bezier(.16,1,.3,1)' }
+      ));
+    }
+  };
+
+  $$('#pickthumbs button').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      selectRecord(btn.dataset.pick);
+    });
+    btn.addEventListener('pointerup', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      selectRecord(btn.dataset.pick);
+    });
+  });
+
+  if (thumbsContainer) {
+    thumbsContainer.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-pick]');
+      if (btn) selectRecord(btn.dataset.pick);
+    });
+  }
 }
 
 function setParams(mut) {
@@ -1181,6 +1176,15 @@ function setParams(mut) {
 }
 function mountShop(routeKey, params) {
   const grid = $('#grid');
+  const ftgl = $('#filtertgl'), rail = $('#rail');
+  if (ftgl && rail) {
+    ftgl.addEventListener('click', () => {
+      const open = rail.classList.toggle('is-open');
+      ftgl.setAttribute('aria-expanded', String(open));
+      const sp = ftgl.querySelector('span');
+      if (sp) sp.textContent = open ? 'Hide filters' : 'Filter';
+    });
+  }
   const rects = grid ? new Map($$('.card', grid).map(c => [c.dataset.card, c.getBoundingClientRect()])) : null;
   $$('#rail input').forEach(inp => inp.addEventListener('change', () => {
     setParams(pp => {

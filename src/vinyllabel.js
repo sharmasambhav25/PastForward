@@ -54,10 +54,8 @@ function mountVinylLabel(container, { artist = "", title = "" } = {}) {
     ctx.fillStyle = "#f3efe8";
     ctx.font = '16px Georgia, "Times New Roman", serif';
     ctx.fillText("SIDE A", 169, CENTER);
-    ctx.fillText("33⅓ RPM", 471, CENTER);
+    ctx.fillText("STEREO", 471, CENTER);
     fittedText(current.title || "Your album or track", 432, 452, 36);
-    ctx.font = '14px Georgia, "Times New Roman", serif';
-    ctx.fillText("NOT FOR PLAYBACK", CENTER, 505);
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath(); ctx.arc(CENTER, CENTER, 17, 0, Math.PI * 2); ctx.fill();

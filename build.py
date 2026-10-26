@@ -2,7 +2,7 @@
 """Assemble the PastForward site into two single-file builds."""
 import json, os, base64, mimetypes
 
-ROOT = '/home/claude/pf'
+ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, 'src')
 IMG = os.path.join(ROOT, 'img')
 DIST = os.path.join(ROOT, 'dist')
@@ -129,6 +129,9 @@ open(f'{DIST}/artifact.html', 'w').write(art)
 # ---------- qa build: standalone doc using the same embedded data ----------
 qa = assemble(js_payload(img_data=data), True)
 open(f'{DIST}/qa.html', 'w').write(qa)
+DOCS = os.path.join(ROOT, 'docs')
+if os.path.isdir(DOCS):
+    open(f'{DOCS}/index.html', 'w').write(qa)
 
 for n in ('index.html', 'artifact.html', 'qa.html'):
     print(f'{n:16} {os.path.getsize(f"{DIST}/{n}")/1048576:.2f} MB')
