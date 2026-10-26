@@ -18,6 +18,7 @@ function imgSrc(file, big) {
   const base = (big && window.__IMG_BASE_LG__) || window.__IMG_BASE__ || '';
   return base + encodeURIComponent(file);
 }
+window.imgSrc = imgSrc;
 const variant = (p, f) => p.variants.find(v => v.format === f);
 const primary = p => p.variants[0];
 const albumOf = p => p.album === '[CONFIRM]' ? CONFIRM('Album name not recorded for this design — confirm before publishing') : esc(p.album);
@@ -51,10 +52,8 @@ function recordHTML(p, o = {}) {
       <svg class="record__etch" viewBox="0 0 100 100" aria-hidden="true">
         <defs>
           <path id="pfT${uid}" d="M50 50 m -27 0 a 27 27 0 0 1 54 0" fill="none"/>
-          <path id="pfB${uid}" d="M50 50 m -30 0 a 30 30 0 0 0 60 0" fill="none"/>
         </defs>
         <text><textPath href="#pfT${uid}" startOffset="50%" text-anchor="middle">PASTFORWARD · ESTD 2025</textPath></text>
-        <text><textPath href="#pfB${uid}" startOffset="50%" text-anchor="middle">33⅓ RPM · NOT FOR PLAYBACK</textPath></text>
       </svg>
       <div class="record__label" data-layer="label">
         <img class="record__art" src="${src}" alt="${esc(alt)}" ${o.eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">
@@ -264,20 +263,28 @@ function chromeHTML() {
     <div class="drawer__ft" id="drawerft"></div>
   </aside>
   <nav class="menu" id="menu" aria-label="Mobile">
-    <button class="iconbtn" data-close aria-label="Close menu" data-x style="position:absolute;top:12px;right:16px">×</button>
-    <a href="#/shop">Shop</a><a href="#/collections/the-classics">Collections</a>
-    <a href="#/custom">Custom</a><a href="#/story">Story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a>
-    <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:20px">
-      <a href="#/custom" class="mono" style="font-family:var(--mono);font-size:.7rem">Custom orders</a>
-      <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" class="mono" style="font-family:var(--mono);font-size:.7rem">@pastforward.shop</a>
+    <button class="iconbtn" data-close aria-label="Close menu" data-x style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
+    <a href="#/shop">Shop</a>
+    <div style="display:flex;gap:16px;padding:2px 0 10px;flex-wrap:wrap">
+      <a href="#/shop/vinyl" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Vinyl (${COUNTS.vinyl})</a>
+      <a href="#/shop/posters" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Posters (${COUNTS.posters})</a>
+      <a href="#/shop/polaroids" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Polaroids (${COUNTS.polaroids})</a>
+    </div>
+    <a href="#/collections/the-classics">Collections</a>
+    <a href="#/custom">Custom Orders</a>
+    <a href="#/story">Our Story</a>
+    <a href="#/faq">FAQ</a>
+    <a href="#/contact">Contact</a>
+    <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:20px;padding-bottom:12px">
+      <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" class="mono" style="font-family:var(--mono);font-size:.72rem;color:var(--muted)">@pastforward.shop ↗</a>
     </div>
   </nav>
   <div class="menu" id="search" role="dialog" aria-label="Search">
-    <button class="iconbtn" data-close aria-label="Close search" style="position:absolute;top:12px;right:16px">×</button>
-    <div class="wrap searchwrap" style="padding-top:6vh">
+    <button class="iconbtn" data-close aria-label="Close search" style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
+    <div class="wrap searchwrap" style="padding-top:clamp(20px, 5vh, 48px)">
       <input id="searchinput" placeholder="ARTIST OR ALBUM" aria-label="Search the catalogue" autocomplete="off">
       <div class="mono-xs dim" style="margin-top:10px">Esc to close</div>
-      <div id="searchres" style="margin-top:32px;max-height:58vh;overflow:auto"></div>
+      <div id="searchres" style="margin-top:24px;max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
     </div>
   </div>
   </div>
@@ -314,7 +321,7 @@ function grooveField() {
 
 /* ---------- preloader: black, the mark, and a very large counter ---------- */
 function initPre() {
-  if (RM()) return;
+  if (RM() || location.search.includes('nopre')) return;
   const el = document.createElement('div');
   el.id = 'pre';
   el.innerHTML = `<div class="pre__bar"></div>
@@ -494,7 +501,7 @@ function initGrain() {
   c.replaceWith(el);
   const g = $('#grain');
   g.style.backgroundImage = `url(${tiles[0]})`;
-  if (RM()) return;
+  if (RM() || window.matchMedia('(max-width:767px)').matches) return;
   let i = 0;
   setInterval(() => { i = (i + 1) % 4; g.style.backgroundImage = `url(${tiles[i]})`; }, 83);
 }
@@ -544,19 +551,25 @@ function mountDragScroll(el) {
   }
   function wake() { if (!raf) { tickT = performance.now(); raf = requestAnimationFrame(frame); } }
 
+  let hasCapture = false;
   el.addEventListener('pointerdown', e => {
     if (e.pointerType === 'touch') return;      // never fight native touch scrolling
     cancelAnimationFrame(raf); raf = 0;
-    dragging = true; moved = false; pid = e.pointerId;
+    dragging = true; moved = false; hasCapture = false; pid = e.pointerId;
     startX = e.clientX; startScroll = el.scrollLeft;
     lastX = e.clientX; lastT = performance.now(); vel = 0;
-    el.setPointerCapture(pid);
-    el.classList.add('is-dragging');
   });
   el.addEventListener('pointermove', e => {
     if (!dragging || e.pointerId !== pid) return;
     const dx = e.clientX - startX;
-    if (Math.abs(dx) > 3) moved = true;
+    if (Math.abs(dx) > 6) {
+      moved = true;
+      if (!hasCapture) {
+        try { el.setPointerCapture(pid); hasCapture = true; } catch (err) {}
+        el.classList.add('is-dragging');
+      }
+    }
+    if (!moved) return;
     const max = maxScroll(), target = startScroll - dx;
     if (target < 0) { setOver(rubber(-target, el.clientWidth || 1)); el.scrollLeft = 0; }
     else if (target > max) { setOver(-rubber(target - max, el.clientWidth || 1)); el.scrollLeft = max; }
@@ -569,6 +582,10 @@ function mountDragScroll(el) {
     if (!dragging || (e && e.pointerId !== pid)) return;
     dragging = false;
     el.classList.remove('is-dragging');
+    if (hasCapture) {
+      try { el.releasePointerCapture(pid); } catch (err) {}
+      hasCapture = false;
+    }
     if (moved) {
       // swallow the click a drag-release generates on whatever's under the pointer,
       // so letting go over a thumbnail doesn't also select it

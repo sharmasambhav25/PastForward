@@ -2,7 +2,8 @@
 """Generate PastForward catalogue from the real archive filenames."""
 import os, json, re, unicodedata
 
-IMG = "/home/claude/pf/img"
+ROOT = os.path.dirname(os.path.abspath(__file__))
+IMG = os.path.join(ROOT, "img")
 
 FORMATS = {
     'vinyl':     dict(label='Vinyl',        size='12-inch record, ⌀305mm',  price=899, ratio=1.0,    badge='12″'),
@@ -256,10 +257,10 @@ def main():
         counts=counts,
         unresolved=sorted(set(unresolved)),
     )
-    with open('/home/claude/pf/catalogue.json', 'w') as fh:
+    with open(os.path.join(ROOT, 'catalogue.json'), 'w') as fh:
         json.dump(out, fh, ensure_ascii=False, indent=1)
 
-    with open('/home/claude/pf/audit.txt', 'w') as fh:
+    with open(os.path.join(ROOT, 'audit.txt'), 'w') as fh:
         for a, b in audit: fh.write(f"{a}\t{b}\n")
 
     print(json.dumps(counts, indent=2))

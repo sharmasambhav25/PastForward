@@ -1,18 +1,17 @@
 /* ============================================================
    PastForward — hero disc "album scrub" (adapted from a reference
-   build; classic script, no imports). As the pointer moves across
-   the hero disc, it scrubs through real PastForward catalogue
-   albums — crossfading each one's actual cover art and real
-   artist/album name onto the centre label — then fades back to the
-   default PASTFORWARD label when the pointer leaves. The list of
-   albums is supplied by the caller (vinyl3d.js) from the site's own
-   catalogue data; this module never invents artist or album names.
+   build; classic script, no imports).
+   Cycles through real PastForward catalogue albums on the centre
+   label every 2 seconds (with smooth crossfades), while allowing
+   pointer scrub on hover/touch.
    ============================================================ */
 function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
+  opts = opts || {};
   var albums = opts.albums || [];
   var drawDefault = opts.drawDefaultLabel;
   var onRedraw = opts.onNeedsRedraw || null;
-  var FADE_MS = opts.fadeDuration != null ? opts.fadeDuration : 300;
+  var FADE_MS = opts.fadeDuration != null ? opts.fadeDuration : 480;
+  var AUTO_INTERVAL_MS = opts.autoInterval != null ? opts.autoInterval : 2000;
 
   if (!albums.length) {
     return {
@@ -60,8 +59,12 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
   var activeIdx = -1;
   var fading = false;
   var fadeT0 = 0;
-  var hovering = false;
   var destroyed = false;
+
+  var autoIdx = -1;
+  var lastAutoAdvance = performance.now();
+  var userInteracting = false;
+  var lastUserAction = 0;
 
   function paintDefault(tgt) {
     tgt.save();
@@ -165,30 +168,58 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
 
   function onEnter(e) {
     if (destroyed) return;
-    hovering = true;
-    beginFade(clientXToIndex(e.clientX));
+    userInteracting = true;
+    lastUserAction = performance.now();
+    var idx = clientXToIndex(e.clientX);
+    autoIdx = idx;
+    beginFade(idx);
   }
 
   function onMove(e) {
-    if (destroyed || !hovering) return;
+    if (destroyed) return;
+    userInteracting = true;
+    lastUserAction = performance.now();
     var idx = clientXToIndex(e.clientX);
-    if (idx !== activeIdx) beginFade(idx);
+    if (idx !== activeIdx) {
+      autoIdx = idx;
+      beginFade(idx);
+    }
   }
 
   function onLeave() {
     if (destroyed) return;
-    hovering = false;
-    beginFade(-1);
+    userInteracting = false;
+    lastAutoAdvance = performance.now();
   }
 
   containerEl.addEventListener('pointerenter', onEnter);
   containerEl.addEventListener('pointermove', onMove);
   containerEl.addEventListener('pointerleave', onLeave);
 
-  function update() {
-    if (destroyed || !fading) return false;
+  function update(now) {
+    if (destroyed) return false;
+    var currentTime = now || performance.now();
 
-    var elapsed = performance.now() - fadeT0;
+    // If user stopped moving pointer for > 1.8s, resume auto-cycling
+    if (userInteracting && (currentTime - lastUserAction > 1800)) {
+      userInteracting = false;
+      lastAutoAdvance = currentTime;
+    }
+
+    // Auto-advance every AUTO_INTERVAL_MS (2 seconds)
+    if (!userInteracting && albums.length > 0) {
+      if (currentTime - lastAutoAdvance >= AUTO_INTERVAL_MS) {
+        lastAutoAdvance = currentTime;
+        var nextIdx = (activeIdx + 1) % albums.length;
+        if (nextIdx < 0) nextIdx = 0;
+        autoIdx = nextIdx;
+        beginFade(nextIdx);
+      }
+    }
+
+    if (!fading) return false;
+
+    var elapsed = currentTime - fadeT0;
     var t = Math.min(elapsed / FADE_MS, 1);
     var e = easeInOut(t);
 
@@ -225,7 +256,7 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
     containerEl.removeEventListener('pointerleave', onLeave);
 
     fading = false;
-    hovering = false;
+    userInteracting = false;
     activeIdx = -1;
 
     ctx.save();
