@@ -1028,10 +1028,10 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 @media(max-width:767px){.fhero{min-height:520px}}
 .fhero__col{position:absolute; inset:0; z-index:0; display:flex}
 .fhero__col>i{flex:1; background-repeat:repeat; background-size:auto 760px;
-  background-position:center; opacity:.34}
-.fhero__col>i:last-child{opacity:.38}
+  background-position:center; opacity:.44}
+.fhero__col>i:last-child{opacity:.48}
 .fhero__col::after{content:""; position:absolute; inset:0;
-  background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.92) 24%,rgba(6,5,6,.5) 62%,rgba(6,5,6,.2))}
+  background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.86) 24%,rgba(6,5,6,.4) 62%,rgba(6,5,6,.12))}
 @media(max-width:767px){.fhero__col>i{background-size:auto 480px}}
 
 /* the disc itself — sized to overflow the viewport on desktop, centered on mobile */
@@ -5341,10 +5341,12 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
       tgt.fill();
     }
 
-    var g = tgt.createRadialGradient(CX, CY, R * 0.05, CX, CY, R);
-    g.addColorStop(0, 'rgba(0,0,0,0.52)');
-    g.addColorStop(0.55, 'rgba(0,0,0,0.30)');
-    g.addColorStop(1, 'rgba(0,0,0,0.62)');
+    // only a soft fall-off at the very edge, where a printed label meets the vinyl;
+    // the art itself stays at full brightness
+    var g = tgt.createRadialGradient(CX, CY, R * 0.62, CX, CY, R);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.8, 'rgba(0,0,0,0.06)');
+    g.addColorStop(1, 'rgba(0,0,0,0.26)');
     tgt.fillStyle = g;
     tgt.beginPath();
     tgt.arc(CX, CY, R, 0, Math.PI * 2);
@@ -7158,43 +7160,122 @@ export function mountVinyl(container) {
     return texture;
   }
 
+  /* A real 12" LP, to scale (disc radius 2.99 units = 152mm):
+     label to r 0.965 · smooth glossy run-out (dead wax) to 1.22 · grooved programme area
+     split into tracks by narrow glossy gaps · smooth lead-in from 2.86 · rounded rim.
+     The look of real vinyl comes from the grooves scattering light ACROSS them, which
+     turns every reflection into a thin radial streak (the "bow-tie" sheen in photos).
+     That is done physically below with an anisotropy map pointing radially, so the
+     highlight stays put in the room while the record turns under it. */
+  const RUNOUT = 1.22, LEADIN = 2.86, EDGE = 2.955;
+  const GAPS = [1.47, 1.71, 1.985, 2.215, 2.53];
+  const TRACKS = [RUNOUT, ...GAPS, LEADIN].slice(1).map((end, i, a) => ({
+    from: i === 0 ? RUNOUT : a[i - 1], to: end,
+    rough: 0.17 + random() * 0.07,   // louder/quieter cuts reflect slightly differently
+    aniso: 0.8 + random() * 0.2
+  }));
+
   function makeVinylMaps() {
-    const size = 2048;
-    const colorCanvas = makeCanvas(size);
-    const bumpCanvas = makeCanvas(size);
-    const roughCanvas = makeCanvas(size);
-    const color = colorCanvas.getContext("2d");
-    const bump = bumpCanvas.getContext("2d");
-    const rough = roughCanvas.getContext("2d");
-    color.fillStyle = "#151619"; color.fillRect(0, 0, size, size);
+    const size = 2048, center = size / 2, px = size / 6;
+    const colorCanvas = makeCanvas(size), roughCanvas = makeCanvas(size), bumpCanvas = makeCanvas(size);
+    const color = colorCanvas.getContext("2d"), rough = roughCanvas.getContext("2d"), bump = bumpCanvas.getContext("2d");
+    color.fillStyle = "#0b0b0c"; color.fillRect(0, 0, size, size);
+    rough.fillStyle = "#3a3a3a"; rough.fillRect(0, 0, size, size);
     bump.fillStyle = "#808080"; bump.fillRect(0, 0, size, size);
-    rough.fillStyle = "#888888"; rough.fillRect(0, 0, size, size);
-    const center = size / 2, px = size / 6;
+    const g = v => { v = Math.max(0, Math.min(255, Math.round(v))); return `rgb(${v},${v},${v})`; };
     function ring(ctx, radius, width, stroke) {
       ctx.beginPath(); ctx.arc(center, center, radius * px, 0, Math.PI * 2);
       ctx.lineWidth = width; ctx.strokeStyle = stroke; ctx.stroke();
     }
-    for (let r = 1.035; r < 2.965; r += 0.0038 + random() * 0.002) {
-      const v = 17 + Math.floor(random() * 13);
-      ring(color, r, 0.55 + random() * 0.65, `rgb(${v},${v + 1},${v + 3})`);
-      ring(bump, r, 0.65 + random() * 0.5, `rgb(${45 + random() * 40},${45 + random() * 40},${45 + random() * 40})`);
-      ring(rough, r, 0.8, random() > 0.5 ? "#b5b5b5" : "#696969");
+    function band(ctx, r0, r1, fill) {
+      ctx.beginPath(); ctx.arc(center, center, r1 * px, 0, Math.PI * 2); ctx.arc(center, center, r0 * px, 0, Math.PI * 2, true);
+      ctx.fillStyle = fill; ctx.fill();
     }
-    for (const radius of [1.39, 1.79, 2.18, 2.57]) {
-      ring(color, radius, 3.2, "#111216"); ring(bump, radius, 3.2, "#808080");
-      ring(rough, radius, 3.2, "#626262"); ring(bump, radius + 0.008, 0.8, "#444444");
+    // run-out: near-mirror, with a few widely spaced locked/lead-out grooves
+    band(rough, 0.965, RUNOUT, g(0.09 * 255));
+    for (let r = 1.0; r < RUNOUT - 0.01; r += 0.034 + random() * 0.02) { ring(rough, r, 1.1, g(0.22 * 255)); ring(color, r, 1, "#101012"); }
+    // programme area: very fine grooves, each track with its own sheen
+    for (const t of TRACKS) {
+      band(rough, t.from, t.to, g(t.rough * 255));
+      for (let r = t.from + 0.006; r < t.to - 0.006; r += 0.0027 + random() * 0.0011) {
+        const v = 9 + random() * 7;
+        ring(color, r, 0.7, `rgb(${v},${v},${v + 1})`);
+        ring(rough, r, 0.7, g((t.rough + (random() - 0.5) * 0.08) * 255));
+      }
     }
-    for (const radius of [0.985, 1.004, 1.023, 2.975, 2.985]) {
-      ring(bump, radius, 1, "#424242"); ring(color, radius, 1, "#25262a");
+    // track gaps: smooth and glossy, sitting a hair below the grooved land
+    for (const r of GAPS) {
+      ring(rough, r, 3, g(0.115 * 255)); ring(color, r, 3, "#0c0c0d");
+      ring(bump, r, 3, "#7b7b7b");
     }
-    for (let i = 0; i < 95; i++) {
-      const radius = (1.08 + random() * 1.84) * px, angle = random() * Math.PI * 2;
-      color.beginPath();
-      color.arc(center, center, radius, angle, angle + 0.006 + random() * 0.055);
-      color.lineWidth = 0.35; color.strokeStyle = `rgba(150,155,165,${0.025 + random() * 0.055})`;
-      color.stroke();
+    // lead-in and the rounded rim
+    band(rough, LEADIN, EDGE, g(0.09 * 255));
+    for (const r of [LEADIN + 0.012, LEADIN + 0.03, LEADIN + 0.052]) ring(rough, r, 1.1, g(0.2 * 255));
+    band(rough, EDGE, 3.0, g(0.14 * 255));
+    ring(bump, LEADIN, 1.6, "#707070"); ring(bump, 0.968, 2, "#9a9a9a"); ring(bump, RUNOUT, 1.2, "#787878");
+    // handling: faint hairline scuffs and the odd speck of dust, as on any played record
+    for (let i = 0; i < 70; i++) {
+      const radius = (1.0 + random() * 1.94) * px, angle = random() * Math.PI * 2, len = 0.01 + random() * 0.07;
+      color.beginPath(); color.arc(center, center, radius, angle, angle + len);
+      color.lineWidth = 0.5; color.strokeStyle = `rgba(160,162,170,${0.03 + random() * 0.05})`; color.stroke();
+      rough.beginPath(); rough.arc(center, center, radius, angle, angle + len);
+      rough.lineWidth = 0.6; rough.strokeStyle = "rgba(150,150,150,.5)"; rough.stroke();
     }
-    return { map: textureFrom(colorCanvas, true), bumpMap: textureFrom(bumpCanvas), roughnessMap: textureFrom(roughCanvas) };
+    for (let i = 0; i < 40; i++) {
+      const a = random() * Math.PI * 2, r = (1.0 + random() * 1.94) * px;
+      color.fillStyle = `rgba(190,190,195,${0.05 + random() * 0.08})`;
+      color.fillRect(center + Math.cos(a) * r, center + Math.sin(a) * r, 1 + random() * 1.4, 1 + random() * 1.4);
+    }
+    return {
+      map: textureFrom(colorCanvas, true), roughnessMap: textureFrom(roughCanvas),
+      bumpMap: textureFrom(bumpCanvas), anisotropyMap: makeAnisotropyMap()
+    };
+  }
+
+  /* RG = direction in the surface's UV frame (radial, pointing out from the spindle),
+     B = strength. RingGeometry's UVs are planar, so UV x/y are the disc's own x/y. */
+  function makeAnisotropyMap() {
+    const A = 1024, c = A / 2, upx = A / 6;
+    const cv = makeCanvas(A), ctx = cv.getContext("2d"), img = ctx.createImageData(A, A), d = img.data;
+    const trackAt = r => TRACKS.find(t => r >= t.from && r < t.to);
+    for (let y = 0; y < A; y++) {
+      for (let x = 0; x < A; x++) {
+        const dx = x + 0.5 - c, dy = -(y + 0.5 - c), len = Math.hypot(dx, dy) || 1, r = len / upx;
+        let s;
+        if (r < RUNOUT) s = 0.3;
+        else if (r < LEADIN) {
+          const t = trackAt(r), nearGap = GAPS.some(gp => Math.abs(gp - r) < 0.0055);
+          s = nearGap ? 0.62 : (t ? t.aniso : 1);
+        } else if (r < EDGE) s = 0.45;
+        else s = 0.15;
+        const i = (y * A + x) * 4;
+        d[i] = (dx / len * 0.5 + 0.5) * 255; d[i + 1] = (dy / len * 0.5 + 0.5) * 255; d[i + 2] = s * 255; d[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    const tex = textureFrom(cv);
+    tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter;   // mipmapping would blur the direction field at the spindle
+    return tex;
+  }
+
+  /* a dark studio for the record to reflect: two long softboxes and a dim fill, no floor.
+     Real vinyl is almost black; what you see is mostly the room reflected in it. */
+  function makeStudio() {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const room = new THREE.Scene();
+    const owned = [];
+    const add = (geo, color, pos) => {
+      const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+      const mesh = new THREE.Mesh(geo, mat); mesh.position.set(...pos); mesh.lookAt(0, 0, 0);
+      room.add(mesh); owned.push(geo, mat);
+    };
+    add(new THREE.SphereGeometry(30, 32, 16), new THREE.Color("#060607"), [0, 0, 0]);
+    add(new THREE.PlaneGeometry(3.2, 2.2), new THREE.Color("#f7f5f2").multiplyScalar(7), [-5.5, 6.5, 8.5]);   // key softbox, upper left
+    add(new THREE.PlaneGeometry(2.2, 1.6), new THREE.Color("#e9eefb").multiplyScalar(3), [6.5, 2.5, 9]);     // cool fill softbox, right
+    add(new THREE.PlaneGeometry(12, 5), new THREE.Color("#ffffff").multiplyScalar(0.05), [0, 9, 13]);       // faint overhead fill
+    const target = pmrem.fromScene(room, 0.03);
+    owned.forEach(o => o.dispose()); pmrem.dispose();
+    return target;
   }
 
   /* the printed centre label — PastForward's own microcopy only, no invented track listing.
@@ -7256,22 +7337,30 @@ export function mountVinyl(container) {
     bevelSize: 0.009, bevelThickness: 0.009, curveSegments: 192
   });
   bodyGeometry.translate(0, 0, -0.035);
+  const studio = makeStudio();
+  scene.environment = studio.texture;
+
   const body = new THREE.Mesh(bodyGeometry, new THREE.MeshPhysicalMaterial({
-    color: "#090a0c", roughness: 0.25, metalness: 0.03, clearcoat: 0.4, clearcoatRoughness: 0.2
+    color: "#0a0a0b", roughness: 0.2, metalness: 0, ior: 1.5
   }));
   record.add(body);
 
   const vinylMaterial = new THREE.MeshPhysicalMaterial({
-    ...makeVinylMaps(), color: "#ffffff", metalness: 0.04, roughness: 0.52,
-    bumpScale: 0.011, clearcoat: 0.28, clearcoatRoughness: 0.24, ior: 1.48
+    ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,   // roughnessMap carries the real values
+    anisotropy: 0.85, bumpScale: 0.04, ior: 1.5, specularIntensity: 1
   });
   const surface = new THREE.Mesh(new THREE.RingGeometry(0.085, 2.992, 256), vinylMaterial);
   surface.position.z = 0.030;
   record.add(surface);
 
   const labelBuild = makeLabelMaps();
+  /* the label is printed paper: show the art at its true colour (emissive, not tone-mapped)
+     and let the moving light add a little on top, instead of the art only existing where lit */
   const label = new THREE.Mesh(new THREE.RingGeometry(0.085, 0.965, 192), new THREE.MeshStandardMaterial({
-    ...labelBuild.maps, roughness: 0.92, metalness: 0, bumpScale: 0.0012
+    ...labelBuild.maps, roughness: 0.9, metalness: 0, bumpScale: 0.0012,
+    color: new THREE.Color(0.14, 0.14, 0.14),   // light only adds a gentle sheen, never blows the art out
+    emissive: "#ffffff", emissiveMap: labelBuild.maps.map, emissiveIntensity: 0.9,
+    envMapIntensity: 0.12, toneMapped: false
   }));
   label.position.z = 0.034;
   record.add(label);
@@ -7311,10 +7400,10 @@ export function mountVinyl(container) {
     } catch (e) { albumScrub = null; }
   }
 
-  const light = new THREE.PointLight("#fff1da", 100, 40, 2);
+  const light = new THREE.PointLight("#f6f2ec", 100, 40, 2);
   light.position.set(-1.8, 2.2, 4.5);
   scene.add(light);
-  scene.add(new THREE.AmbientLight("#3a3d46", 1.15));
+  scene.add(new THREE.AmbientLight("#3a3d46", 0.35));
 
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
@@ -7367,7 +7456,9 @@ export function mountVinyl(container) {
   }
   function animate(now) {
     if (disposed) return;
-    const dt = Math.min((now - previousTime) / 1000, 0.05);
+    // clamp at 0 as well: the first rAF timestamp can predate mount on a busy page, and a
+    // negative step makes the light's smoothing extrapolate it off to infinity (dark disc)
+    const dt = Math.max(0, Math.min((now - previousTime) / 1000, 0.05));
     previousTime = now;
 
     // The vinyl continues to spin smoothly
@@ -7419,6 +7510,7 @@ export function mountVinyl(container) {
     geometries.forEach(g => g.dispose());
     materials.forEach(m => m.dispose());
     textures.forEach(t => t.dispose());
+    studio.dispose();
     renderer.dispose();
     renderer.forceContextLoss();
     canvas.remove();

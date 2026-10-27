@@ -1025,10 +1025,10 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 @media(max-width:767px){.fhero{min-height:520px}}
 .fhero__col{position:absolute; inset:0; z-index:0; display:flex}
 .fhero__col>i{flex:1; background-repeat:repeat; background-size:auto 760px;
-  background-position:center; opacity:.34}
-.fhero__col>i:last-child{opacity:.38}
+  background-position:center; opacity:.44}
+.fhero__col>i:last-child{opacity:.48}
 .fhero__col::after{content:""; position:absolute; inset:0;
-  background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.92) 24%,rgba(6,5,6,.5) 62%,rgba(6,5,6,.2))}
+  background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.86) 24%,rgba(6,5,6,.4) 62%,rgba(6,5,6,.12))}
 @media(max-width:767px){.fhero__col>i{background-size:auto 480px}}
 
 /* the disc itself — sized to overflow the viewport on desktop, centered on mobile */
