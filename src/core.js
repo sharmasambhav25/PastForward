@@ -740,6 +740,8 @@ function parseHash() {
   const [path, q] = raw.split('?');
   return { path: path.replace(/\/+$/, '') || '/', params: new URLSearchParams(q || '') };
 }
+window.__unmounts = [];
+function onUnmount(fn) { window.__unmounts.push(fn); }
 function render() {
   const { path, params } = parseHash();
   const seg = path.split('/').filter(Boolean);
@@ -760,6 +762,8 @@ function render() {
   else { out = view404(); title = 'Not found | PastForward'; }
 
   document.title = title;
+  // tear down the page we're leaving: WebGL contexts, frame loops, observers
+  (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
   main.innerHTML = out;
   bindEffects(main);
   $$('.hdr__nav [data-nav]').forEach(a => a.classList.toggle('is-active', a.dataset.nav === seg[0]));
@@ -772,7 +776,9 @@ function render() {
 function go(hash) { location.hash = hash; }
 
 /* ---------- global events ---------- */
-addEventListener('hashchange', () => { const p = parseHash().path; if (!p.startsWith('/product')) scrollTo(0, 0); else scrollTo(0, 0); render(); });
+// jump (not glide) to the top: html has scroll-behavior:smooth, and a glide gets cut short
+// by the new page rendering, leaving you halfway down it
+addEventListener('hashchange', () => { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); });
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
