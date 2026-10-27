@@ -607,9 +607,6 @@ function initCursor() {
     const t = e.target.closest('[data-cursor]');
     cur.classList.toggle('is-lg', !!t);
     if (t) lbl.textContent = t.dataset.cursor;
-    /* over the library shelf the cursor blooms into a turning badge —
-       the ring is the affordance that the shelf itself turns */
-    cur.classList.toggle('is-badge', !!e.target.closest('[data-cursor-badge]'));
   }, { passive: true });
   (function loop() {
     rx += (x - rx) * .18; ry += (y - ry) * .18;
@@ -804,9 +801,6 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
   if (e.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); }
-  /* THE LIBRARY answers the arrow keys + Enter while it owns the viewport;
-     the hook nulls itself the moment the shelf leaves the page */
-  if (window.__libKeys) window.__libKeys(e);
 });
 function openSearch() {
   lastFocus = document.activeElement;
