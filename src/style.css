@@ -508,90 +508,74 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none}
 .wall__scroller::-webkit-scrollbar{display:none}
 .wall__scroller>*{scroll-snap-align:center; flex:none}
-/* ---------- beat 4: THE CRATES — the catalogue as a shelf you flip through.
-     A24-inspired: one record in focus, neighbours receding into the room.
-     All 3D lives on .crate-rec / .crate-rec__flip (preserve-3d all the way
-     down from the stage's perspective); the receding dim is a filter on each
-     face's .record — one level below the 3D chain, so it never flattens it. */
-.crates{--crate-size:clamp(230px,38vmin,400px); display:grid; grid-template-columns:auto 1fr auto;
-  align-items:center; gap:clamp(8px,2vw,20px)}
-@media(max-width:640px){.crates{--crate-size:min(60vw,290px)}}
-.crates__head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;
-  margin-bottom:clamp(10px,2.4vw,26px)}
-.crates__tally{display:inline-flex; align-items:baseline; gap:.4em; font-size:clamp(1.2rem,2.4vw,1.6rem)}
-.crates__of{font-size:.55em; letter-spacing:.2em; color:var(--muted)}
-/* the odometer: digit columns that roll to their mark */
-.odo{display:inline-flex; height:1em; line-height:1; overflow:hidden}
-.odo__col{height:1em; overflow:hidden}
-.odo__strip{display:block; transition:transform 640ms var(--e-out-expo)}
-.odo__strip i{display:block; height:1em; font-style:normal}
-
-.crate-arrow{width:52px; height:52px; min-width:52px; display:grid; place-items:center; z-index:200;
-  position:relative; background:var(--elevated); border:1px solid var(--border); border-radius:50%;
-  color:var(--cream); cursor:pointer;
-  transition:transform 320ms var(--e-spring), border-color var(--d-micro) var(--e-ui)}
-.crate-arrow:hover{border-color:var(--cream); transform:scale(1.1)}
-.crate-arrow:active{transform:scale(.88)}
-.crate-arrow svg{width:20px; height:20px}
-@media(max-width:640px){
-  .crate-arrow{width:44px; height:44px; min-width:44px}
-  .crate-arrow svg{width:16px; height:16px}
+.picker{display:grid; gap:36px; align-items:center; grid-template-columns:1fr; width:100%; min-width:0}
+.picker > *{min-width:0; width:100%}
+@media(min-width:900px){
+  .picker{grid-template-columns:1fr 1fr; gap:64px}
+  .picker__disc{order:2}
+  .picker__info{order:1}
 }
-
-.crates__stage{position:relative; height:calc(var(--crate-size) * 1.14); perspective:1500px; touch-action:pan-y}
-.crates__fan{position:absolute; left:50%; top:50%; width:var(--crate-size); height:var(--crate-size);
-  transform:translate(-50%,-50%); transform-style:preserve-3d}
-.crate-rec{position:absolute; inset:0; transform-style:preserve-3d; will-change:transform; cursor:pointer;
-  transition:transform 660ms var(--e-out-expo), opacity 420ms var(--e-ui)}
-.crates__fan.no-t .crate-rec{transition:none}
-.crate-rec.is-front{cursor:grab}
-.crates__fan.is-dragging .crate-rec.is-front{cursor:grabbing}
-.crate-rec__flip{position:absolute; inset:0; transform-style:preserve-3d;
-  transition:transform 720ms var(--e-in-out-quart)}
-.crate-rec.is-flipped .crate-rec__flip{transform:rotateY(180deg)}
-.crate-rec__face{position:absolute; inset:0; display:grid; place-items:center;
-  backface-visibility:hidden; -webkit-backface-visibility:hidden}
-.crate-rec__face--b{transform:rotateY(180deg)}
-.crate-rec .record{filter:brightness(var(--dim,1))}
-@media(prefers-reduced-motion:reduce){
-  .crate-rec,.crate-rec__flip,.odo__strip{transition:none}
+@media(max-width:899px){
+  section#picker{
+    min-height:auto!important;
+    padding-top:clamp(20px, 3.5vw, 32px)!important;
+  }
+  .picker{display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; width:100%; min-width:0}
+  .picker__info{display:contents}
+  .picker__head{order:1; text-align:center; margin-inline:auto}
+  .picker__head .cap{margin-inline:auto; text-align:center}
+  .picker__head h2{font-size:clamp(1.75rem, 7vw, 2.3rem); margin:10px auto 14px; text-align:center; text-wrap:balance}
+  .picker__head p{text-align:center; margin-inline:auto; max-width:34ch; font-size:.94rem; line-height:1.5}
+  .picker__disc{order:2; display:flex; justify-content:center; align-items:center; width:100%; margin:6px auto}
+  #pickrec{
+    width:min(74vw, 280px)!important;
+    height:min(74vw, 280px)!important;
+    margin-inline:auto!important;
+    max-width:none!important;
+  }
+  .picker__active{order:3; text-align:center; margin-inline:auto; margin-top:8px!important}
+  .picker__active .card__artist{font-size:.70rem; letter-spacing:.16em; text-align:center}
+  .picker__active .d-s{font-size:clamp(1.2rem, 4.5vw, 1.45rem); margin-top:2px; text-align:center}
+  .picker .thumbs{
+    order:4;
+    width:100vw;
+    margin-inline:calc(-1 * var(--gutter));
+    padding-inline:calc(50vw - 28px);
+    scroll-padding-inline:calc(50vw - 28px);
+    justify-content:flex-start;
+    padding-block:8px 14px;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+  }
+  .picker .thumbs button{
+    scroll-snap-align:center;
+    width:56px;
+    height:56px;
+  }
+  .picker__cta{
+    order:5;
+    justify-content:center!important;
+    text-align:center;
+    margin-inline:auto;
+    gap:18px!important;
+    margin-top:10px!important;
+  }
 }
-/* side B: the back of the record — same black disc, an info label at the centre */
-.record--bside .record__etch{display:block}
-.record__label--b{left:30%; top:30%; width:40%; height:40%;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:.3em; text-align:center; padding:9%}
-.bside__tag{font-family:var(--mono); font-size:.44rem; letter-spacing:.24em; color:var(--oxblood)}
-.bside__artist{font-family:var(--mono); font-size:.5rem; letter-spacing:.08em; text-transform:uppercase; color:#161314}
-.bside__album{font-family:var(--display); font-size:clamp(.6rem,1.7vmin,.78rem); line-height:1.15;
-  color:#161314; text-wrap:balance; max-width:100%}
-.bside__meta{font-family:var(--mono); font-size:.46rem; letter-spacing:.06em; color:#5c5650}
-
-/* the info column: what the front record is, in text */
-.crates__info{max-width:600px; margin:clamp(22px,3vw,36px) auto 0; text-align:center;
-  display:flex; flex-direction:column; align-items:center; gap:16px}
-.crates__id .card__artist{letter-spacing:.16em}
-.crates__sides{display:grid; width:100%}
-.crates__side{grid-area:1/1; display:flex; flex-direction:column; align-items:center; gap:9px;
-  transition:opacity 300ms var(--e-ui), transform 300ms var(--e-ui)}
-.crates__side--b{opacity:0; transform:translateY(8px); pointer-events:none}
-#crates.is-flipped .crates__side--a{opacity:0; transform:translateY(-8px)}
-#crates.is-flipped .crates__side--b{opacity:1; transform:none; pointer-events:auto}
-.crates__q{font-family:var(--display); font-style:italic; font-size:clamp(1.05rem,2.1vw,1.25rem);
-  line-height:1.35; margin:0; text-wrap:balance}
-.crates__specs{display:flex; flex-direction:column; gap:7px; color:var(--muted)}
-.crates__flip{background:none; border:0; cursor:pointer; padding:4px 2px}
-.crates__flip:hover{color:var(--cream)}
-.crates__buy{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap}
-.crates__price{font-size:1.25rem}
-.crates__hint{margin-top:clamp(18px,2.8vw,32px); text-align:center; letter-spacing:.18em; line-height:2}
-.crates__hint b{color:var(--cream); font-weight:500}
-#crates.is-live .crates__hint b{color:var(--ember)}
 /* drag-to-scroll (mountDragScroll, core.js): the strip itself carries the rubber-band
    overshoot as a transform, so it must never transition that property on its own —
    the JS drives every frame of it directly. */
-.wall__scroller{transition:none}
-.wall__scroller.is-dragging{cursor:grabbing!important; user-select:none}
+.thumbs,.wall__scroller{transition:none}
+.thumbs.is-dragging,.wall__scroller.is-dragging{cursor:grabbing!important; user-select:none}
+.thumbs{display:flex; gap:12px; overflow-x:auto; padding:6px 2px 12px; cursor:grab;
+  -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none}
+.thumbs::-webkit-scrollbar{display:none}
+.thumbs button{flex:none; width:56px; height:56px; border-radius:50%; border:2px solid transparent;
+  cursor:pointer; padding:0; background:none; overflow:hidden; opacity:.55;
+  transition:transform var(--d-micro) var(--e-ui), opacity var(--d-micro) var(--e-ui), border-color var(--d-micro) var(--e-ui), box-shadow var(--d-micro) var(--e-ui)}
+.thumbs button:hover{opacity:.9; transform:scale(1.05)}
+.thumbs button.is-on{border-color:var(--ember); opacity:1; transform:scale(1.08);
+  box-shadow:0 0 0 2px var(--ink), 0 0 0 4px rgba(192,53,63,.45), 0 0 12px rgba(192,53,63,.6)}
+.thumbs img{width:100%; height:100%; object-fit:cover; border-radius:50%; pointer-events:none}
 .scatter{position:relative; min-height:min(78vh,640px)}
 .scatter>*{position:absolute}
 @media(max-width:767px){.scatter{min-height:0; display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
@@ -1372,7 +1356,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     padding:0 32px;
     text-align:center;
   }
-  #beat3rec, .pdp-record{
+  #pickrec, #beat3rec, .pdp-record{
     max-width:min(var(--size, 320px), calc(100vw - 2 * var(--gutter)))!important;
     margin-inline:auto;
   }
