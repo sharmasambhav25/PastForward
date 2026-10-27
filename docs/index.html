@@ -511,74 +511,90 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none}
 .wall__scroller::-webkit-scrollbar{display:none}
 .wall__scroller>*{scroll-snap-align:center; flex:none}
-.picker{display:grid; gap:36px; align-items:center; grid-template-columns:1fr; width:100%; min-width:0}
-.picker > *{min-width:0; width:100%}
-@media(min-width:900px){
-  .picker{grid-template-columns:1fr 1fr; gap:64px}
-  .picker__disc{order:2}
-  .picker__info{order:1}
+/* ---------- beat 4: THE CRATES — the catalogue as a shelf you flip through.
+     A24-inspired: one record in focus, neighbours receding into the room.
+     All 3D lives on .crate-rec / .crate-rec__flip (preserve-3d all the way
+     down from the stage's perspective); the receding dim is a filter on each
+     face's .record — one level below the 3D chain, so it never flattens it. */
+.crates{--crate-size:clamp(230px,38vmin,400px); display:grid; grid-template-columns:auto 1fr auto;
+  align-items:center; gap:clamp(8px,2vw,20px)}
+@media(max-width:640px){.crates{--crate-size:min(60vw,290px)}}
+.crates__head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;
+  margin-bottom:clamp(10px,2.4vw,26px)}
+.crates__tally{display:inline-flex; align-items:baseline; gap:.4em; font-size:clamp(1.2rem,2.4vw,1.6rem)}
+.crates__of{font-size:.55em; letter-spacing:.2em; color:var(--muted)}
+/* the odometer: digit columns that roll to their mark */
+.odo{display:inline-flex; height:1em; line-height:1; overflow:hidden}
+.odo__col{height:1em; overflow:hidden}
+.odo__strip{display:block; transition:transform 640ms var(--e-out-expo)}
+.odo__strip i{display:block; height:1em; font-style:normal}
+
+.crate-arrow{width:52px; height:52px; min-width:52px; display:grid; place-items:center; z-index:200;
+  position:relative; background:var(--elevated); border:1px solid var(--border); border-radius:50%;
+  color:var(--cream); cursor:pointer;
+  transition:transform 320ms var(--e-spring), border-color var(--d-micro) var(--e-ui)}
+.crate-arrow:hover{border-color:var(--cream); transform:scale(1.1)}
+.crate-arrow:active{transform:scale(.88)}
+.crate-arrow svg{width:20px; height:20px}
+@media(max-width:640px){
+  .crate-arrow{width:44px; height:44px; min-width:44px}
+  .crate-arrow svg{width:16px; height:16px}
 }
-@media(max-width:899px){
-  section#picker{
-    min-height:auto!important;
-    padding-top:clamp(20px, 3.5vw, 32px)!important;
-  }
-  .picker{display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; width:100%; min-width:0}
-  .picker__info{display:contents}
-  .picker__head{order:1; text-align:center; margin-inline:auto}
-  .picker__head .cap{margin-inline:auto; text-align:center}
-  .picker__head h2{font-size:clamp(1.75rem, 7vw, 2.3rem); margin:10px auto 14px; text-align:center; text-wrap:balance}
-  .picker__head p{text-align:center; margin-inline:auto; max-width:34ch; font-size:.94rem; line-height:1.5}
-  .picker__disc{order:2; display:flex; justify-content:center; align-items:center; width:100%; margin:6px auto}
-  #pickrec{
-    width:min(74vw, 280px)!important;
-    height:min(74vw, 280px)!important;
-    margin-inline:auto!important;
-    max-width:none!important;
-  }
-  .picker__active{order:3; text-align:center; margin-inline:auto; margin-top:8px!important}
-  .picker__active .card__artist{font-size:.70rem; letter-spacing:.16em; text-align:center}
-  .picker__active .d-s{font-size:clamp(1.2rem, 4.5vw, 1.45rem); margin-top:2px; text-align:center}
-  .picker .thumbs{
-    order:4;
-    width:100vw;
-    margin-inline:calc(-1 * var(--gutter));
-    padding-inline:calc(50vw - 28px);
-    scroll-padding-inline:calc(50vw - 28px);
-    justify-content:flex-start;
-    padding-block:8px 14px;
-    -webkit-overflow-scrolling:touch;
-    scroll-snap-type:x mandatory;
-  }
-  .picker .thumbs button{
-    scroll-snap-align:center;
-    width:56px;
-    height:56px;
-  }
-  .picker__cta{
-    order:5;
-    justify-content:center!important;
-    text-align:center;
-    margin-inline:auto;
-    gap:18px!important;
-    margin-top:10px!important;
-  }
+
+.crates__stage{position:relative; height:calc(var(--crate-size) * 1.14); perspective:1500px; touch-action:pan-y}
+.crates__fan{position:absolute; left:50%; top:50%; width:var(--crate-size); height:var(--crate-size);
+  transform:translate(-50%,-50%); transform-style:preserve-3d}
+.crate-rec{position:absolute; inset:0; transform-style:preserve-3d; will-change:transform; cursor:pointer;
+  transition:transform 660ms var(--e-out-expo), opacity 420ms var(--e-ui)}
+.crates__fan.no-t .crate-rec{transition:none}
+.crate-rec.is-front{cursor:grab}
+.crates__fan.is-dragging .crate-rec.is-front{cursor:grabbing}
+.crate-rec__flip{position:absolute; inset:0; transform-style:preserve-3d;
+  transition:transform 720ms var(--e-in-out-quart)}
+.crate-rec.is-flipped .crate-rec__flip{transform:rotateY(180deg)}
+.crate-rec__face{position:absolute; inset:0; display:grid; place-items:center;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden}
+.crate-rec__face--b{transform:rotateY(180deg)}
+.crate-rec .record{filter:brightness(var(--dim,1))}
+@media(prefers-reduced-motion:reduce){
+  .crate-rec,.crate-rec__flip,.odo__strip{transition:none}
 }
+/* side B: the back of the record — same black disc, an info label at the centre */
+.record--bside .record__etch{display:block}
+.record__label--b{left:30%; top:30%; width:40%; height:40%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.3em; text-align:center; padding:9%}
+.bside__tag{font-family:var(--mono); font-size:.44rem; letter-spacing:.24em; color:var(--oxblood)}
+.bside__artist{font-family:var(--mono); font-size:.5rem; letter-spacing:.08em; text-transform:uppercase; color:#161314}
+.bside__album{font-family:var(--display); font-size:clamp(.6rem,1.7vmin,.78rem); line-height:1.15;
+  color:#161314; text-wrap:balance; max-width:100%}
+.bside__meta{font-family:var(--mono); font-size:.46rem; letter-spacing:.06em; color:#5c5650}
+
+/* the info column: what the front record is, in text */
+.crates__info{max-width:600px; margin:clamp(22px,3vw,36px) auto 0; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:16px}
+.crates__id .card__artist{letter-spacing:.16em}
+.crates__sides{display:grid; width:100%}
+.crates__side{grid-area:1/1; display:flex; flex-direction:column; align-items:center; gap:9px;
+  transition:opacity 300ms var(--e-ui), transform 300ms var(--e-ui)}
+.crates__side--b{opacity:0; transform:translateY(8px); pointer-events:none}
+#crates.is-flipped .crates__side--a{opacity:0; transform:translateY(-8px)}
+#crates.is-flipped .crates__side--b{opacity:1; transform:none; pointer-events:auto}
+.crates__q{font-family:var(--display); font-style:italic; font-size:clamp(1.05rem,2.1vw,1.25rem);
+  line-height:1.35; margin:0; text-wrap:balance}
+.crates__specs{display:flex; flex-direction:column; gap:7px; color:var(--muted)}
+.crates__flip{background:none; border:0; cursor:pointer; padding:4px 2px}
+.crates__flip:hover{color:var(--cream)}
+.crates__buy{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap}
+.crates__price{font-size:1.25rem}
+.crates__hint{margin-top:clamp(18px,2.8vw,32px); text-align:center; letter-spacing:.18em; line-height:2}
+.crates__hint b{color:var(--cream); font-weight:500}
+#crates.is-live .crates__hint b{color:var(--ember)}
 /* drag-to-scroll (mountDragScroll, core.js): the strip itself carries the rubber-band
    overshoot as a transform, so it must never transition that property on its own —
    the JS drives every frame of it directly. */
-.thumbs,.wall__scroller{transition:none}
-.thumbs.is-dragging,.wall__scroller.is-dragging{cursor:grabbing!important; user-select:none}
-.thumbs{display:flex; gap:12px; overflow-x:auto; padding:6px 2px 12px; cursor:grab;
-  -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none}
-.thumbs::-webkit-scrollbar{display:none}
-.thumbs button{flex:none; width:56px; height:56px; border-radius:50%; border:2px solid transparent;
-  cursor:pointer; padding:0; background:none; overflow:hidden; opacity:.55;
-  transition:transform var(--d-micro) var(--e-ui), opacity var(--d-micro) var(--e-ui), border-color var(--d-micro) var(--e-ui), box-shadow var(--d-micro) var(--e-ui)}
-.thumbs button:hover{opacity:.9; transform:scale(1.05)}
-.thumbs button.is-on{border-color:var(--ember); opacity:1; transform:scale(1.08);
-  box-shadow:0 0 0 2px var(--ink), 0 0 0 4px rgba(192,53,63,.45), 0 0 12px rgba(192,53,63,.6)}
-.thumbs img{width:100%; height:100%; object-fit:cover; border-radius:50%; pointer-events:none}
+.wall__scroller{transition:none}
+.wall__scroller.is-dragging{cursor:grabbing!important; user-select:none}
 .scatter{position:relative; min-height:min(78vh,640px)}
 .scatter>*{position:absolute}
 @media(max-width:767px){.scatter{min-height:0; display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
@@ -1359,7 +1375,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     padding:0 32px;
     text-align:center;
   }
-  #pickrec, #beat3rec, .pdp-record{
+  #beat3rec, .pdp-record{
     max-width:min(var(--size, 320px), calc(100vw - 2 * var(--gutter)))!important;
     margin-inline:auto;
   }
@@ -4930,6 +4946,7 @@ document.addEventListener('submit', e => {
 });
 addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
+  if (window.__crateKeys) window.__crateKeys(e);   /* THE CRATES: arrows / space / enter while in view */
   if (e.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); }
 });
@@ -5834,14 +5851,63 @@ const seam = (kind) => `<div class="seam seam--${kind}">${photo('col-g')
 /* the tagline, set the way the brand sets it on the flex */
 const TAGLINE = `<span class="tagline">designed from <em>memory,</em> made for <em>now</em></span>`;
 
+const colOf = p => COLS.find(c => p.tags.includes(c.slug));
+
+/* ---------- the odometer: digit columns that roll to their mark ---------- */
+function odoHTML(digits) {
+  return Array.from(digits).map(() => `<span class="odo__col"><span class="odo__strip">${
+    Array.from({ length: 10 }, (_, n) => `<i>${n}</i>`).join('')}</span></span>`).join('');
+}
+
+/* ---------- one record on the crates shelf ----------
+   Two faces on a preserve-3d flipper: the A-side is the real spinning
+   .record; the B-side is the back of the disc — same black vinyl, with
+   the centre label carrying the purchase facts, like a run-out etch. */
+function crateRecHTML(p, i, start) {
+  const v = variant(p, 'vinyl');
+  return `<div class="crate-rec${i === start ? ' is-front' : ''}" data-i="${i}" data-slug="${p.slug}" aria-hidden="true">
+    <div class="crate-rec__flip">
+      <div class="crate-rec__face crate-rec__face--a" data-media>
+        ${recordHTML(p, { size: 1000, big: true })}
+      </div>
+      <div class="crate-rec__face crate-rec__face--b">
+        <div class="record record--bside">
+          <div class="record__disc">
+            <div class="record__grooves"></div>
+            <div class="record__grooves2"></div>
+            <div class="record__deadwax"></div>
+            <svg class="record__etch" viewBox="0 0 100 100" aria-hidden="true">
+              <defs><path id="pfC${i}" d="M50 50 m -27 0 a 27 27 0 0 1 54 0" fill="none"/></defs>
+              <text><textPath href="#pfC${i}" startOffset="50%" text-anchor="middle">SIDE B · PASTFORWARD · ESTD 2025</textPath></text>
+            </svg>
+            <div class="record__label record__label--b">
+              <span class="bside__tag">SIDE B</span>
+              <span class="bside__artist">${esc(p.artist)}</span>
+              <span class="bside__album">${albumOf(p)}</span>
+              <span class="bside__meta num">${v ? money(v.price) : money(p.from)}</span>
+            </div>
+            <div class="record__spindle"></div>
+          </div>
+          <div class="record__sheen"></div>
+          <div class="record__rim"></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
 /* ============================== HOME ============================== */
 function viewHome() {
   const feat = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
   const pickers = feat.slice(0, 8);
   const posters = [], polas = [];   /* filled for the catalogue wall */
   const objectRec = pickers.find(p => p.slug === 'travis-scott-utopia') || pickers[1];
-  const pickStart = pickers.find(p => p.slug === 'pink-floyd-the-dark-side-of-the-moon-1973') || pickers[2];
   const closeRec  = pickers.find(p => p.slug === 'karan-aujla-at-peace') || pickers[3];
+  /* THE CRATES: the featured shelf in rank order. It opens on Dark Side —
+     the same record the old picker opened on — because that label reads
+     instantly at any size. */
+  const crateRecs = feat.slice(0, 12);
+  const crateStart = Math.max(0, crateRecs.findIndex(p => p.slug === 'pink-floyd-the-dark-side-of-the-moon-1973'));
 
   const seenArt = new Set();
   P.filter(p => variant(p, 'poster-a3') && !seenArt.has(p.artist))
@@ -5941,30 +6007,65 @@ function viewHome() {
     </div>
   </section>
 
-  <!-- 4 ============ MAKE IT YOURS (PICKER) ============ -->
-  <section class="beat sec ground" id="picker" data-section="MAKE IT YOURS" style="overflow:hidden">
+  <!-- 4 ============ THE CRATES ============
+       The A24 move, translated: the catalogue is the interface. Every
+       featured record is an object on a shelf you flip through — arrows
+       to browse, space to turn one over, enter to take it out. -->
+  <section class="beat sec ground" id="crates" data-section="THE CRATES" style="overflow:hidden">
     ${col('r', 'col--soft col--mask')}
-    <div class="wrap picker">
-      <div class="picker__disc" style="display:grid;place-items:center">
-        ${recordHTML(pickStart, { size: 400, big: true, id: 'pickrec' })}
+    <div class="wrap">
+      <div class="crates__head">
+        <div style="max-width:520px">
+          <div class="cap">THE CRATES</div>
+          <h2 class="d-l reveal" style="margin:14px 0 0">Flip through the crate.</h2>
+          <p class="body-l dim reveal measure" style="margin-top:16px">The records people keep asking for, up front in one crate. Turn one over. Take it out. Put it on your wall.</p>
+        </div>
+        <div class="crates__tally num reveal" aria-label="${crateRecs.length} records in the crate">
+          <span class="odo" id="cratecount">${odoHTML('00')}</span>
+          <span class="crates__of">OF</span><span>${String(crateRecs.length).padStart(2, '0')}</span>
+        </div>
       </div>
-      <div class="picker__info">
-        <div class="picker__head">
-          <div class="cap">MAKE IT YOURS</div>
-          <h2 class="d-l reveal" style="margin:14px 0 18px">Pick the one that's yours.</h2>
-          <p class="body-l dim reveal measure">Tap through. Watch it change. That's the whole point. This isn't decor somebody else chose for you.</p>
+
+      <div class="crates" id="cratesrow">
+        <button class="crate-arrow" data-crate="-1" aria-label="Previous record" data-cursor="PULL">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="crates__stage" id="cratestage">
+          <div class="crates__fan" id="cratefan">
+            ${crateRecs.map((p, i) => crateRecHTML(p, i, crateStart)).join('')}
+          </div>
         </div>
-        <div class="picker__active" style="margin-top:24px">
-          <div class="card__artist" id="pickartist">${esc(pickStart.artist)}</div>
-          <div class="d-s" id="pickalbum" style="margin-top:2px">${albumOf(pickStart)}</div>
+        <button class="crate-arrow" data-crate="1" aria-label="Next record" data-cursor="PULL">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="crates__info">
+        <div class="crates__id" aria-live="polite">
+          <div class="card__artist" id="crateartist">${esc(crateRecs[crateStart].artist)}</div>
+          <div class="d-s" id="cratealbum" style="margin-top:2px">${albumOf(crateRecs[crateStart])}</div>
         </div>
-        <div class="thumbs" role="listbox" aria-label="Choose a record" id="pickthumbs">
-          ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} · ${esc(albumText(p))}">
-            <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy"></button>`).join('')}
+        <div class="crates__sides">
+          <div class="crates__side crates__side--a">
+            <p class="crates__q" id="cratequote">“${esc((colOf(crateRecs[crateStart]) || {}).desc || 'Records that were on a wall before you were born.')}”</p>
+            <div class="mono-xs dim" id="cratequotesrc">FROM ${esc(((colOf(crateRecs[crateStart]) || {}).name || 'The Catalogue').toUpperCase())}</div>
+          </div>
+          <div class="crates__side crates__side--b" aria-hidden="true">
+            <div class="crates__specs mono-xs">
+              <span>UPCYCLED 12-INCH RECORD · ⌀305MM</span>
+              <span>PRINTED CENTRE LABEL</span>
+              <span>READY TO HANG</span>
+            </div>
+          </div>
         </div>
-        <div class="picker__cta" style="display:flex;align-items:center;margin-top:24px">
-          <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
+        <button class="btn--ghost mono-xs crates__flip" id="crateside" aria-pressed="false">TURN OVER — SIDE B</button>
+        <div class="crates__buy">
+          <span class="num crates__price" id="crateprice">${money(variant(crateRecs[crateStart], 'vinyl').price)}</span>
+          <button class="btn btn--primary" id="crateadd" data-add="${crateRecs[crateStart].slug}|vinyl"><span class="btn__mag">Add to crate</span></button>
+          <a class="btn btn--secondary" id="crateopen" href="#/product/${crateRecs[crateStart].slug}"><span class="btn__mag">Open</span></a>
         </div>
+      </div>
+
+      <div class="crates__hint mono-xs dim">
+        <b>←</b> <b>→</b> BROWSE · <b>SPACE</b> OR TAP TO TURN A RECORD OVER · <b>ENTER</b> TO OPEN · DRAG TO SPIN
       </div>
     </div>
   </section>
@@ -6564,7 +6665,6 @@ function mountHome() {
     if (el) spins.push(Object.assign({ host, el, rate, base: rate, angle: 0, kick: 0, mom: 0 }, opt));
   };
   addSpin('beat3rec', 7.5, { hover: true });
-  addSpin('pickrec', 6);
   addSpin('droprec', 12, { boost: true, stopper: true });
 
   /* the flex hero disc: same drag/momentum/scratch-sound loop as every other record —
@@ -6856,70 +6956,218 @@ function mountHome() {
     else setTimeout(() => annot.classList.add('is-in'), 900);
   }
 
-  // Preload all picker vinyl images for instant switching
-  const featList = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
-  const pickersList = featList.slice(0, 8);
-  pickersList.forEach(p => {
-    const v = variant(p, 'vinyl');
-    if (v) { const pre = new Image(); pre.src = imgSrc(v.image, true); }
-  });
+  /* --- THE CRATES (beat 4): the catalogue as a shelf you flip through.
+       A24-inspired: one record in focus, arrow keys browse, Space turns the
+       front record over to its B-side, Enter takes it out. Everything is
+       driven by real catalogue data — nothing here is decorative. --- */
+  (function mountCrates() {
+    const sec = $('#crates'), fan = $('#cratefan'), row = $('#cratesrow');
+    if (!sec || !fan || !row) return;
+    const recs = $$('.crate-rec', fan), N = recs.length;
+    if (!N) return;
+    const artistEl = $('#crateartist'), albumEl = $('#cratealbum'),
+          quoteEl = $('#cratequote'), srcEl = $('#cratequotesrc'),
+          priceEl = $('#crateprice'), addBtn = $('#crateadd'),
+          openLink = $('#crateopen'), sideBtn = $('#crateside'),
+          strips = $$('.odo__strip', sec);
+    let cur = Math.max(0, recs.findIndex(r => r.classList.contains('is-front')));
+    let flipped = false, live = false, odoShown = false;
 
-  // picker interaction: click options to switch the vinyl album
-  const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
-  const thumbsContainer = $('#pickthumbs');
-  if (thumbsContainer) mountDragScroll(thumbsContainer);
+    /* browsing must be instant — every label is already in memory */
+    recs.forEach(r => { const p = bySlug[r.dataset.slug]; if (!p) return;
+      const v = variant(p, 'vinyl'); if (v) { const pre = new Image(); pre.src = imgSrc(v.image, true); } });
 
-  const selectRecord = (slug) => {
-    const p = bySlug[slug];
-    if (!p || !prec) return;
-    $$('#pickthumbs button').forEach(x => {
-      const isSel = x.dataset.pick === slug;
-      x.classList.toggle('is-on', isSel);
-      x.setAttribute('aria-selected', String(isSel));
+    /* odometer: each column rolls to its digit, cascading right to left */
+    function setOdo(n) {
+      const s = String(Math.min(n, 99)).padStart(2, '0');
+      strips.forEach((st, i) => {
+        st.style.transitionDelay = (i * 90) + 'ms';
+        st.style.transform = `translateY(-${+s[i]}em)`;
+      });
+    }
+
+    /* the fan: every record's place is a function of its offset to the front.
+       Left records turn their faces toward the centre (rotateY > 0), the way
+       a fanned hand of records leans. */
+    const XS = [0, .34, .50, .58, .62], DIM = [1, .8, .55, .34, .2], OP = [1, .92, .55, .18, 0];
+    function layout(instant) {
+      if (instant) fan.classList.add('no-t');
+      const size = fan.offsetWidth || 320;
+      recs.forEach(rec => {
+        const o = (+rec.dataset.i) - cur, ao = Math.min(Math.abs(o), 4), so = Math.sign(o);
+        rec.classList.toggle('is-front', ao === 0);
+        rec.style.zIndex = 100 - ao;
+        rec.style.opacity = OP[ao];
+        rec.style.visibility = Math.abs(o) > 3 ? 'hidden' : 'visible';
+        rec.style.setProperty('--dim', DIM[Math.min(ao, 3)]);
+        rec.dataset.cursor = ao === 0 ? 'SPIN' : 'PULL';
+        rec.style.transform = `translateX(${so * size * XS[ao]}px) translateZ(${-ao * 92}px) rotateY(${-so * (ao ? Math.min(30, 22 + ao * 2.5) : 0)}deg) scale(${1 - ao * .09})`;
+      });
+      if (instant) requestAnimationFrame(() => fan.classList.remove('no-t'));
+    }
+
+    /* the info column — everything the front record is, in text */
+    function info(p, dir, animate) {
+      const v = variant(p, 'vinyl'), c = colOf(p);
+      artistEl.textContent = p.artist;
+      albumEl.innerHTML = albumOf(p);
+      quoteEl.textContent = '“' + (c ? c.desc : 'Records that were on a wall before you were born.') + '”';
+      srcEl.textContent = c ? 'FROM ' + c.name.toUpperCase() : 'FROM THE CATALOGUE';
+      priceEl.textContent = v ? money(v.price) : money(p.from);
+      addBtn.setAttribute('data-add', p.slug + '|vinyl');
+      addBtn.setAttribute('aria-label', 'Add ' + albumText(p) + ' to the crate');
+      openLink.setAttribute('href', '#/product/' + p.slug);
+      openLink.setAttribute('aria-label', 'Open ' + albumText(p));
+      if (animate && !RM()) [artistEl, albumEl, quoteEl, srcEl].forEach(el => el && el.animate(
+        [{ opacity: 0, transform: `translateX(${(dir || 1) * 12}px)` }, { opacity: 1, transform: 'none' }],
+        { duration: 340, easing: 'cubic-bezier(.16,1,.3,1)' }));
+    }
+
+    /* Space / tap: turn the front record over */
+    function setFlip(f) {
+      if (flipped === f) return;
+      flipped = f;
+      recs[cur].classList.toggle('is-flipped', f);
+      sec.classList.toggle('is-flipped', f);
+      sideBtn.textContent = f ? 'TURN BACK — SIDE A' : 'TURN OVER — SIDE B';
+      sideBtn.setAttribute('aria-pressed', String(f));
+      Sound.tick();
+    }
+
+    function go(to, dir) {
+      to = Math.max(0, Math.min(N - 1, to));
+      if (to === cur) return;
+      setFlip(false);                       /* a fresh record always shows its A-side */
+      const p = bySlug[recs[to].dataset.slug];
+      cur = to;
+      layout(false);
+      info(p, dir, true);
+      setOdo(cur + 1);
+      recs[cur]._kick = 150;                /* the arriving record gets a nudge */
+      Sound.tick();
+    }
+
+    /* the spin: only the front record turns, and each record remembers
+       its own angle, so browsing back resumes where you left it */
+    let mom = 0, dragging = false, vel = 0, dragMoved = 0, swiped = false;
+    const frontRec = () => fan.querySelector('.crate-rec.is-front');
+    if (!RM()) {
+      let last = performance.now();
+      (function loop(t) {
+        if (!document.body.contains(fan)) return;      /* home unmounted: stop */
+        const dt = Math.min(64, t - last); last = t;
+        const rec = frontRec(), el = rec && $('[data-disc]', rec);
+        if (el) {
+          if (!dragging) {
+            rec._ang = (rec._ang || 0) + (5 + mom) * dt / 1000;
+            if (rec._kick) { const step = rec._kick * (1 - Math.pow(.86, dt / 16.7)); rec._kick -= step; rec._ang += step; if (rec._kick < .3) rec._kick = 0; }
+            if (mom) { mom *= Math.pow(.93, dt / 16.7); if (Math.abs(mom) < .8) mom = 0; }
+          }
+          el.style.transform = `rotate(${rec._ang || 0}deg)`;
+        }
+        requestAnimationFrame(loop);
+      })(last);
+    }
+
+    /* drag to spin (mouse/pen) · swipe to browse (touch) · tap to turn over */
+    const angleAt = (rec, e) => {
+      const r = rec.getBoundingClientRect();
+      return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
+    };
+    let tx = 0, ty = 0, tIntent = null, dx0 = 0, dy0 = 0;
+    fan.addEventListener('pointerdown', e => {
+      const rec = e.target.closest('.crate-rec'); if (!rec) return;
+      if (e.pointerType === 'touch') { tx = e.clientX; ty = e.clientY; tIntent = null; swiped = false; return; }
+      if (!rec.classList.contains('is-front')) return;  /* neighbours get pulled, not spun */
+      e.preventDefault();
+      dragging = true; dragMoved = 0; mom = 0; vel = 0;
+      const f = frontRec();
+      if (f) { f._lastA = angleAt(f, e); f._lastT = performance.now(); }
+      dx0 = e.clientX; dy0 = e.clientY;
+      fan.setPointerCapture(e.pointerId);
+      Sound.scratchStart();
     });
-    const img = $('.record__art', prec);
-    const v = variant(p, 'vinyl');
-    const src = v ? imgSrc(v.image, true) : '';
-    if (img && src) {
-      if (RM()) {
-        img.src = src;
-      } else {
-        if (pspin) { pspin.kick = 140; pspin.stopped = false; pspin.rate = pspin.base; }
-        img.animate(
-          [{ opacity: 1, transform: 'scale(1)' }, { opacity: .12, transform: 'scale(.92)' }, { opacity: 1, transform: 'scale(1)' }],
-          { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)' }
-        );
-        setTimeout(() => { img.src = src; }, 160);
+    fan.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') {
+        if (tIntent) return;
+        const dx = e.clientX - tx, dy = e.clientY - ty;
+        if (Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy) * 1.3) tIntent = 'x';
+        return;
       }
-    }
-    const ar = $('#pickartist'), al = $('#pickalbum');
-    if (ar) ar.textContent = p.artist;
-    if (al) al.innerHTML = albumOf(p);
-    if (!RM() && ar && al) {
-      [ar, al].forEach(el => el.animate(
-        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
-        { duration: 320, easing: 'cubic-bezier(.16,1,.3,1)' }
-      ));
-    }
-  };
+      if (!dragging) return;
+      const rec = frontRec(); if (!rec) return;
+      dragMoved = Math.max(dragMoved, Math.hypot(e.clientX - dx0, e.clientY - dy0));
+      let a = angleAt(rec, e), d = a - rec._lastA;
+      if (d > 180) d -= 360; else if (d < -180) d += 360;
+      const now = performance.now(), dt = Math.max(8, now - rec._lastT);
+      vel = Math.max(-1400, Math.min(1400, d / (dt / 1000)));
+      rec._ang = (rec._ang || 0) + d; rec._lastA = a; rec._lastT = now;
+      Sound.scratchUpdate(vel);
+    });
+    const endPointer = e => {
+      if (e.pointerType === 'touch') {
+        if (tIntent === 'x') {
+          const dx = e.clientX - tx;
+          if (Math.abs(dx) > 46) { swiped = true; go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); }
+        }
+        tIntent = null; return;
+      }
+      if (!dragging) return;
+      dragging = false; mom = vel;
+      Sound.scratchStop();
+    };
+    fan.addEventListener('pointerup', endPointer);
+    fan.addEventListener('pointercancel', endPointer);
 
-  $$('#pickthumbs button').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      selectRecord(btn.dataset.pick);
+    fan.addEventListener('click', e => {
+      const rec = e.target.closest('.crate-rec'); if (!rec) return;
+      if (swiped) { swiped = false; return; }
+      if (dragMoved > 8) { dragMoved = 0; return; }    /* that was a spin, not a click */
+      if (rec.classList.contains('is-front')) setFlip(!flipped);
+      else go(+rec.dataset.i, +rec.dataset.i > cur ? 1 : -1);
     });
-    btn.addEventListener('pointerup', e => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      selectRecord(btn.dataset.pick);
-    });
-  });
 
-  if (thumbsContainer) {
-    thumbsContainer.addEventListener('click', e => {
-      const btn = e.target.closest('button[data-pick]');
-      if (btn) selectRecord(btn.dataset.pick);
+    $$('.crate-arrow', row).forEach(b => b.addEventListener('click', () => go(cur + (+b.dataset.crate), +b.dataset.crate)));
+    sideBtn.addEventListener('click', () => setFlip(!flipped));
+    openLink.addEventListener('click', () => { captureFlip(frontRec()); });
+
+    /* keyboard: active while the crates own the viewport — A24's model.
+       Self-unhooks once the homepage is unmounted. */
+    window.__crateKeys = e => {
+      if (!document.body.contains(fan)) { window.__crateKeys = null; return; }
+      if (!live) return;
+      if (/input|textarea|select/i.test(document.activeElement.tagName)) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1, -1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1, 1); }
+      else if (e.key === ' ') {
+        if (e.target.closest('button,a,input,select,textarea')) return;
+        e.preventDefault(); setFlip(!flipped);
+      } else if (e.key === 'Enter') {
+        if (e.target.closest('button,a,input,select,textarea')) return;
+        e.preventDefault(); openLink.click();
+      }
+    };
+
+    const io = new IntersectionObserver(es => es.forEach(en => {
+      live = en.intersectionRatio >= .5;
+      sec.classList.toggle('is-live', live);
+      if (live && !odoShown) { odoShown = true; setOdo(cur + 1); }
+    }), { threshold: [0, .5, .75] });
+    io.observe(sec);
+
+    /* the pointer is intent: hovering the crates arms the keyboard too,
+       even before the section owns half the viewport */
+    sec.addEventListener('pointerenter', () => {
+      if (!document.body.contains(fan) || live) return;
+      live = true; sec.classList.add('is-live');
+      if (!odoShown) { odoShown = true; setOdo(cur + 1); }
     });
-  }
+
+    addEventListener('resize', () => { if (document.body.contains(fan)) layout(true); }, { passive: true });
+
+    layout(true);
+    info(bySlug[recs[cur].dataset.slug], 1, false);
+  })();
 }
 
 function setParams(mut) {
