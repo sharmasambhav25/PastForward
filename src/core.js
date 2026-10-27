@@ -799,6 +799,7 @@ document.addEventListener('submit', e => {
 });
 addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
+  if (window.__crateKeys) window.__crateKeys(e);   /* THE CRATES: arrows / space / enter while in view */
   if (e.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); }
 });
