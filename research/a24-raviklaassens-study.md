@@ -165,17 +165,14 @@ Awwwards singled out four elements: **Preloader → Hero**, **Films → Televisi
 
 ## 9. Proposed work, prioritized
 
-**P1 — "The Crates": a flip-through record library** — ❌ **built, reviewed, and removed** → ✅ **rebuilt as "THE LIBRARY" (what the review actually asked for)**
-The first attempt (fanned 3D shelf, Space flip to a B-side, odometer) missed the point and was removed whole; the picker was restored. The re-read of A24's actual opening produced **THE LIBRARY**, now live as homepage beat 2, straight after the hero:
-- *the discs are right there when the page loads* — one flat row, featured first, the front record centred and large, neighbours scaled and dimmed;
-- *scroll through them* — wheel (accumulator + glide lock, one glide = one record) and horizontal swipe step the shelf; ←/→ step too; at either end the shelf releases so the page keeps scrolling — no trap;
-- *touch a disc and an animation responds to movement* — a ring of turning type circles the front record (base speed, boosted by pointer velocity with decay), the record leans toward the pointer, and the cursor blooms into a rotating dashed badge;
-- *select to open its information* — click the front record or press Enter; the credits under the shelf swap with it (artist / album / collection quote / price / add);
-- *swipe down for the full cover* — every PDP now has a full-bleed real-photo section under the specs;
-- *discs rotate at the bottom as you scroll* — every PDP ends with The Library strip: all vinyls as small discs, angle driven by page scroll.
+**P1 — the disc-shelf library** — ❌ **two attempts, both built, reviewed, and removed**
+1. *The Crates* — a fanned 3D shelf (arrow keys, Space flip to a B-side, odometer counter). Removed whole after review; the picker was restored.
+2. *The Library* — the literal A24 opening, translated: a scroll-browsed shelf right after the hero (wheel/swipe/arrows, edge-release at both ends), a turning ring of type around the front record, pointer lean, a cursor badge, a full-bleed real-photo cover on every PDP, and a bottom strip of all 47 discs driven by page scroll. Also removed after review — the site is back to its picker-era state (the `ffe1c2b` structure).
 
-**P2 — PDP as "the open case"** — ◐ **partly done by P1**
-The full-bleed cover and the bottom library strip shipped with THE LIBRARY. Still open from this item: the archival credits stack (PRESSED FROM / DIAMETER / LABEL / EDITION rows) and the big "Next in the crate →" serif link.
+Both are kept here as closed chapters, not proposals. The study's observations remain accurate; nothing of either implementation remains in `src/`.
+
+**P2 — PDP as "the open case"**
+Restyle the spec block into the full archival credits stack (PRESSED FROM / DIAMETER / LABEL / EDITION rows), add the big "Next in the crate →" serif link, and replace the 4-card "Goes well with" with **The Catalogue** shelf (every vinyl as a small disc, one row, click = jump). Every PDP ends inside the library, A24-style. *(Not started — the PDP cover and bottom strip that briefly shipped with attempt 2 were removed with it.)*
 
 **P3 — Odometer stats strip**
 A reusable rolling-digit component (`data-odometer`): columns of 0–9 that translate to the target digit when scrolled into view. First use: a home beat "66 ARTWORKS · 53 ARTISTS · 128 VARIANTS · ESTD 2025"; also the "1 of 12" counter in P1.
