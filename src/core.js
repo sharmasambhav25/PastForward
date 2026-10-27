@@ -238,7 +238,7 @@ function chromeHTML() {
       <a class="navlink" href="#/shop" data-nav="shop">Shop${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" aria-expanded="false" style="background:none;border:0;cursor:pointer">Collections${wave('wave--under')}</button>
       <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
-      <a class="navlink" href="#/story" data-nav="story">Story${wave('wave--under')}</a>
+      <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
       <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
