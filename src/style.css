@@ -49,9 +49,12 @@ body{
   margin:0; background:var(--ink); color:var(--cream);
   font-family:var(--body); font-size:16px; line-height:1.65;
   font-optical-sizing:auto; -webkit-font-smoothing:antialiased;
-  overflow-x:hidden; position:relative; width:100%;
+  overflow-x:clip; position:relative; width:100%;
   -webkit-tap-highlight-color:transparent;
 }
+/* clip (not hidden) so body doesn't become a scroll container: hidden here silently
+   breaks every position:sticky on the site (the crate's pinned stage, the wall page) */
+@supports not (overflow:clip){body{overflow-x:hidden}}
 /* overlays live in one fixed, clipped layer so an off-canvas drawer can never
    widen the page — and so nothing above the document breaks position:sticky */
 #overlays{position:fixed; inset:0; z-index:290; overflow:hidden; pointer-events:none}
@@ -399,8 +402,8 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 @media(min-width:1024px){.filterbtn{display:none!important}}
 
 /* ---------- pdp ---------- */
-.pdp{display:grid; gap:clamp(28px, 5vw, 48px); grid-template-columns:1fr}
-@media(min-width:1024px){.pdp{grid-template-columns:55fr 45fr; gap:72px}}
+.pdp{display:grid; gap:clamp(28px, 5vw, 48px); grid-template-columns:minmax(0,1fr)}   /* minmax: the thumbnail strip mustn't widen the column past the screen */
+@media(min-width:1024px){.pdp{grid-template-columns:minmax(0,55fr) minmax(0,45fr); gap:72px}}
 .pdp__stage{position:relative; background:var(--elevated); border:1px solid var(--border);
   display:grid; place-items:center; padding:clamp(16px,4vw,48px); min-height:clamp(260px,46vh,560px); overflow:hidden}
 .pdp__thumbs{display:flex; gap:8px; margin-top:14px; overflow-x:auto; -webkit-overflow-scrolling:touch;
@@ -414,7 +417,7 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .pdp__thumb span{position:absolute; left:0; right:0; bottom:0; font-family:var(--mono); font-size:.46rem;
   letter-spacing:.1em; background:rgba(10,7,8,.82); color:var(--muted); padding:2px 0; text-align:center}
 .pdp__thumb.is-on span{color:var(--cream)}
-.fmt{display:grid; gap:8px; grid-template-columns:repeat(2,1fr)}
+.fmt{display:grid; gap:8px; grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(min-width:600px){.fmt{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}
 .fmt button{background:var(--elevated); border:1px solid var(--border); padding:10px 12px; cursor:pointer;
   text-align:left; display:flex; flex-direction:column; gap:3px; transition:border-color var(--d-micro) var(--e-ui),background var(--d-micro) var(--e-ui);
@@ -1544,3 +1547,133 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 /* the mega menu is only opened from the desktop nav (hidden under 900px); its 4-column grid
    was wider than a phone and let iOS widen the page, cropping the preloader and shop on the right */
 @media(max-width:899px){.mega{display:none}}
+
+/* ---------- the crate: a diagonal row of records, flipped through by scrolling ----------
+   The section is tall; its stage sticks to the viewport while page scroll moves the row.
+   --step sets how much scroll each record takes; vinylcrate.js measures the result. */
+.crate{--step:62svh; position:relative; height:calc(100svh + var(--n) * var(--step))}
+.crate__stage{position:sticky; top:0; height:100svh; overflow:hidden}
+.crate__gl{position:absolute; inset:0; z-index:1}
+.crate__scribble{position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; overflow:visible; opacity:0}
+.crate__scribble path{fill:none; stroke:var(--paper-ink); stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke}
+.crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 18px); width:min(360px, 34vw); pointer-events:none}
+.crate__eyebrow{color:#5E5854; margin-bottom:10px}
+.crate__title{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
+  font-size:clamp(1.7rem,3vw,2.7rem); line-height:.98; margin:0 0 12px; overflow:hidden; padding-bottom:.06em}
+.crate__title span,.crate__rows dd span,.crate__fv span,.crate__fl span{display:inline-block}
+.crate__rows{margin:0; border-top:1px solid rgba(22,19,20,.32)}
+.crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:7px 0 6px;
+  border-bottom:1px solid rgba(22,19,20,.32)}
+.crate__rows dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854}
+.crate__rows dd{margin:0; text-align:right; overflow:hidden; font-size:.95rem}
+.crate__facts{position:absolute; z-index:4; left:50%; bottom:clamp(20px,5svh,48px); transform:translateX(-50%);
+  display:flex; gap:clamp(36px,9vw,140px); text-align:center; pointer-events:none; width:max-content; max-width:calc(100vw - 2*var(--gutter))}
+.crate__fl{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:#5E5854; margin-bottom:8px; overflow:hidden}
+.crate__fv{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
+  font-size:clamp(1.05rem,1.9vw,1.65rem); line-height:1.02; overflow:hidden}
+.crate__count{position:absolute; z-index:4; right:var(--gutter); bottom:clamp(20px,5svh,48px); color:#5E5854; letter-spacing:.2em}
+/* how-to hint: under the info panel on desktop (the corners belong to the neighbouring
+   records), centred near the bottom on phones */
+.crate__hint{color:#5E5854; letter-spacing:.2em; line-height:1.9}
+.crate__hint--d{margin-top:18px}
+.crate__hint--m{display:none}
+@media(hover:none) and (max-width:767px){.crate__hint--d{display:none} .crate__hint--m{display:block}}
+/* the record list is for keyboards and screen readers: every item stays focusable,
+   only the focused one surfaces (as a small chip above the facts) */
+.crate__list{position:absolute; z-index:5; left:var(--gutter); bottom:clamp(96px,16svh,150px); margin:0; padding:0; list-style:none}
+.crate__list li{position:absolute; left:0; bottom:0; clip-path:inset(50%); width:1px; height:1px; overflow:hidden; white-space:nowrap}
+.crate__list li:focus-within{clip-path:none; width:auto; height:auto; overflow:visible}
+.crate__list a{display:flex; gap:10px; align-items:center; background:var(--paper); padding:6px 10px 6px 6px;
+  border:1px solid rgba(22,19,20,.3); font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase}
+.crate__list img{width:34px; height:34px; border-radius:50%; object-fit:cover}
+@media(max-width:767px){
+  .crate{--step:52svh}
+  .crate__meta{width:calc(100% - 2*var(--gutter)); top:calc(var(--nav-h) + 8px)}
+  .crate__title{font-size:clamp(1.5rem,7vw,2.1rem)}
+  .crate__rows>div{padding:5px 0 4px}
+  .crate__rows dd{font-size:.85rem}
+  .crate__facts{bottom:calc(15svh + env(safe-area-inset-bottom,0px)); gap:28px}
+  .crate__fv{font-size:1rem}
+  .crate__count{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .crate__hint--d{display:none}
+  .crate__hint--m{display:block; position:absolute; z-index:4; left:50%; transform:translateX(-50%); bottom:calc(9svh + env(safe-area-inset-bottom,0px)); text-align:center; white-space:nowrap}
+  .crate__count{display:none}
+}
+/* no WebGL: the crate becomes a plain list of records */
+.crate--flat{height:auto}
+.crate--flat .crate__stage{position:relative; height:auto; padding:calc(var(--nav-h) + 24px) var(--gutter) 48px}
+.crate--flat .crate__meta,.crate--flat .crate__facts,.crate--flat .crate__count,.crate--flat .crate__hint,.crate--flat .crate__scribble{display:none}
+.crate--flat .crate__list{position:static; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.crate--flat .crate__list li{position:static; clip-path:none; width:auto; height:auto; overflow:visible}
+
+/* ---------- product page, editorial ---------- */
+.pdx-head{padding:calc(var(--nav-h) + clamp(18px,3vw,36px)) var(--gutter) clamp(30px,5vw,64px); text-align:center}
+.pdx-crumb{color:#5E5854; margin-bottom:clamp(28px,6vw,80px); text-align:left}
+.pdx-crumb a:hover{color:var(--paper-ink)}
+.pdx-title{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.025em;
+  font-size:clamp(2.6rem,9.5vw,9.6rem); line-height:.9; margin:0; text-wrap:balance; overflow-wrap:anywhere;
+  padding-bottom:.08em; border-bottom:1px solid rgba(22,19,20,.4)}
+.pdx-credits{margin:12px 0 0; font-size:clamp(.95rem,1.3vw,1.15rem)}
+.pdx-k{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854; margin:0 6px 0 14px}
+.pdx-k:first-child{margin-left:0}
+.pdx-table{margin:14px 0 0; border-top:1px solid rgba(22,19,20,.4); text-align:left}
+.pdx-table>div{display:flex; justify-content:space-between; align-items:baseline; gap:20px; padding:7px 0 6px; border-bottom:1px solid rgba(22,19,20,.4)}
+.pdx-table dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854}
+.pdx-table dd{margin:0; text-align:right}
+.pdx-table a{text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px}
+.pdx-actions{display:flex; justify-content:center; gap:clamp(10px,2vw,18px); margin-top:clamp(40px,7vw,96px); flex-wrap:wrap}
+.pdx-btn{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
+  font-size:clamp(1.35rem,3vw,2.6rem); line-height:1; padding:.32em .12em .26em; background:none; color:inherit; cursor:pointer;
+  border:0; border-top:4px solid currentColor; border-bottom:4px solid currentColor; transition:opacity .2s, letter-spacing .35s var(--e-out-expo)}
+.pdx-btn:hover{letter-spacing:.02em}
+.pdx-btn:focus-visible{outline:2px solid var(--ember); outline-offset:4px}
+
+/* the cover rises from under a torn paper edge */
+.pdx-reveal{position:relative; overflow:hidden; color:var(--cream); background:#0b090a; margin-top:-1px; isolation:isolate}
+.pdx-reveal__bg{position:absolute; inset:0; z-index:0; overflow:hidden}
+.pdx-reveal__bg img{width:100%; height:100%; object-fit:cover; transform:scale(1.28); filter:blur(34px) saturate(1.25) brightness(.62); will-change:transform}
+.pdx-reveal__bg::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(6,5,6,.15),rgba(6,5,6,.45))}
+.pdx-tear{position:absolute; top:-1px; left:0; width:100%; height:clamp(54px,9vw,120px); z-index:3; display:block}
+.pdx-tear path{fill:var(--paper)}
+.pdx-reveal__rows{position:relative; z-index:2; padding-top:clamp(70px,11vw,150px)}
+.pdx-row{position:relative; min-height:clamp(84px,15vw,210px); border-bottom:1px solid rgba(243,239,232,.32);
+  display:flex; align-items:flex-end; padding:0 var(--gutter) 8px}
+.pdx-row--art{min-height:0; justify-content:center; padding-block:clamp(24px,4vw,48px)}
+.pdx-row--cta{justify-content:center; align-items:center; min-height:clamp(120px,16vw,200px); border-bottom:0}
+.pdx-w{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.025em;
+  font-size:clamp(2.2rem,8vw,8rem); line-height:.86; max-width:80%; overflow-wrap:anywhere}
+.pdx-w--l{margin-right:auto; padding-left:clamp(0px,5vw,80px)}
+.pdx-w--r{margin-left:auto; text-align:right; padding-right:clamp(0px,3vw,48px)}
+.pdx-cover{margin:0; width:min(460px,74vw,58svh); aspect-ratio:1; box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.08);
+  transform:translateY(var(--py,0px))}
+.pdx-cover.reveal{transform:translateY(calc(var(--py,0px) + 18px))}
+.pdx-cover.reveal.is-in{transform:translateY(var(--py,0px))}
+.pdx-cover img{width:100%; height:100%; object-fit:cover; display:block}
+.pdx-btn--light{color:var(--cream)}
+
+/* up next: the next record's name on hairlines, the record rising and turning */
+.pdx-next{position:relative; overflow:hidden; min-height:clamp(620px,120svh,1100px); margin-top:clamp(40px,6vw,80px)}
+.pdx-next .pdx-row{border-bottom-color:rgba(22,19,20,.4)}
+.pdx-next__rows{position:relative; z-index:2; pointer-events:none}
+.pdx-next__cap{color:#5E5854; padding-bottom:4px}
+.pdx-next__rec{position:absolute; z-index:1; left:50%; bottom:0; width:min(640px,86vw); transform:translate3d(-50%,40%,0); display:block; will-change:transform}
+.pdx-next__rec .record{--size:640px !important; width:100%}
+.pdx-next__rec:focus-visible{outline:2px solid var(--ember); outline-offset:6px; border-radius:50%}
+@media(max-width:767px){
+  .pdx-credits .pdx-k{display:inline-block; margin-left:0}
+  .pdx-credits{display:grid; gap:4px; justify-items:center}
+  .pdx-w{max-width:100%}
+  .pdx-next{min-height:clamp(560px,105svh,900px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .pdx-btn{transition:none}
+  .pdx-next__rec{transform:translate3d(-50%,14%,0)}
+}
+#buy{scroll-margin-top:calc(var(--nav-h) + 8px)}
+.pdx-cover--round{border-radius:50%; overflow:hidden; box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.1)}
+.pdx-cover--round img{transform:scale(1.01)}
+/* the product stage: give the media box the stage's width so the record (sized as a % of it) shows */
+#stagemedia{width:100%; display:grid; place-items:center}
+/* the next record rises behind its name: invert the words where they cross it */
+.pdx-next .pdx-w{color:var(--paper); mix-blend-mode:difference}

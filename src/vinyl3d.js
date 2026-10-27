@@ -7,31 +7,10 @@
    ============================================================ */
 import * as THREE from "__THREE_IMPORT__";
 
-export function mountVinyl(container) {
-  if (!(container instanceof HTMLElement)) {
-    throw new TypeError("mountVinyl requires a DOM container.");
-  }
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    powerPreference: "high-performance"
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
-  renderer.setClearColor(0x000000, 0);
-  const canvas = renderer.domElement;
-  canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:pan-y;";
-  canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label", "A slowly rotating vinyl record, lit by a light that follows the pointer");
-  container.appendChild(canvas);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, -3.6, 8.1);
-  camera.lookAt(0, 0, 0);
-
+/* Everything that makes a record look like a real pressing, shared by the hero disc
+   and the crate carousel: seeded noise, the groove/roughness/anisotropy maps and the
+   small studio it reflects. One kit per renderer (textures belong to a GL context). */
+export function createVinylKit(renderer) {
   const textures = new Set();
   let seed = 781;
   function random() {
@@ -168,6 +147,60 @@ export function mountVinyl(container) {
     owned.forEach(o => o.dispose()); pmrem.dispose();
     return target;
   }
+
+  /* geometry + materials for one LP, shareable across many records in one scene */
+  function recordParts() {
+    const outline = new THREE.Shape();
+    outline.absarc(0, 0, 2.99, 0, Math.PI * 2, false);
+    const hole = new THREE.Path();
+    hole.absarc(0, 0, 0.085, 0, Math.PI * 2, true);
+    outline.holes.push(hole);
+    const bodyGeometry = new THREE.ExtrudeGeometry(outline, {
+      depth: 0.055, steps: 1, bevelEnabled: true, bevelSegments: 3,
+      bevelSize: 0.009, bevelThickness: 0.009, curveSegments: 160
+    });
+    bodyGeometry.translate(0, 0, -0.035);
+    return {
+      bodyGeometry,
+      surfaceGeometry: new THREE.RingGeometry(0.085, 2.992, 200),
+      labelGeometry: new THREE.RingGeometry(0.085, 0.965, 128),
+      bodyMaterial: new THREE.MeshPhysicalMaterial({ color: "#0a0a0b", roughness: 0.2, metalness: 0, ior: 1.5 }),
+      vinylMaterial: new THREE.MeshPhysicalMaterial({
+        ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,
+        anisotropy: 0.85, bumpScale: 0.04, ior: 1.5, specularIntensity: 1
+      })
+    };
+  }
+
+  return { random, makeCanvas, textureFrom, textures, makeVinylMaps, makeStudio, recordParts };
+}
+
+export function mountVinyl(container) {
+  if (!(container instanceof HTMLElement)) {
+    throw new TypeError("mountVinyl requires a DOM container.");
+  }
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    powerPreference: "high-performance"
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  renderer.setClearColor(0x000000, 0);
+  const canvas = renderer.domElement;
+  canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:pan-y;";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "A slowly rotating vinyl record, lit by a light that follows the pointer");
+  container.appendChild(canvas);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, -3.6, 8.1);
+  camera.lookAt(0, 0, 0);
+
+  const { random, makeCanvas, textureFrom, textures, makeVinylMaps, makeStudio } = createVinylKit(renderer);
 
   /* the printed centre label — PastForward's own microcopy only, no invented track listing.
      Built once onto `defaultLabelCanvas` (the procedural grain/text render is deterministic,
@@ -335,6 +368,10 @@ export function mountVinyl(container) {
   resize();
 
   let frame, disposed = false, previousTime = performance.now();
+  // skip drawing while the hero is scrolled out of view (the loop stays alive, the GPU rests)
+  let onScreen = true;
+  const visibility = new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { rootMargin: "80px" });
+  visibility.observe(container);
   /* rotation is driven from outside — the page's existing drag-to-spin/momentum/
      scratch-sound system (routes.js mountHome()) computes one angle per frame for
      every record on the page, CSS or WebGL alike, and calls setAngleDeg() with it.
@@ -379,8 +416,8 @@ export function mountVinyl(container) {
 
     light.position.lerp(lightTarget, 1 - Math.exp(-6 * dt));
 
-    if (albumScrub) albumScrub.update(now);
-    renderer.render(scene, camera);
+    if (albumScrub && onScreen) albumScrub.update(now);
+    if (onScreen) renderer.render(scene, camera);
     frame = requestAnimationFrame(animate);
   }
   frame = requestAnimationFrame(animate);
@@ -390,6 +427,7 @@ export function mountVinyl(container) {
     disposed = true;
     cancelAnimationFrame(frame);
     resizeObserver.disconnect();
+    visibility.disconnect();
     window.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("pointerleave", onPointerLeave);
     if (albumScrub) albumScrub.cleanup();
