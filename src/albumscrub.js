@@ -97,10 +97,12 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
       tgt.fill();
     }
 
-    var g = tgt.createRadialGradient(CX, CY, R * 0.05, CX, CY, R);
-    g.addColorStop(0, 'rgba(0,0,0,0.52)');
-    g.addColorStop(0.55, 'rgba(0,0,0,0.30)');
-    g.addColorStop(1, 'rgba(0,0,0,0.62)');
+    // only a soft fall-off at the very edge, where a printed label meets the vinyl;
+    // the art itself stays at full brightness
+    var g = tgt.createRadialGradient(CX, CY, R * 0.62, CX, CY, R);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.8, 'rgba(0,0,0,0.06)');
+    g.addColorStop(1, 'rgba(0,0,0,0.26)');
     tgt.fillStyle = g;
     tgt.beginPath();
     tgt.arc(CX, CY, R, 0, Math.PI * 2);
