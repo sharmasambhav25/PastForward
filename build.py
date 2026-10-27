@@ -28,6 +28,9 @@ def vinyl3d_module():
     three_b64 = base64.b64encode(open(three_path, 'rb').read()).decode()
     three_uri = 'data:text/javascript;base64,' + three_b64
     js = open(src_path).read().replace('__THREE_IMPORT__', three_uri)
+    crate = os.path.join(SRC, 'vinylcrate.js')
+    if os.path.exists(crate):   # shares the module's THREE import and createVinylKit()
+        js += '\n' + open(crate).read()
     return f'<script type="module">{js}</script>'
 
 VINYL3D = vinyl3d_module()
