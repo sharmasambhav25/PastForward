@@ -1151,6 +1151,96 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 }
 
 /* ================================================================
+   THE LIBRARY
+   The A24 opening, translated to records: the whole vinyl catalogue
+   as one shelf, right after the hero. You scroll through it record by
+   record; the shelf lets go at either end so the page keeps moving.
+   The front record carries a turning ring of type, leans toward the
+   pointer, opens on click / Enter, and spins when dragged.
+   ================================================================ */
+.lib{position:relative; overflow:hidden;
+  padding-block:clamp(44px,6vw,76px) clamp(30px,4vw,52px)}
+.lib__head{display:flex; justify-content:space-between; align-items:flex-end;
+  gap:24px; flex-wrap:wrap}
+.lib__tally{display:inline-flex; align-items:baseline; gap:.4em;
+  font-size:clamp(1.15rem,2.2vw,1.5rem)}
+.lib__tally .of{font-size:.55em; letter-spacing:.2em; color:var(--muted)}
+.lib__stage{position:relative; height:clamp(340px,58vh,560px);
+  perspective:1200px; touch-action:pan-y; cursor:grab}
+.lib__stage.is-dragging{cursor:grabbing}
+.lib__row{position:absolute; inset:0}
+.lib-rec{position:absolute; left:50%; top:50%;
+  width:var(--lib-size,320px); height:var(--lib-size,320px);
+  margin:calc(var(--lib-size,320px) / -2) 0 0 calc(var(--lib-size,320px) / -2);
+  transform-style:preserve-3d; cursor:pointer; will-change:transform;
+  transition:transform 520ms var(--e-out-expo)}
+.lib-rec.no-t{transition:none}
+.lib-rec .record{filter:brightness(var(--dim,1))}
+.lib-rec.is-act{cursor:grab}
+.lib__stage.is-dragging .lib-rec.is-act{cursor:grabbing}
+.lib-rec__tilt{position:absolute; inset:0; transform-style:preserve-3d;
+  transition:transform 420ms var(--e-ui)}
+/* the ring: circular type around the front record. It never stops
+   turning; pointer movement feeds it and it eases back to its base
+   speed. It sits behind the row and never takes a pointer event. */
+.lib__ring{position:absolute; left:50%; top:50%;
+  width:calc(var(--lib-size,320px) * 1.38); aspect-ratio:1;
+  transform:translate(-50%,-50%); pointer-events:none; z-index:60;
+  opacity:.32; transition:opacity 400ms var(--e-ui)}
+.lib.is-over .lib__ring{opacity:.95}
+.lib__ring svg{width:100%; height:100%; overflow:visible}
+.lib__ring text{font-family:var(--mono); font-size:9.2px; letter-spacing:2.6px;
+  fill:rgba(243,233,222,.5); text-transform:uppercase;
+  transition:fill 400ms var(--e-ui)}
+.lib.is-over .lib__ring text{fill:rgba(243,233,222,.92)}
+/* credits under the shelf — the front record's story, swapping as you browse */
+.lib__credits{max-width:640px; margin:clamp(20px,3vw,32px) auto 0; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:16px}
+.lib__q{font-family:var(--display); font-style:italic;
+  font-size:clamp(1.05rem,2vw,1.2rem); line-height:1.4; margin:0; text-wrap:balance}
+.lib__acts{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center}
+.lib__hint{margin-top:clamp(18px,2.6vw,28px); text-align:center;
+  letter-spacing:.18em; line-height:2.1}
+.lib__hint b{color:var(--cream); font-weight:500; transition:color 300ms var(--e-ui)}
+.lib.is-live .lib__hint b{color:var(--ember)}
+/* the record's own full-bleed cover on the product page */
+.libcover{margin-top:clamp(48px,7vw,88px)}
+.bleed--tall img{height:clamp(420px,88vh,900px)}
+/* the library strip at the bottom of every product page: small discs
+   that turn with the page scroll */
+.libstrip{display:flex; gap:18px; overflow-x:auto; padding:6px 2px 18px;
+  cursor:grab; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;
+  scrollbar-width:none; scroll-snap-type:x proximity}
+.libstrip::-webkit-scrollbar{display:none}
+.libstrip__rec{flex:none; width:96px; scroll-snap-align:center; text-align:center;
+  text-decoration:none; transition:transform 300ms var(--e-spring)}
+.libstrip__rec:hover{transform:translateY(-4px)}
+.libstrip__rec .record{margin-inline:auto}
+.libstrip__tag{display:block; margin-top:9px; color:var(--muted); font-size:.52rem;
+  letter-spacing:.12em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.libstrip__rec.is-here .libstrip__tag{color:var(--ember)}
+/* the cursor blooms into a turning badge over the shelf */
+.cursor.is-badge .cursor__ring{width:84px; height:84px; margin:-42px 0 0 -42px;
+  border-color:transparent}
+.cursor.is-badge .cursor__ring::before{content:""; position:absolute; inset:-1px;
+  border-radius:50%; border:1px dashed rgba(243,233,222,.75);
+  animation:libspin 12s linear infinite}
+.cursor.is-badge .cursor__lbl{opacity:1}
+@keyframes libspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  .lib-rec,.lib-rec__tilt{transition:none}
+  .lib__ring{display:none}
+  .cursor.is-badge .cursor__ring::before{animation:none}
+  .libstrip__rec:hover{transform:none}
+}
+@media(max-width:767px){
+  .lib__stage{height:clamp(300px,52vh,420px)}
+  .lib__hint{letter-spacing:.12em}
+  .libstrip{gap:14px}
+  .libstrip__rec{width:84px}
+}
+
+/* ================================================================
    THE ARTWORK WALL
    The paper chapter used to be phone photographs in a lot of empty
    space. It is now the thing we actually sell: real album artwork,

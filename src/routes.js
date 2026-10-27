@@ -81,6 +81,11 @@ const seam = (kind) => `<div class="seam seam--${kind}">${photo('col-g')
 /* the tagline, set the way the brand sets it on the flex */
 const TAGLINE = `<span class="tagline">designed from <em>memory,</em> made for <em>now</em></span>`;
 
+const colOf = p => COLS.find(c => p.tags.includes(c.slug));
+/* THE LIBRARY: the whole vinyl catalogue as one shelf — featured first,
+   then the rest. This is the shelf you scroll through on the homepage. */
+const LIB = withVinyl.slice().sort((a, b) => a.rank - b.rank);
+
 /* ============================== HOME ============================== */
 function viewHome() {
   const feat = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
@@ -140,6 +145,55 @@ function viewHome() {
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
       <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
+    </div>
+  </section>
+
+  <!-- 1.5 ============ THE LIBRARY ============
+       The A24 opening, translated: the whole vinyl catalogue as one shelf.
+       Scrolling browses it record by record; the shelf lets go at either
+       end so the page keeps moving. Click the record in front (or press
+       Enter) to open it; drag it to spin; the ring turns around whatever
+       is in front and speeds up as you move. -->
+  <section class="lib" id="library" data-section="THE LIBRARY">
+    ${col('g', 'col--soft col--mask')}
+    <div class="wrap">
+      <div class="lib__head">
+        <div style="max-width:560px">
+          <div class="cap">THE LIBRARY</div>
+          <h2 class="d-l reveal" style="margin:14px 0 0">Discover the library of records.</h2>
+          <p class="body-l dim reveal measure" style="margin-top:16px">Every vinyl we make, on one shelf. Scroll through it like you would a crate — pull one forward, open it up.</p>
+        </div>
+        <div class="lib__tally num reveal" aria-label="${LIB.length} records in the library">
+          <span id="libpos">01</span> <span class="of">/ ${String(LIB.length).padStart(2, '0')}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lib__stage" id="libstage" data-cursor-badge>
+      <div class="lib__ring" id="libring" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <defs><path id="libRingP" d="M100 100 m -78 0 a 78 78 0 1 1 156 0 a 78 78 0 1 1 -156 0" fill="none"/></defs>
+          <text><textPath href="#libRingP">PASTFORWARD · SCROLL THE SHELF · OPEN THE RECORD · DRAG TO SPIN ·</textPath></text>
+        </svg>
+      </div>
+      <div class="lib__row" id="librow" aria-label="The record library. Scroll or use the arrow keys to browse, Enter to open."></div>
+    </div>
+    <div class="wrap">
+      <div class="lib__credits" aria-live="polite">
+        <div>
+          <div class="card__artist" id="libartist">${esc(LIB[0].artist)}</div>
+          <div class="d-s" id="libalbum" style="margin-top:4px">${albumOf(LIB[0])}</div>
+        </div>
+        <div>
+          <p class="lib__q" id="libquote">“${esc(colOf(LIB[0]).desc)}”</p>
+          <div class="mono-xs dim" id="libsrc" style="margin-top:8px">FROM ${esc(colOf(LIB[0]).name.toUpperCase())}</div>
+        </div>
+        <div class="lib__acts">
+          <span class="num" id="libprice" style="font-size:1.2rem">${money(variant(LIB[0], 'vinyl').price)}</span>
+          <button class="btn btn--primary" id="libadd" data-add="${LIB[0].slug}|vinyl"><span class="btn__mag">Add to crate</span></button>
+          <a class="btn btn--secondary" id="libopen" href="#/product/${LIB[0].slug}"><span class="btn__mag">Open</span></a>
+        </div>
+      </div>
+      <div class="lib__hint mono-xs dim"><b>SCROLL</b> THE SHELF · <b>←</b>&hairsp;<b>→</b> STEP · CLICK THE RECORD TO OPEN · DRAG TO SPIN</div>
     </div>
   </section>
 
@@ -460,6 +514,19 @@ function viewProduct(p, params) {
       </div>
     </div>
 
+    ${photo(FORMAT_PHOTO[sel]) ? `
+    <!-- the record, full-bleed: scroll down from the specs and the format
+         you chose takes over the whole page — a real photo, not a render -->
+    <section class="libcover" data-section="ON THE WALL">
+      <div class="bleed bleed--tall">
+        <img src="${photo(FORMAT_PHOTO[sel])}" alt="A PastForward ${esc(FMT[sel].label)} of ${esc(p.artist)}, photographed for real" loading="lazy" decoding="async">
+        <div class="bleed__cap">
+          <div class="d-s">The real thing, at full size.</div>
+          <div class="mono-xs dim" style="margin-top:8px">PHOTOGRAPHED, NOT RENDERED · ${esc(FMT[sel].label.toUpperCase())}</div>
+        </div>
+      </div>
+    </section>` : ''}
+
     <section class="sec" data-section="SCALE">
       ${eyebrow('SCALE')}
       <h2 class="d-m reveal" style="margin:12px 0 24px">How big it actually is.</h2>
@@ -473,6 +540,21 @@ function viewProduct(p, params) {
         ${col ? `<a class="mono-xs" href="#/collections/${col.slug}" style="color:var(--muted)">PART OF ${esc(col.name.toUpperCase())} →</a>` : ''}
       </div>
       <div class="grid">${rel2.map(cardHTML).join('')}</div>
+    </section>
+
+    <!-- the library, at the bottom of every record: the whole catalogue as a
+         strip of small discs that turn as the page scrolls past. A24 ends its
+         film pages the same way — you never hit a dead end. -->
+    <section class="sec" style="padding-top:0" data-section="THE LIBRARY">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+        <h2 class="d-s">The library</h2>
+        <span class="mono-xs dim num">${LIB.length} RECORDS · THEY TURN AS YOU SCROLL</span>
+      </div>
+      <div class="libstrip" id="libstrip" aria-label="The whole record library">
+        ${LIB.map((q, i) => `<a class="libstrip__rec${q.slug === p.slug ? ' is-here' : ''}" href="#/product/${q.slug}" aria-label="${esc(q.artist)} · ${esc(albumText(q))}">
+          ${recordHTML(q, { size: 84 })}
+          <span class="libstrip__tag mono-xs">${esc(q.artist)}</span></a>`).join('')}
+      </div>
     </section>
 
     <div class="buybar" id="buybar">
@@ -802,6 +884,245 @@ function mountAccordions() {
 }
 
 function mountHome() {
+  /* --- THE LIBRARY controller: the shelf right after the hero. One row,
+     windowed to the records near the front. Scrolling over the section steps
+     through it (with an accumulator + lock so one glide = one record); at
+     either end the shelf lets go and the page scrolls on — no trap. The
+     front record carries the ring, the lean, the credits and opens on
+     click / Enter; dragging it spins it; a horizontal swipe browses. --- */
+  (function mountLibrary() {
+    const sec = $('#library'), stage = $('#libstage'), row = $('#librow'), ringEl = $('#libring');
+    if (!sec || !stage || !row) return;
+    const N = LIB.length; if (!N) return;
+    const artistEl = $('#libartist'), albumEl = $('#libalbum'), quoteEl = $('#libquote'),
+      srcEl = $('#libsrc'), priceEl = $('#libprice'), addBtn = $('#libadd'),
+      openLink = $('#libopen'), posEl = $('#libpos');
+    let act = 0, live = false, swiped = false;
+    const node = new Map();
+    const WIN = 4;
+    /* plain maths for the row: offset, scale and dimming by distance from front */
+    const XS = [0, .72, 1.05, 1.34, 1.58], SC = [1, .66, .53, .44, .38], DIM = [1, .58, .38, .24, .14];
+
+    function makeRec(i) {
+      const p = LIB[i];
+      const el = document.createElement('div');
+      el.className = 'lib-rec no-t'; el.dataset.i = i;
+      el.innerHTML = `<div class="lib-rec__tilt" data-media>${recordHTML(p, { size: 1000, big: true, style: 'width:100%' })}</div>`;
+      row.appendChild(el);
+      return el;
+    }
+    function layout() {
+      const S = Math.max(190, Math.min(stage.offsetHeight * .96, stage.offsetWidth * .52, 470));
+      stage.style.setProperty('--lib-size', S + 'px');
+      for (let i = act - WIN; i <= act + WIN; i++) {
+        if (i < 0 || i >= N) continue;
+        if (!node.has(i)) { const el = makeRec(i); node.set(i, el); el._fresh = true; }
+      }
+      for (const [i, el] of Array.from(node)) {
+        if (i < act - WIN - 1 || i > act + WIN + 1) { el.remove(); node.delete(i); }
+      }
+      node.forEach((el, i) => {
+        const o = i - act, ao = Math.min(Math.abs(o), WIN), so = Math.sign(o) || 0;
+        el.classList.toggle('is-act', ao === 0);
+        el.style.zIndex = 100 - ao;
+        el.style.transform = `translateX(${(so * S * XS[ao]).toFixed(1)}px) scale(${SC[ao]})`;
+        el.style.setProperty('--dim', DIM[ao]);
+        el.dataset.cursor = ao === 0 ? 'OPEN' : 'PULL';
+        if (el._fresh) { el._fresh = false; requestAnimationFrame(() => el.classList.remove('no-t')); }
+      });
+    }
+    function info(p) {
+      const v = variant(p, 'vinyl'), c = colOf(p);
+      artistEl.textContent = p.artist;
+      albumEl.innerHTML = albumOf(p);
+      quoteEl.textContent = '“' + (c ? c.desc : 'Records that were on a wall before you were born.') + '”';
+      srcEl.textContent = c ? 'FROM ' + c.name.toUpperCase() : 'FROM THE CATALOGUE';
+      priceEl.textContent = v ? money(v.price) : money(p.from);
+      addBtn.setAttribute('data-add', p.slug + '|vinyl');
+      openLink.setAttribute('href', '#/product/' + p.slug);
+      posEl.textContent = String(act + 1).padStart(2, '0');
+    }
+    function go(to, dir) {
+      to = Math.max(0, Math.min(N - 1, to));
+      if (to === act) return;
+      act = to; layout(); info(LIB[act]);
+      const el = node.get(act); if (el) el._kick = 130;   // pulled forward with a little spin
+      preloadAhead();
+      Sound.tick();
+    }
+    function openRec() {
+      const rec = node.get(act);
+      if (rec) captureFlip(rec);                            // the flip carries into the PDP stage
+      location.hash = '#/product/' + LIB[act].slug;
+      Sound.tick();
+    }
+    function preloadAhead() {
+      for (let i = act - 2; i <= act + 6; i++) {
+        const p = LIB[i]; if (!p) continue;
+        const v = variant(p, 'vinyl');
+        if (v) { const im = new Image(); im.src = imgSrc(v.image, true); }
+      }
+    }
+
+    /* scrolling over the shelf browses it. One glide on a normal wheel emits
+       many small deltas, so they accumulate until they cross a step; a short
+       lock afterwards keeps one glide from running away. At either end of the
+       shelf the handler steps aside entirely — the page keeps scrolling. */
+    let acc = 0, lockT = 0;
+    sec.addEventListener('wheel', e => {
+      if (!live || /INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
+      const d = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1);
+      const dir = d > 0 ? 1 : -1;
+      if ((dir > 0 && act >= N - 1) || (dir < 0 && act <= 0)) { acc = 0; return; }
+      e.preventDefault();
+      const now = performance.now();
+      if (now < lockT) return;
+      acc += d;
+      if (Math.abs(acc) > 55) { go(act + (acc > 0 ? 1 : -1)); acc = 0; lockT = now + 400; }
+    }, { passive: false });
+
+    /* ← → step, Enter opens — the same keys A24's shelf answers to */
+    window.__libKeys = e => {
+      if (!document.body.contains(sec)) { window.__libKeys = null; return; }
+      if (!live || /INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(act - 1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); go(act + 1); }
+      else if (e.key === 'Enter' && !e.target.closest('button, a, input, select, textarea')) { e.preventDefault(); openRec(); }
+    };
+
+    /* the pointer: leans the front record, feeds the ring's speed, drags it
+       round (with scratch audio), and reads a horizontal swipe as a step.
+       A vertical swipe stays with the page — touch-action keeps pan-y. */
+    let px = 0, ringV = 14, ringA = 0, drag = null, moved = 0, swipe = null, lastX = null;
+    const angleAt = (el, e) => {
+      const r = el.getBoundingClientRect();
+      if (!r.width) return 0;
+      return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
+    };
+    stage.addEventListener('pointerdown', e => {
+      moved = 0; swiped = false;   // a new press clears the last gesture's tail
+      if (e.pointerType === 'touch') {
+        swipe = { x: e.clientX, y: e.clientY, intent: null };
+        sec.classList.add('is-over');
+        return;
+      }
+      const rec = e.target.closest('.lib-rec');
+      if (!rec || !rec.classList.contains('is-act')) return;  // only the front record spins on drag
+      e.preventDefault();
+      drag = rec; moved = 0; rec._mom = 0; rec._kick = 0;
+      rec._lastA = angleAt(rec, e); rec._lastT = performance.now(); rec._vel = 0;
+      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+      stage.classList.add('is-dragging');
+      Sound.scratchStart();
+    });
+    stage.addEventListener('pointermove', e => {
+      if (lastX !== null) { ringV += Math.min(80, Math.abs(e.clientX - lastX) * 1.4); }
+      lastX = e.clientX;
+      if (swipe && e.pointerType === 'touch') {
+        if (!swipe.intent) {
+          const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+          if (Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy) * 1.25) swipe.intent = 'x';
+          else if (Math.abs(dy) > 14) swipe.intent = 'y';
+        }
+        return;
+      }
+      if (drag) {
+        const a = angleAt(drag, e), dA = a - drag._lastA;
+        drag._ang = (drag._ang || 0) + dA;
+        const t = performance.now(), dt = Math.max(1, t - drag._lastT);
+        drag._vel = drag._vel * .7 + (dA / dt * 1000) * .3;
+        drag._lastA = a; drag._lastT = t; moved = Math.max(moved, Math.abs(dA));
+        const disc = drag.querySelector('[data-disc]');
+        if (disc) disc.style.transform = `rotate(${drag._ang.toFixed(2)}deg)`;   // the disc follows the hand
+        Sound.scratchUpdate(Math.abs(drag._vel));
+        return;
+      }
+      if (e.pointerType === 'touch') return;
+      const r = stage.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const rec = node.get(act);
+      if (rec && !RM()) {
+        const nx = (e.clientX - r.left) / r.width * 2 - 1, ny = (e.clientY - r.top) / r.height * 2 - 1;
+        rec.firstElementChild.style.transform = `rotateX(${(-ny * 5).toFixed(2)}deg) rotateY(${(nx * 7).toFixed(2)}deg)`;
+      }
+    });
+    const up = e => {
+      if (swipe && e.pointerType === 'touch') {
+        if (swipe.intent === 'x') {
+          const dx = e.clientX - swipe.x;
+          if (Math.abs(dx) > 46) { swiped = true; go(act + (dx < 0 ? 1 : -1)); }
+        }
+        swipe = null; sec.classList.remove('is-over');
+        return;
+      }
+      if (!drag) return;
+      drag._mom = drag._vel; drag = null;
+      stage.classList.remove('is-dragging');
+      Sound.scratchStop();
+    };
+    stage.addEventListener('pointerup', up);
+    stage.addEventListener('pointercancel', up);
+    stage.addEventListener('pointerenter', () => sec.classList.add('is-over'));
+    stage.addEventListener('pointerleave', () => {
+      sec.classList.remove('is-over');
+      const rec = node.get(act);
+      if (rec) rec.firstElementChild.style.transform = '';
+    });
+    /* clicking a neighbour pulls it forward; clicking the front record opens it
+       (unless that click was really the tail of a drag or a swipe) */
+    row.addEventListener('click', e => {
+      const rec = e.target.closest('.lib-rec'); if (!rec) return;
+      if (swiped) { swiped = false; return; }
+      if (moved > 9) { moved = 0; return; }
+      const i = +rec.dataset.i;
+      if (i === act) openRec(); else go(i);
+    });
+
+    /* the ring and the front record's spin share one loop. The ring never
+       stops; pointer movement adds velocity that eases back to its base. */
+    if (!RM()) {
+      let last = performance.now();
+      (function loop(t) {
+        if (!document.body.contains(sec)) return;
+        const dt = Math.min(64, t - last); last = t;
+        ringA = (ringA + ringV * dt / 1000) % 360;
+        ringV += (14 - ringV) * Math.min(1, dt / 900);
+        if (ringEl) ringEl.style.transform = `translate(-50%,-50%) rotate(${ringA.toFixed(2)}deg)`;
+        const rec = node.get(act);
+        if (rec && !drag) {
+          const disc = rec.querySelector('[data-disc]');
+          if (disc) {
+            rec._ang = (rec._ang || 0) + 5 * dt / 1000;
+            if (rec._kick) {
+              const s = rec._kick * (1 - Math.pow(.86, dt / 16.7));
+              rec._kick -= s; rec._ang += s;
+              if (rec._kick < .4) rec._kick = 0;
+            }
+            if (rec._mom) {
+              rec._ang += rec._mom * dt / 1000;
+              rec._mom *= Math.pow(.93, dt / 16.7);
+              if (Math.abs(rec._mom) < .8) rec._mom = 0;
+            }
+            disc.style.transform = `rotate(${rec._ang.toFixed(2)}deg)`;
+          }
+        }
+        requestAnimationFrame(loop);
+      })(last);
+    }
+
+    /* the shelf is "live" while it owns the viewport — only then does
+       scrolling browse it */
+    const io = new IntersectionObserver(es => es.forEach(en => {
+      live = en.intersectionRatio >= .55;
+      sec.classList.toggle('is-live', live);
+    }), { threshold: [0, .55, .8] });
+    io.observe(sec);
+    const onResize = () => { if (document.body.contains(sec)) layout(); else removeEventListener('resize', onResize); };
+    addEventListener('resize', onResize);
+
+    layout(); info(LIB[0]); preloadAhead();
+  })();
+
   /* One rAF loop drives every disc. Each keeps its own angle, so no two records
      are ever in phase. Rate = idle spin + scroll boost + drag momentum. */
   const spins = [];
@@ -1289,6 +1610,28 @@ function mountProduct(p, params) {
   }
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { drawScale(); io.disconnect(); } }), { threshold: .25 });
   const sv = $('#scaleview'); if (sv) io.observe(sv);
+
+  /* the library at the bottom of the page: every record turns with the
+     scroll — angle is a function of scroll position, so scrolling down and
+     back un-turns them. rAF-throttled; detaches with the strip. */
+  const strip = $('#libstrip');
+  if (strip) {
+    const discs = $$('.record [data-disc], .record[data-disc]', strip);
+    const paint = () => {
+      const y = window.scrollY || 0;
+      discs.forEach((d, i) => { d.style.transform = `rotate(${((i * 21 + y * .18) % 360).toFixed(1)}deg)`; });
+    };
+    if (!discs.length || RM()) { /* static discs are fine without motion */ }
+    else {
+      let queued = false;
+      const onScroll = () => {
+        if (!document.body.contains(strip)) { removeEventListener('scroll', onScroll); return; }
+        if (!queued) { queued = true; requestAnimationFrame(paint); }
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      paint();
+    }
+  }
 }
 
 function mountCollection() {
