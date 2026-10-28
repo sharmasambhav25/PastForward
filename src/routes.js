@@ -143,18 +143,7 @@ function viewHome() {
     </div>
   </section>
 
-  <!-- 2 ============ THE CUT ============
-       Two lines of type running opposite ways, cropped by the page. -->
-  <section style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
-    ${col('r', 'col--soft col--mask')}
-    <div style="position:relative;z-index:2">
-      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
-      <div style="height:clamp(6px,1.4vw,20px)"></div>
-      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
-    </div>
-  </section>
-
-  <!-- 3 ============ THE OBJECT ============ -->
+  <!-- 2 ============ THE OBJECT ============ -->
   <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
     ${col('g', 'col--soft col--mask')}
     <div class="wrap beat3-wrap">
@@ -842,7 +831,17 @@ function viewStory() {
       <form data-form="newsletter" style="display:flex;gap:10px;flex-wrap:wrap;max-width:440px;margin-top:14px">
         <input name="email" type="email" required placeholder="your@email.com" aria-label="Email" style="flex:1;min-width:180px;background:var(--elevated);border:1px solid var(--border);padding:13px;border-radius:2px">
         <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button></form><div data-form-msg></div>
-    </div></div>`;
+    </div></div>
+
+  <!-- THE CUT: two lines of type running opposite ways, cropped by the page -->
+  <section id="storymarquee" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
+    ${col('r', 'col--soft col--mask')}
+    <div style="position:relative;z-index:2">
+      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
+      <div style="height:clamp(6px,1.4vw,20px)"></div>
+      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
+    </div>
+  </section>`;
 }
 
 /* ============================== FAQ / CONTACT ============================== */
@@ -960,7 +959,44 @@ window.__mount = function (seg, params) {
   if (page === 'search') mountSearchPage();
   if (page === 'custom') mountCustom();
   mountAccordions();
+  mountMarquees();
 };
+
+function mountMarquees() {
+  const marqs = $$('[data-marq]').map(m => ({
+    el: m, t: m.querySelector('.marq__t'),
+    dir: parseFloat(m.dataset.marq) || 1, x: 0, w: 0
+  }));
+  if (!marqs.length || RM()) return;
+  marqs.forEach(m => { m.w = m.t.scrollWidth / 6; });
+  let mlast = performance.now();
+  let alive = true;
+  let boost = 0;
+  let lastY = window.scrollY || 0;
+  const onScroll = () => {
+    const y = window.scrollY || 0;
+    const dy = Math.abs(y - lastY);
+    lastY = y;
+    boost = Math.min(180, boost + dy * 0.45);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onUnmount(() => {
+    alive = false;
+    window.removeEventListener('scroll', onScroll);
+  });
+  (function mloop(t) {
+    if (!alive) return;
+    const dt = Math.min(64, t - mlast); mlast = t;
+    boost = Math.max(0, boost - dt * 0.12);
+    marqs.forEach(m => {
+      if (!m.w || m.w < 20) m.w = m.t.scrollWidth / 6;
+      m.x -= m.dir * (26 + boost * 0.18) * dt / 1000;
+      if (m.w) { if (m.x <= -m.w) m.x += m.w; if (m.x >= 0) m.x -= m.w; }
+      m.t.style.transform = `translate3d(${m.x.toFixed(1)}px,0,0)`;
+    });
+    requestAnimationFrame(mloop);
+  })(performance.now());
+}
 
 function mountAccordions() {
   $$('.acc button').forEach(b => {
@@ -1232,26 +1268,6 @@ function mountHome() {
       drop.boost = false;
     }
   };
-
-  /* ---- marquees: two lines, opposite directions, driven by scroll + drift ---- */
-  const marqs = $$('[data-marq]').map(m => ({
-    el: m, t: m.querySelector('.marq__t'),
-    dir: parseFloat(m.dataset.marq) || 1, x: 0, w: 0
-  }));
-  marqs.forEach(m => { m.w = m.t.scrollWidth / 6; });
-  if (!RM() && marqs.length) {
-    let mlast = performance.now();
-    (function mloop(t) {
-      const dt = Math.min(64, t - mlast); mlast = t;
-      marqs.forEach(m => {
-        if (!m.w) m.w = m.t.scrollWidth / 6;
-        m.x -= m.dir * (26 + boost * 0.18) * dt / 1000;
-        if (m.w) { if (m.x <= -m.w) m.x += m.w; if (m.x >= 0) m.x -= m.w; }
-        m.t.style.transform = `translate3d(${m.x.toFixed(1)}px,0,0)`;
-      });
-      requestAnimationFrame(mloop);
-    })(performance.now());
-  }
 
   /* ---- photographs: greyscale until they arrive, then colour ---- */
   const plates = $$('.plate');
