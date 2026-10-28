@@ -273,6 +273,7 @@ function viewHome() {
 /* ============================== THE CRATE ==============================
    A diagonal row of records you flip through by scrolling (see vinylcrate.js).
    Real catalogue data only: artist, album, price, formats, collection. */
+const CRATE_SCROLL = 3;   // records the page scroll moves through before carrying on down
 const FMT_SHORT = { 'poster-a3': 'POSTER', 'poster-a5': 'POSTER', 'print-10': 'PRINT', 'polaroid': 'POLAROID' };
 function crateList() {
   const ok = p => p.album !== '[CONFIRM]' && variant(p, 'vinyl');
@@ -297,14 +298,14 @@ function crateHTML() {
   <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
        Records on a diagonal, like flipping through a crate at the stall.
        Arrows (or a swipe) bring the next one to the front; click it to open it. -->
-  <section class="crate ground" id="crate" data-section="MAKE IT YOURS">
+  <section class="crate ground" id="crate" data-section="MAKE IT YOURS" style="--steps:${CRATE_SCROLL}">
     <!-- a live wallpaper behind the records (wallpaper.js); the collage shows if WebGL can't -->
-    <div class="crate__bg" aria-hidden="true">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-      <div class="crate__wall" id="cratewall"></div>
-    </div>
     <div class="crate__stage" tabindex="-1">
+      <div class="crate__bg" aria-hidden="true">
+        <i style="background-image:url(${photo('col-g')})"></i>
+        <i style="background-image:url(${photo('col-r')})"></i>
+        <div class="crate__wall" id="cratewall"></div>
+      </div>
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
       <div class="crate__meta">
@@ -315,7 +316,7 @@ function crateHTML() {
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
           <div><dt>COLLECTION</dt><dd><span data-cm="collection">${esc(f0.collection)}</span></dd></div>
         </dl>
-        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
+        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">SCROLL OR USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
       <div class="crate__facts">
         <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
@@ -871,7 +872,18 @@ window.__mount = function (seg, params) {
 
   if (page === 'home') {
     mountHome();
-    mountCrateSection(onUnmount);
+    const crate = mountCrateSection(onUnmount);
+    if (crate) {
+      // the first CRATE_SCROLL records slide past as you scroll through the pinned section
+      const root = document.getElementById('crate');
+      const onCrate = () => {
+        const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
+        if (span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
+      };
+      const prev = window.__onScroll;
+      window.__onScroll = y => { if (prev) prev(y); onCrate(); };
+      onCrate();
+    }
   }
   if (page === 'shop') mountShop(seg[1], params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
@@ -1259,7 +1271,7 @@ function mountProduct(p, params) {
   if (liq && window.mountLiquid) {
     const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
     try {
-      const api = window.mountLiquid(liq, imgSrc(artV.image), { round: artV.format === 'vinyl', reducedMotion: RM() });
+      const api = window.mountLiquid(liq, imgSrc(artV.image, true), { round: artV.format === 'vinyl', reducedMotion: RM() });
       if (api) onUnmount(() => api.cleanup());
     } catch (e) {}
   }

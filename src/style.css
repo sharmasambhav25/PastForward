@@ -1550,13 +1550,14 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 
 /* ---------- the crate (MAKE IT YOURS): a diagonal row of records on the brand collage ----------
    One screen tall; arrows / swipe / keys move the row. */
-.crate{position:relative; height:100svh; min-height:640px; overflow:hidden; background:var(--ink)}
+/* tall enough for the page scroll to move through --steps records while the stage stays pinned */
+.crate{position:relative; height:calc(100svh + var(--steps, 3) * 34svh); background:var(--ink)}
 .crate__bg{position:absolute; inset:0; z-index:0; display:flex}
 .crate__bg>i{flex:1; background-repeat:repeat; background-size:auto 680px; background-position:center; opacity:.30}
 .crate__bg>i:last-child{opacity:.36}
 .crate__bg::after{content:""; position:absolute; inset:0;
   background:radial-gradient(70% 70% at 54% 52%,rgba(6,5,6,.88) 18%,rgba(6,5,6,.55) 55%,rgba(6,5,6,.25))}
-.crate__stage{position:relative; z-index:2; height:100%; outline:none}
+.crate__stage{position:sticky; top:0; z-index:2; height:100svh; min-height:640px; overflow:hidden; outline:none; background:var(--ink)}
 .crate__gl{position:absolute; inset:0; z-index:1}
 .crate__scribble{position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; overflow:visible; opacity:0}
 .crate__scribble path{fill:none; stroke:var(--ember); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
@@ -1578,14 +1579,14 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate__fv{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
   font-size:clamp(1.05rem,1.9vw,1.65rem); line-height:1.02; overflow:hidden}
 .crate__nav{position:absolute; z-index:5; right:var(--gutter); bottom:clamp(22px,5svh,50px); display:flex; align-items:center; gap:14px}
-.crate__count{color:var(--muted); letter-spacing:.2em; min-width:7ch; text-align:center}
-.crate__arrow{width:54px; height:54px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
-  background:rgba(6,5,6,.55); border:1px solid rgba(243,239,232,.3); color:var(--cream);
+.crate__count{color:var(--cream); letter-spacing:.2em; min-width:7ch; text-align:center; font-size:.72rem}
+.crate__arrow{width:66px; height:66px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  background:var(--cream); border:2px solid var(--cream); color:var(--ink); box-shadow:0 8px 28px rgba(0,0,0,.55), 0 0 0 6px rgba(243,239,232,.08);
   transition:background .25s, border-color .25s, transform .35s var(--e-spring), opacity .25s; backdrop-filter:blur(6px)}
-.crate__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
-.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); transform:scale(1.06)}
+.crate__arrow svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); color:var(--cream); transform:scale(1.08)}
 .crate__arrow:active:not(:disabled){transform:scale(.94)}
-.crate__arrow:disabled{opacity:.28; cursor:default}
+.crate__arrow:disabled{opacity:.35; background:transparent; color:var(--cream); border-color:rgba(243,239,232,.45); box-shadow:none; cursor:default}
 .crate__arrow:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
 /* a real link to the record in front, for keyboards and screen readers */
 .sr-focus{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
@@ -1593,7 +1594,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   padding:10px 14px; background:var(--ink); border:1px solid var(--ember); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase}
 @media(max-width:1023px){ .crate__meta{width:min(380px, 42vw)} }
 @media(max-width:767px){
-  .crate{min-height:600px}
+  .crate__stage{min-height:600px}
   .crate__meta{width:calc(100% - 2*var(--gutter)); top:calc(var(--nav-h) + 6px)}
   .crate__eyebrow{margin-bottom:6px}
   .crate__head{font-size:clamp(1.55rem,7vw,2rem); margin-bottom:10px}
@@ -1622,3 +1623,4 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate__wall{position:absolute; inset:0; z-index:1}
 .crate--live .crate__bg>i{display:none}
 .crate--live .crate__bg::after{display:none}
+.crate--flat{height:auto}
