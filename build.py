@@ -13,6 +13,7 @@ core  = open(f'{SRC}/core.js').read()
 ripple = open(f'{SRC}/ripple.js').read()
 vinyllabel = open(f'{SRC}/vinyllabel.js').read()
 albumscrub = open(f'{SRC}/albumscrub.js').read()
+liquid = open(f'{SRC}/liquid.js').read()
 footerreveal = open(f'{SRC}/footerreveal.js').read()
 routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
@@ -105,6 +106,7 @@ def assemble(payload, standalone):
 <script>{ripple}</script>
 <script>{vinyllabel}</script>
 <script>{albumscrub}</script>
+<script>{liquid}</script>
 <script>{footerreveal}</script>
 <script>{routes}</script>
 <script>{boot}</script>
