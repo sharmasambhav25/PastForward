@@ -190,34 +190,6 @@ function viewHome() {
 
   ${crateHTML()}
 
-  <!-- 4 ============ MAKE IT YOURS (PICKER) ============ -->
-  <section class="beat sec ground" id="picker" data-section="MAKE IT YOURS" style="overflow:hidden">
-    ${col('r', 'col--soft col--mask')}
-    <div class="wrap picker">
-      <div class="picker__disc" style="display:grid;place-items:center">
-        ${recordHTML(pickStart, { size: 400, big: true, id: 'pickrec' })}
-      </div>
-      <div class="picker__info">
-        <div class="picker__head">
-          <div class="cap">MAKE IT YOURS</div>
-          <h2 class="d-l reveal" style="margin:14px 0 18px">Pick the one that's yours.</h2>
-          <p class="body-l dim reveal measure">Tap through. Watch it change. That's the whole point. This isn't decor somebody else chose for you.</p>
-        </div>
-        <div class="picker__active" style="margin-top:24px">
-          <div class="card__artist" id="pickartist">${esc(pickStart.artist)}</div>
-          <div class="d-s" id="pickalbum" style="margin-top:2px">${albumOf(pickStart)}</div>
-        </div>
-        <div class="thumbs" role="listbox" aria-label="Choose a record" id="pickthumbs">
-          ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} · ${esc(albumText(p))}">
-            <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy"></button>`).join('')}
-        </div>
-        <div class="picker__cta" style="display:flex;align-items:center;margin-top:24px">
-          <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   ${seam('in-ink')}
 
   <!-- 5 ============ COMPANIONS ============ -->
@@ -322,34 +294,39 @@ function crateFacts(p) {
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
   return `
-  <!-- 3½ ============ THE CRATE ============
-       Flip through records the way you would at the stall: scroll, and the
-       next one slides into your hands. Click the one in front to open it. -->
-  <section class="crate ground g-paper" id="crate" data-section="THE CRATE" style="--n:${n - 1}">
-    <div class="crate__stage">
+  <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
+       Records on a diagonal, like flipping through a crate at the stall.
+       Arrows (or a swipe) bring the next one to the front; click it to open it. -->
+  <section class="crate ground" id="crate" data-section="MAKE IT YOURS">
+    <div class="crate__bg" aria-hidden="true">
+      <i style="background-image:url(${photo('col-g')})"></i>
+      <i style="background-image:url(${photo('col-r')})"></i>
+    </div>
+    <div class="crate__stage" tabindex="-1">
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
       <div class="crate__meta">
-        <div class="cap crate__eyebrow">THE CRATE</div>
-        <h2 class="crate__title"><span data-cm="album">${esc(f0.album)}</span></h2>
-        <dl class="crate__rows">
+        <div class="cap crate__eyebrow">MAKE IT YOURS</div>
+        <h2 class="crate__head">Pick the one that's yours.</h2>
+        <dl class="crate__rows" aria-live="polite">
+          <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
-          <div><dt>FORMAT</dt><dd><span>12-inch record</span></dd></div>
           <div><dt>COLLECTION</dt><dd><span data-cm="collection">${esc(f0.collection)}</span></dd></div>
         </dl>
-        <div class="crate__hint crate__hint--d mono-xs" aria-hidden="true">SCROLL TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</div>
+        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
-      <div class="crate__facts" aria-live="polite">
+      <div class="crate__facts">
         <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
         <div><div class="crate__fl"><span data-cm="otherLabel">${f0.otherLabel}</span></div><div class="crate__fv"><span data-cm="other">${esc(f0.other)}</span></div></div>
       </div>
-      <div class="crate__count mono-xs" aria-hidden="true"><span data-cm="n">01</span> / ${String(n).padStart(2, '0')}</div>
-      <div class="crate__hint crate__hint--m mono-xs" aria-hidden="true">SWIPE TO FLIP · TAP TO OPEN</div>
-      <ol class="crate__list" aria-label="Records in the crate">
-        ${list.map((p, i) => `<li><a href="#/product/${p.slug}" data-crate="${i}">
-          <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy" decoding="async">
-          <span>${esc(p.artist)} · ${esc(albumText(p))}</span></a></li>`).join('')}
-      </ol>
+      <div class="crate__nav">
+        <button class="crate__arrow" type="button" data-crate-prev aria-label="Previous record" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="crate__count mono-xs" aria-hidden="true"><span data-cm="n">01</span> / ${String(n).padStart(2, '0')}</span>
+        <button class="crate__arrow" type="button" data-crate-next aria-label="Next record">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <a class="crate__open sr-focus" href="#/product/${list[0].slug}" data-crate-open>Open ${esc(f0.album)} by ${esc(f0.artist)}</a>
     </div>
   </section>`;
 }
@@ -357,8 +334,14 @@ function mountCrateSection(onUnmount) {
   const root = document.getElementById('crate'); if (!root) return null;
   const list = crateList(), facts = list.map(crateFacts);
   const cm = k => root.querySelector(`[data-cm="${k}"]`);
+  const prevB = root.querySelector('[data-crate-prev]'), nextB = root.querySelector('[data-crate-next]');
+  const openA = root.querySelector('[data-crate-open]');
   let shown = 0;
   const swap = (i) => {
+    prevB.disabled = i <= 0; nextB.disabled = i >= list.length - 1;
+    cm('n').textContent = String(i + 1).padStart(2, '0');
+    openA.href = '#/product/' + list[i].slug;
+    openA.textContent = `Open ${facts[i].album} by ${facts[i].artist}`;
     if (i === shown) return; const dir = i > shown ? 1 : -1; shown = i;
     const f = facts[i];
     ['album', 'artist', 'collection', 'price', 'otherLabel', 'other'].forEach((k, j) => {
@@ -367,7 +350,6 @@ function mountCrateSection(onUnmount) {
       if (!RM()) el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
         { duration: 420, delay: j * 28, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
     });
-    cm('n').textContent = String(i + 1).padStart(2, '0');
   };
   let api = null;
   if (window.mountCrate) {
@@ -381,17 +363,13 @@ function mountCrateSection(onUnmount) {
   }
   if (!api) { root.classList.add('crate--flat'); return null; }
   onUnmount(() => api.cleanup());
-  // keyboard: focusing a record in the (visually hidden) list brings it to the front
-  root.querySelectorAll('[data-crate]').forEach(a => {
-    a.addEventListener('focus', () => api.goTo(+a.dataset.crate));
-    a.addEventListener('keydown', e => {
-      const i = +a.dataset.crate, k = e.key;
-      const to = k === 'ArrowDown' || k === 'ArrowRight' ? i + 1 : k === 'ArrowUp' || k === 'ArrowLeft' ? i - 1 : k === 'Home' ? 0 : k === 'End' ? list.length - 1 : null;
-      if (to === null) return;
-      e.preventDefault();
-      const t = root.querySelector(`[data-crate="${Math.max(0, Math.min(list.length - 1, to))}"]`);
-      if (t) t.focus({ preventScroll: true });
-    });
+  const tick = () => { try { Sound.tick(); } catch (e) {} };
+  prevB.addEventListener('click', () => { tick(); api.prev(); });
+  nextB.addEventListener('click', () => { tick(); api.next(); });
+  // ←/→ while anything in the crate has focus
+  root.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); api.next(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); api.prev(); }
   });
   return api;
 }
@@ -500,74 +478,17 @@ function activePills(params) {
 }
 
 /* ============================== PDP ============================== */
-/* ---------- product page, editorial: title on hairlines, a torn-edge cover reveal,
-   and the next record rising and turning at the bottom ---------- */
-function hashStr(t) { let h = 2166136261; for (const c of t) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
-function tornEdge(slug) {
-  // a hand-torn paper edge, different per record but stable between visits
-  let a = hashStr(slug) || 1;
-  const rnd = () => { a ^= a << 13; a ^= a >>> 17; a ^= a << 5; return ((a >>> 0) % 10000) / 10000; };
-  const pts = []; let y = 70;
-  for (let x = 0; x <= 1000; x += 18 + rnd() * 26) { y = Math.max(18, Math.min(112, y + (rnd() - 0.5) * 34 + (60 - y) * 0.08)); pts.push([x, y]); }
-  pts.push([1000, 60 + rnd() * 30]);
-  let d = `M0 0 L1000 0 L1000 ${pts[pts.length - 1][1].toFixed(1)}`;
-  for (let i = pts.length - 2; i >= 0; i--) {
-    const [x, yy] = pts[i], [px, py] = pts[i + 1];
-    d += ` Q${((x + px) / 2).toFixed(1)} ${(py + (rnd() - 0.5) * 10).toFixed(1)} ${x.toFixed(1)} ${yy.toFixed(1)}`;
-  }
-  return `<svg class="pdx-tear" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L0 0 Z"/></svg>`;
-}
-function nextRecordOf(p) {
-  const list = withVinyl.filter(x => x.album !== '[CONFIRM]');
-  const i = list.findIndex(x => x.slug === p.slug);
-  return i < 0 ? list[0] : list[(i + 1) % list.length];
-}
-function pdxRows(p, sel) {
-  const v = variant(p, sel), col = COLS.find(c => p.tags.includes(c.slug));
-  return `
-    <div><dt>FORMAT</dt><dd id="pdxfmt">${esc(FMT[sel].label)}</dd></div>
-    <div><dt>SIZE</dt><dd id="pdxsize">${v.size === '[CONFIRM]' ? CONFIRM('Size not measured yet') : esc(v.size)}</dd></div>
-    <div><dt>PRICE</dt><dd class="num" id="pdxprice">${money(v.price)}</dd></div>
-    <div><dt>COLLECTION</dt><dd>${col ? `<a href="#/collections/${col.slug}">${esc(col.name)}</a>` : 'PastForward'}</dd></div>`;
-}
 function viewProduct(p, params) {
   const sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
   const v = variant(p, sel);
   const col = COLS.find(c => p.tags.includes(c.slug));
   const related = P.filter(x => x.slug !== p.slug && (col ? x.tags.includes(col.slug) : x.artist === p.artist)).slice(0, 4);
   const rel2 = related.length ? related : P.filter(x => x.slug !== p.slug).slice(0, 4);
-  // the full square artwork when we print it, otherwise the round label art cropped to a circle
-  const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
-  const art = imgSrc(artV.image), artRound = artV.format === 'vinyl';
-  const nx = nextRecordOf(p);
-  const formats = p.variants.map(x => FMT[x.format].label);
-  return `
-  <header class="pdx-head ground g-paper" data-section="${esc(albumText(p).toUpperCase())}">
-    <div class="pdx-crumb mono-xs">
+  return `<div class="pliq" id="pliq" aria-hidden="true"></div>
+  <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
+    <div class="mono-xs dim" style="margin-bottom:24px">
       <a href="#/shop">SHOP</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
     </div>
-    <h1 class="pdx-title">${albumOf(p)}</h1>
-    <p class="pdx-credits"><span class="pdx-k">BY</span> ${esc(p.artist)}
-      <span class="pdx-k">MADE AS</span> ${formats.map(esc).join(', ')}</p>
-    <dl class="pdx-table">${pdxRows(p, sel)}</dl>
-    <div class="pdx-actions">
-      <button class="pdx-btn" id="pdxadd" type="button">Add to cart</button>
-      <button class="pdx-btn" type="button" data-goto="buy">${p.variants.length > 1 ? 'Choose a format' : 'See the details'}</button>
-    </div>
-  </header>
-
-  <section class="pdx-reveal" data-section="THE COVER" aria-label="The album cover">
-    <div class="pdx-reveal__bg" aria-hidden="true"><img src="${art}" alt="" decoding="async"></div>
-    ${tornEdge(p.slug)}
-    <div class="pdx-reveal__rows">
-      <div class="pdx-row"><span class="pdx-w pdx-w--l reveal">${esc(p.artist)}</span></div>
-      <div class="pdx-row pdx-row--art"><figure class="pdx-cover reveal${artRound ? ' pdx-cover--round' : ''}"><img src="${art}" alt="${esc(artV.alt)}" decoding="async"></figure></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--r reveal">${albumOf(p)}</span></div>
-      <div class="pdx-row pdx-row--cta"><button class="pdx-btn pdx-btn--light" type="button" data-goto="buy">Make it yours</button></div>
-    </div>
-  </section>
-
-  <div class="wrap sec pdp-wrap" id="buy" style="padding-top:clamp(56px,8vw,110px)">
     <div class="pdp">
       <div>
         <div class="pdp__stage" id="stage"><div class="roomlight"></div>
@@ -583,7 +504,7 @@ function viewProduct(p, params) {
       </div>
       <div>
         <div class="card__artist">${esc(p.artist)}</div>
-        <h2 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h2>
+        <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${money(v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
 
         <div class="fmt" style="margin-top:28px">
@@ -636,19 +557,7 @@ function viewProduct(p, params) {
     <div class="buybar" id="buybar">
       <span class="num" id="barprice">${money(v.price)}</span>
       <button class="btn btn--primary" style="flex:1" id="baradd"><span class="btn__mag">Add to cart</span></button>
-    </div></div>
-
-  <section class="pdx-next ground g-paper" data-section="UP NEXT">
-    <div class="pdx-next__rows">
-      <div class="pdx-row"><span class="cap pdx-next__cap">UP NEXT</span></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--l reveal">${esc(nx.artist)}</span></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--r reveal">${albumOf(nx)}</span></div>
-      <div class="pdx-row"></div>
-    </div>
-    <a class="pdx-next__rec" id="pdxnext" href="#/product/${nx.slug}" data-cursor="NEXT" aria-label="Next record: ${esc(albumText(nx))} by ${esc(nx.artist)}">
-      ${recordHTML(nx, { size: 640, big: true, id: 'nextrec' })}
-    </a>
-  </section>`;
+    </div></div>`;
 }
 function stageMedia(p, fmt) {
   const v = variant(p, fmt);
@@ -951,8 +860,7 @@ window.__mount = function (seg, params) {
 
   if (page === 'home') {
     mountHome();
-    const crate = mountCrateSection(onUnmount);
-    if (crate) { const prev = window.__onScroll; window.__onScroll = y => { if (prev) prev(y); crate.onScroll(y); }; }
+    mountCrateSection(onUnmount);
   }
   if (page === 'shop') mountShop(seg[1], params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
@@ -985,7 +893,6 @@ function mountHome() {
     if (el) spins.push(Object.assign({ host, el, rate, base: rate, angle: 0, kick: 0, mom: 0 }, opt));
   };
   addSpin('beat3rec', 7.5, { hover: true });
-  addSpin('pickrec', 6);
   addSpin('droprec', 12, { boost: true, stopper: true });
 
   /* the flex hero disc: same drag/momentum/scratch-sound loop as every other record —
@@ -1281,70 +1188,6 @@ function mountHome() {
     else setTimeout(() => annot.classList.add('is-in'), 900);
   }
 
-  // Preload all picker vinyl images for instant switching
-  const featList = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
-  const pickersList = featList.slice(0, 8);
-  pickersList.forEach(p => {
-    const v = variant(p, 'vinyl');
-    if (v) { const pre = new Image(); pre.src = imgSrc(v.image, true); }
-  });
-
-  // picker interaction: click options to switch the vinyl album
-  const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
-  const thumbsContainer = $('#pickthumbs');
-  if (thumbsContainer) mountDragScroll(thumbsContainer);
-
-  const selectRecord = (slug) => {
-    const p = bySlug[slug];
-    if (!p || !prec) return;
-    $$('#pickthumbs button').forEach(x => {
-      const isSel = x.dataset.pick === slug;
-      x.classList.toggle('is-on', isSel);
-      x.setAttribute('aria-selected', String(isSel));
-    });
-    const img = $('.record__art', prec);
-    const v = variant(p, 'vinyl');
-    const src = v ? imgSrc(v.image, true) : '';
-    if (img && src) {
-      if (RM()) {
-        img.src = src;
-      } else {
-        if (pspin) { pspin.kick = 140; pspin.stopped = false; pspin.rate = pspin.base; }
-        img.animate(
-          [{ opacity: 1, transform: 'scale(1)' }, { opacity: .12, transform: 'scale(.92)' }, { opacity: 1, transform: 'scale(1)' }],
-          { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)' }
-        );
-        setTimeout(() => { img.src = src; }, 160);
-      }
-    }
-    const ar = $('#pickartist'), al = $('#pickalbum');
-    if (ar) ar.textContent = p.artist;
-    if (al) al.innerHTML = albumOf(p);
-    if (!RM() && ar && al) {
-      [ar, al].forEach(el => el.animate(
-        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
-        { duration: 320, easing: 'cubic-bezier(.16,1,.3,1)' }
-      ));
-    }
-  };
-
-  $$('#pickthumbs button').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      selectRecord(btn.dataset.pick);
-    });
-    btn.addEventListener('pointerup', e => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      selectRecord(btn.dataset.pick);
-    });
-  });
-
-  if (thumbsContainer) {
-    thumbsContainer.addEventListener('click', e => {
-      const btn = e.target.closest('button[data-pick]');
-      if (btn) selectRecord(btn.dataset.pick);
-    });
-  }
 }
 
 function setParams(mut) {
@@ -1400,6 +1243,15 @@ function mountShop(routeKey, params) {
 
 function mountProduct(p, params) {
   if (!p) return;
+  /* the liquid backdrop: the album art flowing behind the page (see liquid.js) */
+  const liq = $('#pliq');
+  if (liq && window.mountLiquid) {
+    const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
+    try {
+      const api = window.mountLiquid(liq, imgSrc(artV.image), { round: artV.format === 'vinyl', reducedMotion: RM() });
+      if (api) onUnmount(() => api.cleanup());
+    } catch (e) {}
+  }
   playFlip($('#stagemedia'));
   let qty = 1, sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
   if (sel === 'vinyl') setTimeout(() => Sound.needleDrop(), 260);
@@ -1424,10 +1276,6 @@ function mountProduct(p, params) {
     if (!RM()) mountRipple();
     $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     $('#barprice').textContent = money(v.price);
-    const pf = $('#pdxfmt'), ps = $('#pdxsize'), pp = $('#pdxprice');
-    if (pf) pf.textContent = FMT[f].label;
-    if (ps) ps.innerHTML = v.size === '[CONFIRM]' ? CONFIRM('Size not measured yet') : esc(v.size);
-    if (pp) pp.textContent = money(v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
       : '300gsm matte poster stock ' + CONFIRM('Paper stock not confirmed with the printer');
@@ -1456,37 +1304,8 @@ function mountProduct(p, params) {
   const add = e => addToCart(p.slug, sel, qty, e.currentTarget);
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
-  const pdxAdd = $('#pdxadd');
-  if (pdxAdd) pdxAdd.addEventListener('click', e => addToCart(p.slug, sel, 1, e.currentTarget));
-  $$('[data-goto="buy"]').forEach(b => b.addEventListener('click', () => {
-    const t = document.getElementById('buy'); if (t) t.scrollIntoView({ behavior: RM() ? 'auto' : 'smooth', block: 'start' });
-  }));
   const bar = $('#buybar');
-  /* scroll-linked: the cover drifts under its torn edge; the next record rises and turns */
-  const reveal = $('.pdx-reveal'), revBg = $('.pdx-reveal__bg img'), cover = $('.pdx-cover');
-  const nextSec = $('.pdx-next'), nextA = $('#pdxnext'), nextDisc = $('#nextrec [data-disc]');
-  const motion = !RM();
-  window.__onScroll = y => {
-    if (bar) bar.classList.toggle('is-on', y > innerHeight * .6);
-    if (!motion) return;
-    if (reveal) {
-      const r = reveal.getBoundingClientRect();
-      if (r.bottom > 0 && r.top < innerHeight) {
-        const q = (innerHeight - r.top) / (innerHeight + r.height);          // 0 → 1 across the section
-        if (revBg) revBg.style.transform = `translate3d(0,${((q - .5) * -12).toFixed(2)}%,0) scale(1.28)`;
-        if (cover) cover.style.setProperty('--py', `${((.5 - q) * 60).toFixed(1)}px`);
-      }
-    }
-    if (nextSec && nextA) {
-      const r = nextSec.getBoundingClientRect();
-      if (r.top < innerHeight && r.bottom > 0) {
-        const q = Math.min(1, Math.max(0, (innerHeight - r.top) / r.height));
-        nextA.style.transform = `translate3d(-50%,${(62 - q * 50).toFixed(2)}%,0)`;
-        if (nextDisc) nextDisc.style.transform = `rotate(${(q * 420).toFixed(1)}deg)`;
-      }
-    }
-  };
-  window.__onScroll(scrollY);
+  window.__onScroll = y => { if (bar) bar.classList.toggle('is-on', y > innerHeight * .6); };
   function drawScale() {
     if (RM()) return;
     const svg = $('#scaleview svg'); if (!svg) return;

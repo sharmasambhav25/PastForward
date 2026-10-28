@@ -1551,135 +1551,76 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    was wider than a phone and let iOS widen the page, cropping the preloader and shop on the right */
 @media(max-width:899px){.mega{display:none}}
 
-/* ---------- the crate: a diagonal row of records, flipped through by scrolling ----------
-   The section is tall; its stage sticks to the viewport while page scroll moves the row.
-   --step sets how much scroll each record takes; vinylcrate.js measures the result. */
-.crate{--step:62svh; position:relative; height:calc(100svh + var(--n) * var(--step))}
-.crate__stage{position:sticky; top:0; height:100svh; overflow:hidden}
+/* ---------- the crate (MAKE IT YOURS): a diagonal row of records on the brand collage ----------
+   One screen tall; arrows / swipe / keys move the row. */
+.crate{position:relative; height:100svh; min-height:640px; overflow:hidden; background:var(--ink)}
+.crate__bg{position:absolute; inset:0; z-index:0; display:flex}
+.crate__bg>i{flex:1; background-repeat:repeat; background-size:auto 680px; background-position:center; opacity:.30}
+.crate__bg>i:last-child{opacity:.36}
+.crate__bg::after{content:""; position:absolute; inset:0;
+  background:radial-gradient(70% 70% at 54% 52%,rgba(6,5,6,.88) 18%,rgba(6,5,6,.55) 55%,rgba(6,5,6,.25))}
+.crate__stage{position:relative; z-index:2; height:100%; outline:none}
 .crate__gl{position:absolute; inset:0; z-index:1}
 .crate__scribble{position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; overflow:visible; opacity:0}
-.crate__scribble path{fill:none; stroke:var(--paper-ink); stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke}
-.crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 18px); width:min(360px, 34vw); pointer-events:none}
-.crate__eyebrow{color:#5E5854; margin-bottom:10px}
-.crate__title{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
-  font-size:clamp(1.7rem,3vw,2.7rem); line-height:.98; margin:0 0 12px; overflow:hidden; padding-bottom:.06em}
-.crate__title span,.crate__rows dd span,.crate__fv span,.crate__fl span{display:inline-block}
-.crate__rows{margin:0; border-top:1px solid rgba(22,19,20,.32)}
-.crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:7px 0 6px;
-  border-bottom:1px solid rgba(22,19,20,.32)}
-.crate__rows dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854}
-.crate__rows dd{margin:0; text-align:right; overflow:hidden; font-size:.95rem}
-.crate__facts{position:absolute; z-index:4; left:50%; bottom:clamp(20px,5svh,48px); transform:translateX(-50%);
-  display:flex; gap:clamp(36px,9vw,140px); text-align:center; pointer-events:none; width:max-content; max-width:calc(100vw - 2*var(--gutter))}
-.crate__fl{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:#5E5854; margin-bottom:8px; overflow:hidden}
+.crate__scribble path{fill:none; stroke:var(--ember); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 6px rgba(192,53,63,.45))}
+.crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 22px); width:min(380px, 30vw); pointer-events:none}
+.crate__eyebrow{margin-bottom:12px}
+.crate__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.9rem,3.1vw,3rem); line-height:1; margin:0 0 20px; text-wrap:balance}
+.crate__rows dd span,.crate__fv span,.crate__fl span{display:inline-block}
+.crate__rows{margin:0; border-top:1px solid rgba(243,239,232,.24)}
+.crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:8px 0 7px; border-bottom:1px solid rgba(243,239,232,.24)}
+.crate__rows dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:var(--muted); flex:none}
+.crate__rows dd{margin:0; text-align:right; overflow:hidden; font-size:.95rem; min-width:0; text-wrap:balance}
+.crate__rows>div:first-child dd{font-family:var(--display); font-size:1.15rem; text-transform:uppercase; letter-spacing:-.01em}
+.crate__hint{margin-top:18px; color:var(--muted); letter-spacing:.2em; line-height:1.9}
+.crate__hint-m{display:none}
+.crate__facts{position:absolute; z-index:4; left:50%; bottom:clamp(22px,5svh,50px); transform:translateX(-50%);
+  display:flex; gap:clamp(36px,8vw,120px); text-align:center; pointer-events:none; width:max-content; max-width:calc(100vw - 2*var(--gutter) - 200px)}
+.crate__fl{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:var(--muted); margin-bottom:8px; overflow:hidden}
 .crate__fv{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
   font-size:clamp(1.05rem,1.9vw,1.65rem); line-height:1.02; overflow:hidden}
-.crate__count{position:absolute; z-index:4; right:var(--gutter); bottom:clamp(20px,5svh,48px); color:#5E5854; letter-spacing:.2em}
-/* how-to hint: under the info panel on desktop (the corners belong to the neighbouring
-   records), centred near the bottom on phones */
-.crate__hint{color:#5E5854; letter-spacing:.2em; line-height:1.9}
-.crate__hint--d{margin-top:18px}
-.crate__hint--m{display:none}
-@media(hover:none) and (max-width:767px){.crate__hint--d{display:none} .crate__hint--m{display:block}}
-/* the record list is for keyboards and screen readers: every item stays focusable,
-   only the focused one surfaces (as a small chip above the facts) */
-.crate__list{position:absolute; z-index:5; left:var(--gutter); bottom:clamp(96px,16svh,150px); margin:0; padding:0; list-style:none}
-.crate__list li{position:absolute; left:0; bottom:0; clip-path:inset(50%); width:1px; height:1px; overflow:hidden; white-space:nowrap}
-.crate__list li:focus-within{clip-path:none; width:auto; height:auto; overflow:visible}
-.crate__list a{display:flex; gap:10px; align-items:center; background:var(--paper); padding:6px 10px 6px 6px;
-  border:1px solid rgba(22,19,20,.3); font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase}
-.crate__list img{width:34px; height:34px; border-radius:50%; object-fit:cover}
+.crate__nav{position:absolute; z-index:5; right:var(--gutter); bottom:clamp(22px,5svh,50px); display:flex; align-items:center; gap:14px}
+.crate__count{color:var(--muted); letter-spacing:.2em; min-width:7ch; text-align:center}
+.crate__arrow{width:54px; height:54px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  background:rgba(6,5,6,.55); border:1px solid rgba(243,239,232,.3); color:var(--cream);
+  transition:background .25s, border-color .25s, transform .35s var(--e-spring), opacity .25s; backdrop-filter:blur(6px)}
+.crate__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
+.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); transform:scale(1.06)}
+.crate__arrow:active:not(:disabled){transform:scale(.94)}
+.crate__arrow:disabled{opacity:.28; cursor:default}
+.crate__arrow:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+/* a real link to the record in front, for keyboards and screen readers */
+.sr-focus{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+.sr-focus:focus{z-index:6; width:auto; height:auto; clip-path:none; left:var(--gutter); bottom:clamp(22px,5svh,50px);
+  padding:10px 14px; background:var(--ink); border:1px solid var(--ember); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase}
+@media(max-width:1023px){ .crate__meta{width:min(380px, 42vw)} }
 @media(max-width:767px){
-  .crate{--step:52svh}
-  .crate__meta{width:calc(100% - 2*var(--gutter)); top:calc(var(--nav-h) + 8px)}
-  .crate__title{font-size:clamp(1.5rem,7vw,2.1rem)}
+  .crate{min-height:600px}
+  .crate__meta{width:calc(100% - 2*var(--gutter)); top:calc(var(--nav-h) + 6px)}
+  .crate__eyebrow{margin-bottom:6px}
+  .crate__head{font-size:clamp(1.55rem,7vw,2rem); margin-bottom:10px}
   .crate__rows>div{padding:5px 0 4px}
   .crate__rows dd{font-size:.85rem}
-  .crate__facts{bottom:calc(15svh + env(safe-area-inset-bottom,0px)); gap:28px}
+  .crate__rows>div:first-child dd{font-size:1rem}
+  .crate__rows>div:nth-child(3){display:none}
+  .crate__hint{display:none}
+  .crate__facts{bottom:calc(92px + env(safe-area-inset-bottom,0px)); gap:26px; max-width:calc(100vw - 2*var(--gutter))}
   .crate__fv{font-size:1rem}
-  .crate__count{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-  .crate__hint--d{display:none}
-  .crate__hint--m{display:block; position:absolute; z-index:4; left:50%; transform:translateX(-50%); bottom:calc(9svh + env(safe-area-inset-bottom,0px)); text-align:center; white-space:nowrap}
-  .crate__count{display:none}
+  .crate__nav{left:50%; right:auto; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom,0px))}
 }
-/* no WebGL: the crate becomes a plain list of records */
-.crate--flat{height:auto}
-.crate--flat .crate__stage{position:relative; height:auto; padding:calc(var(--nav-h) + 24px) var(--gutter) 48px}
-.crate--flat .crate__meta,.crate--flat .crate__facts,.crate--flat .crate__count,.crate--flat .crate__hint,.crate--flat .crate__scribble{display:none}
-.crate--flat .crate__list{position:static; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-.crate--flat .crate__list li{position:static; clip-path:none; width:auto; height:auto; overflow:visible}
+@media(prefers-reduced-motion:reduce){ .crate__arrow{transition:none} }
+/* no WebGL: show the records as a simple list of links */
+.crate--flat .crate__gl,.crate--flat .crate__scribble,.crate--flat .crate__facts,.crate--flat .crate__nav{display:none}
+.crate--flat .sr-focus{position:absolute; width:auto; height:auto; clip-path:none; left:var(--gutter); bottom:clamp(22px,5svh,50px)}
 
-/* ---------- product page, editorial ---------- */
-.pdx-head{padding:calc(var(--nav-h) + clamp(18px,3vw,36px)) var(--gutter) clamp(30px,5vw,64px); text-align:center}
-.pdx-crumb{color:#5E5854; margin-bottom:clamp(28px,6vw,80px); text-align:left}
-.pdx-crumb a:hover{color:var(--paper-ink)}
-.pdx-title{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.025em;
-  font-size:clamp(2.6rem,9.5vw,9.6rem); line-height:.9; margin:0; text-wrap:balance; overflow-wrap:anywhere;
-  padding-bottom:.08em; border-bottom:1px solid rgba(22,19,20,.4)}
-.pdx-credits{margin:12px 0 0; font-size:clamp(.95rem,1.3vw,1.15rem)}
-.pdx-k{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854; margin:0 6px 0 14px}
-.pdx-k:first-child{margin-left:0}
-.pdx-table{margin:14px 0 0; border-top:1px solid rgba(22,19,20,.4); text-align:left}
-.pdx-table>div{display:flex; justify-content:space-between; align-items:baseline; gap:20px; padding:7px 0 6px; border-bottom:1px solid rgba(22,19,20,.4)}
-.pdx-table dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854}
-.pdx-table dd{margin:0; text-align:right}
-.pdx-table a{text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px}
-.pdx-actions{display:flex; justify-content:center; gap:clamp(10px,2vw,18px); margin-top:clamp(40px,7vw,96px); flex-wrap:wrap}
-.pdx-btn{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
-  font-size:clamp(1.35rem,3vw,2.6rem); line-height:1; padding:.32em .12em .26em; background:none; color:inherit; cursor:pointer;
-  border:0; border-top:4px solid currentColor; border-bottom:4px solid currentColor; transition:opacity .2s, letter-spacing .35s var(--e-out-expo)}
-.pdx-btn:hover{letter-spacing:.02em}
-.pdx-btn:focus-visible{outline:2px solid var(--ember); outline-offset:4px}
-
-/* the cover rises from under a torn paper edge */
-.pdx-reveal{position:relative; overflow:hidden; color:var(--cream); background:#0b090a; margin-top:-1px; isolation:isolate}
-.pdx-reveal__bg{position:absolute; inset:0; z-index:0; overflow:hidden}
-.pdx-reveal__bg img{width:100%; height:100%; object-fit:cover; transform:scale(1.28); filter:blur(34px) saturate(1.25) brightness(.62); will-change:transform}
-.pdx-reveal__bg::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(6,5,6,.15),rgba(6,5,6,.45))}
-.pdx-tear{position:absolute; top:-1px; left:0; width:100%; height:clamp(54px,9vw,120px); z-index:3; display:block}
-.pdx-tear path{fill:var(--paper)}
-.pdx-reveal__rows{position:relative; z-index:2; padding-top:clamp(70px,11vw,150px)}
-.pdx-row{position:relative; min-height:clamp(84px,15vw,210px); border-bottom:1px solid rgba(243,239,232,.32);
-  display:flex; align-items:flex-end; padding:0 var(--gutter) 8px}
-.pdx-row--art{min-height:0; justify-content:center; padding-block:clamp(24px,4vw,48px)}
-.pdx-row--cta{justify-content:center; align-items:center; min-height:clamp(120px,16vw,200px); border-bottom:0}
-.pdx-w{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.025em;
-  font-size:clamp(2.2rem,8vw,8rem); line-height:.86; max-width:80%; overflow-wrap:anywhere}
-.pdx-w--l{margin-right:auto; padding-left:clamp(0px,5vw,80px)}
-.pdx-w--r{margin-left:auto; text-align:right; padding-right:clamp(0px,3vw,48px)}
-.pdx-cover{margin:0; width:min(460px,74vw,58svh); aspect-ratio:1; box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.08);
-  transform:translateY(var(--py,0px))}
-.pdx-cover.reveal{transform:translateY(calc(var(--py,0px) + 18px))}
-.pdx-cover.reveal.is-in{transform:translateY(var(--py,0px))}
-.pdx-cover img{width:100%; height:100%; object-fit:cover; display:block}
-.pdx-btn--light{color:var(--cream)}
-
-/* up next: the next record's name on hairlines, the record rising and turning */
-.pdx-next{position:relative; overflow:hidden; min-height:clamp(620px,120svh,1100px); margin-top:clamp(40px,6vw,80px)}
-.pdx-next .pdx-row{border-bottom-color:rgba(22,19,20,.4)}
-.pdx-next__rows{position:relative; z-index:2; pointer-events:none}
-.pdx-next__cap{color:#5E5854; padding-bottom:4px}
-.pdx-next__rec{position:absolute; z-index:1; left:50%; bottom:0; width:min(640px,86vw); transform:translate3d(-50%,40%,0); display:block; will-change:transform}
-.pdx-next__rec .record{--size:640px !important; width:100%}
-.pdx-next__rec:focus-visible{outline:2px solid var(--ember); outline-offset:6px; border-radius:50%}
-@media(max-width:767px){
-  .pdx-credits .pdx-k{display:inline-block; margin-left:0}
-  .pdx-credits{display:grid; gap:4px; justify-items:center}
-  .pdx-w{max-width:100%}
-  .pdx-next{min-height:clamp(560px,105svh,900px)}
-}
-@media(prefers-reduced-motion:reduce){
-  .pdx-btn{transition:none}
-  .pdx-next__rec{transform:translate3d(-50%,14%,0)}
-}
 #buy{scroll-margin-top:calc(var(--nav-h) + 8px)}
-.pdx-cover--round{border-radius:50%; overflow:hidden; box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.1)}
-.pdx-cover--round img{transform:scale(1.01)}
 /* the product stage: give the media box the stage's width so the record (sized as a % of it) shows */
 #stagemedia{width:100%; display:grid; place-items:center}
-/* the next record rises behind its name: invert the words where they cross it */
-.pdx-next .pdx-w{color:var(--paper); mix-blend-mode:difference}
+/* product page: the liquid album-art backdrop, fixed behind the content */
+.pliq{position:fixed; inset:0; z-index:0; pointer-events:none}
+.pliq canvas{display:block}
+.pdp-wrap{position:relative; z-index:1}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -5658,6 +5599,186 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
 }
 window.mountAlbumScrub = mountAlbumScrub;
 </script>
+<script>/* ============================================================
+   PastForward — liquid backdrop for the product page.
+   The album art as a slow, flowing colour field, behind the page,
+   with a live liquid edge on top: it swells and ripples on its own,
+   rises into a mound toward the pointer, and the art ripples where
+   the pointer moves through it. As you scroll, the liquid floods up
+   behind the content. Plain WebGL 1, no libraries.
+
+   mountLiquid(host, imageUrl, { round, reducedMotion }) → { cleanup }
+   ============================================================ */
+function mountLiquid(host, imageUrl, opts) {
+  opts = opts || {};
+  var RM = !!opts.reducedMotion;
+  var canvas = document.createElement('canvas');
+  canvas.setAttribute('aria-hidden', 'true');
+  host.appendChild(canvas);
+  var gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+  if (!gl) { canvas.remove(); return null; }
+
+  var VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+  var FS = [
+    'precision highp float;',
+    'uniform sampler2D uTex; uniform vec2 uRes; uniform float uTime, uEdge, uMound, uMoundX, uMotion, uDpr, uBlur;',
+    'uniform vec3 uDrops[6];',
+    'float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }',
+    'float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(hash(i), hash(i + vec2(1,0)), u.x), mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x), u.y); }',
+    'float fbm(vec2 p){ float v = 0.0, a = 0.5; for (int i = 0; i < 5; i++){ v += a * noise(p); p = p * 2.03 + 17.1; a *= 0.5; } return v; }',
+    'void main(){',
+    '  vec2 px = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) / uDpr;   // CSS px, from the top-left',
+    '  vec2 res = uRes / uDpr;',
+    '  float t = uTime * uMotion;',
+    '  float x = px.x;',
+    // the surface: a slow swell, waves travelling across, a fine torn texture, and the pointer's pull
+    '  float e = uEdge;',
+    '  e += (fbm(vec2(x * 0.0026 + t * 0.07, t * 0.05)) - 0.5) * 120.0;',
+    '  e += sin(x * 0.011 - t * 1.3) * 7.0 + sin(x * 0.023 + t * 0.9) * 4.0;',
+    '  e += (noise(vec2(x * 0.11, t * 0.6)) - 0.5) * 5.0;',
+    '  e -= uMound * exp(-pow((x - uMoundX) / (res.x * 0.11 + 60.0), 2.0));',
+    '  float d = px.y - e;                                    // >0: inside the liquid',
+    '  float inside = smoothstep(-1.0, 1.0, d);',
+    '  if (inside <= 0.0) { gl_FragColor = vec4(0.0); return; }',
+    // the art, flowing: domain-warped, rippled by the pointer
+    '  vec2 uv = px / res;',
+    '  vec2 q = vec2(uv.x * res.x / res.y, uv.y);',
+    '  vec2 w = vec2(fbm(q * 1.4 + vec2(t * 0.05, -t * 0.04)), fbm(q * 1.4 + vec2(5.2 - t * 0.04, 1.3 + t * 0.06)));',
+    '  uv += (w - 0.5) * 0.09 * uMotion;',
+    '  for (int i = 0; i < 6; i++) {',
+    '    vec2 dv = px - uDrops[i].xy; float age = uTime - uDrops[i].z; float r = length(dv);',
+    '    float ring = sin(r * 0.055 - age * 8.0) * exp(-age * 1.4) * exp(-r * 0.0065) * step(0.0, age) * step(age, 4.0);',
+    '    uv += (dv / (r + 1.0)) * ring * 0.014 * uMotion;',
+    '  }',
+    // cover-fit the square art to the screen, a little parallax as the liquid rises
+    '  vec2 st = uv - 0.5; float va = res.x / res.y;',
+    '  if (va > 1.0) st.y /= va; else st.x *= va;',
+    '  st *= 0.92; st.y -= (uEdge / res.y) * 0.06; st += 0.5;',
+    '  vec3 c = texture2D(uTex, st, uBlur).rgb;                 // soft: the art is only 480px',
+    '  vec3 c2 = texture2D(uTex, st + (w - 0.5) * 0.05, uBlur + 1.4).rgb;',
+    '  c = mix(c, c2, 0.45);',
+    '  float l = dot(c, vec3(0.299, 0.587, 0.114));',
+    '  c = mix(vec3(l), c, 1.25);                             // a touch richer',
+    '  c = c / (1.0 + c * 0.9);                               // tame the brightest parts of the art',
+    '  c *= 0.95;                                             // kept dark so the page reads on top',
+    '  c *= 1.0 - 0.45 * exp(-d * 0.018);                      // shadow just under the surface',
+    '  float rim = exp(-abs(d) * 0.45);',
+    '  c += rim * vec3(0.95, 0.9, 0.86) * 0.22;                // a bright meniscus on the edge',
+    '  gl_FragColor = vec4(c * inside, inside);',
+    '}'
+  ].join('\n');
+
+  function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+  var prog = gl.createProgram();
+  try { gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); }
+  catch (err) { canvas.remove(); return null; }
+  gl.linkProgram(prog); gl.useProgram(prog);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var U = {}; ['uTex', 'uRes', 'uTime', 'uEdge', 'uMound', 'uMoundX', 'uMotion', 'uDpr', 'uDrops', 'uBlur'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+
+  /* texture: the art drawn into a 512² canvas (power of two → mipmaps → cheap soft blur);
+     round label art is cropped to its middle so the white corners never show */
+  var tex = gl.createTexture();
+  var ready = false;
+  var img = new Image();
+  img.onload = function () {
+    var c = document.createElement('canvas'); c.width = c.height = 512;
+    var x = c.getContext('2d'), k = opts.round ? 0.68 : 1;
+    var sw = img.naturalWidth * k, sh2 = img.naturalHeight * k;
+    x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh2) / 2, sw, sh2, 0, 0, 512, 512);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+    ready = true; wake();
+  };
+  img.src = imageUrl;
+
+  /* state: the surface sits low on the first screen and floods up as you scroll */
+  var W = 1, H = 1, dpr = 1;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = innerWidth; H = innerHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    wake();
+  }
+  var edgeFor = function () { return Math.max(-160, H * 0.8 - scrollY * 0.85); };
+  var edge = edgeFor();
+  var mx = -9999, my = -9999, lastPX = 0, lastPY = 0, lastDrop = 0, pointerAt = 0;
+  var mound = 0, moundX = innerWidth / 2;
+  var drops = new Float32Array(18); for (var i = 0; i < 6; i++) drops[i * 3 + 2] = -99;
+  var dropI = 0, t0 = performance.now();
+
+  function onMove(e) {
+    mx = e.clientX; my = e.clientY; pointerAt = performance.now();
+    var v = Math.hypot(mx - lastPX, my - lastPY); lastPX = mx; lastPY = my;
+    var now = (performance.now() - t0) / 1000;
+    // moving through the liquid leaves ripples
+    if (!RM && v > 6 && my > edge && performance.now() - lastDrop > 140) {
+      lastDrop = performance.now();
+      drops[dropI * 3] = mx; drops[dropI * 3 + 1] = my; drops[dropI * 3 + 2] = now;
+      dropI = (dropI + 1) % 6;
+    }
+    wake();
+  }
+  function onScroll() { wake(); }
+
+  var raf = 0, visible = !document.hidden, last = performance.now(), disposed = false;
+  function wake() { if (!raf && visible && !disposed) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0;
+    var dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+    var goal = edgeFor();
+    edge += (goal - edge) * (RM ? 1 : 1 - Math.exp(-dt * 7));
+    // the surface reaches up toward the pointer when it's near (and lets go when it leaves)
+    var near = (now - pointerAt < 2500) ? Math.exp(-Math.abs(my - edge) / 230) : 0;
+    var want = RM ? 0 : (my < edge ? 1 : 0.45) * near * Math.min(150, H * 0.18);
+    mound += (want - mound) * (1 - Math.exp(-dt * 3.2));
+    moundX += (mx - moundX) * (1 - Math.exp(-dt * 4.5));
+    if (ready) {
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform1i(U.uTex, 0);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height);
+      gl.uniform1f(U.uTime, (now - t0) / 1000);
+      gl.uniform1f(U.uEdge, edge);
+      gl.uniform1f(U.uMound, mound);
+      gl.uniform1f(U.uMoundX, moundX);
+      gl.uniform1f(U.uMotion, RM ? 0 : 1);
+      gl.uniform1f(U.uDpr, dpr);
+      gl.uniform1f(U.uBlur, W < 768 ? 4.4 : 3.4);           // phones see the art much larger, so blur it more
+      gl.uniform3fv(U.uDrops, drops);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    if (!RM || Math.abs(goal - edge) > 0.5) raf = requestAnimationFrame(frame);
+  }
+  function onVis() { visible = !document.hidden; if (visible) { last = performance.now(); wake(); } else { cancelAnimationFrame(raf); raf = 0; } }
+
+  resize();
+  addEventListener('resize', resize, { passive: true });
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('pointermove', onMove, { passive: true });
+  document.addEventListener('visibilitychange', onVis);
+
+  return { cleanup: function () {
+    if (disposed) return; disposed = true;
+    cancelAnimationFrame(raf);
+    removeEventListener('resize', resize); removeEventListener('scroll', onScroll);
+    removeEventListener('pointermove', onMove); document.removeEventListener('visibilitychange', onVis);
+    try { gl.deleteTexture(tex); gl.deleteBuffer(buf); gl.deleteProgram(prog); var ext = gl.getExtension('WEBGL_lose_context'); if (ext) ext.loseContext(); } catch (e) {}
+    canvas.remove();
+  } };
+}
+window.mountLiquid = mountLiquid;
+</script>
 <script>/* PastForward — footer reveal
    A grid of record-sleeve credits that lights up under the cursor and fades behind it.
    Usage: <footer data-footer-reveal> <div class="rv-content">…</div> </footer>, then PFFooterReveal(el)
@@ -6082,34 +6203,6 @@ function viewHome() {
 
   ${crateHTML()}
 
-  <!-- 4 ============ MAKE IT YOURS (PICKER) ============ -->
-  <section class="beat sec ground" id="picker" data-section="MAKE IT YOURS" style="overflow:hidden">
-    ${col('r', 'col--soft col--mask')}
-    <div class="wrap picker">
-      <div class="picker__disc" style="display:grid;place-items:center">
-        ${recordHTML(pickStart, { size: 400, big: true, id: 'pickrec' })}
-      </div>
-      <div class="picker__info">
-        <div class="picker__head">
-          <div class="cap">MAKE IT YOURS</div>
-          <h2 class="d-l reveal" style="margin:14px 0 18px">Pick the one that's yours.</h2>
-          <p class="body-l dim reveal measure">Tap through. Watch it change. That's the whole point. This isn't decor somebody else chose for you.</p>
-        </div>
-        <div class="picker__active" style="margin-top:24px">
-          <div class="card__artist" id="pickartist">${esc(pickStart.artist)}</div>
-          <div class="d-s" id="pickalbum" style="margin-top:2px">${albumOf(pickStart)}</div>
-        </div>
-        <div class="thumbs" role="listbox" aria-label="Choose a record" id="pickthumbs">
-          ${pickers.map((p) => `<button role="option" aria-selected="${p.slug === pickStart.slug}" class="${p.slug === pickStart.slug ? 'is-on' : ''}" data-pick="${p.slug}" aria-label="${esc(p.artist)} · ${esc(albumText(p))}">
-            <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy"></button>`).join('')}
-        </div>
-        <div class="picker__cta" style="display:flex;align-items:center;margin-top:24px">
-          <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   ${seam('in-ink')}
 
   <!-- 5 ============ COMPANIONS ============ -->
@@ -6214,34 +6307,39 @@ function crateFacts(p) {
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
   return `
-  <!-- 3½ ============ THE CRATE ============
-       Flip through records the way you would at the stall: scroll, and the
-       next one slides into your hands. Click the one in front to open it. -->
-  <section class="crate ground g-paper" id="crate" data-section="THE CRATE" style="--n:${n - 1}">
-    <div class="crate__stage">
+  <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
+       Records on a diagonal, like flipping through a crate at the stall.
+       Arrows (or a swipe) bring the next one to the front; click it to open it. -->
+  <section class="crate ground" id="crate" data-section="MAKE IT YOURS">
+    <div class="crate__bg" aria-hidden="true">
+      <i style="background-image:url(${photo('col-g')})"></i>
+      <i style="background-image:url(${photo('col-r')})"></i>
+    </div>
+    <div class="crate__stage" tabindex="-1">
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
       <div class="crate__meta">
-        <div class="cap crate__eyebrow">THE CRATE</div>
-        <h2 class="crate__title"><span data-cm="album">${esc(f0.album)}</span></h2>
-        <dl class="crate__rows">
+        <div class="cap crate__eyebrow">MAKE IT YOURS</div>
+        <h2 class="crate__head">Pick the one that's yours.</h2>
+        <dl class="crate__rows" aria-live="polite">
+          <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
-          <div><dt>FORMAT</dt><dd><span>12-inch record</span></dd></div>
           <div><dt>COLLECTION</dt><dd><span data-cm="collection">${esc(f0.collection)}</span></dd></div>
         </dl>
-        <div class="crate__hint crate__hint--d mono-xs" aria-hidden="true">SCROLL TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</div>
+        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
-      <div class="crate__facts" aria-live="polite">
+      <div class="crate__facts">
         <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
         <div><div class="crate__fl"><span data-cm="otherLabel">${f0.otherLabel}</span></div><div class="crate__fv"><span data-cm="other">${esc(f0.other)}</span></div></div>
       </div>
-      <div class="crate__count mono-xs" aria-hidden="true"><span data-cm="n">01</span> / ${String(n).padStart(2, '0')}</div>
-      <div class="crate__hint crate__hint--m mono-xs" aria-hidden="true">SWIPE TO FLIP · TAP TO OPEN</div>
-      <ol class="crate__list" aria-label="Records in the crate">
-        ${list.map((p, i) => `<li><a href="#/product/${p.slug}" data-crate="${i}">
-          <img src="${imgSrc(variant(p, 'vinyl').image)}" alt="" loading="lazy" decoding="async">
-          <span>${esc(p.artist)} · ${esc(albumText(p))}</span></a></li>`).join('')}
-      </ol>
+      <div class="crate__nav">
+        <button class="crate__arrow" type="button" data-crate-prev aria-label="Previous record" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="crate__count mono-xs" aria-hidden="true"><span data-cm="n">01</span> / ${String(n).padStart(2, '0')}</span>
+        <button class="crate__arrow" type="button" data-crate-next aria-label="Next record">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <a class="crate__open sr-focus" href="#/product/${list[0].slug}" data-crate-open>Open ${esc(f0.album)} by ${esc(f0.artist)}</a>
     </div>
   </section>`;
 }
@@ -6249,8 +6347,14 @@ function mountCrateSection(onUnmount) {
   const root = document.getElementById('crate'); if (!root) return null;
   const list = crateList(), facts = list.map(crateFacts);
   const cm = k => root.querySelector(`[data-cm="${k}"]`);
+  const prevB = root.querySelector('[data-crate-prev]'), nextB = root.querySelector('[data-crate-next]');
+  const openA = root.querySelector('[data-crate-open]');
   let shown = 0;
   const swap = (i) => {
+    prevB.disabled = i <= 0; nextB.disabled = i >= list.length - 1;
+    cm('n').textContent = String(i + 1).padStart(2, '0');
+    openA.href = '#/product/' + list[i].slug;
+    openA.textContent = `Open ${facts[i].album} by ${facts[i].artist}`;
     if (i === shown) return; const dir = i > shown ? 1 : -1; shown = i;
     const f = facts[i];
     ['album', 'artist', 'collection', 'price', 'otherLabel', 'other'].forEach((k, j) => {
@@ -6259,7 +6363,6 @@ function mountCrateSection(onUnmount) {
       if (!RM()) el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
         { duration: 420, delay: j * 28, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
     });
-    cm('n').textContent = String(i + 1).padStart(2, '0');
   };
   let api = null;
   if (window.mountCrate) {
@@ -6273,17 +6376,13 @@ function mountCrateSection(onUnmount) {
   }
   if (!api) { root.classList.add('crate--flat'); return null; }
   onUnmount(() => api.cleanup());
-  // keyboard: focusing a record in the (visually hidden) list brings it to the front
-  root.querySelectorAll('[data-crate]').forEach(a => {
-    a.addEventListener('focus', () => api.goTo(+a.dataset.crate));
-    a.addEventListener('keydown', e => {
-      const i = +a.dataset.crate, k = e.key;
-      const to = k === 'ArrowDown' || k === 'ArrowRight' ? i + 1 : k === 'ArrowUp' || k === 'ArrowLeft' ? i - 1 : k === 'Home' ? 0 : k === 'End' ? list.length - 1 : null;
-      if (to === null) return;
-      e.preventDefault();
-      const t = root.querySelector(`[data-crate="${Math.max(0, Math.min(list.length - 1, to))}"]`);
-      if (t) t.focus({ preventScroll: true });
-    });
+  const tick = () => { try { Sound.tick(); } catch (e) {} };
+  prevB.addEventListener('click', () => { tick(); api.prev(); });
+  nextB.addEventListener('click', () => { tick(); api.next(); });
+  // ←/→ while anything in the crate has focus
+  root.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); api.next(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); api.prev(); }
   });
   return api;
 }
@@ -6392,74 +6491,17 @@ function activePills(params) {
 }
 
 /* ============================== PDP ============================== */
-/* ---------- product page, editorial: title on hairlines, a torn-edge cover reveal,
-   and the next record rising and turning at the bottom ---------- */
-function hashStr(t) { let h = 2166136261; for (const c of t) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
-function tornEdge(slug) {
-  // a hand-torn paper edge, different per record but stable between visits
-  let a = hashStr(slug) || 1;
-  const rnd = () => { a ^= a << 13; a ^= a >>> 17; a ^= a << 5; return ((a >>> 0) % 10000) / 10000; };
-  const pts = []; let y = 70;
-  for (let x = 0; x <= 1000; x += 18 + rnd() * 26) { y = Math.max(18, Math.min(112, y + (rnd() - 0.5) * 34 + (60 - y) * 0.08)); pts.push([x, y]); }
-  pts.push([1000, 60 + rnd() * 30]);
-  let d = `M0 0 L1000 0 L1000 ${pts[pts.length - 1][1].toFixed(1)}`;
-  for (let i = pts.length - 2; i >= 0; i--) {
-    const [x, yy] = pts[i], [px, py] = pts[i + 1];
-    d += ` Q${((x + px) / 2).toFixed(1)} ${(py + (rnd() - 0.5) * 10).toFixed(1)} ${x.toFixed(1)} ${yy.toFixed(1)}`;
-  }
-  return `<svg class="pdx-tear" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L0 0 Z"/></svg>`;
-}
-function nextRecordOf(p) {
-  const list = withVinyl.filter(x => x.album !== '[CONFIRM]');
-  const i = list.findIndex(x => x.slug === p.slug);
-  return i < 0 ? list[0] : list[(i + 1) % list.length];
-}
-function pdxRows(p, sel) {
-  const v = variant(p, sel), col = COLS.find(c => p.tags.includes(c.slug));
-  return `
-    <div><dt>FORMAT</dt><dd id="pdxfmt">${esc(FMT[sel].label)}</dd></div>
-    <div><dt>SIZE</dt><dd id="pdxsize">${v.size === '[CONFIRM]' ? CONFIRM('Size not measured yet') : esc(v.size)}</dd></div>
-    <div><dt>PRICE</dt><dd class="num" id="pdxprice">${money(v.price)}</dd></div>
-    <div><dt>COLLECTION</dt><dd>${col ? `<a href="#/collections/${col.slug}">${esc(col.name)}</a>` : 'PastForward'}</dd></div>`;
-}
 function viewProduct(p, params) {
   const sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
   const v = variant(p, sel);
   const col = COLS.find(c => p.tags.includes(c.slug));
   const related = P.filter(x => x.slug !== p.slug && (col ? x.tags.includes(col.slug) : x.artist === p.artist)).slice(0, 4);
   const rel2 = related.length ? related : P.filter(x => x.slug !== p.slug).slice(0, 4);
-  // the full square artwork when we print it, otherwise the round label art cropped to a circle
-  const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
-  const art = imgSrc(artV.image), artRound = artV.format === 'vinyl';
-  const nx = nextRecordOf(p);
-  const formats = p.variants.map(x => FMT[x.format].label);
-  return `
-  <header class="pdx-head ground g-paper" data-section="${esc(albumText(p).toUpperCase())}">
-    <div class="pdx-crumb mono-xs">
+  return `<div class="pliq" id="pliq" aria-hidden="true"></div>
+  <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
+    <div class="mono-xs dim" style="margin-bottom:24px">
       <a href="#/shop">SHOP</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
     </div>
-    <h1 class="pdx-title">${albumOf(p)}</h1>
-    <p class="pdx-credits"><span class="pdx-k">BY</span> ${esc(p.artist)}
-      <span class="pdx-k">MADE AS</span> ${formats.map(esc).join(', ')}</p>
-    <dl class="pdx-table">${pdxRows(p, sel)}</dl>
-    <div class="pdx-actions">
-      <button class="pdx-btn" id="pdxadd" type="button">Add to cart</button>
-      <button class="pdx-btn" type="button" data-goto="buy">${p.variants.length > 1 ? 'Choose a format' : 'See the details'}</button>
-    </div>
-  </header>
-
-  <section class="pdx-reveal" data-section="THE COVER" aria-label="The album cover">
-    <div class="pdx-reveal__bg" aria-hidden="true"><img src="${art}" alt="" decoding="async"></div>
-    ${tornEdge(p.slug)}
-    <div class="pdx-reveal__rows">
-      <div class="pdx-row"><span class="pdx-w pdx-w--l reveal">${esc(p.artist)}</span></div>
-      <div class="pdx-row pdx-row--art"><figure class="pdx-cover reveal${artRound ? ' pdx-cover--round' : ''}"><img src="${art}" alt="${esc(artV.alt)}" decoding="async"></figure></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--r reveal">${albumOf(p)}</span></div>
-      <div class="pdx-row pdx-row--cta"><button class="pdx-btn pdx-btn--light" type="button" data-goto="buy">Make it yours</button></div>
-    </div>
-  </section>
-
-  <div class="wrap sec pdp-wrap" id="buy" style="padding-top:clamp(56px,8vw,110px)">
     <div class="pdp">
       <div>
         <div class="pdp__stage" id="stage"><div class="roomlight"></div>
@@ -6475,7 +6517,7 @@ function viewProduct(p, params) {
       </div>
       <div>
         <div class="card__artist">${esc(p.artist)}</div>
-        <h2 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h2>
+        <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${money(v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
 
         <div class="fmt" style="margin-top:28px">
@@ -6528,19 +6570,7 @@ function viewProduct(p, params) {
     <div class="buybar" id="buybar">
       <span class="num" id="barprice">${money(v.price)}</span>
       <button class="btn btn--primary" style="flex:1" id="baradd"><span class="btn__mag">Add to cart</span></button>
-    </div></div>
-
-  <section class="pdx-next ground g-paper" data-section="UP NEXT">
-    <div class="pdx-next__rows">
-      <div class="pdx-row"><span class="cap pdx-next__cap">UP NEXT</span></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--l reveal">${esc(nx.artist)}</span></div>
-      <div class="pdx-row"><span class="pdx-w pdx-w--r reveal">${albumOf(nx)}</span></div>
-      <div class="pdx-row"></div>
-    </div>
-    <a class="pdx-next__rec" id="pdxnext" href="#/product/${nx.slug}" data-cursor="NEXT" aria-label="Next record: ${esc(albumText(nx))} by ${esc(nx.artist)}">
-      ${recordHTML(nx, { size: 640, big: true, id: 'nextrec' })}
-    </a>
-  </section>`;
+    </div></div>`;
 }
 function stageMedia(p, fmt) {
   const v = variant(p, fmt);
@@ -6843,8 +6873,7 @@ window.__mount = function (seg, params) {
 
   if (page === 'home') {
     mountHome();
-    const crate = mountCrateSection(onUnmount);
-    if (crate) { const prev = window.__onScroll; window.__onScroll = y => { if (prev) prev(y); crate.onScroll(y); }; }
+    mountCrateSection(onUnmount);
   }
   if (page === 'shop') mountShop(seg[1], params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
@@ -6877,7 +6906,6 @@ function mountHome() {
     if (el) spins.push(Object.assign({ host, el, rate, base: rate, angle: 0, kick: 0, mom: 0 }, opt));
   };
   addSpin('beat3rec', 7.5, { hover: true });
-  addSpin('pickrec', 6);
   addSpin('droprec', 12, { boost: true, stopper: true });
 
   /* the flex hero disc: same drag/momentum/scratch-sound loop as every other record —
@@ -7173,70 +7201,6 @@ function mountHome() {
     else setTimeout(() => annot.classList.add('is-in'), 900);
   }
 
-  // Preload all picker vinyl images for instant switching
-  const featList = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
-  const pickersList = featList.slice(0, 8);
-  pickersList.forEach(p => {
-    const v = variant(p, 'vinyl');
-    if (v) { const pre = new Image(); pre.src = imgSrc(v.image, true); }
-  });
-
-  // picker interaction: click options to switch the vinyl album
-  const prec = $('#pickrec'), pspin = spins.find(s => s.host && s.host.id === 'pickrec');
-  const thumbsContainer = $('#pickthumbs');
-  if (thumbsContainer) mountDragScroll(thumbsContainer);
-
-  const selectRecord = (slug) => {
-    const p = bySlug[slug];
-    if (!p || !prec) return;
-    $$('#pickthumbs button').forEach(x => {
-      const isSel = x.dataset.pick === slug;
-      x.classList.toggle('is-on', isSel);
-      x.setAttribute('aria-selected', String(isSel));
-    });
-    const img = $('.record__art', prec);
-    const v = variant(p, 'vinyl');
-    const src = v ? imgSrc(v.image, true) : '';
-    if (img && src) {
-      if (RM()) {
-        img.src = src;
-      } else {
-        if (pspin) { pspin.kick = 140; pspin.stopped = false; pspin.rate = pspin.base; }
-        img.animate(
-          [{ opacity: 1, transform: 'scale(1)' }, { opacity: .12, transform: 'scale(.92)' }, { opacity: 1, transform: 'scale(1)' }],
-          { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)' }
-        );
-        setTimeout(() => { img.src = src; }, 160);
-      }
-    }
-    const ar = $('#pickartist'), al = $('#pickalbum');
-    if (ar) ar.textContent = p.artist;
-    if (al) al.innerHTML = albumOf(p);
-    if (!RM() && ar && al) {
-      [ar, al].forEach(el => el.animate(
-        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
-        { duration: 320, easing: 'cubic-bezier(.16,1,.3,1)' }
-      ));
-    }
-  };
-
-  $$('#pickthumbs button').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      selectRecord(btn.dataset.pick);
-    });
-    btn.addEventListener('pointerup', e => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      selectRecord(btn.dataset.pick);
-    });
-  });
-
-  if (thumbsContainer) {
-    thumbsContainer.addEventListener('click', e => {
-      const btn = e.target.closest('button[data-pick]');
-      if (btn) selectRecord(btn.dataset.pick);
-    });
-  }
 }
 
 function setParams(mut) {
@@ -7292,6 +7256,15 @@ function mountShop(routeKey, params) {
 
 function mountProduct(p, params) {
   if (!p) return;
+  /* the liquid backdrop: the album art flowing behind the page (see liquid.js) */
+  const liq = $('#pliq');
+  if (liq && window.mountLiquid) {
+    const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
+    try {
+      const api = window.mountLiquid(liq, imgSrc(artV.image), { round: artV.format === 'vinyl', reducedMotion: RM() });
+      if (api) onUnmount(() => api.cleanup());
+    } catch (e) {}
+  }
   playFlip($('#stagemedia'));
   let qty = 1, sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
   if (sel === 'vinyl') setTimeout(() => Sound.needleDrop(), 260);
@@ -7316,10 +7289,6 @@ function mountProduct(p, params) {
     if (!RM()) mountRipple();
     $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     $('#barprice').textContent = money(v.price);
-    const pf = $('#pdxfmt'), ps = $('#pdxsize'), pp = $('#pdxprice');
-    if (pf) pf.textContent = FMT[f].label;
-    if (ps) ps.innerHTML = v.size === '[CONFIRM]' ? CONFIRM('Size not measured yet') : esc(v.size);
-    if (pp) pp.textContent = money(v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
       : '300gsm matte poster stock ' + CONFIRM('Paper stock not confirmed with the printer');
@@ -7348,37 +7317,8 @@ function mountProduct(p, params) {
   const add = e => addToCart(p.slug, sel, qty, e.currentTarget);
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
-  const pdxAdd = $('#pdxadd');
-  if (pdxAdd) pdxAdd.addEventListener('click', e => addToCart(p.slug, sel, 1, e.currentTarget));
-  $$('[data-goto="buy"]').forEach(b => b.addEventListener('click', () => {
-    const t = document.getElementById('buy'); if (t) t.scrollIntoView({ behavior: RM() ? 'auto' : 'smooth', block: 'start' });
-  }));
   const bar = $('#buybar');
-  /* scroll-linked: the cover drifts under its torn edge; the next record rises and turns */
-  const reveal = $('.pdx-reveal'), revBg = $('.pdx-reveal__bg img'), cover = $('.pdx-cover');
-  const nextSec = $('.pdx-next'), nextA = $('#pdxnext'), nextDisc = $('#nextrec [data-disc]');
-  const motion = !RM();
-  window.__onScroll = y => {
-    if (bar) bar.classList.toggle('is-on', y > innerHeight * .6);
-    if (!motion) return;
-    if (reveal) {
-      const r = reveal.getBoundingClientRect();
-      if (r.bottom > 0 && r.top < innerHeight) {
-        const q = (innerHeight - r.top) / (innerHeight + r.height);          // 0 → 1 across the section
-        if (revBg) revBg.style.transform = `translate3d(0,${((q - .5) * -12).toFixed(2)}%,0) scale(1.28)`;
-        if (cover) cover.style.setProperty('--py', `${((.5 - q) * 60).toFixed(1)}px`);
-      }
-    }
-    if (nextSec && nextA) {
-      const r = nextSec.getBoundingClientRect();
-      if (r.top < innerHeight && r.bottom > 0) {
-        const q = Math.min(1, Math.max(0, (innerHeight - r.top) / r.height));
-        nextA.style.transform = `translate3d(-50%,${(62 - q * 50).toFixed(2)}%,0)`;
-        if (nextDisc) nextDisc.style.transform = `rotate(${(q * 420).toFixed(1)}deg)`;
-      }
-    }
-  };
-  window.__onScroll(scrollY);
+  window.__onScroll = y => { if (bar) bar.classList.toggle('is-on', y > innerHeight * .6); };
   function drawScale() {
     if (RM()) return;
     const svg = $('#scaleview svg'); if (!svg) return;
@@ -7912,13 +7852,14 @@ window.mountVinyl = mountVinyl;
    PastForward — "the crate": a diagonal row of real records.
    Appended to the vinyl3d.js module by build.py, so it shares that
    file's THREE import and createVinylKit() (same realistic pressing
-   as the hero). The page's own scroll drives it: the section is tall,
-   its stage is sticky, and scroll position maps to which record sits
-   in the middle. Nothing is scroll-jacked, so phones swipe natively.
+   as the hero).
 
-   mountCrate(root, items, { onOpen, reducedMotion }) → { cleanup, onScroll }
-   items: [{ slug, artist, album, image (url), ... }] — DOM text is
-   rendered by routes.js; this file only moves records and the scribble.
+   Moving between records: the arrow buttons, ←/→ keys, a horizontal
+   swipe or drag, or clicking a neighbour. Page scroll is left alone —
+   the section is one screen tall and scrolls past like any other.
+
+   mountCrate(root, items, { onActive, onOpen, reducedMotion })
+     → { cleanup, goTo, next, prev, active }
    ============================================================ */
 
 export function mountCrate(root, items, opts = {}) {
@@ -7935,10 +7876,10 @@ export function mountCrate(root, items, opts = {}) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.12;
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
-  canvas.style.cssText = "display:block;width:100%;height:100%";
+  canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:pan-y";
   canvas.setAttribute("aria-hidden", "true");
   host.appendChild(canvas);
 
@@ -7949,18 +7890,16 @@ export function mountCrate(root, items, opts = {}) {
   scene.environment = studio.texture;
   const parts = kit.recordParts();
 
-  const light = new THREE.PointLight("#f6f2ec", 60, 60, 2);
-  light.position.set(-3, 4, 7);
+  const light = new THREE.PointLight("#f6f2ec", 70, 80, 2);
+  light.position.set(-3, 4, 9);
   scene.add(light);
-  scene.add(new THREE.AmbientLight("#ffffff", 0.25));
+  scene.add(new THREE.AmbientLight("#ffffff", 0.3));
 
-  /* ---- one record per item: tilt (fixed lean, like a record propped in a crate)
-          → spin (turns with scroll) → body / grooves / printed label ---- */
-  const labelGeo = parts.labelGeometry;
+  let dirty = true;
+
+  /* ---- one record per item: holder (place in the row) → tilt (lean + hover) → spin ---- */
   const records = items.map((item, i) => {
-    const holder = new THREE.Group();          // position along the diagonal
-    const tilt = new THREE.Group();            // lean + hover tilt
-    const spin = new THREE.Group();            // rotation about the spindle
+    const holder = new THREE.Group(), tilt = new THREE.Group(), spin = new THREE.Group();
     holder.add(tilt); tilt.add(spin); scene.add(holder);
     const body = new THREE.Mesh(parts.bodyGeometry, parts.bodyMaterial);
     const surface = new THREE.Mesh(parts.surfaceGeometry, parts.vinylMaterial);
@@ -7968,7 +7907,7 @@ export function mountCrate(root, items, opts = {}) {
     const lc = kit.makeCanvas(512), lctx = lc.getContext("2d");
     lctx.fillStyle = "#1a1718"; lctx.fillRect(0, 0, 512, 512);
     const tex = kit.textureFrom(lc, true);
-    const label = new THREE.Mesh(labelGeo, new THREE.MeshStandardMaterial({
+    const label = new THREE.Mesh(parts.labelGeometry, new THREE.MeshStandardMaterial({
       map: tex, emissive: "#ffffff", emissiveMap: tex, emissiveIntensity: 0.9,
       color: new THREE.Color(0.14, 0.14, 0.14), roughness: 0.9, metalness: 0,
       envMapIntensity: 0.12, toneMapped: false
@@ -7979,79 +7918,59 @@ export function mountCrate(root, items, opts = {}) {
     const img = new Image();
     img.decoding = "async";
     img.onload = () => {
-      // the printed label: album art cropped to the circle, a hairline ring at the edge
       const s = Math.max(512 / img.naturalWidth, 512 / img.naturalHeight);
       lctx.drawImage(img, 256 - img.naturalWidth * s / 2, 256 - img.naturalHeight * s / 2, img.naturalWidth * s, img.naturalHeight * s);
       const g = lctx.createRadialGradient(256, 256, 256 * 0.62, 256, 256, 256);
       g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(0.8, "rgba(0,0,0,0.06)"); g.addColorStop(1, "rgba(0,0,0,0.26)");
       lctx.fillStyle = g; lctx.fillRect(0, 0, 512, 512);
-      tex.needsUpdate = true; dirty = true;
+      tex.needsUpdate = true; dirty = true; wake();
     };
     img.src = item.image;
-    return { holder, tilt, spin, hit: [body, surface, label], angle: 0, hover: 0, tx: 0, ty: 0 };
+    return { holder, tilt, spin, hit: [body, surface, label], angle: 0, hover: 0, tx: 0, ty: 0, lift: 0 };
   });
   const hitMeshes = records.flatMap(r => r.hit);
 
-  /* ---- layout ---- */
-  let W = 1, H = 1, portrait = false, DIAG = new THREE.Vector3(), SPACING = 7.4, LIFT_Y = 0;
-  const LEAN_X = -0.62, LEAN_Y = 0.36;          // record faces the viewer, top tipped away, turned toward the row
+  /* ---- layout, measured from the reference: the record in front fills ~60% of the
+          screen height; the next one sits up and to the right and a little closer,
+          the previous one down and to the left and a little further away ---- */
+  let W = 1, H = 1, portrait = false, LIFT_Y = 0;
+  const STEP = new THREE.Vector3();
+  const LEAN_X = -0.32, LEAN_Y = 0.26;
   function resize() {
     W = Math.max(1, stage.clientWidth); H = Math.max(1, stage.clientHeight);
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     portrait = W / H < 0.8;
-    // fit: the active record fills ~56% of the height on wide screens, ~84% of the width on phones
-    const vfov = THREE.MathUtils.degToRad(camera.fov);
-    const visH = portrait ? 6.2 / 0.74 / camera.aspect : 6.2 / 0.56;
-    camera.position.set(0, 0, visH / (2 * Math.tan(vfov / 2)));
+    const t = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+    const D = portrait ? 6 / (0.84 * 2 * t * camera.aspect) : 6 / (0.6 * 2 * t);
+    camera.position.set(0, 0, D);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
-    // phones: a steeper row with wider gaps, so neighbours only peek from the corners
-    // and never sit under the text; the active record rides a little above centre
-    DIAG.set(portrait ? 0.55 : 1, portrait ? 0.835 : 0.56, 0).normalize();
-    SPACING = portrait ? 11 : 8.3;
-    LIFT_Y = portrait ? visH * 0.045 : 0;
+    const z1 = D * (portrait ? 0.06 : 0.11);                  // the next record is this much closer
+    const d1 = D - z1, visW = 2 * t * d1 * camera.aspect, visH = 2 * t * d1;
+    // screen offset of the neighbour, as a share of the screen
+    STEP.set(visW * (portrait ? 0.74 : 0.36), visH * (portrait ? 0.15 : 0.19), z1);
+    LIFT_Y = 2 * t * D * (portrait ? 0.05 : 0.035);
     dirty = true;
   }
 
-  /* ---- scroll → progress ---- */
-  let target = 0, visual = 0, lastTarget = 0, spinBoost = 0, active = -1;
-  // scroll distance per record, measured from the laid-out section (CSS decides it via --step)
-  const stepPx = () => Math.max(1, (root.offsetHeight - stage.offsetHeight) / Math.max(1, N - 1));
-  function readScroll() {
-    const r = root.getBoundingClientRect();
-    target = Math.min(N - 1, Math.max(0, -r.top / stepPx()));
-    return r;
+  /* ---- navigation ---- */
+  let target = 0, visual = 0, active = -1, spinBoost = 0, dragOffset = 0;
+  function goTo(i) {
+    const t = Math.max(0, Math.min(N - 1, i));
+    if (t === target && !dragOffset) return;
+    target = t; dirty = true; wake();
   }
-  let snapTimer = 0;
-  function onScroll() {
-    readScroll();
-    const dv = Math.abs(target - lastTarget); lastTarget = target;
-    if (!RM) spinBoost = Math.min(900, spinBoost + dv * 900);
-    dirty = true; wake();
-    clearTimeout(snapTimer);
-    snapTimer = setTimeout(snap, 150);
-  }
-  function snap() {
-    const r = root.getBoundingClientRect();
-    const pinned = r.top < -2 && r.bottom > innerHeight + 2;
-    const t = Math.round(target);
-    if (!pinned || Math.abs(t - target) < 0.02) return;
-    scrollToIndex(t);
-  }
-  function scrollToIndex(i) {
-    const top = window.scrollY + root.getBoundingClientRect().top + i * stepPx() + 1;
-    window.scrollTo({ top, behavior: RM ? "auto" : "smooth" });
-  }
+  const next = () => goTo(target + 1), prev = () => goTo(target - 1);
 
-  /* ---- pointer: hover a record → scribble chases the pointer; click/tap opens or goes to it ---- */
-  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-  let hovered = -1, pointerIn = false, lastMove = 0, downAt = null;
-  const local = new THREE.Vector3();
+  /* ---- pointer: hover → the loop draws round the record and chases the pointer;
+          drag/swipe sideways → previous/next; click the front record → open it ---- */
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), local = new THREE.Vector3();
+  let hovered = -1, pointerIn = false, lastMove = 0, down = null, opening = false;
   const touchOnly = window.matchMedia("(hover: none)").matches;
-  function pick(e) {
+  function pick(x, y) {
     const r = canvas.getBoundingClientRect();
-    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
     const hits = ray.intersectObjects(hitMeshes.filter(m => m.parent.parent.parent.visible), false);
     if (!hits.length) return null;
@@ -8059,17 +7978,29 @@ export function mountCrate(root, items, opts = {}) {
     local.copy(hits[0].point); records[i].tilt.worldToLocal(local);
     return { i, x: local.x / 3, y: local.y / 3 };
   }
+  const lightTarget = new THREE.Vector3(-3, 4, 9);
   function onMove(e) {
+    if (down && down.id === e.pointerId) {
+      const dx = e.clientX - down.x, dy = e.clientY - down.y;
+      if (!down.dragging && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        down.dragging = true;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      if (down.dragging) {
+        dragOffset = -dx / (W * (portrait ? 0.7 : 0.38));     // the row follows the finger
+        dirty = true; wake();
+        return;
+      }
+    }
     if (e.pointerType === "touch") return;
-    const h = pick(e);
     pointerIn = true; lastMove = performance.now();
-    // the light follows the pointer across the stage
     const r = canvas.getBoundingClientRect();
-    lightTarget.set(((e.clientX - r.left) / r.width - 0.5) * 16, -((e.clientY - r.top) / r.height - 0.5) * 10, 7);
+    lightTarget.set(((e.clientX - r.left) / r.width - 0.5) * 18, -((e.clientY - r.top) / r.height - 0.5) * 11, 9);
+    const h = pick(e.clientX, e.clientY);
     if (h) {
       records[h.i].tx = h.x; records[h.i].ty = h.y;
       chase = Math.atan2(h.y, h.x);
-      if (hovered !== h.i) { hovered = h.i; drawOn(h.i); }
+      if (hovered !== h.i) { if (hovered !== -1) { records[hovered].tx = records[hovered].ty = 0; } hovered = h.i; drawOn(h.i); }
       canvas.style.cursor = "pointer";
     } else if (hovered !== -1) {
       records[hovered].tx = records[hovered].ty = 0;
@@ -8082,28 +8013,39 @@ export function mountCrate(root, items, opts = {}) {
     if (hovered !== -1) { records[hovered].tx = records[hovered].ty = 0; hovered = -1; drawOff(); }
     canvas.style.cursor = ""; dirty = true; wake();
   }
-  function onDown(e) { downAt = { x: e.clientX, y: e.clientY, t: performance.now() }; }
-  function onUp(e) {
-    if (!downAt) return;
-    const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 8 || performance.now() - downAt.t > 900;
-    downAt = null;
-    if (moved) return;
-    const h = pick(e);
-    if (!h) return;
-    if (h.i === Math.round(visual) && Math.abs(visual - h.i) < 0.15) {
-      if (e.pointerType === "touch" && hovered !== h.i) { hovered = h.i; drawOn(h.i); setTimeout(() => open(h.i), 380); }
-      else open(h.i);
-    } else scrollToIndex(h.i);
+  function onDown(e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    down = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), dragging: false };
   }
-  let opening = false;
+  function onUp(e) {
+    if (!down || down.id !== e.pointerId) return;
+    const d = down; down = null;
+    if (d.dragging) {
+      const moved = dragOffset;
+      dragOffset = 0;
+      // a flick of a fifth of a record is enough; a long drag can travel several
+      const steps = Math.abs(moved) < 0.18 ? 0 : Math.sign(moved) * Math.max(1, Math.round(Math.abs(moved)));
+      target = Math.max(0, Math.min(N - 1, target + steps));
+      visual = Math.max(-0.4, Math.min(N - 0.6, visual + moved));   // continue from where the finger left it
+      dirty = true; wake();
+      return;
+    }
+    if (performance.now() - d.t > 900) return;
+    const h = pick(e.clientX, e.clientY);
+    if (!h) return;
+    if (h.i === target && Math.abs(visual - target) < 0.2) {
+      if (e.pointerType === "touch" && drawnAround !== h.i) { drawOn(h.i); setTimeout(() => open(h.i), 380); }
+      else open(h.i);
+    } else goTo(h.i);
+  }
+  function onCancel() { if (down && down.dragging) { dragOffset = 0; dirty = true; wake(); } down = null; }
   function open(i) {
     if (opening) return; opening = true;
     if (RM) { onOpen(items[i], i); return; }
-    // the chosen record lifts toward the viewer, then the product page takes over
     const r = records[i], t0 = performance.now();
     (function lift(now) {
       const k = Math.min(1, (now - t0) / 420), e = 1 - Math.pow(1 - k, 3);
-      r.lift = e; dirty = true;
+      r.lift = e; dirty = true; wake();
       if (k < 1) requestAnimationFrame(lift); else onOpen(items[i], i);
     })(t0);
   }
@@ -8111,22 +8053,22 @@ export function mountCrate(root, items, opts = {}) {
   canvas.addEventListener("pointerleave", onLeave);
   canvas.addEventListener("pointerdown", onDown);
   canvas.addEventListener("pointerup", onUp);
+  canvas.addEventListener("pointercancel", onCancel);
 
-  /* ---- the scribble: a loose ink loop drawn around a record, in screen space.
-          It's built from points on the record's own rim, so it follows the
-          perspective lean, and it "boils" (re-seeds) while the pointer moves. ---- */
-  let seed = 7, chase = 2.2, drawnAround = -1, drawn = 0, lastBoil = 0;
-  const startAngle = { v: 2.2 };
+  /* ---- the loop: a loose ring of ink around the record, in screen space, built from
+          points on the record's own rim so it follows the lean; it re-draws itself a few
+          times a second while the pointer moves, and leans toward the pointer ---- */
+  let seed = 7, chase = 2.2, drawnAround = -1, drawn = 0, lastBoil = 0, startAngle = 1.1, drawAnim = null;
   const P = new THREE.Vector3();
   function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function scribblePath(i) {
     const rec = records[i], rnd = mulberry(seed);
     const ph1 = rnd() * 6.28, ph2 = rnd() * 6.28, wob = 0.025 + rnd() * 0.02;
     const turns = 1.32 + rnd() * 0.18, steps = 120;
-    const ox = rec.tx * 0.18, oy = rec.ty * 0.18;              // the loop leans toward the pointer
+    const ox = rec.tx * 0.18, oy = rec.ty * 0.18;
     let d = "";
     for (let k = 0; k <= steps; k++) {
-      const t = k / steps, a = startAngle.v + t * turns * Math.PI * 2;
+      const t = k / steps, a = startAngle + t * turns * Math.PI * 2;
       const rr = 3.0 * (1.07 + wob * Math.sin(a * 2 + ph1) + 0.018 * Math.sin(a * 5 + ph2) + 0.05 * t);
       P.set(ox + rr * Math.cos(a), oy + rr * 0.985 * Math.sin(a), 0.05);
       rec.tilt.localToWorld(P); P.project(camera);
@@ -8134,113 +8076,118 @@ export function mountCrate(root, items, opts = {}) {
     }
     return d;
   }
-  let drawAnim = null;
   function drawOn(i) {
     drawnAround = i; seed = (seed * 9301 + 49297) % 233280;
-    startAngle.v = chase - 1.1;
+    startAngle = chase - 1.1;
     ink.setAttribute("d", scribblePath(i));
     svg.style.opacity = "1";
     if (drawAnim) drawAnim.cancel();
-    if (RM) { ink.style.strokeDashoffset = "0"; drawn = 1; return; }
-    drawAnim = ink.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 620, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" });
     drawn = 1;
+    if (RM) { ink.style.strokeDashoffset = "0"; return; }
+    drawAnim = ink.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 620, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" });
   }
   function drawOff() {
     if (drawAnim) drawAnim.cancel();
-    if (RM) { svg.style.opacity = "0"; drawn = 0; drawnAround = -1; return; }
+    drawn = 0;
+    if (RM) { svg.style.opacity = "0"; drawnAround = -1; return; }
+    const was = drawnAround;
     drawAnim = ink.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -1 }], { duration: 360, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
-    drawn = 0; const was = drawnAround;
     drawAnim.onfinish = () => { if (drawnAround === was && !drawn) { svg.style.opacity = "0"; drawnAround = -1; } };
   }
 
-  /* ---- frame loop: runs only while the section is on screen ---- */
-  const lightTarget = light.position.clone();
-  let raf = 0, last = performance.now(), visible = false, dirty = true, disposed = false;
+  /* ---- frame loop: only while on screen and something is changing ---- */
+  let raf = 0, last = performance.now(), visible = false, disposed = false;
   function wake() { if (!raf && visible && !disposed) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
     raf = 0;
     const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
     let moving = false;
 
-    const k = RM ? 1 : 1 - Math.exp(-dt * 8);
-    const nv = visual + (target - visual) * k;
-    if (Math.abs(nv - visual) > 1e-4) moving = true;
-    visual = Math.abs(target - nv) < 1e-4 ? target : nv;
+    const goal = target + dragOffset;
+    const before = visual;
+    const k = RM ? 1 : 1 - Math.exp(-dt * (dragOffset ? 18 : 6.5));
+    visual += (goal - visual) * k;
+    if (Math.abs(goal - visual) < 1e-4) visual = goal; else moving = true;
+    if (!RM) spinBoost = Math.min(900, spinBoost + Math.abs(visual - before) * 600);
 
-    const a = Math.round(visual);
+    const a = Math.max(0, Math.min(N - 1, Math.round(visual)));
     if (a !== active) { active = a; onActive(items[a], a); }
     if (touchOnly && !pointerIn) {
-      // no hover on phones: the record that settles in the middle gets the loop
-      const settled = Math.abs(visual - a) < 0.03;
-      if (settled && drawnAround !== a) { hovered = -1; chase = 2.2; drawOn(a); }
+      // no hover on phones: the record that settles in front gets the loop
+      const settled = Math.abs(visual - target) < 0.03 && !dragOffset;
+      if (settled && drawnAround !== target) { chase = 2.2; drawOn(target); }
       else if (!settled && drawnAround !== -1 && drawn) drawOff();
     }
 
     spinBoost *= Math.pow(0.9, dt * 60);
-    // records turn only while you scroll; once the row settles each one comes to rest
-    // with its label upright, so the art reads the right way up
     const settling = spinBoost < 4;
     records.forEach((r, i) => {
       const d = i - visual;
-      const on = Math.abs(d) < 2.6;
+      const on = Math.abs(d) < 2.7;
       r.holder.visible = on;
       if (!on) return;
-      r.holder.position.copy(DIAG).multiplyScalar(d * SPACING);
+      r.holder.position.copy(STEP).multiplyScalar(d);
+      if (d < 0) r.holder.position.z *= 1.9;          // records already passed sink further back, clear of the text
       r.holder.position.y += LIFT_Y;
-      r.holder.position.z = (r.lift || 0) * 2.2;
+      r.holder.position.z += r.lift * 2.4;
+      // records turn while the row moves, then come to rest with the art upright
       r.angle += spinBoost * (Math.abs(d) < 0.6 ? 1 : 0.6) * dt;
       if (settling) {
         const rest = Math.round(r.angle / 360) * 360, gap = rest - r.angle;
         if (Math.abs(gap) > 0.05) { r.angle += gap * (RM ? 1 : 1 - Math.exp(-dt * 2.6)); moving = true; } else r.angle = rest;
       }
       r.spin.rotation.z = -r.angle * Math.PI / 180;
-      // hover: lean a touch toward the pointer
       const want = i === hovered ? 1 : 0;
       r.hover += (want - r.hover) * (RM ? 1 : 1 - Math.exp(-dt * 10));
-      r.tilt.rotation.set(LEAN_X - r.ty * 0.12 * r.hover, LEAN_Y + r.tx * 0.14 * r.hover, 0, "YXZ");
       if (Math.abs(r.hover - want) > 0.002) moving = true;
+      r.tilt.rotation.set(LEAN_X - r.ty * 0.12 * r.hover, LEAN_Y + r.tx * 0.14 * r.hover, 0, "YXZ");
+      r.tilt.scale.setScalar(1 + 0.025 * r.hover);
     });
     if (spinBoost > 0.5) moving = true;
 
     if (!pointerIn) {
       const t = now * 0.001;
-      lightTarget.set(Math.cos(t * 0.5) * 6, 3 + Math.sin(t * 0.35) * 2.5, 7);
+      lightTarget.set(Math.cos(t * 0.5) * 7, 3 + Math.sin(t * 0.35) * 3, 9);
+      if (!RM) moving = true;     // the light keeps drifting over the grooves while on screen
     }
     light.position.lerp(lightTarget, 1 - Math.exp(-5 * dt));
 
     if (drawnAround >= 0) {
-      startAngle.v += ((chase - 1.1) - startAngle.v) * (1 - Math.exp(-dt * 4));
-      // boil a few times a second while the pointer is moving; otherwise just track the record
+      startAngle += ((chase - 1.1) - startAngle) * (1 - Math.exp(-dt * 4));
       if (!RM && pointerIn && now - lastBoil > 110 && now - lastMove < 300) { seed = (seed * 9301 + 49297) % 233280; lastBoil = now; }
       ink.setAttribute("d", scribblePath(drawnAround));
     }
 
-    if (dirty || moving) renderer.render(scene, camera);
+    renderer.render(scene, camera);
     dirty = false;
-    if (moving && visible) raf = requestAnimationFrame(frame);
+    if ((moving || dirty) && visible) raf = requestAnimationFrame(frame);
   }
 
-  const io = new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) { dirty = true; wake(); } }, { rootMargin: "100px" });
+  const io = new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) { dirty = true; wake(); } }, { rootMargin: "60px" });
   io.observe(stage);
   const ro = new ResizeObserver(() => { resize(); wake(); });
   ro.observe(stage);
-  resize(); readScroll(); visual = target;
+  const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else wake(); };
+  document.addEventListener("visibilitychange", onVis);
+  resize();
 
   function cleanup() {
     if (disposed) return; disposed = true;
-    cancelAnimationFrame(raf); clearTimeout(snapTimer);
+    cancelAnimationFrame(raf);
     io.disconnect(); ro.disconnect();
+    document.removeEventListener("visibilitychange", onVis);
     canvas.removeEventListener("pointermove", onMove);
     canvas.removeEventListener("pointerleave", onLeave);
     canvas.removeEventListener("pointerdown", onDown);
     canvas.removeEventListener("pointerup", onUp);
+    canvas.removeEventListener("pointercancel", onCancel);
     const geos = new Set(), mats = new Set();
     scene.traverse(o => { if (o.geometry) geos.add(o.geometry); if (o.material) mats.add(o.material); });
     geos.forEach(g => g.dispose()); mats.forEach(m => m.dispose());
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, onScroll, goTo: scrollToIndex, get active() { return active; } };
+  return { cleanup, goTo, next, prev, get active() { return target; } };
 }
 window.mountCrate = mountCrate;
 </script></body></html>
