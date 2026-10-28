@@ -129,7 +129,7 @@ function viewHome() {
       <div class="annot" id="heroannot">
         <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
           <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
-        <div class="annot__pt annot__pt--r" style="left:70.5%;top:50%;--ad:260ms">
+        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
           <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
         <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
           <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
@@ -1292,10 +1292,7 @@ function mountHome() {
 
   /* ---- annotation markers over the hero record ---- */
   const annot = $('#heroannot');
-  if (annot) {
-    if (RM()) annot.classList.add('is-in');
-    else setTimeout(() => annot.classList.add('is-in'), 900);
-  }
+  if (annot) annot.classList.add('is-in');
 
   // Preload all picker vinyl images for instant switching
   const featList = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);

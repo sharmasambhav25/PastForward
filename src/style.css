@@ -939,26 +939,26 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   background:linear-gradient(270deg,rgba(192,53,63,.8),rgba(243,239,232,.35))}
 
 /* Desktop leader line lengths: push labels near vinyl perimeter */
-.annot__pt:nth-child(1)::before{right:6px; width:clamp(200px, 22vw, 270px)}
-.annot__pt:nth-child(1) .annot__lab{right:calc(100% + clamp(206px, 22vw + 6px, 276px)); text-align:right}
+.annot__pt:nth-child(1)::before{right:6px; width:clamp(260px, 25vw, 340px)}
+.annot__pt:nth-child(1) .annot__lab{right:calc(100% + clamp(266px, 25vw + 6px, 346px)); text-align:right}
 
-.annot__pt:nth-child(2)::before{left:6px; width:clamp(130px, 14vw, 175px)}
-.annot__pt:nth-child(2) .annot__lab{left:calc(100% + clamp(136px, 14vw + 6px, 181px)); text-align:left}
+.annot__pt:nth-child(2)::before{left:6px; width:clamp(260px, 24vw, 340px)}
+.annot__pt:nth-child(2) .annot__lab{left:calc(100% + clamp(266px, 24vw + 6px, 346px)); text-align:left}
 
-.annot__pt:nth-child(3)::before{left:6px; width:clamp(75px, 8vw, 110px)}
-.annot__pt:nth-child(3) .annot__lab{left:calc(100% + clamp(81px, 8vw + 6px, 116px)); text-align:left}
+.annot__pt:nth-child(3)::before{left:6px; width:clamp(95px, 9vw, 130px)}
+.annot__pt:nth-child(3) .annot__lab{left:calc(100% + clamp(101px, 9vw + 6px, 136px)); text-align:left}
 
 .annot__pt{opacity:0; transition:opacity 620ms var(--e-ui) var(--ad,0ms)}
 .annot.is-in .annot__pt{opacity:1}
 @media(max-width:1100px) and (min-width:768px){
   .annot{display:block}
   .annot__lab{font-size:.68rem; letter-spacing:.14em}
-  .annot__pt:nth-child(1)::before{right:5px; width:150px}
-  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 156px); text-align:right}
-  .annot__pt:nth-child(2)::before{left:5px; width:100px}
-  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 106px); text-align:left}
-  .annot__pt:nth-child(3)::before{left:5px; width:65px}
-  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 71px); text-align:left}
+  .annot__pt:nth-child(1)::before{right:5px; width:180px}
+  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 186px); text-align:right}
+  .annot__pt:nth-child(2)::before{left:5px; width:170px}
+  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 176px); text-align:left}
+  .annot__pt:nth-child(3)::before{left:5px; width:80px}
+  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 86px); text-align:left}
 }
 @media(max-width:767px){
   .annot{display:block; position:absolute; inset:0; pointer-events:none; z-index:5}
@@ -968,7 +968,7 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
     box-shadow:0 0 8px rgba(192,53,63,.8), 0 0 0 2px rgba(192,53,63,.3);
   }
   .annot__pt:nth-child(1){left:50%!important; top:50%!important}
-  .annot__pt:nth-child(2){left:67.5%!important; top:50%!important}
+  .annot__pt:nth-child(2){left:58%!important; top:50%!important}
   .annot__pt:nth-child(3){left:70%!important; top:29%!important}
   
   .annot__pt::before{
@@ -980,14 +980,14 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   }
 
   /* Extended leader lines to place labels near vinyl perimeter */
-  .annot__pt:nth-child(1)::before{right:5px; width:94px}
-  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 102px); text-align:right}
+  .annot__pt:nth-child(1)::before{right:5px; width:82px}
+  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 90px); text-align:right}
 
-  .annot__pt:nth-child(2)::before{left:5px; width:58px}
-  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 66px); text-align:left}
+  .annot__pt:nth-child(2)::before{left:5px; width:42px}
+  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 50px); text-align:left}
 
-  .annot__pt:nth-child(3)::before{left:5px; width:48px}
-  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 56px); text-align:left}
+  .annot__pt:nth-child(3)::before{left:5px; width:34px}
+  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 42px); text-align:left}
 
   .annot__lab{
     font-size:clamp(0.58rem, 2.2vw, 0.65rem);
