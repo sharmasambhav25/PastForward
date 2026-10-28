@@ -770,6 +770,10 @@ function render() {
   if (typeof window.__afterRender === 'function') window.__afterRender(seg, params);
   window.__onScroll = null;
   if (typeof window.__mount === 'function') window.__mount(seg, params);
+  if (params.get('scroll')) {
+    const target = document.getElementById(params.get('scroll'));
+    if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }
   if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
 }
