@@ -108,10 +108,20 @@ export function mountCrate(root, items, opts = {}) {
 
   /* ---- navigation ---- */
   let target = 0, visual = 0, active = -1, spinBoost = 0, dragOffset = 0;
+  /* page scroll drives the first few records (the section pins while you scroll through
+     them), the arrows/drag/keys move freely; whichever you used last, the other carries on
+     from there rather than jumping back */
+  let base = 0, lastS = 0;
   function goTo(i) {
     const t = Math.max(0, Math.min(N - 1, i));
+    base = t - lastS;
     if (t === target && !dragOffset) return;
     target = t; dirty = true; wake();
+  }
+  function fromScroll(s) {
+    lastS = s;
+    const t = Math.max(0, Math.min(N - 1, Math.round(base + s)));
+    if (t !== target) { target = t; dirty = true; wake(); }
   }
   const next = () => goTo(target + 1), prev = () => goTo(target - 1);
 
@@ -178,6 +188,7 @@ export function mountCrate(root, items, opts = {}) {
       // a flick of a fifth of a record is enough; a long drag can travel several
       const steps = Math.abs(moved) < 0.18 ? 0 : Math.sign(moved) * Math.max(1, Math.round(Math.abs(moved)));
       target = Math.max(0, Math.min(N - 1, target + steps));
+      base = target - lastS;
       visual = Math.max(-0.4, Math.min(N - 0.6, visual + moved));   // continue from where the finger left it
       dirty = true; wake();
       return;
@@ -340,6 +351,6 @@ export function mountCrate(root, items, opts = {}) {
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, goTo, next, prev, get active() { return target; } };
+  return { cleanup, goTo, next, prev, fromScroll, get active() { return target; } };
 }
 window.mountCrate = mountCrate;

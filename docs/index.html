@@ -1553,13 +1553,14 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 
 /* ---------- the crate (MAKE IT YOURS): a diagonal row of records on the brand collage ----------
    One screen tall; arrows / swipe / keys move the row. */
-.crate{position:relative; height:100svh; min-height:640px; overflow:hidden; background:var(--ink)}
+/* tall enough for the page scroll to move through --steps records while the stage stays pinned */
+.crate{position:relative; height:calc(100svh + var(--steps, 3) * 34svh); background:var(--ink)}
 .crate__bg{position:absolute; inset:0; z-index:0; display:flex}
 .crate__bg>i{flex:1; background-repeat:repeat; background-size:auto 680px; background-position:center; opacity:.30}
 .crate__bg>i:last-child{opacity:.36}
 .crate__bg::after{content:""; position:absolute; inset:0;
   background:radial-gradient(70% 70% at 54% 52%,rgba(6,5,6,.88) 18%,rgba(6,5,6,.55) 55%,rgba(6,5,6,.25))}
-.crate__stage{position:relative; z-index:2; height:100%; outline:none}
+.crate__stage{position:sticky; top:0; z-index:2; height:100svh; min-height:640px; overflow:hidden; outline:none; background:var(--ink)}
 .crate__gl{position:absolute; inset:0; z-index:1}
 .crate__scribble{position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; overflow:visible; opacity:0}
 .crate__scribble path{fill:none; stroke:var(--ember); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
@@ -1581,14 +1582,14 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate__fv{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
   font-size:clamp(1.05rem,1.9vw,1.65rem); line-height:1.02; overflow:hidden}
 .crate__nav{position:absolute; z-index:5; right:var(--gutter); bottom:clamp(22px,5svh,50px); display:flex; align-items:center; gap:14px}
-.crate__count{color:var(--muted); letter-spacing:.2em; min-width:7ch; text-align:center}
-.crate__arrow{width:54px; height:54px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
-  background:rgba(6,5,6,.55); border:1px solid rgba(243,239,232,.3); color:var(--cream);
+.crate__count{color:var(--cream); letter-spacing:.2em; min-width:7ch; text-align:center; font-size:.72rem}
+.crate__arrow{width:66px; height:66px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  background:var(--cream); border:2px solid var(--cream); color:var(--ink); box-shadow:0 8px 28px rgba(0,0,0,.55), 0 0 0 6px rgba(243,239,232,.08);
   transition:background .25s, border-color .25s, transform .35s var(--e-spring), opacity .25s; backdrop-filter:blur(6px)}
-.crate__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
-.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); transform:scale(1.06)}
+.crate__arrow svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); color:var(--cream); transform:scale(1.08)}
 .crate__arrow:active:not(:disabled){transform:scale(.94)}
-.crate__arrow:disabled{opacity:.28; cursor:default}
+.crate__arrow:disabled{opacity:.35; background:transparent; color:var(--cream); border-color:rgba(243,239,232,.45); box-shadow:none; cursor:default}
 .crate__arrow:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
 /* a real link to the record in front, for keyboards and screen readers */
 .sr-focus{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
@@ -1596,7 +1597,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   padding:10px 14px; background:var(--ink); border:1px solid var(--ember); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase}
 @media(max-width:1023px){ .crate__meta{width:min(380px, 42vw)} }
 @media(max-width:767px){
-  .crate{min-height:600px}
+  .crate__stage{min-height:600px}
   .crate__meta{width:calc(100% - 2*var(--gutter)); top:calc(var(--nav-h) + 6px)}
   .crate__eyebrow{margin-bottom:6px}
   .crate__head{font-size:clamp(1.55rem,7vw,2rem); margin-bottom:10px}
@@ -1625,6 +1626,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate__wall{position:absolute; inset:0; z-index:1}
 .crate--live .crate__bg>i{display:none}
 .crate--live .crate__bg::after{display:none}
+.crate--flat{height:auto}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -5649,7 +5651,7 @@ function mountLiquid(host, imageUrl, opts) {
     '  vec2 uv = px / res;',
     '  vec2 q = vec2(uv.x * res.x / res.y, uv.y);',
     '  vec2 w = vec2(fbm(q * 1.4 + vec2(t * 0.05, -t * 0.04)), fbm(q * 1.4 + vec2(5.2 - t * 0.04, 1.3 + t * 0.06)));',
-    '  uv += (w - 0.5) * 0.09 * uMotion;',
+    '  uv += (w - 0.5) * 0.045 * uMotion;                     // gentler flow keeps the art legible',
     '  for (int i = 0; i < 6; i++) {',
     '    vec2 dv = px - uDrops[i].xy; float age = uTime - uDrops[i].z; float r = length(dv);',
     '    float ring = sin(r * 0.055 - age * 8.0) * exp(-age * 1.4) * exp(-r * 0.0065) * step(0.0, age) * step(age, 4.0);',
@@ -5659,9 +5661,11 @@ function mountLiquid(host, imageUrl, opts) {
     '  vec2 st = uv - 0.5; float va = res.x / res.y;',
     '  if (va > 1.0) st.y /= va; else st.x *= va;',
     '  st *= 0.92; st.y -= (uEdge / res.y) * 0.06; st += 0.5;',
-    '  vec3 c = texture2D(uTex, st, uBlur).rgb;                 // soft: the art is only 480px',
-    '  vec3 c2 = texture2D(uTex, st + (w - 0.5) * 0.05, uBlur + 1.4).rgb;',
-    '  c = mix(c, c2, 0.45);',
+    '  vec3 c = texture2D(uTex, st, uBlur).rgb;',
+    '  vec3 c2 = texture2D(uTex, st + (w - 0.5) * 0.04, uBlur + 1.8).rgb;',
+    '  c = mix(c, c2, 0.22);',
+    '  float gr = fract(sin(dot(gl_FragCoord.xy + floor(uTime * 24.0), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;',
+    '  c += gr * 0.035;                                       // fine film grain: reads as a photo, hides the upscale',
     '  float l = dot(c, vec3(0.299, 0.587, 0.114));',
     '  c = mix(vec3(l), c, 1.25);                             // a touch richer',
     '  c = c / (1.0 + c * 0.9);                               // tame the brightest parts of the art',
@@ -5684,16 +5688,17 @@ function mountLiquid(host, imageUrl, opts) {
   var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   var U = {}; ['uTex', 'uRes', 'uTime', 'uEdge', 'uMound', 'uMoundX', 'uMotion', 'uDpr', 'uDrops', 'uBlur'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
-  /* texture: the art drawn into a 512² canvas (power of two → mipmaps → cheap soft blur);
+  /* texture: the art drawn into a 1024² canvas with high-quality resampling (power of two → mipmaps → cheap soft blur);
      round label art is cropped to its middle so the white corners never show */
   var tex = gl.createTexture();
   var ready = false;
   var img = new Image();
   img.onload = function () {
-    var c = document.createElement('canvas'); c.width = c.height = 512;
+    var c = document.createElement('canvas'); c.width = c.height = 1024;
     var x = c.getContext('2d'), k = opts.round ? 0.68 : 1;
     var sw = img.naturalWidth * k, sh2 = img.naturalHeight * k;
-    x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh2) / 2, sw, sh2, 0, 0, 512, 512);
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+    x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh2) / 2, sw, sh2, 0, 0, 1024, 1024);
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
     gl.generateMipmap(gl.TEXTURE_2D);
@@ -5716,7 +5721,7 @@ function mountLiquid(host, imageUrl, opts) {
     wake();
   }
   // the liquid hangs in from the top, then pours down the page as you scroll
-  var edgeFor = function () { return Math.min(H + 160, H * 0.2 + scrollY * 0.85); };
+  var edgeFor = function () { return Math.min(H + 160, H * 0.42 + scrollY * 0.85); };   // starts a little above halfway
   var edge = edgeFor();
   var mx = -9999, my = -9999, lastPX = 0, lastPY = 0, lastDrop = 0, pointerAt = 0;
   var mound = 0, moundX = innerWidth / 2;
@@ -5759,7 +5764,7 @@ function mountLiquid(host, imageUrl, opts) {
       gl.uniform1f(U.uMoundX, moundX);
       gl.uniform1f(U.uMotion, RM ? 0 : 1);
       gl.uniform1f(U.uDpr, dpr);
-      gl.uniform1f(U.uBlur, W < 768 ? 4.4 : 3.4);           // phones see the art much larger, so blur it more
+      gl.uniform1f(U.uBlur, W < 768 ? 2.6 : 1.5);           // just enough softness to hide the 480px source; phones see it larger
       gl.uniform3fv(U.uDrops, drops);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
@@ -6474,6 +6479,7 @@ function viewHome() {
 /* ============================== THE CRATE ==============================
    A diagonal row of records you flip through by scrolling (see vinylcrate.js).
    Real catalogue data only: artist, album, price, formats, collection. */
+const CRATE_SCROLL = 3;   // records the page scroll moves through before carrying on down
 const FMT_SHORT = { 'poster-a3': 'POSTER', 'poster-a5': 'POSTER', 'print-10': 'PRINT', 'polaroid': 'POLAROID' };
 function crateList() {
   const ok = p => p.album !== '[CONFIRM]' && variant(p, 'vinyl');
@@ -6498,14 +6504,14 @@ function crateHTML() {
   <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
        Records on a diagonal, like flipping through a crate at the stall.
        Arrows (or a swipe) bring the next one to the front; click it to open it. -->
-  <section class="crate ground" id="crate" data-section="MAKE IT YOURS">
+  <section class="crate ground" id="crate" data-section="MAKE IT YOURS" style="--steps:${CRATE_SCROLL}">
     <!-- a live wallpaper behind the records (wallpaper.js); the collage shows if WebGL can't -->
-    <div class="crate__bg" aria-hidden="true">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-      <div class="crate__wall" id="cratewall"></div>
-    </div>
     <div class="crate__stage" tabindex="-1">
+      <div class="crate__bg" aria-hidden="true">
+        <i style="background-image:url(${photo('col-g')})"></i>
+        <i style="background-image:url(${photo('col-r')})"></i>
+        <div class="crate__wall" id="cratewall"></div>
+      </div>
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
       <div class="crate__meta">
@@ -6516,7 +6522,7 @@ function crateHTML() {
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
           <div><dt>COLLECTION</dt><dd><span data-cm="collection">${esc(f0.collection)}</span></dd></div>
         </dl>
-        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
+        <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">SCROLL OR USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
       <div class="crate__facts">
         <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
@@ -7072,7 +7078,18 @@ window.__mount = function (seg, params) {
 
   if (page === 'home') {
     mountHome();
-    mountCrateSection(onUnmount);
+    const crate = mountCrateSection(onUnmount);
+    if (crate) {
+      // the first CRATE_SCROLL records slide past as you scroll through the pinned section
+      const root = document.getElementById('crate');
+      const onCrate = () => {
+        const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
+        if (span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
+      };
+      const prev = window.__onScroll;
+      window.__onScroll = y => { if (prev) prev(y); onCrate(); };
+      onCrate();
+    }
   }
   if (page === 'shop') mountShop(seg[1], params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
@@ -7460,7 +7477,7 @@ function mountProduct(p, params) {
   if (liq && window.mountLiquid) {
     const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
     try {
-      const api = window.mountLiquid(liq, imgSrc(artV.image), { round: artV.format === 'vinyl', reducedMotion: RM() });
+      const api = window.mountLiquid(liq, imgSrc(artV.image, true), { round: artV.format === 'vinyl', reducedMotion: RM() });
       if (api) onUnmount(() => api.cleanup());
     } catch (e) {}
   }
@@ -8157,10 +8174,20 @@ export function mountCrate(root, items, opts = {}) {
 
   /* ---- navigation ---- */
   let target = 0, visual = 0, active = -1, spinBoost = 0, dragOffset = 0;
+  /* page scroll drives the first few records (the section pins while you scroll through
+     them), the arrows/drag/keys move freely; whichever you used last, the other carries on
+     from there rather than jumping back */
+  let base = 0, lastS = 0;
   function goTo(i) {
     const t = Math.max(0, Math.min(N - 1, i));
+    base = t - lastS;
     if (t === target && !dragOffset) return;
     target = t; dirty = true; wake();
+  }
+  function fromScroll(s) {
+    lastS = s;
+    const t = Math.max(0, Math.min(N - 1, Math.round(base + s)));
+    if (t !== target) { target = t; dirty = true; wake(); }
   }
   const next = () => goTo(target + 1), prev = () => goTo(target - 1);
 
@@ -8227,6 +8254,7 @@ export function mountCrate(root, items, opts = {}) {
       // a flick of a fifth of a record is enough; a long drag can travel several
       const steps = Math.abs(moved) < 0.18 ? 0 : Math.sign(moved) * Math.max(1, Math.round(Math.abs(moved)));
       target = Math.max(0, Math.min(N - 1, target + steps));
+      base = target - lastS;
       visual = Math.max(-0.4, Math.min(N - 0.6, visual + moved));   // continue from where the finger left it
       dirty = true; wake();
       return;
@@ -8389,7 +8417,7 @@ export function mountCrate(root, items, opts = {}) {
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, goTo, next, prev, get active() { return target; } };
+  return { cleanup, goTo, next, prev, fromScroll, get active() { return target; } };
 }
 window.mountCrate = mountCrate;
 </script></body></html>

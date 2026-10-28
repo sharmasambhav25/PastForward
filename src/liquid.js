@@ -44,7 +44,7 @@ function mountLiquid(host, imageUrl, opts) {
     '  vec2 uv = px / res;',
     '  vec2 q = vec2(uv.x * res.x / res.y, uv.y);',
     '  vec2 w = vec2(fbm(q * 1.4 + vec2(t * 0.05, -t * 0.04)), fbm(q * 1.4 + vec2(5.2 - t * 0.04, 1.3 + t * 0.06)));',
-    '  uv += (w - 0.5) * 0.09 * uMotion;',
+    '  uv += (w - 0.5) * 0.045 * uMotion;                     // gentler flow keeps the art legible',
     '  for (int i = 0; i < 6; i++) {',
     '    vec2 dv = px - uDrops[i].xy; float age = uTime - uDrops[i].z; float r = length(dv);',
     '    float ring = sin(r * 0.055 - age * 8.0) * exp(-age * 1.4) * exp(-r * 0.0065) * step(0.0, age) * step(age, 4.0);',
@@ -54,9 +54,11 @@ function mountLiquid(host, imageUrl, opts) {
     '  vec2 st = uv - 0.5; float va = res.x / res.y;',
     '  if (va > 1.0) st.y /= va; else st.x *= va;',
     '  st *= 0.92; st.y -= (uEdge / res.y) * 0.06; st += 0.5;',
-    '  vec3 c = texture2D(uTex, st, uBlur).rgb;                 // soft: the art is only 480px',
-    '  vec3 c2 = texture2D(uTex, st + (w - 0.5) * 0.05, uBlur + 1.4).rgb;',
-    '  c = mix(c, c2, 0.45);',
+    '  vec3 c = texture2D(uTex, st, uBlur).rgb;',
+    '  vec3 c2 = texture2D(uTex, st + (w - 0.5) * 0.04, uBlur + 1.8).rgb;',
+    '  c = mix(c, c2, 0.22);',
+    '  float gr = fract(sin(dot(gl_FragCoord.xy + floor(uTime * 24.0), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;',
+    '  c += gr * 0.035;                                       // fine film grain: reads as a photo, hides the upscale',
     '  float l = dot(c, vec3(0.299, 0.587, 0.114));',
     '  c = mix(vec3(l), c, 1.25);                             // a touch richer',
     '  c = c / (1.0 + c * 0.9);                               // tame the brightest parts of the art',
@@ -79,16 +81,17 @@ function mountLiquid(host, imageUrl, opts) {
   var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   var U = {}; ['uTex', 'uRes', 'uTime', 'uEdge', 'uMound', 'uMoundX', 'uMotion', 'uDpr', 'uDrops', 'uBlur'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
-  /* texture: the art drawn into a 512² canvas (power of two → mipmaps → cheap soft blur);
+  /* texture: the art drawn into a 1024² canvas with high-quality resampling (power of two → mipmaps → cheap soft blur);
      round label art is cropped to its middle so the white corners never show */
   var tex = gl.createTexture();
   var ready = false;
   var img = new Image();
   img.onload = function () {
-    var c = document.createElement('canvas'); c.width = c.height = 512;
+    var c = document.createElement('canvas'); c.width = c.height = 1024;
     var x = c.getContext('2d'), k = opts.round ? 0.68 : 1;
     var sw = img.naturalWidth * k, sh2 = img.naturalHeight * k;
-    x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh2) / 2, sw, sh2, 0, 0, 512, 512);
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+    x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh2) / 2, sw, sh2, 0, 0, 1024, 1024);
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
     gl.generateMipmap(gl.TEXTURE_2D);
@@ -111,7 +114,7 @@ function mountLiquid(host, imageUrl, opts) {
     wake();
   }
   // the liquid hangs in from the top, then pours down the page as you scroll
-  var edgeFor = function () { return Math.min(H + 160, H * 0.2 + scrollY * 0.85); };
+  var edgeFor = function () { return Math.min(H + 160, H * 0.42 + scrollY * 0.85); };   // starts a little above halfway
   var edge = edgeFor();
   var mx = -9999, my = -9999, lastPX = 0, lastPY = 0, lastDrop = 0, pointerAt = 0;
   var mound = 0, moundX = innerWidth / 2;
@@ -154,7 +157,7 @@ function mountLiquid(host, imageUrl, opts) {
       gl.uniform1f(U.uMoundX, moundX);
       gl.uniform1f(U.uMotion, RM ? 0 : 1);
       gl.uniform1f(U.uDpr, dpr);
-      gl.uniform1f(U.uBlur, W < 768 ? 4.4 : 3.4);           // phones see the art much larger, so blur it more
+      gl.uniform1f(U.uBlur, W < 768 ? 2.6 : 1.5);           // just enough softness to hide the 480px source; phones see it larger
       gl.uniform3fv(U.uDrops, drops);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
