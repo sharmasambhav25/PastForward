@@ -1,7 +1,7 @@
 /* ============================================================
    PastForward — liquid backdrop for the product page.
    The album art as a slow, flowing colour field, behind the page,
-   with a live liquid edge on top: it swells and ripples on its own,
+   pouring down from the top with a live lower edge: it swells and ripples on its own,
    rises into a mound toward the pointer, and the art ripples where
    the pointer moves through it. As you scroll, the liquid floods up
    behind the content. Plain WebGL 1, no libraries.
@@ -36,8 +36,8 @@ function mountLiquid(host, imageUrl, opts) {
     '  e += (fbm(vec2(x * 0.0026 + t * 0.07, t * 0.05)) - 0.5) * 120.0;',
     '  e += sin(x * 0.011 - t * 1.3) * 7.0 + sin(x * 0.023 + t * 0.9) * 4.0;',
     '  e += (noise(vec2(x * 0.11, t * 0.6)) - 0.5) * 5.0;',
-    '  e -= uMound * exp(-pow((x - uMoundX) / (res.x * 0.11 + 60.0), 2.0));',
-    '  float d = px.y - e;                                    // >0: inside the liquid',
+    '  e += uMound * exp(-pow((x - uMoundX) / (res.x * 0.11 + 60.0), 2.0));   // reaches down toward the pointer',
+    '  float d = e - px.y;                                    // >0: inside the liquid (above the edge)',
     '  float inside = smoothstep(-1.0, 1.0, d);',
     '  if (inside <= 0.0) { gl_FragColor = vec4(0.0); return; }',
     // the art, flowing: domain-warped, rippled by the pointer
@@ -61,7 +61,7 @@ function mountLiquid(host, imageUrl, opts) {
     '  c = mix(vec3(l), c, 1.25);                             // a touch richer',
     '  c = c / (1.0 + c * 0.9);                               // tame the brightest parts of the art',
     '  c *= 0.95;                                             // kept dark so the page reads on top',
-    '  c *= 1.0 - 0.45 * exp(-d * 0.018);                      // shadow just under the surface',
+    '  c *= 1.0 - 0.35 * exp(-d * 0.018);                      // a little shade along the leading edge',
     '  float rim = exp(-abs(d) * 0.45);',
     '  c += rim * vec3(0.95, 0.9, 0.86) * 0.22;                // a bright meniscus on the edge',
     '  gl_FragColor = vec4(c * inside, inside);',
@@ -110,7 +110,8 @@ function mountLiquid(host, imageUrl, opts) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     wake();
   }
-  var edgeFor = function () { return Math.max(-160, H * 0.8 - scrollY * 0.85); };
+  // the liquid hangs in from the top, then pours down the page as you scroll
+  var edgeFor = function () { return Math.min(H + 160, H * 0.2 + scrollY * 0.85); };
   var edge = edgeFor();
   var mx = -9999, my = -9999, lastPX = 0, lastPY = 0, lastDrop = 0, pointerAt = 0;
   var mound = 0, moundX = innerWidth / 2;
@@ -122,7 +123,7 @@ function mountLiquid(host, imageUrl, opts) {
     var v = Math.hypot(mx - lastPX, my - lastPY); lastPX = mx; lastPY = my;
     var now = (performance.now() - t0) / 1000;
     // moving through the liquid leaves ripples
-    if (!RM && v > 6 && my > edge && performance.now() - lastDrop > 140) {
+    if (!RM && v > 6 && my < edge && performance.now() - lastDrop > 140) {
       lastDrop = performance.now();
       drops[dropI * 3] = mx; drops[dropI * 3 + 1] = my; drops[dropI * 3 + 2] = now;
       dropI = (dropI + 1) % 6;
@@ -140,7 +141,7 @@ function mountLiquid(host, imageUrl, opts) {
     edge += (goal - edge) * (RM ? 1 : 1 - Math.exp(-dt * 7));
     // the surface reaches up toward the pointer when it's near (and lets go when it leaves)
     var near = (now - pointerAt < 2500) ? Math.exp(-Math.abs(my - edge) / 230) : 0;
-    var want = RM ? 0 : (my < edge ? 1 : 0.45) * near * Math.min(150, H * 0.18);
+    var want = RM ? 0 : (my > edge ? 1 : 0.45) * near * Math.min(150, H * 0.18);
     mound += (want - mound) * (1 - Math.exp(-dt * 3.2));
     moundX += (mx - moundX) * (1 - Math.exp(-dt * 4.5));
     if (ready) {

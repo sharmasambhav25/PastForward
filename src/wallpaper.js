@@ -33,7 +33,7 @@ function mountWallpaper(host, opts) {
     deriv ? '#extension GL_OES_standard_derivatives : enable' : '',
     'precision highp float;',
     'uniform vec2 uRes, uPtr, uFocus; uniform float uTime, uMode, uPtrAmt, uDpr;',
-    'const vec3 INK = vec3(0.024, 0.02, 0.024);',
+    'const vec3 INK = vec3(0.075, 0.068, 0.072);',
     'const vec3 CREAM = vec3(0.953, 0.937, 0.91);',
     'const vec3 OX = vec3(0.753, 0.208, 0.247);',
     'vec2 hash2(vec2 p){ p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return -1.0 + 2.0 * fract(sin(p) * 43758.5453); }',
@@ -43,10 +43,9 @@ function mountWallpaper(host, opts) {
     'float fbm(vec2 p){ float v = 0.0, a = 0.5; mat2 r = mat2(0.8, -0.6, 0.6, 0.8);',
     '  for (int i = 0; i < 4; i++){ v += a * noise(p); p = r * p * 2.02 + 3.1; a *= 0.5; } return v; }',
     // the moving surface, plus a soft swell under the pointer
-    'float field(vec2 q, float t){',
+    'float field(vec2 q, float t){   // q already includes the pointer push (see main)',
     '  vec2 w = vec2(fbm(q * 0.9 + vec2(t * 0.05, -t * 0.04)), fbm(q * 0.9 + vec2(4.7 - t * 0.03, 1.9 + t * 0.05)));',
     '  float h = fbm(q * 1.1 + w * 1.6 + vec2(0.0, t * 0.02));',
-    '  vec2 d = q - uPtr; h += uPtrAmt * 0.42 * exp(-dot(d, d) * 3.2);',
     '  return h;',
     '}',
     'void main(){',
@@ -54,10 +53,12 @@ function mountWallpaper(host, opts) {
     '  float asp = uRes.x / uRes.y;',
     '  vec2 q = vec2(uv.x * asp, uv.y) * 1.6;',
     '  float t = uTime;',
-    '  float h = field(uMode < 0.5 ? q * 0.62 : q, t);',
+    '  vec2 pd = q - uPtr; float pr = length(pd);',
+    '  vec2 push = pd / (pr + 1e-3) * uPtrAmt * 0.11 * exp(-pr * pr * 4.0);   // a soft dent that follows the cursor',
+    '  float h = field((q + push) * (uMode < 0.5 ? 0.62 : 1.0), t);',
     '  vec3 col;',
     '  vec2 fq = vec2(uFocus.x * asp, 1.0 - uFocus.y) * 1.6;',
-    '  float pool = exp(-dot(q - fq, q - fq) * 0.55);       // the lit area behind the front record',
+    '  float pool = exp(-dot(q - fq, q - fq) * 0.32);       // the lit area behind the front record',
     '  if (uMode < 0.5) {',
     // contours: lines at fixed heights; every 6th is an index line in oxblood
     '    float n = 30.0, k = h * n;',
@@ -65,8 +66,8 @@ function mountWallpaper(host, opts) {
     '    float dl = abs(fract(k + 0.5) - 0.5) / fw;',
     '    float line = 1.0 - smoothstep(0.55, 1.6, dl);',
     '    float idx = step(abs(mod(floor(k + 0.5), 7.0)), 0.5);',
-    '    vec3 lc = mix(CREAM * 0.58, OX * 0.9, idx * 0.8);',
-    '    col = mix(INK + vec3(0.03) * pool, lc, line * (0.55 + 0.45 * pool));',
+    '    vec3 lc = mix(CREAM * 0.78, OX * 1.1, idx * 0.85);',
+    '    col = mix(INK + vec3(0.11, 0.1, 0.1) * pool, lc, line * (0.7 + 0.3 * pool));',
     '  } else if (uMode < 1.5) {',
     // dots: a grid of points lifted and brightened by the surface
     '    float cell = 15.0 * uDpr;',
@@ -79,7 +80,7 @@ function mountWallpaper(host, opts) {
     '  } else if (uMode < 2.5) {',
     // chrome: shade the surface's normal against a soft studio
     '    float e = 0.004;',
-    '    float hx = field(q + vec2(e, 0.0), t) - h, hy = field(q + vec2(0.0, e), t) - h;',
+    '    float hx = field(q + push + vec2(e, 0.0), t) - h, hy = field(q + push + vec2(0.0, e), t) - h;',
     '    vec3 nrm = normalize(vec3(-hx / e, -hy / e, 2.2));',
     '    vec3 r = reflect(vec3(0.0, 0.0, -1.0), nrm);',
     '    float sky = smoothstep(-0.3, 0.9, r.y) * 0.75 + 0.25 * smoothstep(0.2, 1.0, r.x);',
@@ -94,10 +95,10 @@ function mountWallpaper(host, opts) {
     '    col *= 0.75 + 0.35 * pool;',
     '  }',
     '  float vig = smoothstep(1.25, 0.35, length((uv - 0.5) * vec2(asp, 1.0)));',
-    '  float quiet = asp > 1.0 ? mix(0.42, 1.0, smoothstep(0.08, 0.36, uv.x)) : mix(0.5, 1.0, smoothstep(0.82, 0.62, uv.y));',
-    '  quiet *= mix(0.55, 1.0, smoothstep(0.02, 0.2, uv.y));',
+    '  float quiet = asp > 1.0 ? mix(0.4, 1.0, smoothstep(0.1, 0.36, uv.x)) : mix(0.6, 1.0, smoothstep(0.84, 0.64, uv.y));',
+    '  quiet *= mix(0.65, 1.0, smoothstep(0.02, 0.18, uv.y));',
     '  col = mix(INK, col, quiet);',
-    '  col *= 0.6 + 0.4 * vig;',
+    '  col *= 0.78 + 0.22 * vig;',
     '  gl_FragColor = vec4(col, 1.0);',
     '}'
   ].join('\n');
@@ -141,9 +142,9 @@ function mountWallpaper(host, opts) {
   function draw(now) {
     var dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
     if (now - lastMove > 2500) amtGoal = 0;
-    amt += (amtGoal - amt) * (1 - Math.exp(-dt * 2.5));
-    ptr[0] += (ptrGoal[0] - ptr[0]) * (1 - Math.exp(-dt * 4));
-    ptr[1] += (ptrGoal[1] - ptr[1]) * (1 - Math.exp(-dt * 4));
+    amt += (amtGoal - amt) * (1 - Math.exp(-dt * 1.6));
+    ptr[0] += (ptrGoal[0] - ptr[0]) * (1 - Math.exp(-dt * 3));
+    ptr[1] += (ptrGoal[1] - ptr[1]) * (1 - Math.exp(-dt * 3));
     gl.uniform2f(U.uRes, W, H);
     gl.uniform2f(U.uPtr, ptr[0], ptr[1]);
     gl.uniform2f(U.uFocus, focus[0], focus[1]);

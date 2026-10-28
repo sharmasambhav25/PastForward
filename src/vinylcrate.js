@@ -92,16 +92,17 @@ export function mountCrate(root, items, opts = {}) {
     camera.aspect = W / H;
     portrait = W / H < 0.8;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
-    const D = portrait ? 6 / (0.84 * 2 * t * camera.aspect) : 6 / (0.6 * 2 * t);
+    // the front record fills ~78% of the screen height (a phone: ~92% of its width), like the reference
+    const D = portrait ? 6 / (0.92 * 2 * t * camera.aspect) : 6 / (0.78 * 2 * t);
     camera.position.set(0, 0, D);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
     const z1 = D * (portrait ? 0.06 : 0.11);                  // the next record is this much closer
     const d1 = D - z1, visW = 2 * t * d1 * camera.aspect, visH = 2 * t * d1;
     // screen offset of the neighbour, as a share of the screen
-    STEP.set(visW * (portrait ? 0.86 : 0.36), visH * (portrait ? 0.05 : 0.19), z1);
+    STEP.set(visW * (portrait ? 0.95 : 0.43), visH * (portrait ? 0.05 : 0.24), z1);
     LIFT_Y = 2 * t * D * (portrait ? 0.05 : 0.035);
-    SHIFT_X = portrait ? 0 : 2 * t * D * camera.aspect * 0.045;   // leave the info panel on the left clear
+    SHIFT_X = portrait ? 0 : 2 * t * D * camera.aspect * 0.06;   // leave the info panel on the left clear
     dirty = true;
   }
 
