@@ -74,7 +74,7 @@ DESC  = 'Real 12-inch records with the album pressed into the centre label, made
 WORDMARK = 'data:image/webp;base64,' + base64.b64encode(open(f'{ROOT}/brand/wordmark.webp','rb').read()).decode()
 
 PHOTOS = {}
-for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r', 'flex-mark'})):
+for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r', 'flex-mark', 'engrave-g', 'engrave-r'})):
     if not os.path.isdir(_dir):
         continue
     for _f in sorted(os.listdir(_dir)):

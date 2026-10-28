@@ -83,7 +83,7 @@ export function mountCrate(root, items, opts = {}) {
   /* ---- layout, measured from the reference: the record in front fills ~60% of the
           screen height; the next one sits up and to the right and a little closer,
           the previous one down and to the left and a little further away ---- */
-  let W = 1, H = 1, portrait = false, LIFT_Y = 0;
+  let W = 1, H = 1, portrait = false, LIFT_Y = 0, SHIFT_X = 0;
   const STEP = new THREE.Vector3();
   const LEAN_X = -0.32, LEAN_Y = 0.26;
   function resize() {
@@ -99,8 +99,9 @@ export function mountCrate(root, items, opts = {}) {
     const z1 = D * (portrait ? 0.06 : 0.11);                  // the next record is this much closer
     const d1 = D - z1, visW = 2 * t * d1 * camera.aspect, visH = 2 * t * d1;
     // screen offset of the neighbour, as a share of the screen
-    STEP.set(visW * (portrait ? 0.74 : 0.36), visH * (portrait ? 0.15 : 0.19), z1);
+    STEP.set(visW * (portrait ? 0.86 : 0.36), visH * (portrait ? 0.05 : 0.19), z1);
     LIFT_Y = 2 * t * D * (portrait ? 0.05 : 0.035);
+    SHIFT_X = portrait ? 0 : 2 * t * D * camera.aspect * 0.045;   // leave the info panel on the left clear
     dirty = true;
   }
 
@@ -277,8 +278,9 @@ export function mountCrate(root, items, opts = {}) {
       r.holder.visible = on;
       if (!on) return;
       r.holder.position.copy(STEP).multiplyScalar(d);
-      if (d < 0) r.holder.position.z *= 1.9;          // records already passed sink further back, clear of the text
+      if (d < 0) { r.holder.position.z *= 1.9; r.holder.position.y *= 1.4; }   // records already passed sink back and down, clear of the text
       r.holder.position.y += LIFT_Y;
+      r.holder.position.x += SHIFT_X;
       r.holder.position.z += r.lift * 2.4;
       // records turn while the row moves, then come to rest with the art upright
       r.angle += spinBoost * (Math.abs(d) < 0.6 ? 1 : 0.6) * dt;
