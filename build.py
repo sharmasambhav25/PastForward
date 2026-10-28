@@ -14,6 +14,7 @@ ripple = open(f'{SRC}/ripple.js').read()
 vinyllabel = open(f'{SRC}/vinyllabel.js').read()
 albumscrub = open(f'{SRC}/albumscrub.js').read()
 liquid = open(f'{SRC}/liquid.js').read()
+wallpaper = open(f'{SRC}/wallpaper.js').read()
 footerreveal = open(f'{SRC}/footerreveal.js').read()
 routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
@@ -74,7 +75,7 @@ DESC  = 'Real 12-inch records with the album pressed into the centre label, made
 WORDMARK = 'data:image/webp;base64,' + base64.b64encode(open(f'{ROOT}/brand/wordmark.webp','rb').read()).decode()
 
 PHOTOS = {}
-for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r', 'flex-mark', 'engrave-g', 'engrave-r'})):
+for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r', 'flex-mark'})):
     if not os.path.isdir(_dir):
         continue
     for _f in sorted(os.listdir(_dir)):
@@ -107,6 +108,7 @@ def assemble(payload, standalone):
 <script>{vinyllabel}</script>
 <script>{albumscrub}</script>
 <script>{liquid}</script>
+<script>{wallpaper}</script>
 <script>{footerreveal}</script>
 <script>{routes}</script>
 <script>{boot}</script>
