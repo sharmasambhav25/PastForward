@@ -297,10 +297,11 @@ function crateHTML() {
   <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
        Records on a diagonal, like flipping through a crate at the stall.
        Arrows (or a swipe) bring the next one to the front; click it to open it. -->
-  <section class="crate ground" id="crate" data-section="MAKE IT YOURS">
+  <section class="crate ground g-paper" id="crate" data-section="MAKE IT YOURS">
+    <!-- the flex collage, blind-debossed into paper (tools/engrave.py) -->
     <div class="crate__bg" aria-hidden="true">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
+      <i style="background-image:url(${photo('engrave-g')})"></i>
+      <i style="background-image:url(${photo('engrave-r')})"></i>
     </div>
     <div class="crate__stage" tabindex="-1">
       <div class="crate__gl" aria-hidden="true"></div>

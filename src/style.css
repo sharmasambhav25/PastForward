@@ -1550,47 +1550,47 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 
 /* ---------- the crate (MAKE IT YOURS): a diagonal row of records on the brand collage ----------
    One screen tall; arrows / swipe / keys move the row. */
-.crate{position:relative; height:100svh; min-height:640px; overflow:hidden; background:var(--ink)}
+.crate{position:relative; height:100svh; min-height:640px; overflow:hidden; background:var(--paper)}
 .crate__bg{position:absolute; inset:0; z-index:0; display:flex}
-.crate__bg>i{flex:1; background-repeat:repeat; background-size:auto 680px; background-position:center; opacity:.30}
-.crate__bg>i:last-child{opacity:.36}
+.crate__bg>i{flex:1; background-repeat:no-repeat; background-size:cover; background-position:center}
+/* a soft pool of plain paper behind the record in front, so the relief never fights it */
 .crate__bg::after{content:""; position:absolute; inset:0;
-  background:radial-gradient(70% 70% at 54% 52%,rgba(6,5,6,.88) 18%,rgba(6,5,6,.55) 55%,rgba(6,5,6,.25))}
+  background:radial-gradient(42% 56% at 56% 50%,rgba(237,231,221,.72),rgba(237,231,221,.28) 60%,rgba(237,231,221,0) 85%)}
 .crate__stage{position:relative; z-index:2; height:100%; outline:none}
 .crate__gl{position:absolute; inset:0; z-index:1}
 .crate__scribble{position:absolute; inset:0; width:100%; height:100%; z-index:3; pointer-events:none; overflow:visible; opacity:0}
-.crate__scribble path{fill:none; stroke:var(--ember); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 6px rgba(192,53,63,.45))}
-.crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 22px); width:min(380px, 30vw); pointer-events:none}
-.crate__eyebrow{margin-bottom:12px}
+.crate__scribble path{fill:none; stroke:var(--oxblood); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke}
+.crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 22px); width:min(350px, 27vw); pointer-events:none}
+.crate__eyebrow{margin-bottom:12px; color:#5E5854}
 .crate__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.9rem,3.1vw,3rem); line-height:1; margin:0 0 20px; text-wrap:balance}
 .crate__rows dd span,.crate__fv span,.crate__fl span{display:inline-block}
-.crate__rows{margin:0; border-top:1px solid rgba(243,239,232,.24)}
-.crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:8px 0 7px; border-bottom:1px solid rgba(243,239,232,.24)}
-.crate__rows dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:var(--muted); flex:none}
+.crate__rows{margin:0; border-top:1px solid rgba(22,19,20,.32)}
+.crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:8px 0 7px; border-bottom:1px solid rgba(22,19,20,.32)}
+.crate__rows dt{font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; color:#5E5854; flex:none}
 .crate__rows dd{margin:0; text-align:right; overflow:hidden; font-size:.95rem; min-width:0; text-wrap:balance}
 .crate__rows>div:first-child dd{font-family:var(--display); font-size:1.15rem; text-transform:uppercase; letter-spacing:-.01em}
-.crate__hint{margin-top:18px; color:var(--muted); letter-spacing:.2em; line-height:1.9}
+.crate__hint{margin-top:18px; color:#5E5854; letter-spacing:.2em; line-height:1.9}
 .crate__hint-m{display:none}
 .crate__facts{position:absolute; z-index:4; left:50%; bottom:clamp(22px,5svh,50px); transform:translateX(-50%);
   display:flex; gap:clamp(36px,8vw,120px); text-align:center; pointer-events:none; width:max-content; max-width:calc(100vw - 2*var(--gutter) - 200px)}
-.crate__fl{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:var(--muted); margin-bottom:8px; overflow:hidden}
+.crate__fl{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:#5E5854; margin-bottom:8px; overflow:hidden}
 .crate__fv{font-family:var(--display); font-weight:500; text-transform:uppercase; letter-spacing:-.01em;
   font-size:clamp(1.05rem,1.9vw,1.65rem); line-height:1.02; overflow:hidden}
 .crate__nav{position:absolute; z-index:5; right:var(--gutter); bottom:clamp(22px,5svh,50px); display:flex; align-items:center; gap:14px}
-.crate__count{color:var(--muted); letter-spacing:.2em; min-width:7ch; text-align:center}
+.crate__count{color:#5E5854; letter-spacing:.2em; min-width:7ch; text-align:center}
 .crate__arrow{width:54px; height:54px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
-  background:rgba(6,5,6,.55); border:1px solid rgba(243,239,232,.3); color:var(--cream);
+  background:rgba(237,231,221,.78); border:1px solid rgba(22,19,20,.38); color:var(--paper-ink);
   transition:background .25s, border-color .25s, transform .35s var(--e-spring), opacity .25s; backdrop-filter:blur(6px)}
 .crate__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
-.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--ember); transform:scale(1.06)}
+.crate__arrow:hover:not(:disabled){background:var(--oxblood); border-color:var(--oxblood); color:var(--cream); transform:scale(1.06)}
 .crate__arrow:active:not(:disabled){transform:scale(.94)}
 .crate__arrow:disabled{opacity:.28; cursor:default}
 .crate__arrow:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
 /* a real link to the record in front, for keyboards and screen readers */
 .sr-focus{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
 .sr-focus:focus{z-index:6; width:auto; height:auto; clip-path:none; left:var(--gutter); bottom:clamp(22px,5svh,50px);
-  padding:10px 14px; background:var(--ink); border:1px solid var(--ember); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase}
+  padding:10px 14px; background:var(--paper); color:var(--paper-ink); border:1px solid var(--oxblood); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase}
 @media(max-width:1023px){ .crate__meta{width:min(380px, 42vw)} }
 @media(max-width:767px){
   .crate{min-height:600px}
