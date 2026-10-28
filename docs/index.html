@@ -952,30 +952,49 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 }
 @media(max-width:767px){
   .annot{display:block; position:absolute; inset:0; pointer-events:none; z-index:5}
-  .annot__dot{width:5px; height:5px; box-shadow:0 0 0 3px rgba(192,53,63,.22)}
-  .annot__pt:nth-child(1){left:50%!important; top:50%!important}
-  .annot__pt:nth-child(2){left:69%!important; top:50%!important}
-  .annot__pt:nth-child(3){left:74%!important; top:32%!important}
-  .annot__pt:nth-child(4){left:26%!important; top:70%!important}
-  .annot__pt::before{height:1px}
-  .annot__pt--r::before{left:5px; width:12px}
-  .annot__pt--l::before{right:5px; width:12px}
-  .annot__lab{
-    font-size:clamp(0.57rem, 2.34vw, 0.64rem);
-    letter-spacing:0.08em;
-    line-height:1.15;
-    white-space:normal;
-    max-width:90px;
-    background:rgba(6,5,6,.82);
-    backdrop-filter:blur(4px);
-    -webkit-backdrop-filter:blur(4px);
-    padding:3px 6px;
-    border-radius:2px;
-    border:1px solid rgba(243,239,232,.08);
-    box-shadow:0 2px 6px rgba(0,0,0,.6);
+  .annot__dot{
+    width:5px; height:5px; border-radius:50%;
+    background:var(--ember);
+    box-shadow:0 0 8px rgba(192,53,63,.8), 0 0 0 2px rgba(192,53,63,.3);
   }
-  .annot__pt--r .annot__lab{left:calc(100% + 14px); text-align:left}
-  .annot__pt--l .annot__lab{right:calc(100% + 14px); text-align:right}
+  .annot__pt:nth-child(1){left:50%!important; top:50%!important}
+  .annot__pt:nth-child(2){left:67.5%!important; top:50%!important}
+  .annot__pt:nth-child(3){left:70%!important; top:29%!important}
+  
+  .annot__pt::before{
+    content:""; position:absolute; top:50%; height:1px;
+    background:linear-gradient(90deg, rgba(192,53,63,.8), rgba(243,239,232,.35));
+  }
+  .annot__pt--l::before{
+    background:linear-gradient(270deg, rgba(192,53,63,.8), rgba(243,239,232,.35));
+  }
+
+  /* Extended leader lines to place labels near vinyl perimeter */
+  .annot__pt:nth-child(1)::before{right:5px; width:94px}
+  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 98px); text-align:right}
+
+  .annot__pt:nth-child(2)::before{left:5px; width:58px}
+  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 62px); text-align:left}
+
+  .annot__pt:nth-child(3)::before{left:5px; width:48px}
+  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 52px); text-align:left}
+
+  .annot__lab{
+    font-size:clamp(0.53rem, 2.0vw, 0.59rem);
+    letter-spacing:0.11em;
+    line-height:1.24;
+    white-space:normal;
+    max-width:86px;
+    background:rgba(8,6,7,.38);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    padding:4px 8px;
+    border-radius:6px;
+    border:1px solid rgba(243,239,232,.10);
+    box-shadow:none;
+    color:var(--cream);
+    text-shadow:0 1px 4px rgba(0,0,0,.95);
+  }
 }
 
 /* ---------- corner chrome, always present ---------- */
