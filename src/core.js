@@ -238,7 +238,7 @@ function chromeHTML() {
       <a class="navlink" href="#/shop" data-nav="shop">Shop${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" aria-expanded="false" style="background:none;border:0;cursor:pointer">Collections${wave('wave--under')}</button>
       <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
-      <a class="navlink" href="#/story" data-nav="story">Story${wave('wave--under')}</a>
+      <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
       <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -770,6 +770,10 @@ function render() {
   if (typeof window.__afterRender === 'function') window.__afterRender(seg, params);
   window.__onScroll = null;
   if (typeof window.__mount === 'function') window.__mount(seg, params);
+  if (params.get('scroll')) {
+    const target = document.getElementById(params.get('scroll'));
+    if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }
   if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
 }
