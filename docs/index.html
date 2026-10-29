@@ -929,53 +929,85 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
 .annot{position:absolute; inset:0; pointer-events:none; z-index:5}
 .annot__pt{position:absolute; transform:translate(-50%,-50%)}
 .annot__dot{width:6px; height:6px; border-radius:50%; background:var(--ember);
-  box-shadow:0 0 0 4px rgba(192,53,63,.18)}
+  box-shadow:0 0 8px rgba(192,53,63,.8), 0 0 0 3px rgba(192,53,63,.25)}
 .annot__lab{position:absolute; white-space:nowrap; font-family:var(--mono);
   font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--cream);
-  top:50%; transform:translateY(-50%)}
+  top:50%; transform:translateY(-50%);
+  text-shadow:0 1px 4px rgba(0,0,0,.95), 0 2px 10px rgba(0,0,0,.85)}
 .annot__lab b{color:var(--ember); font-weight:400; margin-right:.7em}
-.annot__pt--r .annot__lab{left:calc(100% + 46px)}
-.annot__pt--l .annot__lab{right:calc(100% + 46px); text-align:right}
+
 .annot__pt::before{content:""; position:absolute; top:50%; height:1px;
-  background:linear-gradient(90deg,rgba(192,53,63,.7),rgba(243,239,232,.24))}
-.annot__pt--r::before{left:6px; width:40px}
-.annot__pt--l::before{right:6px; width:40px;
-  background:linear-gradient(270deg,rgba(192,53,63,.7),rgba(243,239,232,.24))}
+  background:linear-gradient(90deg,rgba(192,53,63,.8),rgba(243,239,232,.35))}
+.annot__pt--l::before{
+  background:linear-gradient(270deg,rgba(192,53,63,.8),rgba(243,239,232,.35))}
+
+/* Desktop leader line lengths: push labels near vinyl perimeter */
+.annot__pt:nth-child(1)::before{right:6px; width:clamp(260px, 25vw, 340px)}
+.annot__pt:nth-child(1) .annot__lab{right:calc(100% + clamp(266px, 25vw + 6px, 346px)); text-align:right}
+
+.annot__pt:nth-child(2)::before{left:6px; width:clamp(260px, 24vw, 340px)}
+.annot__pt:nth-child(2) .annot__lab{left:calc(100% + clamp(266px, 24vw + 6px, 346px)); text-align:left}
+
+.annot__pt:nth-child(3)::before{left:6px; width:clamp(95px, 9vw, 130px)}
+.annot__pt:nth-child(3) .annot__lab{left:calc(100% + clamp(101px, 9vw + 6px, 136px)); text-align:left}
+
 .annot__pt{opacity:0; transition:opacity 620ms var(--e-ui) var(--ad,0ms)}
 .annot.is-in .annot__pt{opacity:1}
 @media(max-width:1100px) and (min-width:768px){
   .annot{display:block}
   .annot__lab{font-size:.68rem; letter-spacing:.14em}
-  .annot__pt--r::before, .annot__pt--l::before{width:22px}
-  .annot__pt--r .annot__lab{left:calc(100% + 26px)}
-  .annot__pt--l .annot__lab{right:calc(100% + 26px)}
+  .annot__pt:nth-child(1)::before{right:5px; width:180px}
+  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 186px); text-align:right}
+  .annot__pt:nth-child(2)::before{left:5px; width:170px}
+  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 176px); text-align:left}
+  .annot__pt:nth-child(3)::before{left:5px; width:80px}
+  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 86px); text-align:left}
 }
 @media(max-width:767px){
   .annot{display:block; position:absolute; inset:0; pointer-events:none; z-index:5}
-  .annot__dot{width:5px; height:5px; box-shadow:0 0 0 3px rgba(192,53,63,.22)}
-  .annot__pt:nth-child(1){left:50%!important; top:50%!important}
-  .annot__pt:nth-child(2){left:69%!important; top:50%!important}
-  .annot__pt:nth-child(3){left:74%!important; top:32%!important}
-  .annot__pt:nth-child(4){left:26%!important; top:70%!important}
-  .annot__pt::before{height:1px}
-  .annot__pt--r::before{left:5px; width:12px}
-  .annot__pt--l::before{right:5px; width:12px}
-  .annot__lab{
-    font-size:clamp(0.57rem, 2.34vw, 0.64rem);
-    letter-spacing:0.08em;
-    line-height:1.15;
-    white-space:normal;
-    max-width:90px;
-    background:rgba(6,5,6,.82);
-    backdrop-filter:blur(4px);
-    -webkit-backdrop-filter:blur(4px);
-    padding:3px 6px;
-    border-radius:2px;
-    border:1px solid rgba(243,239,232,.08);
-    box-shadow:0 2px 6px rgba(0,0,0,.6);
+  .annot__dot{
+    width:5px; height:5px; border-radius:50%;
+    background:var(--ember);
+    box-shadow:0 0 8px rgba(192,53,63,.8), 0 0 0 2px rgba(192,53,63,.3);
   }
-  .annot__pt--r .annot__lab{left:calc(100% + 14px); text-align:left}
-  .annot__pt--l .annot__lab{right:calc(100% + 14px); text-align:right}
+  .annot__pt:nth-child(1){left:50%!important; top:50%!important}
+  .annot__pt:nth-child(2){left:58%!important; top:50%!important}
+  .annot__pt:nth-child(3){left:70%!important; top:29%!important}
+  
+  .annot__pt::before{
+    content:""; position:absolute; top:50%; height:1px;
+    background:linear-gradient(90deg, rgba(192,53,63,.8), rgba(243,239,232,.35));
+  }
+  .annot__pt--l::before{
+    background:linear-gradient(270deg, rgba(192,53,63,.8), rgba(243,239,232,.35));
+  }
+
+  /* Extended leader lines to place labels near vinyl perimeter */
+  .annot__pt:nth-child(1)::before{right:5px; width:82px}
+  .annot__pt:nth-child(1) .annot__lab{right:calc(100% + 90px); text-align:right}
+
+  .annot__pt:nth-child(2)::before{left:5px; width:42px}
+  .annot__pt:nth-child(2) .annot__lab{left:calc(100% + 50px); text-align:left}
+
+  .annot__pt:nth-child(3)::before{left:5px; width:34px}
+  .annot__pt:nth-child(3) .annot__lab{left:calc(100% + 42px); text-align:left}
+
+  .annot__lab{
+    font-size:clamp(0.58rem, 2.2vw, 0.65rem);
+    letter-spacing:0.12em;
+    line-height:1.25;
+    white-space:normal;
+    max-width:96px;
+    background:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    padding:0;
+    border:none;
+    border-radius:0;
+    box-shadow:none;
+    color:var(--cream);
+    text-shadow:0 1px 4px rgba(0,0,0,.95), 0 2px 10px rgba(0,0,0,.85);
+  }
 }
 
 /* ---------- corner chrome, always present ---------- */
@@ -4449,7 +4481,7 @@ function chromeHTML() {
       <a class="navlink" href="#/shop" data-nav="shop">Shop${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" aria-expanded="false" style="background:none;border:0;cursor:pointer">Collections${wave('wave--under')}</button>
       <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
-      <a class="navlink" href="#/story" data-nav="story">Story${wave('wave--under')}</a>
+      <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
       <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -4981,6 +5013,10 @@ function render() {
   if (typeof window.__afterRender === 'function') window.__afterRender(seg, params);
   window.__onScroll = null;
   if (typeof window.__mount === 'function') window.__mount(seg, params);
+  if (params.get('scroll')) {
+    const target = document.getElementById(params.get('scroll'));
+    if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }
   if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
 }
@@ -6335,7 +6371,7 @@ function viewHome() {
       <div class="annot" id="heroannot">
         <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
           <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
-        <div class="annot__pt annot__pt--r" style="left:70.5%;top:50%;--ad:260ms">
+        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
           <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
         <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
           <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
@@ -6349,18 +6385,7 @@ function viewHome() {
     </div>
   </section>
 
-  <!-- 2 ============ THE CUT ============
-       Two lines of type running opposite ways, cropped by the page. -->
-  <section style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
-    ${col('r', 'col--soft col--mask')}
-    <div style="position:relative;z-index:2">
-      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
-      <div style="height:clamp(6px,1.4vw,20px)"></div>
-      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
-    </div>
-  </section>
-
-  <!-- 3 ============ THE OBJECT ============ -->
+  <!-- 2 ============ THE OBJECT ============ -->
   <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
     ${col('g', 'col--soft col--mask')}
     <div class="wrap beat3-wrap">
@@ -6969,7 +6994,17 @@ function viewStory() {
       <form data-form="newsletter" style="display:flex;gap:10px;flex-wrap:wrap;max-width:440px;margin-top:14px">
         <input name="email" type="email" required placeholder="your@email.com" aria-label="Email" style="flex:1;min-width:180px;background:var(--elevated);border:1px solid var(--border);padding:13px;border-radius:2px">
         <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button></form><div data-form-msg></div>
-    </div></div>`;
+    </div></div>
+
+  <!-- THE CUT: two lines of type running opposite ways, cropped by the page -->
+  <section id="storymarquee" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
+    ${col('r', 'col--soft col--mask')}
+    <div style="position:relative;z-index:2">
+      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
+      <div style="height:clamp(6px,1.4vw,20px)"></div>
+      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
+    </div>
+  </section>`;
 }
 
 /* ============================== FAQ / CONTACT ============================== */
@@ -7097,7 +7132,44 @@ window.__mount = function (seg, params) {
   if (page === 'search') mountSearchPage();
   if (page === 'custom') mountCustom();
   mountAccordions();
+  mountMarquees();
 };
+
+function mountMarquees() {
+  const marqs = $$('[data-marq]').map(m => ({
+    el: m, t: m.querySelector('.marq__t'),
+    dir: parseFloat(m.dataset.marq) || 1, x: 0, w: 0
+  }));
+  if (!marqs.length || RM()) return;
+  marqs.forEach(m => { m.w = m.t.scrollWidth / 6; });
+  let mlast = performance.now();
+  let alive = true;
+  let boost = 0;
+  let lastY = window.scrollY || 0;
+  const onScroll = () => {
+    const y = window.scrollY || 0;
+    const dy = Math.abs(y - lastY);
+    lastY = y;
+    boost = Math.min(180, boost + dy * 0.45);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onUnmount(() => {
+    alive = false;
+    window.removeEventListener('scroll', onScroll);
+  });
+  (function mloop(t) {
+    if (!alive) return;
+    const dt = Math.min(64, t - mlast); mlast = t;
+    boost = Math.max(0, boost - dt * 0.12);
+    marqs.forEach(m => {
+      if (!m.w || m.w < 20) m.w = m.t.scrollWidth / 6;
+      m.x -= m.dir * (26 + boost * 0.18) * dt / 1000;
+      if (m.w) { if (m.x <= -m.w) m.x += m.w; if (m.x >= 0) m.x -= m.w; }
+      m.t.style.transform = `translate3d(${m.x.toFixed(1)}px,0,0)`;
+    });
+    requestAnimationFrame(mloop);
+  })(performance.now());
+}
 
 function mountAccordions() {
   $$('.acc button').forEach(b => {
@@ -7369,26 +7441,6 @@ function mountHome() {
     }
   };
 
-  /* ---- marquees: two lines, opposite directions, driven by scroll + drift ---- */
-  const marqs = $$('[data-marq]').map(m => ({
-    el: m, t: m.querySelector('.marq__t'),
-    dir: parseFloat(m.dataset.marq) || 1, x: 0, w: 0
-  }));
-  marqs.forEach(m => { m.w = m.t.scrollWidth / 6; });
-  if (!RM() && marqs.length) {
-    let mlast = performance.now();
-    (function mloop(t) {
-      const dt = Math.min(64, t - mlast); mlast = t;
-      marqs.forEach(m => {
-        if (!m.w) m.w = m.t.scrollWidth / 6;
-        m.x -= m.dir * (26 + boost * 0.18) * dt / 1000;
-        if (m.w) { if (m.x <= -m.w) m.x += m.w; if (m.x >= 0) m.x -= m.w; }
-        m.t.style.transform = `translate3d(${m.x.toFixed(1)}px,0,0)`;
-      });
-      requestAnimationFrame(mloop);
-    })(performance.now());
-  }
-
   /* ---- photographs: greyscale until they arrive, then colour ---- */
   const plates = $$('.plate');
   if (plates.length) {
@@ -7412,10 +7464,7 @@ function mountHome() {
 
   /* ---- annotation markers over the hero record ---- */
   const annot = $('#heroannot');
-  if (annot) {
-    if (RM()) annot.classList.add('is-in');
-    else setTimeout(() => annot.classList.add('is-in'), 900);
-  }
+  if (annot) annot.classList.add('is-in');
 
 }
 
