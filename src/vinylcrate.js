@@ -259,6 +259,12 @@ export function mountCrate(root, items, opts = {}) {
   }
 
   /* ---- frame loop: only while on screen and something is changing ---- */
+  /* the opening sequence (driven from routes.js): flip 0→1 turns the first record from
+     edge-on to facing you, small and centred; build 0→1 grows it into place while the
+     neighbours slide in along the diagonal. Both rest at 1 when there's no intro. */
+  let introFlip = 1, introBuild = 1;
+  const ease = k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+  function setIntro(flip, build) { introFlip = flip; introBuild = build; dirty = true; wake(); }
   let raf = 0, last = performance.now(), visible = false, disposed = false;
   function wake() { if (!raf && visible && !disposed) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
@@ -275,7 +281,7 @@ export function mountCrate(root, items, opts = {}) {
 
     const a = Math.max(0, Math.min(N - 1, Math.round(visual)));
     if (a !== active) { active = a; onActive(items[a], a); }
-    if (touchOnly && !pointerIn) {
+    if (touchOnly && !pointerIn && introBuild >= 1) {
       // no hover on phones: the record that settles in front gets the loop
       const settled = Math.abs(visual - target) < 0.03 && !dragOffset;
       if (settled && drawnAround !== target) { chase = 2.2; drawOn(target); }
@@ -286,7 +292,8 @@ export function mountCrate(root, items, opts = {}) {
     const settling = spinBoost < 4;
     records.forEach((r, i) => {
       const d = i - visual;
-      const on = Math.abs(d) < 2.7;
+      const eB = ease(introBuild), eF = ease(introFlip), front = i === target;
+      const on = Math.abs(d) < 2.7 && (front ? introFlip > 0 : introBuild > 0.02);
       r.holder.visible = on;
       if (!on) return;
       r.holder.position.copy(STEP).multiplyScalar(d);
@@ -294,18 +301,23 @@ export function mountCrate(root, items, opts = {}) {
       r.holder.position.y += LIFT_Y;
       r.holder.position.x += SHIFT_X;
       r.holder.position.z += r.lift * 2.4;
+      if (introBuild < 1) {
+        if (front) r.holder.position.multiplyScalar(eB);                     // from the centre into its place
+        else r.holder.position.addScaledVector(STEP, Math.sign(d) * (1 - eB) * 2.2);   // neighbours slide in
+      }
       // records turn while the row moves, then come to rest with the art upright
       r.angle += spinBoost * (Math.abs(d) < 0.6 ? 1 : 0.6) * dt;
       if (settling) {
         const rest = Math.round(r.angle / 360) * 360, gap = rest - r.angle;
         if (Math.abs(gap) > 0.05) { r.angle += gap * (RM ? 1 : 1 - Math.exp(-dt * 2.6)); moving = true; } else r.angle = rest;
       }
-      r.spin.rotation.z = -r.angle * Math.PI / 180;
+      r.spin.rotation.z = -(r.angle + (front ? 420 * Math.pow(1 - eF, 2) : 0)) * Math.PI / 180;   // unwinds to upright as it turns to face you
       const want = i === hovered ? 1 : 0;
       r.hover += (want - r.hover) * (RM ? 1 : 1 - Math.exp(-dt * 10));
       if (Math.abs(r.hover - want) > 0.002) moving = true;
       r.tilt.rotation.set(LEAN_X - r.ty * 0.12 * r.hover, LEAN_Y + r.tx * 0.14 * r.hover, 0, "YXZ");
-      r.tilt.scale.setScalar(1 + 0.025 * r.hover);
+      r.tilt.scale.setScalar((1 + 0.025 * r.hover) * (front && introBuild < 1 ? 0.5 + 0.5 * eB : 1));
+      if (front && introFlip < 1) r.tilt.rotation.y += (1 - eF) * Math.PI * 0.5;
     });
     if (spinBoost > 0.5) moving = true;
 
@@ -351,6 +363,6 @@ export function mountCrate(root, items, opts = {}) {
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, goTo, next, prev, fromScroll, get active() { return target; } };
+  return { cleanup, goTo, next, prev, fromScroll, setIntro, get active() { return target; } };
 }
 window.mountCrate = mountCrate;

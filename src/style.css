@@ -1656,3 +1656,50 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate--live .crate__bg>i{display:none}
 .crate--live .crate__bg::after{display:none}
 .crate--flat{height:auto}
+
+/* ---------- the crate's opening sequence ---------- */
+.crate__intro{position:absolute; inset:0; z-index:8; pointer-events:none; display:none; color:var(--cream)}
+.crate__intro.is-on{display:block; pointer-events:auto}
+.crate__intro.is-out{pointer-events:none}
+/* the counter: three rolling digit columns in the display serif, drifting up the screen */
+.ci-count{position:absolute; left:var(--x,34%); top:var(--y,76%); transform:translate(-50%,-50%); display:flex;
+  font-family:var(--display); font-weight:500; font-size:clamp(4.5rem,11vw,10rem); line-height:1; letter-spacing:-.02em}
+.ci-slot{display:block; height:1em; overflow:hidden; width:.62em; text-align:center; transition:width .3s var(--e-out-expo)}
+.ci-slot.is-blank{width:0}
+.ci-col{display:block; transform:translateY(calc(var(--n,0) * -1em)); transition:transform .32s cubic-bezier(.3,.7,.2,1)}
+.ci-col i{display:block; height:1em; font-style:normal}
+.ci-side{position:absolute; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+.ci-side--l{left:var(--gutter)}
+.ci-side--r{right:var(--gutter); overflow:hidden; height:1.4em; text-align:right}
+.ci-roll{display:inline-block; color:var(--cream)}
+.ci-roll.is-tick{animation:ciTick .22s cubic-bezier(.3,.7,.2,1)}
+@keyframes ciTick{from{transform:translateY(100%); opacity:0} to{transform:none; opacity:1}}
+.ci-pill{position:absolute; left:50%; top:22px; transform:translateX(-50%); display:flex; align-items:center; gap:12px;
+  padding:9px 16px; border-radius:999px; background:rgba(243,239,232,.06); border:1px solid rgba(243,239,232,.14); backdrop-filter:blur(8px)}
+.ci-mark{height:13px; width:auto}
+.ci-state{font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+.ci-spin{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ember); border-top-color:transparent; animation:ciSpin .8s linear infinite}
+@keyframes ciSpin{to{transform:rotate(360deg)}}
+.crate__intro.is-out .ci-count{transition:transform .55s var(--e-out-expo), opacity .4s; transform:translate(-50%,-120%); opacity:0}
+.crate__intro.is-out .ci-side,.crate__intro.is-out .ci-pill{transition:opacity .35s, transform .45s var(--e-out-expo); opacity:0}
+.crate__intro.is-out .ci-pill{transform:translate(-50%,-14px)}
+
+/* while it plays: details, controls, wallpaper and header wait off-stage */
+.crate__meta>*,.crate__facts,.crate__nav,.crate__wall{transition:opacity .7s var(--e-out-expo), transform .8s var(--e-out-expo)}
+.crate.is-intro .crate__meta>*{opacity:0; transform:translateY(26px)}
+.crate.is-intro .crate__facts{opacity:0; transform:translate(-50%,26px)}
+.crate.is-intro .crate__nav{opacity:0; transform:translateY(26px)}
+.crate.is-intro .crate__wall{opacity:0}
+.crate.is-landing .crate__meta>*:nth-child(2){transition-delay:.08s}
+.crate.is-landing .crate__meta>*:nth-child(3){transition-delay:.16s}
+.crate.is-landing .crate__meta>*:nth-child(4){transition-delay:.24s}
+.crate.is-landing .crate__facts{transition-delay:.3s}
+.crate.is-landing .crate__nav{transition-delay:.38s}
+.crate.is-landing .crate__wall{transition-duration:1.6s}
+html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity:0; pointer-events:none}
+@media(max-width:767px){
+  .crate.is-intro .crate__nav{transform:translate(-50%,26px)}
+  .ci-count{font-size:clamp(4rem,24vw,7rem)}
+  .ci-side{top:auto; bottom:calc(30px + env(safe-area-inset-bottom,0px)); transform:none}
+}
+.crate__count{white-space:nowrap}
