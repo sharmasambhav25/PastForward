@@ -96,52 +96,6 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
-  <!-- 1 ============ THE FLEX ============
-       The brand's own standee, made kinetic: one record so large it
-       runs off every edge, the collage split behind it, the wordmark
-       and tagline set on the vinyl itself. -->
-  <section class="fhero" data-section="PASTFORWARD">
-    <div class="fhero__col">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-    </div>
-
-    <div class="fdisc" id="fdisc">
-      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
-      <div class="fdisc__spin" id="fdiscspin">
-        <div class="fdisc__gr"></div>
-        <div class="fdisc__gr2"></div>
-        <div class="fdisc__lab"></div>
-        <div class="fdisc__rule fdisc__rule--a"></div>
-        <div class="fdisc__rule fdisc__rule--b"></div>
-      </div>
-      <div class="fdisc__gloss"></div>
-      <div class="fdisc__sheen"></div>
-      <div class="fdisc__hole"></div>
-
-      <div class="fdisc__type">
-        <h1 class="fdisc__wm"><img src="${window.__WORDMARK__}" alt="PastForward" fetchpriority="high"></h1>
-        <div class="fdisc__tag">${TAGLINE}</div>
-      </div>
-
-      <!-- igloo-style annotation over the object -->
-      <div class="annot" id="heroannot">
-        <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
-          <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
-        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
-          <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
-        <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
-          <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
-      </div>
-    </div>
-
-    <div class="fhero__hint cap">A record that already had a life</div>
-    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
-    <div class="fhero__cta">
-      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
-    </div>
-  </section>
-
   ${crateHTML()}
 
   ${seam('in-ink')}
@@ -262,9 +216,16 @@ function crateHTML() {
       </div>
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
+      <!-- the opening sequence (plays once, on first load of the home page) -->
+      <div class="crate__intro" aria-hidden="true">
+        <div class="ci-pill"><img class="ci-mark" src="${window.__WORDMARK__}" alt=""><span class="ci-state">Pressing</span><span class="ci-spin"></span></div>
+        <div class="ci-side ci-side--l">PastForward Records</div>
+        <div class="ci-side ci-side--r"><span class="ci-roll">${esc(list[list.length - 1].artist)}</span></div>
+        <div class="ci-count">${[0, 1, 2].map(k => `<span class="ci-slot" data-slot="${k}"><span class="ci-col">${k === 0 ? '<i>&nbsp;</i>' : ''}${Array.from({ length: 10 }, (_, d) => `<i>${d}</i>`).join('')}</span></span>`).join('')}</div>
+      </div>
       <div class="crate__meta">
         <div class="cap crate__eyebrow">MAKE IT YOURS</div>
-        <h2 class="crate__head">Pick the one that's yours.</h2>
+        <h1 class="crate__head">Pick the one that's yours.</h1>
         <dl class="crate__rows" aria-live="polite">
           <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
@@ -287,6 +248,81 @@ function crateHTML() {
     </div>
   </section>`;
 }
+/* The opening sequence, after the reference's loader: a counter rolls 0→100 and drifts
+   up the screen, the first record turns from edge-on to face you, then everything
+   lands at once — the record grows into place, its neighbours slide in, the details,
+   controls, header and wallpaper arrive. Plays once per visit, only from the top of the
+   home page, never under reduced motion. Any scroll, key or tap skips ahead. */
+function playCrateIntro(root, api, list, onUnmount) {
+  const html = document.documentElement;
+  const skip = RM() || window.__crateIntroDone || scrollY > 20 || location.search.includes('nopre') || !api.setIntro;
+  if (skip) { window.__crateIntroDone = true; return; }
+  const ov = root.querySelector('.crate__intro');
+  const slots = [...root.querySelectorAll('.ci-slot')];
+  const count = root.querySelector('.ci-count'), roll = root.querySelector('.ci-roll');
+  root.classList.add('is-intro'); html.classList.add('crate-intro');
+  ov.classList.add('is-on');
+  api.setIntro(0, 0);
+  const lock = e => { e.preventDefault(); hurry(); };
+  const keys = e => { if ([' ', 'ArrowDown', 'PageDown', 'Enter', 'Escape'].includes(e.key)) { e.preventDefault(); hurry(); } };
+  addEventListener('wheel', lock, { passive: false });
+  addEventListener('touchmove', lock, { passive: false });
+  addEventListener('keydown', keys);
+  ov.addEventListener('pointerdown', hurry);
+  const COUNT = 2900, FLIP0 = 650, FLIP1 = 2700, LAND = 3150, BUILD = 1000, DONE = LAND + BUILD + 250;
+  let t0 = performance.now(), offset = 0, alive = true, landed = false, lastRoll = 0, ri = 0, shown = -1;
+  function hurry() { const t = performance.now() - t0 + offset; if (t < LAND - 150) offset += LAND - 150 - t; }
+  const cl = k => Math.max(0, Math.min(1, k)), io = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+  function setCount(n) {
+    if (n === shown) return; shown = n;
+    const str = String(n).padStart(3, ' ');
+    slots.forEach((el, k) => {
+      const ch = str[k];
+      // the first slot has a blank row on top so "  7" doesn't show leading zeros
+      const idx = k === 0 ? (ch === ' ' ? 0 : +ch + 1) : (ch === ' ' ? 0 : +ch);
+      el.style.setProperty('--n', idx);
+      el.classList.toggle('is-blank', ch === ' ' && k !== 0);
+    });
+  }
+  function finish(interrupted) {
+    if (!alive) return; alive = false;
+    // counted as played only once it's run its course: the first load renders home twice
+    // (the address gains its #/), and the first, torn-down render mustn't use it up
+    if (!interrupted) window.__crateIntroDone = true;
+    removeEventListener('wheel', lock); removeEventListener('touchmove', lock); removeEventListener('keydown', keys);
+    root.classList.remove('is-intro'); html.classList.remove('crate-intro');
+    api.setIntro(1, 1);
+    setTimeout(() => ov.remove(), 600);
+  }
+  onUnmount(() => { if (alive) finish(true); });
+  (function tick(now) {
+    if (!alive) return;
+    const t = now - t0 + offset;
+    // counter: eased count, drifting from low on the screen up toward the top
+    const kc = io(cl(t / COUNT));
+    setCount(Math.round(kc * 100));
+    count.style.setProperty('--x', (34 + 20 * kc).toFixed(2) + '%');
+    count.style.setProperty('--y', (76 - 62 * kc).toFixed(2) + '%');
+    // right label: the crate's artists flick past, landing on the first one
+    if (t < COUNT && now - lastRoll > 150) { lastRoll = now; roll.textContent = list[(ri++) % list.length].artist; roll.classList.remove('is-tick'); void roll.offsetWidth; roll.classList.add('is-tick'); }
+    if (t >= COUNT && roll.textContent !== list[0].artist) roll.textContent = list[0].artist;
+    // the record turns to face you while the count runs
+    const flip = cl((t - FLIP0) / (FLIP1 - FLIP0));
+    const build = cl((t - LAND) / BUILD);
+    api.setIntro(flip, build);
+    if (t >= LAND && !landed) {
+      landed = true;
+      ov.classList.add('is-out');            // counter, labels and pill leave
+      root.classList.add('is-landing');      // details, controls, header, wallpaper arrive
+      root.classList.remove('is-intro'); html.classList.remove('crate-intro');
+      ['.hdr', '.needle', '#corners'].forEach((sel, k) => { const el = document.querySelector(sel);
+        if (el) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, delay: 200 + k * 120, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' }); });
+    }
+    if (t >= DONE) { root.classList.remove('is-landing'); finish(); return; }
+    requestAnimationFrame(tick);
+  })(t0);
+}
+
 function mountCrateSection(onUnmount) {
   const root = document.getElementById('crate'); if (!root) return null;
   const list = crateList(), facts = list.map(crateFacts);
@@ -337,6 +373,7 @@ function mountCrateSection(onUnmount) {
     if (e.key === 'ArrowRight') { e.preventDefault(); api.next(); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); api.prev(); }
   });
+  playCrateIntro(root, api, list, onUnmount);
   return api;
 }
 

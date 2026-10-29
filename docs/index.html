@@ -1659,6 +1659,53 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate--live .crate__bg>i{display:none}
 .crate--live .crate__bg::after{display:none}
 .crate--flat{height:auto}
+
+/* ---------- the crate's opening sequence ---------- */
+.crate__intro{position:absolute; inset:0; z-index:8; pointer-events:none; display:none; color:var(--cream)}
+.crate__intro.is-on{display:block; pointer-events:auto}
+.crate__intro.is-out{pointer-events:none}
+/* the counter: three rolling digit columns in the display serif, drifting up the screen */
+.ci-count{position:absolute; left:var(--x,34%); top:var(--y,76%); transform:translate(-50%,-50%); display:flex;
+  font-family:var(--display); font-weight:500; font-size:clamp(4.5rem,11vw,10rem); line-height:1; letter-spacing:-.02em}
+.ci-slot{display:block; height:1em; overflow:hidden; width:.62em; text-align:center; transition:width .3s var(--e-out-expo)}
+.ci-slot.is-blank{width:0}
+.ci-col{display:block; transform:translateY(calc(var(--n,0) * -1em)); transition:transform .32s cubic-bezier(.3,.7,.2,1)}
+.ci-col i{display:block; height:1em; font-style:normal}
+.ci-side{position:absolute; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+.ci-side--l{left:var(--gutter)}
+.ci-side--r{right:var(--gutter); overflow:hidden; height:1.4em; text-align:right}
+.ci-roll{display:inline-block; color:var(--cream)}
+.ci-roll.is-tick{animation:ciTick .22s cubic-bezier(.3,.7,.2,1)}
+@keyframes ciTick{from{transform:translateY(100%); opacity:0} to{transform:none; opacity:1}}
+.ci-pill{position:absolute; left:50%; top:22px; transform:translateX(-50%); display:flex; align-items:center; gap:12px;
+  padding:9px 16px; border-radius:999px; background:rgba(243,239,232,.06); border:1px solid rgba(243,239,232,.14); backdrop-filter:blur(8px)}
+.ci-mark{height:13px; width:auto}
+.ci-state{font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+.ci-spin{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ember); border-top-color:transparent; animation:ciSpin .8s linear infinite}
+@keyframes ciSpin{to{transform:rotate(360deg)}}
+.crate__intro.is-out .ci-count{transition:transform .55s var(--e-out-expo), opacity .4s; transform:translate(-50%,-120%); opacity:0}
+.crate__intro.is-out .ci-side,.crate__intro.is-out .ci-pill{transition:opacity .35s, transform .45s var(--e-out-expo); opacity:0}
+.crate__intro.is-out .ci-pill{transform:translate(-50%,-14px)}
+
+/* while it plays: details, controls, wallpaper and header wait off-stage */
+.crate__meta>*,.crate__facts,.crate__nav,.crate__wall{transition:opacity .7s var(--e-out-expo), transform .8s var(--e-out-expo)}
+.crate.is-intro .crate__meta>*{opacity:0; transform:translateY(26px)}
+.crate.is-intro .crate__facts{opacity:0; transform:translate(-50%,26px)}
+.crate.is-intro .crate__nav{opacity:0; transform:translateY(26px)}
+.crate.is-intro .crate__wall{opacity:0}
+.crate.is-landing .crate__meta>*:nth-child(2){transition-delay:.08s}
+.crate.is-landing .crate__meta>*:nth-child(3){transition-delay:.16s}
+.crate.is-landing .crate__meta>*:nth-child(4){transition-delay:.24s}
+.crate.is-landing .crate__facts{transition-delay:.3s}
+.crate.is-landing .crate__nav{transition-delay:.38s}
+.crate.is-landing .crate__wall{transition-duration:1.6s}
+html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity:0; pointer-events:none}
+@media(max-width:767px){
+  .crate.is-intro .crate__nav{transform:translate(-50%,26px)}
+  .ci-count{font-size:clamp(4rem,24vw,7rem)}
+  .ci-side{top:auto; bottom:calc(30px + env(safe-area-inset-bottom,0px)); transform:none}
+}
+.crate__count{white-space:nowrap}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -4565,6 +4612,7 @@ function grooveField() {
 /* ---------- preloader: black, the mark, and a very large counter ---------- */
 function initPre() {
   if (RM() || location.search.includes('nopre')) return;
+  if (/^#?\/?$/.test(location.hash)) return;   // the home page opens with the crate's own intro
   const el = document.createElement('div');
   el.id = 'pre';
   el.innerHTML = `<div class="pre__bar"></div>
@@ -4684,7 +4732,8 @@ function initGrounds() {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
       const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
-      hint.hidden = !home || scrollY > innerHeight * 0.7;
+      // the crate has its own controls and hint; this one belonged to the hero
+      hint.hidden = !home || scrollY > innerHeight * 0.7 || !document.querySelector('.fhero');
     }
     const mid = innerHeight * 0.5;
     const on = lights().some(el => { const r = el.getBoundingClientRect(); return r.top < mid && r.bottom > mid; });
@@ -4868,7 +4917,8 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
+    // the transparent header + hidden logo only make sense over the big hero record
+    const home = (location.hash === '#/' || location.hash === '' || location.hash === '#') && !!document.querySelector('.fhero');
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
@@ -6338,52 +6388,6 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
-  <!-- 1 ============ THE FLEX ============
-       The brand's own standee, made kinetic: one record so large it
-       runs off every edge, the collage split behind it, the wordmark
-       and tagline set on the vinyl itself. -->
-  <section class="fhero" data-section="PASTFORWARD">
-    <div class="fhero__col">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-    </div>
-
-    <div class="fdisc" id="fdisc">
-      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
-      <div class="fdisc__spin" id="fdiscspin">
-        <div class="fdisc__gr"></div>
-        <div class="fdisc__gr2"></div>
-        <div class="fdisc__lab"></div>
-        <div class="fdisc__rule fdisc__rule--a"></div>
-        <div class="fdisc__rule fdisc__rule--b"></div>
-      </div>
-      <div class="fdisc__gloss"></div>
-      <div class="fdisc__sheen"></div>
-      <div class="fdisc__hole"></div>
-
-      <div class="fdisc__type">
-        <h1 class="fdisc__wm"><img src="${window.__WORDMARK__}" alt="PastForward" fetchpriority="high"></h1>
-        <div class="fdisc__tag">${TAGLINE}</div>
-      </div>
-
-      <!-- igloo-style annotation over the object -->
-      <div class="annot" id="heroannot">
-        <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
-          <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
-        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
-          <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
-        <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
-          <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
-      </div>
-    </div>
-
-    <div class="fhero__hint cap">A record that already had a life</div>
-    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
-    <div class="fhero__cta">
-      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
-    </div>
-  </section>
-
   ${crateHTML()}
 
   ${seam('in-ink')}
@@ -6504,9 +6508,16 @@ function crateHTML() {
       </div>
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
+      <!-- the opening sequence (plays once, on first load of the home page) -->
+      <div class="crate__intro" aria-hidden="true">
+        <div class="ci-pill"><img class="ci-mark" src="${window.__WORDMARK__}" alt=""><span class="ci-state">Pressing</span><span class="ci-spin"></span></div>
+        <div class="ci-side ci-side--l">PastForward Records</div>
+        <div class="ci-side ci-side--r"><span class="ci-roll">${esc(list[list.length - 1].artist)}</span></div>
+        <div class="ci-count">${[0, 1, 2].map(k => `<span class="ci-slot" data-slot="${k}"><span class="ci-col">${k === 0 ? '<i>&nbsp;</i>' : ''}${Array.from({ length: 10 }, (_, d) => `<i>${d}</i>`).join('')}</span></span>`).join('')}</div>
+      </div>
       <div class="crate__meta">
         <div class="cap crate__eyebrow">MAKE IT YOURS</div>
-        <h2 class="crate__head">Pick the one that's yours.</h2>
+        <h1 class="crate__head">Pick the one that's yours.</h1>
         <dl class="crate__rows" aria-live="polite">
           <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
@@ -6529,6 +6540,81 @@ function crateHTML() {
     </div>
   </section>`;
 }
+/* The opening sequence, after the reference's loader: a counter rolls 0→100 and drifts
+   up the screen, the first record turns from edge-on to face you, then everything
+   lands at once — the record grows into place, its neighbours slide in, the details,
+   controls, header and wallpaper arrive. Plays once per visit, only from the top of the
+   home page, never under reduced motion. Any scroll, key or tap skips ahead. */
+function playCrateIntro(root, api, list, onUnmount) {
+  const html = document.documentElement;
+  const skip = RM() || window.__crateIntroDone || scrollY > 20 || location.search.includes('nopre') || !api.setIntro;
+  if (skip) { window.__crateIntroDone = true; return; }
+  const ov = root.querySelector('.crate__intro');
+  const slots = [...root.querySelectorAll('.ci-slot')];
+  const count = root.querySelector('.ci-count'), roll = root.querySelector('.ci-roll');
+  root.classList.add('is-intro'); html.classList.add('crate-intro');
+  ov.classList.add('is-on');
+  api.setIntro(0, 0);
+  const lock = e => { e.preventDefault(); hurry(); };
+  const keys = e => { if ([' ', 'ArrowDown', 'PageDown', 'Enter', 'Escape'].includes(e.key)) { e.preventDefault(); hurry(); } };
+  addEventListener('wheel', lock, { passive: false });
+  addEventListener('touchmove', lock, { passive: false });
+  addEventListener('keydown', keys);
+  ov.addEventListener('pointerdown', hurry);
+  const COUNT = 2900, FLIP0 = 650, FLIP1 = 2700, LAND = 3150, BUILD = 1000, DONE = LAND + BUILD + 250;
+  let t0 = performance.now(), offset = 0, alive = true, landed = false, lastRoll = 0, ri = 0, shown = -1;
+  function hurry() { const t = performance.now() - t0 + offset; if (t < LAND - 150) offset += LAND - 150 - t; }
+  const cl = k => Math.max(0, Math.min(1, k)), io = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+  function setCount(n) {
+    if (n === shown) return; shown = n;
+    const str = String(n).padStart(3, ' ');
+    slots.forEach((el, k) => {
+      const ch = str[k];
+      // the first slot has a blank row on top so "  7" doesn't show leading zeros
+      const idx = k === 0 ? (ch === ' ' ? 0 : +ch + 1) : (ch === ' ' ? 0 : +ch);
+      el.style.setProperty('--n', idx);
+      el.classList.toggle('is-blank', ch === ' ' && k !== 0);
+    });
+  }
+  function finish(interrupted) {
+    if (!alive) return; alive = false;
+    // counted as played only once it's run its course: the first load renders home twice
+    // (the address gains its #/), and the first, torn-down render mustn't use it up
+    if (!interrupted) window.__crateIntroDone = true;
+    removeEventListener('wheel', lock); removeEventListener('touchmove', lock); removeEventListener('keydown', keys);
+    root.classList.remove('is-intro'); html.classList.remove('crate-intro');
+    api.setIntro(1, 1);
+    setTimeout(() => ov.remove(), 600);
+  }
+  onUnmount(() => { if (alive) finish(true); });
+  (function tick(now) {
+    if (!alive) return;
+    const t = now - t0 + offset;
+    // counter: eased count, drifting from low on the screen up toward the top
+    const kc = io(cl(t / COUNT));
+    setCount(Math.round(kc * 100));
+    count.style.setProperty('--x', (34 + 20 * kc).toFixed(2) + '%');
+    count.style.setProperty('--y', (76 - 62 * kc).toFixed(2) + '%');
+    // right label: the crate's artists flick past, landing on the first one
+    if (t < COUNT && now - lastRoll > 150) { lastRoll = now; roll.textContent = list[(ri++) % list.length].artist; roll.classList.remove('is-tick'); void roll.offsetWidth; roll.classList.add('is-tick'); }
+    if (t >= COUNT && roll.textContent !== list[0].artist) roll.textContent = list[0].artist;
+    // the record turns to face you while the count runs
+    const flip = cl((t - FLIP0) / (FLIP1 - FLIP0));
+    const build = cl((t - LAND) / BUILD);
+    api.setIntro(flip, build);
+    if (t >= LAND && !landed) {
+      landed = true;
+      ov.classList.add('is-out');            // counter, labels and pill leave
+      root.classList.add('is-landing');      // details, controls, header, wallpaper arrive
+      root.classList.remove('is-intro'); html.classList.remove('crate-intro');
+      ['.hdr', '.needle', '#corners'].forEach((sel, k) => { const el = document.querySelector(sel);
+        if (el) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, delay: 200 + k * 120, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' }); });
+    }
+    if (t >= DONE) { root.classList.remove('is-landing'); finish(); return; }
+    requestAnimationFrame(tick);
+  })(t0);
+}
+
 function mountCrateSection(onUnmount) {
   const root = document.getElementById('crate'); if (!root) return null;
   const list = crateList(), facts = list.map(crateFacts);
@@ -6579,6 +6665,7 @@ function mountCrateSection(onUnmount) {
     if (e.key === 'ArrowRight') { e.preventDefault(); api.next(); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); api.prev(); }
   });
+  playCrateIntro(root, api, list, onUnmount);
   return api;
 }
 
@@ -8395,6 +8482,12 @@ export function mountCrate(root, items, opts = {}) {
   }
 
   /* ---- frame loop: only while on screen and something is changing ---- */
+  /* the opening sequence (driven from routes.js): flip 0→1 turns the first record from
+     edge-on to facing you, small and centred; build 0→1 grows it into place while the
+     neighbours slide in along the diagonal. Both rest at 1 when there's no intro. */
+  let introFlip = 1, introBuild = 1;
+  const ease = k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+  function setIntro(flip, build) { introFlip = flip; introBuild = build; dirty = true; wake(); }
   let raf = 0, last = performance.now(), visible = false, disposed = false;
   function wake() { if (!raf && visible && !disposed) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
@@ -8411,7 +8504,7 @@ export function mountCrate(root, items, opts = {}) {
 
     const a = Math.max(0, Math.min(N - 1, Math.round(visual)));
     if (a !== active) { active = a; onActive(items[a], a); }
-    if (touchOnly && !pointerIn) {
+    if (touchOnly && !pointerIn && introBuild >= 1) {
       // no hover on phones: the record that settles in front gets the loop
       const settled = Math.abs(visual - target) < 0.03 && !dragOffset;
       if (settled && drawnAround !== target) { chase = 2.2; drawOn(target); }
@@ -8422,7 +8515,8 @@ export function mountCrate(root, items, opts = {}) {
     const settling = spinBoost < 4;
     records.forEach((r, i) => {
       const d = i - visual;
-      const on = Math.abs(d) < 2.7;
+      const eB = ease(introBuild), eF = ease(introFlip), front = i === target;
+      const on = Math.abs(d) < 2.7 && (front ? introFlip > 0 : introBuild > 0.02);
       r.holder.visible = on;
       if (!on) return;
       r.holder.position.copy(STEP).multiplyScalar(d);
@@ -8430,18 +8524,23 @@ export function mountCrate(root, items, opts = {}) {
       r.holder.position.y += LIFT_Y;
       r.holder.position.x += SHIFT_X;
       r.holder.position.z += r.lift * 2.4;
+      if (introBuild < 1) {
+        if (front) r.holder.position.multiplyScalar(eB);                     // from the centre into its place
+        else r.holder.position.addScaledVector(STEP, Math.sign(d) * (1 - eB) * 2.2);   // neighbours slide in
+      }
       // records turn while the row moves, then come to rest with the art upright
       r.angle += spinBoost * (Math.abs(d) < 0.6 ? 1 : 0.6) * dt;
       if (settling) {
         const rest = Math.round(r.angle / 360) * 360, gap = rest - r.angle;
         if (Math.abs(gap) > 0.05) { r.angle += gap * (RM ? 1 : 1 - Math.exp(-dt * 2.6)); moving = true; } else r.angle = rest;
       }
-      r.spin.rotation.z = -r.angle * Math.PI / 180;
+      r.spin.rotation.z = -(r.angle + (front ? 420 * Math.pow(1 - eF, 2) : 0)) * Math.PI / 180;   // unwinds to upright as it turns to face you
       const want = i === hovered ? 1 : 0;
       r.hover += (want - r.hover) * (RM ? 1 : 1 - Math.exp(-dt * 10));
       if (Math.abs(r.hover - want) > 0.002) moving = true;
       r.tilt.rotation.set(LEAN_X - r.ty * 0.12 * r.hover, LEAN_Y + r.tx * 0.14 * r.hover, 0, "YXZ");
-      r.tilt.scale.setScalar(1 + 0.025 * r.hover);
+      r.tilt.scale.setScalar((1 + 0.025 * r.hover) * (front && introBuild < 1 ? 0.5 + 0.5 * eB : 1));
+      if (front && introFlip < 1) r.tilt.rotation.y += (1 - eF) * Math.PI * 0.5;
     });
     if (spinBoost > 0.5) moving = true;
 
@@ -8487,7 +8586,7 @@ export function mountCrate(root, items, opts = {}) {
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, goTo, next, prev, fromScroll, get active() { return target; } };
+  return { cleanup, goTo, next, prev, fromScroll, setIntro, get active() { return target; } };
 }
 window.mountCrate = mountCrate;
 </script></body></html>
