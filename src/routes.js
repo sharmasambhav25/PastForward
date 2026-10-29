@@ -86,7 +86,6 @@ function viewHome() {
   const feat = withVinyl.filter(p => p.featured).sort((a, b) => a.rank - b.rank);
   const pickers = feat.slice(0, 8);
   const posters = [], polas = [];   /* filled for the catalogue wall */
-  const objectRec = pickers.find(p => p.slug === 'travis-scott-utopia') || pickers[1];
   const pickStart = pickers.find(p => p.slug === 'pink-floyd-the-dark-side-of-the-moon-1973') || pickers[2];
   const closeRec  = pickers.find(p => p.slug === 'karan-aujla-at-peace') || pickers[3];
 
@@ -140,40 +139,6 @@ function viewHome() {
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
       <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
-    </div>
-  </section>
-
-  <!-- 2 ============ THE OBJECT ============ -->
-  <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
-    ${col('g', 'col--soft col--mask')}
-    <div class="wrap beat3-wrap">
-      <div id="beat3">
-        <div class="reveal beat3__visual" style="position:relative">
-          <div class="beat3__discwrap">
-            ${recordHTML(objectRec, { size: 300, big: true, id: 'beat3rec', style: 'width:100%' })}
-          </div>
-          ${plate('board-display', 'HUNG, NOT SPUN', 'f-m', 'position:relative;z-index:1;width:52%;margin:-14% 0 0 auto')}
-        </div>
-        <div class="beat3__copy">
-          <div class="cap">THE OBJECT</div>
-          <h2 class="d-l reveal" style="margin:14px 0 20px">A record you don't play.</h2>
-          <p class="body-l dim reveal measure">A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.</p>
-          <div class="spec-retro reveal" role="list">
-            <div class="spec-retro__item" role="listitem">
-              <span class="spec-retro__bullet" aria-hidden="true"></span>
-              <span class="spec-retro__text">12-INCH DIAMETER</span>
-            </div>
-            <div class="spec-retro__item" role="listitem">
-              <span class="spec-retro__bullet" aria-hidden="true"></span>
-              <span class="spec-retro__text">UPCYCLED RECORD<span class="spec-retro__dot">·</span>PRINTED CENTRE LABEL</span>
-            </div>
-            <div class="spec-retro__item" role="listitem">
-              <span class="spec-retro__bullet" aria-hidden="true"></span>
-              <span class="spec-retro__text">READY TO HANG</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -684,6 +649,7 @@ function mountCustom() {
 
 /* ============================== STORY ============================== */
 function viewStory() {
+  const objectRec = bySlug['travis-scott-utopia'] || withVinyl.find(p => p.featured) || withVinyl[0];
   const mu = 'VINYL-PASTFORWARDxMasters\' Union.webp';
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     ${eyebrow('THE STORY')}
@@ -708,6 +674,41 @@ function viewStory() {
   </div>
 
   ${bleed('stall-red', "THE TABLE, MASTERS' UNION MELA — 2025", 'Most of it sold face to face.', 'bleed--tall')}
+
+  <!-- THE OBJECT (moved here from the home page) -->
+  <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
+    ${col('g', 'col--soft col--mask')}
+    <div class="wrap beat3-wrap">
+      <div id="beat3">
+        <div class="reveal beat3__visual" style="position:relative">
+          <div class="beat3__discwrap">
+            ${recordHTML(objectRec, { size: 300, big: true, id: 'beat3rec', style: 'width:100%' })}
+          </div>
+          ${plate('board-display', 'HUNG, NOT SPUN', 'f-m', 'position:relative;z-index:1;width:52%;margin:-14% 0 0 auto')}
+        </div>
+        <div class="beat3__copy">
+          <div class="cap">THE OBJECT</div>
+          <h2 class="d-l reveal" style="margin:14px 0 20px">A record you don't play.</h2>
+          <p class="body-l dim reveal measure">A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.</p>
+          <div class="spec-retro reveal" role="list">
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">12-INCH DIAMETER</span>
+            </div>
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">UPCYCLED RECORD<span class="spec-retro__dot">·</span>PRINTED CENTRE LABEL</span>
+            </div>
+            <div class="spec-retro__item" role="listitem">
+              <span class="spec-retro__bullet" aria-hidden="true"></span>
+              <span class="spec-retro__text">READY TO HANG</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <div class="wrap sec col-720">
     ${eyebrow('HOW ONE GETS MADE')}
@@ -889,9 +890,30 @@ window.__mount = function (seg, params) {
   if (page === 'collections') mountCollection();
   if (page === 'search') mountSearchPage();
   if (page === 'custom') mountCustom();
+  if (page === 'story') mountStory();
   mountAccordions();
   mountMarquees();
 };
+
+function mountStory() {
+  const host = document.getElementById('beat3rec');
+  const disc = host && host.querySelector('[data-disc]');
+  if (!disc || RM()) return;
+  let alive = true, angle = 0, rate = 7.5, last = performance.now();
+  host.addEventListener('pointerenter', () => { rate = 0; });
+  host.addEventListener('pointerleave', () => { rate = 7.5; });
+  host.addEventListener('pointermove', e => {
+    const bx = host.getBoundingClientRect();
+    host.style.setProperty('--sheen-a', (Math.atan2(e.clientY - (bx.top + bx.height / 2), e.clientX - (bx.left + bx.width / 2)) * 180 / Math.PI - 30) + 'deg');
+  });
+  onUnmount(() => { alive = false; });
+  (function spin(t) {
+    if (!alive) return;
+    angle += rate * Math.min(64, t - last) / 1000; last = t;
+    disc.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+    requestAnimationFrame(spin);
+  })(last);
+}
 
 function mountMarquees() {
   const marqs = $$('[data-marq]').map(m => ({
@@ -951,7 +973,6 @@ function mountHome() {
     const el = host && host.querySelector('[data-disc]');
     if (el) spins.push(Object.assign({ host, el, rate, base: rate, angle: 0, kick: 0, mom: 0 }, opt));
   };
-  addSpin('beat3rec', 7.5, { hover: true });
   addSpin('droprec', 12, { boost: true, stopper: true });
 
   /* the flex hero disc: same drag/momentum/scratch-sound loop as every other record —
