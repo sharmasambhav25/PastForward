@@ -82,10 +82,27 @@ function mediaHTML(p, size) {
 }
 
 /* ---------- product card ---------- */
-function cardHTML(p) {
-  const v = primary(p);
+function cardHTML(p, targetFormat) {
+  let v;
+  if (targetFormat === 'posters') {
+    v = p.variants.find(x => ['poster-a3', 'poster-a5', 'print-10'].includes(x.format)) || primary(p);
+  } else if (targetFormat) {
+    v = p.variants.find(x => x.format === targetFormat) || primary(p);
+  } else {
+    v = primary(p);
+  }
   const ar = v.format === 'vinyl' || v.format === 'print-10' ? 1 : v.ratio;
-  return `<a class="card" href="#/product/${p.slug}" data-card="${p.slug}" data-cursor="VIEW">
+
+  let sizeText = esc(v.label);
+  if (v.format === 'vinyl') {
+    sizeText = '12-inch record';
+  } else if (v.format === 'polaroid') {
+    sizeText = 'Polaroid card';
+  } else if (v.size && v.size !== '[CONFIRM]') {
+    sizeText = `${esc(v.label)} · ${esc(v.size)}`;
+  }
+
+  return `<a class="card" href="#/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
     <div class="card__media" style="aspect-ratio:${ar}" data-media>
       <span class="card__badge badge">${esc(v.badge)}</span>
       ${v.format === 'vinyl' ? recordHTML(p, { size: 210 })
@@ -96,8 +113,8 @@ function cardHTML(p) {
     <div class="card__meta">
       <span class="card__artist">${esc(p.artist)}</span>
       <span class="card__album">${albumOf(p)}</span>
-      <span class="card__size">${esc(v.label)} · ${v.size === '[CONFIRM]' ? CONFIRM('Polaroid card dimensions not measured yet') : esc(v.size)}</span>
-      <span class="card__price num">${money(v.price)}${p.variants.length > 1 ? `<span class="card__more">${p.variants.length} formats · from ${money(p.from)}</span>` : ''}</span>
+      <span class="card__size">${sizeText}</span>
+      <span class="card__price num">${money(v.price)}</span>
     </div></a>`;
 }
 
@@ -159,7 +176,7 @@ function syncCart() {
 function cartLinesHTML() {
   if (!cart.length) return `<div style="padding:56px 0;text-align:center">
       <p class="d-s" style="margin-bottom:8px">Nothing in the crate yet.</p>
-      <a class="btn btn--secondary" href="#/shop" data-close>Browse the catalogue</a></div>`;
+      <a class="btn btn--secondary" href="#/vinyl" data-close>Browse the catalogue</a></div>`;
   return cart.map((l, i) => {
     const p = bySlug[l.slug], v = variant(p, l.format);
     return `<div class="line">
@@ -223,37 +240,55 @@ function openDrawer() { lastFocus = document.activeElement; $('#drawer').classLi
 function closeAll() {
   ['#drawer', '#menu', '#search'].forEach(s => { const el = $(s); if (el) el.classList.remove('is-open'); });
   $('#scrim').classList.remove('is-open'); $('#mega').classList.remove('is-open');
+  const mp = $('#megaposters'); if (mp) mp.classList.remove('is-open');
   document.body.style.overflow = '';
   if (lastFocus) { try { lastFocus.focus(); } catch (e) {} lastFocus = null; }
 }
 
 /* ---------- chrome ---------- */
 function chromeHTML() {
-  const fmtLinks = [['vinyl', 'Vinyl'], ['posters', 'Posters'], ['prints', 'Prints'], ['polaroids', 'Polaroids']];
   return `
   <a class="skip" href="#main">Skip to content</a>
   <header class="hdr" id="hdr"><div class="wrap hdr__in">
     <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
-      <a class="navlink" href="#/shop" data-nav="shop">Shop${wave('wave--under')}</a>
-      <button class="navlink" id="megabtn" aria-expanded="false" style="background:none;border:0;cursor:pointer">Collections${wave('wave--under')}</button>
-      <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
+      <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
+      <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
+      <a class="navlink" href="#/polaroids" data-nav="polaroids">Polaroids${wave('wave--under')}</a>
+      <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
-      <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
-      <button class="iconbtn" id="cartbtn" aria-label="Open cart"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16l-1.2 12H5.2z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cartcount num" id="cartcount" aria-live="polite" style="display:none">0</span></button>
-      <button class="iconbtn" id="menubtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+      <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+      <button class="iconbtn" id="cartbtn" aria-label="Open cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16l-1.2 12H5.2z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cartcount num" id="cartcount" aria-live="polite" style="display:none">0</span></button>
+      <button class="iconbtn" id="menubtn" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
     </div>
     <div class="hdr__prog" id="hdrprog"></div>
   </div></header>
 
-  <div class="mega" id="mega"><div class="wrap mega__grid">
-    <div><h4>Collections</h4>${COLS.slice(0, 4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
-    <div><h4>&nbsp;</h4>${COLS.slice(4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
-    <div><h4>Format</h4>${fmtLinks.map(([s, l]) => `<a href="#/shop/${s}">${l}</a>`).join('')}</div>
-    <div><h4>In the crate</h4><p class="body-s dim" style="margin:0 0 14px">${COUNTS.products} artworks across ${COUNTS.variants} formats. Everything we've ever printed.</p><a href="#/shop" style="color:var(--cream)">See everything →</a></div>
-  </div></div>
+  <div class="mega mega--posters" id="megaposters">
+    <h4>Poster Formats</h4>
+    <a href="#/posters/a3" class="mega__format-link">
+      <span class="mega__format-title">A3 Posters</span>
+      <span class="mega__format-size">297 × 420mm</span>
+    </a>
+    <a href="#/posters/a5" class="mega__format-link">
+      <span class="mega__format-title">A5 Posters</span>
+      <span class="mega__format-size">148 × 210mm</span>
+    </a>
+    <a href="#/posters/10x10" class="mega__format-link">
+      <span class="mega__format-title">10×10 Format</span>
+      <span class="mega__format-size">254 × 254mm</span>
+    </a>
+  </div>
+
+  <div class="mega mega--collections" id="mega">
+    <h4>Our Collections</h4>
+    <div class="mega__cols-list">
+      <div>${COLS.slice(0, 4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
+      <div>${COLS.slice(4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
+    </div>
+  </div>
 
   <div id="overlays">
   <div class="scrim" id="scrim"></div>
@@ -264,27 +299,31 @@ function chromeHTML() {
   </aside>
   <nav class="menu" id="menu" aria-label="Mobile">
     <button class="iconbtn" data-close aria-label="Close menu" data-x style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
-    <a href="#/shop">Shop</a>
-    <div style="display:flex;gap:16px;padding:2px 0 10px;flex-wrap:wrap">
-      <a href="#/shop/vinyl" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Vinyl (${COUNTS.vinyl})</a>
-      <a href="#/shop/posters" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Posters (${COUNTS.posters})</a>
-      <a href="#/shop/polaroids" class="mono" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--muted);padding:4px 0">Polaroids (${COUNTS.polaroids})</a>
+    <a href="#/vinyl">Vinyls</a>
+    <a href="#/posters">Posters</a>
+    <div class="menu__sublinks">
+      <a href="#/posters/a3" class="menu__pill">A3 Poster</a>
+      <a href="#/posters/a5" class="menu__pill">A5 Poster</a>
+      <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
     </div>
-    <a href="#/collections/the-classics">Collections</a>
-    <a href="#/custom">Custom Orders</a>
+    <a href="#/polaroids">Polaroids</a>
+    <a href="#/collections/the-classics">Our Collections</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
     <a href="#/contact">Contact</a>
-    <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:20px;padding-bottom:12px">
-      <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" class="mono" style="font-family:var(--mono);font-size:.72rem;color:var(--muted)">@pastforward.shop ↗</a>
+    <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px;padding-bottom:4px">
+      <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" class="mono" style="font-family:var(--mono);font-size:.66rem;color:var(--muted);padding:0">@pastforward.shop ↗</a>
     </div>
   </nav>
   <div class="menu" id="search" role="dialog" aria-label="Search">
     <button class="iconbtn" data-close aria-label="Close search" style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
-    <div class="wrap searchwrap" style="padding-top:clamp(20px, 5vh, 48px)">
-      <input id="searchinput" placeholder="ARTIST OR ALBUM" aria-label="Search the catalogue" autocomplete="off">
-      <div class="mono-xs dim" style="margin-top:10px">Esc to close</div>
-      <div id="searchres" style="margin-top:24px;max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
+    <div class="searchwrap">
+      <div class="searchbar">
+        <svg class="searchbar__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="searchinput" placeholder="Search by artist, album, or collection..." aria-label="Search the catalogue" autocomplete="off">
+        <span class="searchbar__hint mono-xs dim">ESC</span>
+      </div>
+      <div id="searchres" style="margin-top:24px;max-height:calc(82vh - 100px);overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
     </div>
   </div>
   </div>
@@ -461,11 +500,11 @@ function footerHTML() {
         <p class="body-s dim" style="margin:6px 0 16px">designed from memory, made for now</p>
         ${wave('', 'width:120px;height:36px;opacity:.6')}
       </div>
-      <div><h4>Shop</h4>
-        <a href="#/shop/vinyl">Vinyl</a><a href="#/shop/posters">Posters</a>
-        <a href="#/shop/prints">Prints</a><a href="#/shop/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
+      <div><h4>Formats</h4>
+        <a href="#/vinyl">Vinyls</a><a href="#/posters">Posters</a>
+        <a href="#/posters/10x10">10×10 Format</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
       <div><h4>Brand</h4>
-        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a><a href="#/wall">Customer walls</a></div>
+        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a></div>
       <div><h4>Newsletter</h4>
         <p class="body-s dim" style="margin:0 0 12px">New records, limited runs, no spam.</p>
         <form data-form="newsletter" style="display:flex;gap:8px;flex-wrap:wrap">
@@ -751,9 +790,17 @@ function render() {
   const main = $('#main');
   let out, title = 'PastForward — designed from memory, made for now';
   if (!seg.length) { out = viewHome(); }
-  else if (seg[0] === 'shop') { out = viewShop(seg[1], params); title = 'The catalogue | PastForward'; }
+  else if (seg[0] === 'vinyl') { out = viewCatalog('vinyl', null, params); title = 'Vinyls | PastForward'; }
+  else if (seg[0] === 'posters') { out = viewCatalog('posters', seg[1], params); title = 'Posters | PastForward'; }
+  else if (seg[0] === 'polaroids') { out = viewCatalog('polaroids', null, params); title = 'Polaroids | PastForward'; }
+  else if (seg[0] === 'shop') { location.replace('#/vinyl'); return; }
   else if (seg[0] === 'product' && bySlug[seg[1]]) { const p = bySlug[seg[1]]; out = viewProduct(p, params); title = `${albumText(p)} — ${p.artist} | PastForward`; }
-  else if (seg[0] === 'collections') { out = viewCollection(seg[1]); }
+  else if (seg[0] === 'collections') {
+    const colSlug = seg[1] || 'the-classics';
+    out = viewCatalog('collections', colSlug, params);
+    const c = COLS.find(x => x.slug === colSlug);
+    title = `${c ? c.name : 'Collection'} | PastForward`;
+  }
   else if (seg[0] === 'custom') { out = viewCustom(); title = 'Custom orders | PastForward'; }
   else if (seg[0] === 'story') { out = viewStory(); title = 'Our story | PastForward'; }
   else if (seg[0] === 'faq') { out = viewFaq(); title = 'FAQ | PastForward'; }
@@ -769,7 +816,10 @@ function render() {
   (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
   main.innerHTML = out;
   bindEffects(main);
-  $$('.hdr__nav [data-nav]').forEach(a => a.classList.toggle('is-active', a.dataset.nav === seg[0]));
+  $$('.hdr__nav [data-nav]').forEach(a => {
+    const isAct = a.dataset.nav === seg[0] || (seg[0] === 'collections' && a.dataset.nav === 'collection');
+    a.classList.toggle('is-active', isAct);
+  });
   if (typeof window.__afterRender === 'function') window.__afterRender(seg, params);
   window.__onScroll = null;
   if (typeof window.__mount === 'function') window.__mount(seg, params);
@@ -823,11 +873,13 @@ function openSearch() {
 }
 function searchResults(q) {
   const list = searchProducts(q);
-  if (!q) return `<div class="mono-xs dim" style="margin-bottom:14px">People searched</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 3).map(c => `<a class="pill" href="#/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
-    <div class="grid" style="margin-top:28px">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
-  if (!list.length) return `<p class="d-s">Nothing under that name yet.</p>
-    <p class="body-s dim">We can still make it — <a href="#/custom" data-close style="color:var(--ember)">ask for a custom one</a>.</p>`;
+  if (!q) return `<div class="mono-xs dim" style="margin-bottom:12px">Suggested Collections</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 5).map(c => `<a class="pill" href="#/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
+    <div class="mono-xs dim" style="margin-top:28px;margin-bottom:14px">Featured in the crate</div>
+    <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
+  if (!list.length) return `<div style="padding:48px 0;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
+    <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet? We can still print it.</p>
+    <a class="btn btn--secondary" href="#/custom" data-close><span class="btn__mag">Request custom piece</span></a></div>`;
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
     <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>`;
 }
