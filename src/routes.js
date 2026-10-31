@@ -68,8 +68,8 @@ const bleed = (key, cap, sub, cls = '') => photo(key) ? `<div class="bleed ${cls
   <div class="mono-xs dim" style="margin-top:8px">${esc(cap)}</div></div></div>` : '';
 const step = (n, key, title, body) => photo(key) ? `<div class="step reveal">
   <div class="step__media"><img src="${photo(key)}" alt="${esc(title)}" loading="lazy" decoding="async"></div>
-  <div><div class="step__n">${n}</div><h3>${esc(title)}</h3>
-  <p class="body-l dim" style="max-width:34ch;margin:0">${esc(body)}</p></div></div>` : '';
+  <div class="step__info"><div class="step__n">${n}</div><h3>${esc(title)}</h3>
+  <p class="body-s dim step__desc">${esc(body)}</p></div></div>` : '';
 
 const eyebrow = t => `<div class="mono dim" data-txt="${esc(t)}"></div>`;
 const secHead = (eb, head, sub) => `${eyebrow(eb)}<h2 class="d-l reveal" style="margin:14px 0 0">${head}</h2>${sub ? `<p class="body-l dim reveal measure" style="margin-top:16px">${sub}</p>` : ''}`;
@@ -145,7 +145,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        <a class="btn btn--primary" href="#/shop/vinyl"><span class="btn__mag">Build your wall</span></a>
+        <a class="btn btn--primary" href="#/vinyl"><span class="btn__mag">Build your wall</span></a>
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -377,17 +377,19 @@ function mountCrateSection(onUnmount) {
   return api;
 }
 
-/* ============================== SHOP ============================== */
-const FORMAT_ROUTES = { vinyl: ['vinyl'], posters: ['poster-a3', 'poster-a5'], prints: ['print-10'], polaroids: ['polaroid'] };
-function filterProducts(params, routeFormats) {
-  const fmts = routeFormats || params.getAll('format');
+/* ============================== CATALOGUE ============================== */
+const FORMAT_ROUTES = { vinyl: ['vinyl'], posters: ['poster-a3', 'poster-a5', 'print-10'], prints: ['print-10'], polaroids: ['polaroid'] };
+function filterProducts(params, routeFormats, requiredTag) {
+  const fmts = (params.getAll('format').length ? params.getAll('format') : routeFormats) || [];
   const cols = params.getAll('collection');
   const price = params.get('price');
   let list = P.filter(p => {
+    if (requiredTag && !p.tags.includes(requiredTag)) return false;
     if (fmts.length && !p.variants.some(v => fmts.includes(v.format))) return false;
     if (cols.length && !cols.some(c => p.tags.includes(c))) return false;
     if (price) {
-      const f = p.from;
+      const matchVariants = fmts.length ? p.variants.filter(v => fmts.includes(v.format)) : p.variants;
+      const f = matchVariants.length ? Math.min(...matchVariants.map(v => v.price)) : p.from;
       if (price === 'u200' && f >= 200) return false;
       if (price === '200-500' && (f < 200 || f > 500)) return false;
       if (price === '500-1000' && (f < 500 || f > 1000)) return false;
@@ -396,55 +398,164 @@ function filterProducts(params, routeFormats) {
     return true;
   });
   const sort = params.get('sort') || 'featured';
-  if (sort === 'price-asc') list.sort((a, b) => a.from - b.from);
-  else if (sort === 'price-desc') list.sort((a, b) => b.from - a.from);
+  if (sort === 'price-asc') list.sort((a, b) => {
+    const pa = fmts.length ? Math.min(...a.variants.filter(v => fmts.includes(v.format)).map(v => v.price), a.from) : a.from;
+    const pb = fmts.length ? Math.min(...b.variants.filter(v => fmts.includes(v.format)).map(v => v.price), b.from) : b.from;
+    return pa - pb;
+  });
+  else if (sort === 'price-desc') list.sort((a, b) => {
+    const pa = fmts.length ? Math.max(...a.variants.filter(v => fmts.includes(v.format)).map(v => v.price), a.from) : a.from;
+    const pb = fmts.length ? Math.max(...b.variants.filter(v => fmts.includes(v.format)).map(v => v.price), b.from) : b.from;
+    return pb - pa;
+  });
   else if (sort === 'artist') list.sort((a, b) => a.artist.localeCompare(b.artist));
   else list.sort((a, b) => (b.featured - a.featured) || a.artist.localeCompare(b.artist));
   return list;
 }
-function viewShop(routeKey, params) {
-  const routeFormats = FORMAT_ROUTES[routeKey];
-  const list = filterProducts(params, routeFormats);
-  const titles = { vinyl: ['Vinyl.', 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.'],
-    posters: ['Posters.', 'A3 and A5, printed from the same artwork as the records.'],
-    prints: ['Prints.', 'Ten inches square. The format that fits where a record won\'t.'],
-    polaroids: ['Polaroids.', 'Small, cheap, and the reason a wall stops looking planned.'] };
-  const [h1, sub] = titles[routeKey] || ['The catalogue.', `Every record, print and polaroid we make. ${COUNTS.products} pieces, and counting.`];
+function viewCatalog(category, subType, params) {
+  let routeFormats = [];
+  let h1 = '', sub = '';
+  let targetFormat = null;
+  let requiredTag = null;
+
+  if (category === 'vinyl') {
+    routeFormats = ['vinyl'];
+    targetFormat = 'vinyl';
+    h1 = 'Vinyls.';
+    sub = 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.';
+  } else if (category === 'polaroids') {
+    routeFormats = ['polaroid'];
+    targetFormat = 'polaroid';
+    h1 = 'Polaroids.';
+    sub = 'Small, cheap, and the reason a wall stops looking planned.';
+  } else if (category === 'posters') {
+    h1 = 'Posters.';
+    sub = 'A3 and A5 posters, and 10×10 square prints of the albums that mattered.';
+
+    let selSizes = params.getAll('size').filter(s => s !== 'all');
+    if (!selSizes.length && subType) {
+      if (subType === 'a3' || subType === 'poster-a3') selSizes = ['poster-a3'];
+      else if (subType === 'a5' || subType === 'poster-a5') selSizes = ['poster-a5'];
+      else if (subType === '10x10' || subType === 'print-10' || subType === 'prints') selSizes = ['print-10'];
+    }
+
+    if (selSizes.length) {
+      routeFormats = selSizes;
+      targetFormat = selSizes.length === 1 ? selSizes[0] : 'posters';
+    } else {
+      routeFormats = ['poster-a3', 'poster-a5', 'print-10'];
+      targetFormat = 'posters';
+    }
+  } else if (category === 'collections') {
+    const colSlug = subType || 'the-classics';
+    const c = COLS.find(x => x.slug === colSlug) || COLS[0];
+    requiredTag = c.slug;
+    h1 = `${c.name}.`;
+    sub = c.desc;
+    const reqFmts = params.getAll('format');
+    if (reqFmts.length === 1) {
+      targetFormat = reqFmts[0];
+      routeFormats = reqFmts;
+    } else if (reqFmts.length > 1) {
+      targetFormat = null;
+      routeFormats = reqFmts;
+    } else {
+      targetFormat = null;
+      routeFormats = [];
+    }
+  } else {
+    routeFormats = ['vinyl'];
+    targetFormat = 'vinyl';
+    h1 = 'Vinyls.';
+    sub = 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.';
+  }
+
+  const list = filterProducts(params, routeFormats, requiredTag);
   const cnt = f => P.filter(p => p.variants.some(v => v.format === f)).length;
+  const posterTotal = P.filter(p => p.variants.some(v => ['poster-a3', 'poster-a5', 'print-10'].includes(v.format))).length;
   const on = (k, v) => params.getAll(k).includes(v) ? 'checked' : '';
   const shown = +(params.get('n') || 24);
+
+  let railContentHTML = '';
+  if (category === 'collections') {
+    const colSlug = requiredTag;
+    const countInCol = f => P.filter(p => p.tags.includes(colSlug) && p.variants.some(v => v.format === f)).length;
+    railContentHTML = `
+      <div class="rail__grp"><h4>Collection</h4>
+        ${COLS.map(c => `
+          <label class="chk">
+            <input type="radio" name="col_nav" data-f="col_nav" value="${c.slug}" ${c.slug === colSlug ? 'checked' : ''}>
+            <span>${esc(c.name)}</span>
+            <span class="n num">${P.filter(p => p.tags.includes(c.slug)).length}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="rail__grp"><h4>Format</h4>
+        ${[
+          ['vinyl', 'Vinyls', countInCol('vinyl')],
+          ['poster-a3', 'A3 Poster', countInCol('poster-a3')],
+          ['poster-a5', 'A5 Poster', countInCol('poster-a5')],
+          ['print-10', '10×10 Format', countInCol('print-10')],
+          ['polaroid', 'Polaroids', countInCol('polaroid')]
+        ].map(([v, l, count]) => `
+          <label class="chk">
+            <input type="checkbox" data-f="format" value="${v}" ${on('format', v)}>
+            <span>${l}</span>
+            <span class="n num">${count}</span>
+          </label>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    let sizeFilterHTML = '';
+    if (category === 'posters') {
+      const hasExplicitSize = params.has('size') ? params.getAll('size').filter(s => s !== 'all').length > 0 : Boolean(subType);
+      const isAllChecked = !hasExplicitSize;
+      const isA3Checked = hasExplicitSize && routeFormats.includes('poster-a3');
+      const isA5Checked = hasExplicitSize && routeFormats.includes('poster-a5');
+      const is10x10Checked = hasExplicitSize && routeFormats.includes('print-10');
+
+      sizeFilterHTML = `
+        <div class="rail__grp"><h4>Size</h4>
+          <label class="chk">
+            <input type="checkbox" data-f="size" value="all" ${isAllChecked ? 'checked' : ''}>
+            <span>All Poster</span>
+            <span class="n num">${posterTotal}</span>
+          </label>
+          <label class="chk">
+            <input type="checkbox" data-f="size" value="poster-a3" ${isA3Checked ? 'checked' : ''}>
+            <span>A3 Poster</span>
+            <span class="n num">${cnt('poster-a3')}</span>
+          </label>
+          <label class="chk">
+            <input type="checkbox" data-f="size" value="poster-a5" ${isA5Checked ? 'checked' : ''}>
+            <span>A5 Poster</span>
+            <span class="n num">${cnt('poster-a5')}</span>
+          </label>
+          <label class="chk">
+            <input type="checkbox" data-f="size" value="print-10" ${is10x10Checked ? 'checked' : ''}>
+            <span>10×10 Format</span>
+            <span class="n num">${cnt('print-10')}</span>
+          </label>
+        </div>`;
+    }
+
+    railContentHTML = `
+      ${sizeFilterHTML}
+      <div class="rail__grp"><h4>Collection</h4>
+        ${COLS.map(c => `<label class="chk"><input type="checkbox" data-f="collection" value="${c.slug}" ${on('collection', c.slug)}><span>${esc(c.name)}</span><span class="n num">${P.filter(p => p.tags.includes(c.slug) && p.variants.some(v => routeFormats.includes(v.format))).length}</span></label>`).join('')}
+      </div>
+    `;
+  }
+
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
     <div class="masthead" style="border:0;padding-bottom:32px">
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
-      <div class="shop__formats-desktop mono-xs dim" style="margin-top:18px;display:flex;gap:18px;flex-wrap:wrap">
-        <a href="#/shop/vinyl">VINYL <span class="num">${cnt('vinyl')}</span></a>
-        <a href="#/shop/posters">POSTERS <span class="num">${cnt('poster-a3') + cnt('poster-a5')}</span></a>
-        <a href="#/shop/prints">PRINTS <span class="num">${cnt('print-10')}</span></a>
-        <a href="#/shop/polaroids">POLAROIDS <span class="num">${cnt('polaroid')}</span></a>
-      </div>
-      <div class="shop__formats-mobile" style="margin-top:16px">
-        <select class="format-select" onchange="if(this.value)location.hash=this.value" aria-label="Select format">
-          <option value="#/shop" ${!routeKey ? 'selected' : ''}>ALL FORMATS (${COUNTS.products})</option>
-          <option value="#/shop/vinyl" ${routeKey === 'vinyl' ? 'selected' : ''}>VINYL (${cnt('vinyl')})</option>
-          <option value="#/shop/posters" ${routeKey === 'posters' ? 'selected' : ''}>POSTERS (${cnt('poster-a3') + cnt('poster-a5')})</option>
-          <option value="#/shop/prints" ${routeKey === 'prints' ? 'selected' : ''}>PRINTS (${cnt('print-10')})</option>
-          <option value="#/shop/polaroids" ${routeKey === 'polaroids' ? 'selected' : ''}>POLAROIDS (${cnt('polaroid')})</option>
-        </select>
-      </div>
     </div>
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
-        <div class="rail__grp"><h4>Format</h4>
-          ${Object.entries(FMT).map(([k, f]) => `<label class="chk"><input type="checkbox" data-f="format" value="${k}" ${on('format', k)}><span>${esc(f.label)}</span><span class="n num">${cnt(k)}</span></label>`).join('')}
-        </div>
-        <div class="rail__grp"><h4>Collection</h4>
-          ${COLS.map(c => `<label class="chk"><input type="checkbox" data-f="collection" value="${c.slug}" ${on('collection', c.slug)}><span>${esc(c.name)}</span><span class="n num">${P.filter(p => p.tags.includes(c.slug)).length}</span></label>`).join('')}
-        </div>
-        <div class="rail__grp"><h4>Price</h4>
-          ${[['u200', 'Under ₹200'], ['200-500', '₹200–500'], ['500-1000', '₹500–1000'], ['1000+', '₹1000+']].map(([v, l]) =>
-            `<label class="chk"><input type="radio" name="price" data-f="price" value="${v}" ${params.get('price') === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}
-        </div>
+        ${railContentHTML}
       </aside>
       <div>
         <div class="shop__bar">
@@ -461,7 +572,7 @@ function viewShop(routeKey, params) {
           </select>
         </div>
         ${activePills(params)}
-        ${list.length ? `<div class="grid" id="grid">${list.slice(0, shown).map(cardHTML).join('')}</div>
+        ${list.length ? `<div class="grid" id="grid">${list.slice(0, shown).map(p => cardHTML(p, targetFormat)).join('')}</div>
           ${list.length > shown ? `<div style="text-align:center;margin-top:48px"><button class="btn btn--secondary" id="loadmore"><span class="btn__mag">Load more</span></button></div>` : ''}`
         : `<div style="padding:80px 0;text-align:center">
             <p class="d-s">Nothing matches that combination.</p>
@@ -470,9 +581,19 @@ function viewShop(routeKey, params) {
       </div>
     </div></div>`;
 }
+function viewShop(routeKey, params) {
+  return viewCatalog(routeKey || 'vinyl', null, params);
+}
 function activePills(params) {
   const items = [];
-  params.getAll('format').forEach(v => items.push(['format', v, FMT[v] ? FMT[v].label : v]));
+  params.getAll('size').forEach(v => {
+    const lbl = v === 'poster-a3' ? 'A3 Poster' : v === 'poster-a5' ? 'A5 Poster' : v === 'print-10' ? '10×10 Format' : v;
+    if (v !== 'all') items.push(['size', v, lbl]);
+  });
+  params.getAll('format').forEach(v => {
+    const lbl = v === 'vinyl' ? 'Vinyls' : v === 'poster-a3' ? 'A3 Poster' : v === 'poster-a5' ? 'A5 Poster' : v === 'print-10' ? '10×10 Format' : v === 'polaroid' ? 'Polaroids' : (FMT[v] ? FMT[v].label : v);
+    items.push(['format', v, lbl]);
+  });
   params.getAll('collection').forEach(v => { const c = COLS.find(c => c.slug === v); items.push(['collection', v, c ? c.name : v]); });
   if (params.get('price')) items.push(['price', params.get('price'), params.get('price')]);
   if (!items.length) return '';
@@ -490,7 +611,7 @@ function viewProduct(p, params) {
   return `<div class="pliq" id="pliq" aria-hidden="true"></div>
   <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
     <div class="mono-xs dim" style="margin-bottom:24px">
-      <a href="#/shop">SHOP</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
+      <a href="#/vinyl">CATALOGUE</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
     </div>
     <div class="pdp">
       <div>
@@ -597,30 +718,8 @@ function scaleSVG(sel) {
 }
 
 /* ============================== COLLECTION ============================== */
-function viewCollection(slug) {
-  const c = COLS.find(c => c.slug === slug); if (!c) return view404();
-  const list = P.filter(p => p.tags.includes(slug));
-  const hero = list.find(p => variant(p, 'poster-a3')) || list[0];
-  const words = c.name.split(' ');
-  const name = words.map((w, i) => i === words.length - 1 ? `<span style="color:var(--oxblood)">${esc(w)}</span>` : esc(w)).join(' ');
-  return `<div class="masthead" style="padding-top:calc(var(--nav-h) + 56px)">
-      <div class="roomlight"></div>
-      <div class="wrap" style="display:grid;gap:28px;grid-template-columns:1fr;align-items:end;padding-bottom:44px;position:relative">
-        <div><h1 class="d-l" style="max-width:12ch">${name}</h1>
-          <p class="body-l dim" style="margin-top:16px">${esc(c.desc)}</p>
-          <div class="mono-xs dim num" style="margin-top:14px">${list.length} ARTWORKS</div></div>
-        <div id="sleeve" style="position:absolute;right:0;bottom:0;width:22vmin;opacity:.9;pointer-events:none;clip-path:inset(0 0 100% 0)">
-          ${hero && variant(hero, 'poster-a3') ? frameHTML(variant(hero, 'poster-a3'), { style: 'width:100%;aspect-ratio:.707' }) : ''}
-        </div>
-      </div></div>
-    <div class="wrap sec">
-      <div class="grid">${list.map(cardHTML).join('')}</div>
-      <h2 class="d-s" style="margin:72px 0 20px">The other seven</h2>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
-        ${COLS.filter(x => x.slug !== slug).map(x => `<a class="tile" href="#/collections/${x.slug}">
-          <div class="d-s">${esc(x.name)}</div>
-          <div class="mono-xs dim num" style="margin-top:8px">${P.filter(p => p.tags.includes(x.slug)).length} ARTWORKS</div></a>`).join('')}
-      </div></div>`;
+function viewCollection(slug, params) {
+  return viewCatalog('collections', slug || 'the-classics', params);
 }
 
 /* ============================== CUSTOM ============================== */
@@ -688,32 +787,8 @@ function mountCustom() {
 function viewStory() {
   const objectRec = bySlug['travis-scott-utopia'] || withVinyl.find(p => p.featured) || withVinyl[0];
   const mu = 'VINYL-PASTFORWARDxMasters\' Union.webp';
-  return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
-    ${eyebrow('THE STORY')}
-    <h1 class="d-l" style="margin:16px 0 28px">We built this once. It worked. Then we stopped.</h1>
-    <div class="body-l" style="display:flex;flex-direction:column;gap:24px">
-      <p class="dim">PastForward started in 2025 as a dropshipping challenge at Masters' Union. We thought we were doing a college project.</p>
-      <p class="dim">Two and a half months later we'd done ₹1.5L+ in sales and reached 400,000 people who'd never heard of us. Most of that didn't happen online. It happened face to face — at campus events, at the Mela, at a table with records stacked on it, watching people pick up an album cover they hadn't thought about in years.</p>
-      <p class="dim">Then the semester ended and the store went quiet.</p>
-      <p class="dim">This is us doing it properly. Same product, same catalogue, built this time to run without the table.</p>
-    </div>
-    <div class="figs" style="margin-top:56px">
-      <div class="fig"><b><span data-count="1.5" data-pre="₹" data-suffix="L+">₹0</span></b><span>Revenue</span></div>
-      <div class="fig"><b><span data-count="400" data-suffix="K+">0</span></b><span>Reach</span></div>
-      <div class="fig"><b class="num">EST. 2025</b><span>Masters' Union</span></div>
-    </div>
-    ${wave('wave--divider', 'margin:44px 0')}
-    <blockquote class="pull" style="position:relative;overflow:hidden">
-      ${col('g', 'col--soft')}
-      <p style="position:relative">We believe in giving forgotten things a future. What once played the soundtrack to someone's youth finds new life on a wall.</p>
-      <cite class="mono-xs dim">FROM THE POSTCARD THAT WENT OUT WITH EVERY ORDER, 2025</cite>
-    </blockquote>
-  </div>
-
-  ${bleed('stall-red', "THE TABLE, MASTERS' UNION MELA — 2025", 'Most of it sold face to face.', 'bleed--tall')}
-
-  <!-- THE OBJECT (moved here from the home page) -->
-  <section class="beat sec ground" data-section="THE OBJECT" style="overflow:hidden">
+  return `<!-- THE OBJECT -->
+  <section class="sec ground" data-section="THE OBJECT" style="overflow:hidden;padding-top:calc(var(--nav-h) + clamp(16px, 2.5vw, 32px));padding-bottom:clamp(28px, 4vw, 56px)">
     ${col('g', 'col--soft col--mask')}
     <div class="wrap beat3-wrap">
       <div id="beat3">
@@ -746,32 +821,19 @@ function viewStory() {
     </div>
   </section>
 
-
-  <div class="wrap sec col-720">
-    ${eyebrow('HOW ONE GETS MADE')}
-    <h2 class="d-l" style="margin:14px 0 0">Found, not pressed.</h2>
-  </div>
-  <div class="wrap steps-ed" style="max-width:1120px">
-    ${step('01', 'records-table', 'The records come first', 'Crates get dug through and sorted. Every disc already had a life — which is why no two are quite the same.')}
-    ${step('02', 'printer', 'The artwork goes to press', 'Album art is printed to order, one sheet at a time, on the machine we can actually stand next to.')}
-    ${step('03', 'handling', 'Then somebody checks it', 'Cut, set into the centre, and looked at by a person before it goes anywhere near a box.')}
-  </div>
-
-  <div class="wrap sec col-720">
+  <div class="wrap col-720" style="padding-top:clamp(28px, 4vw, 48px);padding-bottom:12px">
     ${eyebrow('WHERE THEY END UP')}
-    <h2 class="d-l" style="margin:14px 0 0">On somebody's wall.</h2>
+    <h2 class="d-l" style="margin:12px 0 0">On somebody's wall.</h2>
   </div>
   <div class="wrap" style="max-width:1120px">
     <div class="pair">
-      <figure class="pair__a reveal"><img src="${photo('wall-person')}" alt="Someone looking at a finished PastForward wall" loading="lazy">
-        <figcaption class="mono-xs dim" style="margin-top:9px">A FINISHED WALL, AT HUMAN SCALE</figcaption></figure>
-      <figure class="pair__b reveal"><img src="${photo('board-closeup')}" alt="Prints and polaroids up close" loading="lazy">
-        <figcaption class="mono-xs dim" style="margin-top:9px">UP CLOSE</figcaption></figure>
+      <figure class="pair__a reveal"><img src="${photo('wall-person')}" alt="Someone looking at a finished PastForward wall" loading="lazy"></figure>
+      <figure class="pair__b reveal"><img src="${photo('board-closeup')}" alt="Prints and polaroids up close" loading="lazy"></figure>
     </div>
   </div>
 
-  <div class="wrap sec col-720" style="padding-top:clamp(48px,7vw,88px)">
-    <h2 class="d-s" style="margin-top:56px">Artefacts</h2>
+  <div class="wrap sec col-720" style="padding-top:clamp(24px, 3.5vw, 44px)">
+    <h2 class="d-s" style="margin-top:16px">Artefacts</h2>
     <div style="display:grid;gap:24px;grid-template-columns:1fr 1fr;margin-top:22px">
       <figure style="margin:0"><div style="display:grid;place-items:center;background:var(--elevated);border:1px solid var(--border);padding:20px">
         <img src="${imgSrc(mu)}" alt="PastForward × Masters' Union record" style="width:78%;border-radius:50%" loading="lazy"></div>
@@ -780,17 +842,7 @@ function viewStory() {
         <img src="${imgSrc('PastForward Logo.webp')}" alt="The PastForward record-label mark" style="width:70%" loading="lazy"></div>
         <figcaption class="mono-xs dim" style="margin-top:10px">THE LABEL MARK, ESTD 2025</figcaption></figure>
     </div>
-
-    <div style="margin-top:56px;border:1px solid var(--border);padding:26px">
-      <h3 class="d-s" style="margin:0 0 10px">Who's behind it</h3>
-      <p class="body-s dim" style="margin:0">Sambhav Sharma and Vibhaas Garg. ${CONFIRM('Confirm the founders want names and photos public before this ships')}</p>
-    </div>
-    <div style="margin-top:56px">
-      <h3 class="d-s" style="margin:0 0 10px">Be first to the next drop.</h3>
-      <form data-form="newsletter" style="display:flex;gap:10px;flex-wrap:wrap;max-width:440px;margin-top:14px">
-        <input name="email" type="email" required placeholder="your@email.com" aria-label="Email" style="flex:1;min-width:180px;background:var(--elevated);border:1px solid var(--border);padding:13px;border-radius:2px">
-        <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button></form><div data-form-msg></div>
-    </div></div>
+  </div>
 
   <!-- THE CUT: two lines of type running opposite ways, cropped by the page -->
   <section id="storymarquee" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
@@ -854,7 +906,7 @@ function viewCart() {
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">The crate.</h1>
     ${!cart.length ? `<p class="body-l dim" style="margin:20px 0 26px">Nothing in it yet.</p>
-      <a class="btn btn--secondary" href="#/shop"><span class="btn__mag">Browse the catalogue</span></a>`
+      <a class="btn btn--secondary" href="#/vinyl"><span class="btn__mag">Browse the catalogue</span></a>`
     : `<div class="mono-xs dim num" style="margin:16px 0 26px">${cartCount()} IN THE CRATE</div>
       ${cartLinesHTML()}
       <div class="receipt" style="margin-top:32px">
@@ -898,7 +950,7 @@ function view404() {
     <h1 class="d-l" style="max-width:12ch;position:relative">This one's not in the crate.</h1>
     <p class="body-l dim" style="margin:18px 0 30px;position:relative">The page you're after doesn't exist, or moved.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;position:relative">
-      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Back to the catalogue</span></a>
+      <a class="btn btn--primary" href="#/vinyl"><span class="btn__mag">Back to the catalogue</span></a>
       <a class="btn btn--secondary" href="#/"><span class="btn__mag">Home</span></a></div></div>`;
 }
 
@@ -922,7 +974,7 @@ window.__mount = function (seg, params) {
       onCrate();
     }
   }
-  if (page === 'shop') mountShop(seg[1], params);
+  if (page === 'vinyl' || page === 'posters' || page === 'polaroids' || page === 'shop' || page === 'collections') mountCatalog(seg, params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
   if (page === 'collections') mountCollection();
   if (page === 'search') mountSearchPage();
@@ -1289,7 +1341,8 @@ function setParams(mut) {
   const q = params.toString();
   location.hash = path + (q ? '?' + q : '');
 }
-function mountShop(routeKey, params) {
+function mountCatalog(seg, params) {
+  const currentPath = '#' + (seg.join('/') || 'vinyl');
   const grid = $('#grid');
   const ftgl = $('#filtertgl'), rail = $('#rail');
   if (ftgl && rail) {
@@ -1302,20 +1355,56 @@ function mountShop(routeKey, params) {
   }
   const rects = grid ? new Map($$('.card', grid).map(c => [c.dataset.card, c.getBoundingClientRect()])) : null;
   $$('#rail input').forEach(inp => inp.addEventListener('change', () => {
-    setParams(pp => {
-      if (inp.dataset.f === 'price') { inp.checked ? pp.set('price', inp.value) : pp.delete('price'); return; }
+    const { path, params: pp } = parseHash();
+    let targetPath = path;
+    if (path.startsWith('/posters')) targetPath = '/posters';
+
+    if (inp.dataset.f === 'col_nav') {
+      location.hash = '#/collections/' + inp.value;
+      return;
+    }
+
+    if (inp.dataset.f === 'price') {
+      inp.checked ? pp.set('price', inp.value) : pp.delete('price');
+    } else if (inp.dataset.f === 'size') {
+      if (inp.value === 'all') {
+        pp.delete('size');
+      } else {
+        let cur = pp.getAll('size').filter(v => v !== 'all' && v !== inp.value);
+        if (!pp.has('size') && path.startsWith('/posters/')) {
+          const sub = path.split('/')[2];
+          const map = { 'a3': 'poster-a3', 'a5': 'poster-a5', '10x10': 'print-10' };
+          if (map[sub] && map[sub] !== inp.value) cur.push(map[sub]);
+        }
+        if (inp.checked) cur.push(inp.value);
+        pp.delete('size');
+        cur.forEach(v => pp.append('size', v));
+      }
+    } else {
       const cur = pp.getAll(inp.dataset.f).filter(v => v !== inp.value);
       if (inp.checked) cur.push(inp.value);
       pp.delete(inp.dataset.f); cur.forEach(v => pp.append(inp.dataset.f, v));
-      pp.delete('n');
-    });
+    }
+    pp.delete('n');
+    const q = pp.toString();
+    location.hash = targetPath + (q ? '?' + q : '');
   }));
   const sort = $('#sort'); if (sort) sort.addEventListener('change', () => setParams(pp => pp.set('sort', sort.value)));
   $$('[data-unset]').forEach(b => b.addEventListener('click', () => {
     const [k, v] = b.dataset.unset.split('|');
-    setParams(pp => { const cur = pp.getAll(k).filter(x => x !== v); pp.delete(k); cur.forEach(x => pp.append(k, x)); });
+    const { path, params: pp } = parseHash();
+    let targetPath = path;
+    if (path.startsWith('/posters')) targetPath = '/posters';
+    const cur = pp.getAll(k).filter(x => x !== v);
+    pp.delete(k); cur.forEach(x => pp.append(k, x));
+    const q = pp.toString();
+    location.hash = targetPath + (q ? '?' + q : '');
   }));
-  $$('[data-clear]').forEach(b => b.addEventListener('click', () => { location.hash = '/shop'; }));
+  $$('[data-clear]').forEach(b => b.addEventListener('click', () => {
+    const { path } = parseHash();
+    const basePath = path.startsWith('/posters') ? '/posters' : path;
+    location.hash = basePath;
+  }));
   const more = $('#loadmore'); if (more) more.addEventListener('click', () => setParams(pp => pp.set('n', String((+(pp.get('n') || 24)) + 24))));
   // FLIP re-flow
   if (grid && window.__lastGridRects && !RM()) {
@@ -1327,13 +1416,15 @@ function mountShop(routeKey, params) {
       }
       const now = c.getBoundingClientRect();
       const dx = old.left - now.left, dy = old.top - now.top;
-      if (Math.abs(dx) > 1 || Math.abs(dy) > 1)
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
         c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }],
           { duration: 400, easing: 'cubic-bezier(.76,0,.24,1)' });
+      }
     });
   }
   window.__lastGridRects = rects;
 }
+function mountShop(routeKey, params) { mountCatalog(['shop', routeKey].filter(Boolean), params); }
 
 function mountProduct(p, params) {
   if (!p) return;
