@@ -6,6 +6,10 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
+// sizes not measured yet (the polaroid card) show nothing rather than a placeholder
+const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
+const CONTACT_EMAIL = 'contact@pastforward.shop';
+const DELIVERY = '7–10 days';
 const CONFIRM = (what) => `<span data-confirm title="${esc(what)}">[CONFIRM]</span>`;
 
 const CAT = window.__CATALOGUE__;
@@ -162,7 +166,9 @@ function flyToCart(originEl, onLand) {
 function cartMaths() {
   let sub = 0; cart.forEach(l => sub += l.price * l.qty);
   const distinctVinyl = new Set(cart.filter(l => l.format === 'vinyl').map(l => l.slug)).size;
-  const sets = Math.floor(distinctVinyl / 3);
+  // bundles aren't on offer yet; set BUNDLE_ON = true when PastForward launches the set of three
+  const BUNDLE_ON = false;
+  const sets = BUNDLE_ON ? Math.floor(distinctVinyl / 3) : 0;
   const saved = sets * (899 * 3 - 2199);
   return { sub, sets, saved, total: sub - saved };
 }
@@ -184,7 +190,7 @@ function cartLinesHTML() {
       <div style="flex:1;min-width:0">
         <div class="card__artist">${esc(p.artist)}</div>
         <div style="font-family:var(--display);font-size:1rem;line-height:1.25">${albumOf(p)}</div>
-        <div class="card__size" style="margin-top:3px">${esc(v.label)} · ${v.size === '[CONFIRM]' ? '[CONFIRM]' : esc(v.size)}</div>
+        <div class="card__size" style="margin-top:3px">${esc(v.label)}${sizeOf(v) ? ' · ' + esc(sizeOf(v)) : ''}</div>
         <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
           <span class="qty"><button data-q="${i}|-1" aria-label="Decrease">−</button><span class="num">${l.qty}</span><button data-q="${i}|1" aria-label="Increase">+</button></span>
           <span class="num" style="font-size:.75rem">${money(l.price * l.qty)}</span>

@@ -119,6 +119,18 @@
      "alt": "thank u, next by Ariana Grande — A5 poster by PastForward"
     },
     {
+     "format": "print-10",
+     "label": "10×10 print",
+     "size": "254 × 254mm",
+     "price": 299,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "10×10″",
+     "image": "10X10INCH-THANK U NEXT-ARIANA GRANDE.webp",
+     "sku": "PF-ARIANA-GRANDE-THANK-U-NEXT-PRINT-10",
+     "alt": "thank u, next by Ariana Grande — 10×10 print by PastForward"
+    },
+    {
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
@@ -1128,6 +1140,29 @@
    ],
    "featured": false,
    "from": 399,
+   "rank": 999
+  },
+  {
+   "slug": "maroon-5-love-is-like",
+   "artist": "Maroon 5",
+   "album": "Love Is Like",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 899,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-MAROON-LOVE IS LIKE.webp",
+     "sku": "PF-MAROON-5-LOVE-IS-LIKE-VINYL",
+     "alt": "Love Is Like by Maroon 5 — Vinyl by PastForward"
+    }
+   ],
+   "tags": [],
+   "featured": false,
+   "from": 899,
    "rank": 999
   },
   {
@@ -2561,19 +2596,17 @@
   }
  },
  "counts": {
-  "products": 66,
-  "vinyl": 47,
+  "products": 67,
+  "vinyl": 48,
   "posters": 46,
-  "prints": 13,
+  "prints": 14,
   "polaroids": 22,
-  "variants": 128,
-  "artists": 53
+  "variants": 130,
+  "artists": 54
  },
  "unresolved": [
   "album unknown for Arctic Monkeys",
   "album unknown for Sabrina Carpenter",
-  "ambiguous artist — Maroon 5 or Taylor Swift \"Maroon\" [CONFIRM]",
-  "byte-identical duplicate",
-  "customer name in filename"
+  "byte-identical duplicate"
  ]
 }
