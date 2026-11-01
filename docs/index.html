@@ -1789,52 +1789,49 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .crate--live .crate__bg::after{display:none}
 .crate--flat{height:auto}
 
-/* ---------- the crate's opening sequence ---------- */
-.crate__intro{position:absolute; inset:0; z-index:8; pointer-events:none; display:none; color:var(--cream)}
-.crate__intro.is-on{display:block; pointer-events:auto}
-.crate__intro.is-out{pointer-events:none}
-/* the counter: three rolling digit columns in the display serif, drifting up the screen */
-.ci-count{position:absolute; left:var(--x,34%); top:var(--y,76%); transform:translate(-50%,-50%); display:flex;
-  font-family:var(--display); font-weight:500; font-size:clamp(4.5rem,11vw,10rem); line-height:1; letter-spacing:-.02em}
-.ci-slot{display:block; height:1em; overflow:hidden; width:.62em; text-align:center; transition:width .3s var(--e-out-expo)}
-.ci-slot.is-blank{width:0}
-.ci-col{display:block; transform:translateY(calc(var(--n,0) * -1em)); transition:transform .32s cubic-bezier(.3,.7,.2,1)}
-.ci-col i{display:block; height:1em; font-style:normal}
-.ci-side{position:absolute; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
-.ci-side--l{left:var(--gutter)}
-.ci-side--r{right:var(--gutter); overflow:hidden; height:1.4em; text-align:right}
-.ci-roll{display:inline-block; color:var(--cream)}
-.ci-roll.is-tick{animation:ciTick .22s cubic-bezier(.3,.7,.2,1)}
-@keyframes ciTick{from{transform:translateY(100%); opacity:0} to{transform:none; opacity:1}}
-.ci-pill{position:absolute; left:50%; top:22px; transform:translateX(-50%); display:flex; align-items:center; gap:12px;
-  padding:9px 16px; border-radius:999px; background:rgba(243,239,232,.06); border:1px solid rgba(243,239,232,.14); backdrop-filter:blur(8px)}
-.ci-mark{height:13px; width:auto}
-.ci-state{font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
-.ci-spin{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ember); border-top-color:transparent; animation:ciSpin .8s linear infinite}
-@keyframes ciSpin{to{transform:rotate(360deg)}}
-.crate__intro.is-out .ci-count{transition:transform .55s var(--e-out-expo), opacity .4s; transform:translate(-50%,-120%); opacity:0}
-.crate__intro.is-out .ci-side,.crate__intro.is-out .ci-pill{transition:opacity .35s, transform .45s var(--e-out-expo); opacity:0}
-.crate__intro.is-out .ci-pill{transform:translate(-50%,-14px)}
-
-/* while it plays: details, controls, wallpaper and header wait off-stage */
-.crate__meta>*,.crate__facts,.crate__nav,.crate__wall{transition:opacity .7s var(--e-out-expo), transform .8s var(--e-out-expo)}
-.crate.is-intro .crate__meta>*{opacity:0; transform:translateY(26px)}
-.crate.is-intro .crate__facts{opacity:0; transform:translate(-50%,26px)}
-.crate.is-intro .crate__nav{opacity:0; transform:translateY(26px)}
-.crate.is-intro .crate__wall{opacity:0}
-.crate.is-landing .crate__meta>*:nth-child(2){transition-delay:.08s}
-.crate.is-landing .crate__meta>*:nth-child(3){transition-delay:.16s}
-.crate.is-landing .crate__meta>*:nth-child(4){transition-delay:.24s}
-.crate.is-landing .crate__facts{transition-delay:.3s}
-.crate.is-landing .crate__nav{transition-delay:.38s}
-.crate.is-landing .crate__wall{transition-duration:1.6s}
-html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity:0; pointer-events:none}
-@media(max-width:767px){
-  .crate.is-intro .crate__nav{transform:translate(-50%,26px)}
-  .ci-count{font-size:clamp(4rem,24vw,7rem)}
-  .ci-side{top:auto; bottom:calc(30px + env(safe-area-inset-bottom,0px)); transform:none}
-}
-.crate__count{white-space:nowrap}
+/* ---------- artist groups on the vinyl / posters / polaroids pages ---------- */
+.ag-grid{align-items:start}
+.ag{position:relative; display:flex; flex-direction:column}
+.ag__head{all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; gap:12px; position:relative;
+  transition:transform 380ms var(--e-spring)}
+.ag__head:hover{transform:translateY(-4px)}
+.ag__head:focus-visible{outline:2px solid var(--ember); outline-offset:4px}
+.ag__media{width:100%}
+.ag__head:hover .ag__media{box-shadow:var(--sh-lift)}
+/* more than one album: a second sleeve peeks out behind the first */
+.ag__media--stack{overflow:visible}
+.ag__media--stack::before{content:""; position:absolute; inset:0; z-index:-1; border:1px solid var(--border); background:var(--elevated-2);
+  transform:translate(7px,-7px); transition:transform var(--d-std) var(--e-out-expo)}
+.ag__head:hover .ag__media--stack::before{transform:translate(11px,-11px)}
+.ag__meta{display:flex; flex-direction:column; gap:5px; padding-right:34px}
+.ag__name{font-family:var(--display); font-size:clamp(1.05rem,1.6vw,1.35rem); line-height:1.1; letter-spacing:-.01em}
+.ag__sub{display:flex; flex-wrap:wrap; column-gap:12px; row-gap:2px; color:var(--muted)}
+.ag__sub>span{white-space:nowrap}
+.ag__chev{position:absolute; right:0; bottom:4px; width:28px; height:28px; border-radius:50%; border:1px solid var(--border-2);
+  display:grid; place-items:center; transition:background .25s, border-color .25s, transform .35s var(--e-out-expo)}
+.ag__chev::before{content:""; width:7px; height:7px; border-right:1.5px solid var(--cream); border-bottom:1.5px solid var(--cream); transform:translateY(-2px) rotate(45deg)}
+.ag__head:hover .ag__chev{border-color:var(--ember)}
+.ag.is-open .ag__chev{transform:rotate(180deg); background:var(--oxblood); border-color:var(--oxblood)}
+/* the dropdown: grid-rows trick animates to the list's natural height */
+.ag__drop{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s var(--e-out-expo)}
+.ag.is-open .ag__drop{grid-template-rows:1fr}
+.ag__in{overflow:hidden; min-height:0}
+.ag__list{list-style:none; margin:12px 0 0; padding:0; border-top:1px solid var(--border)}
+.ag__row{display:flex; align-items:center; border-bottom:1px solid var(--border)}
+.ag__link{flex:1; min-width:0; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
+.ag__link:hover{color:var(--ember)}
+.ag__thumb{flex:none; width:42px; height:42px; display:grid; place-items:center; overflow:hidden; background:var(--elevated)}
+.ag__thumb img{width:100%; height:100%; object-fit:cover}
+.ag__thumb--rec{background:none}
+.ag__thumb--rec .record{--size:42px !important; width:42px}
+.ag__album{flex:1; min-width:0; font-family:var(--display); font-size:.98rem; line-height:1.2; display:flex; flex-direction:column; gap:3px; overflow-wrap:anywhere}
+.ag__tags{font-family:var(--mono); font-size:.55rem; letter-spacing:.14em; color:var(--muted)}
+.ag__price{color:var(--cream); white-space:nowrap}
+.ag__add{flex:none; width:30px; height:30px; margin-left:10px; border-radius:50%; border:1px solid var(--border-2); background:none; color:var(--cream);
+  cursor:pointer; font-size:1rem; line-height:1; transition:background .2s, border-color .2s}
+.ag__add:hover{background:var(--oxblood); border-color:var(--oxblood)}
+@media(prefers-reduced-motion:reduce){ .ag__drop{transition:none} .ag__head,.ag__chev{transition:none} }
+@media(max-width:767px){ .ag__thumb{width:36px; height:36px} .ag__thumb--rec .record{--size:36px !important; width:36px} .ag__link{gap:9px} .ag__add{width:28px; height:28px; margin-left:6px} .ag__meta{padding-right:32px} }
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -1959,7 +1956,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -1972,7 +1969,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2022,7 +2019,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-BILLIE EILISH-BAD GUY.webp",
@@ -2045,8 +2042,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-BILLIE EILISH-BAD GUY.webp",
@@ -2057,7 +2054,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2071,7 +2068,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "three-am"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2110,7 +2107,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-BILLY JOEL-THE STRANGER.webp",
@@ -2133,8 +2130,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-BILLY JOEL-THE STRANGER.webp",
@@ -2145,7 +2142,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2158,7 +2155,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "the-classics"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2271,7 +2268,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-COCHISE-TELL EM'.webp",
@@ -2308,7 +2305,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-COLDPLAY-PARACHUTES-YELLOW.webp",
@@ -2331,8 +2328,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-COLDPLAY-PARACHUTES-YELLOW.webp",
@@ -2343,7 +2340,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2356,7 +2353,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2369,7 +2366,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-DILJIT DOSANJH-DON.webp",
@@ -2380,7 +2377,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2393,7 +2390,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "desi-lineage"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 11
   },
   {
@@ -2417,7 +2414,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2430,7 +2427,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "drop-zone"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2493,7 +2490,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-SAPPHIRE-Ed Sheeran.webp",
@@ -2518,7 +2515,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-EMINEM-THE DEATH OF SLIM SHADY.webp",
@@ -2541,8 +2538,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-EMINEM-THE DEATH OF SLIM SHADY.webp",
@@ -2553,7 +2550,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2566,7 +2563,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "drop-zone"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2591,7 +2588,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-FRANK OCEAN-BLONDE.webp",
@@ -2841,7 +2838,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3 POSTER-LANA DEL REY-BLUE BIRD.webp",
@@ -2864,8 +2861,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-LANA DEL REY-BLUEBIRD.webp",
@@ -2876,7 +2873,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -2889,7 +2886,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "three-am"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -2952,7 +2949,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-LUCA BRASSI-NENI STRESS.webp",
@@ -2988,7 +2985,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3001,7 +2998,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "main-stage"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3063,8 +3060,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10x10inch POSTER-TICKETS TO MY DOWNFALL-MGK.webp",
@@ -3075,7 +3072,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3088,7 +3085,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "drop-zone"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3126,7 +3123,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-NIRVANA-NEVERMIND-SMELLS LIKE TEEN SPIRIT.webp",
@@ -3149,7 +3146,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3162,7 +3159,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "the-classics"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 3
   },
   {
@@ -3175,7 +3172,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-OLIVIA RODRIGO-GUTS-BAD IDEA RIGHT.webp",
@@ -3212,7 +3209,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-PINK FLOYD-THE DARKSIDE OF THE MOON(1973).webp",
@@ -3235,8 +3232,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-PINK FLOYD-THE DARKSIDE OF THE MOON(1973).webp",
@@ -3247,7 +3244,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3260,7 +3257,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "the-classics"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 2
   },
   {
@@ -3273,7 +3270,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-POST MALONE-CHEMICAL.webp",
@@ -3284,7 +3281,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3297,7 +3294,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3322,7 +3319,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-SUNFLOWER-POST MALONE.webp",
@@ -3421,7 +3418,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-ROSE-APT.webp",
@@ -3444,8 +3441,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-ROSE-APT.webp",
@@ -3456,7 +3453,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3469,7 +3466,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "k-wave"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3508,7 +3505,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-SABRINA CARPENTER-ESPRESSO.webp",
@@ -3531,8 +3528,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10x10inch-SABRINA CARPENTER-ESPRESSO.webp",
@@ -3543,7 +3540,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3556,7 +3553,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3569,7 +3566,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-SEEDHE MAUT-LUNCH BREAK-11K.webp",
@@ -3580,7 +3577,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3593,7 +3590,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "desi-lineage"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 6
   },
   {
@@ -3606,7 +3603,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-Am I Dreaming-Spiderman.webp",
@@ -3700,7 +3697,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-TAYLOR SWIFT-1989.webp",
@@ -3711,7 +3708,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3724,7 +3721,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 5
   },
   {
@@ -3774,7 +3771,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3 POSTER-TAYLOR SWIFT-LOVER.webp",
@@ -3797,8 +3794,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-TAYLOR SWIFT-LOVER.webp",
@@ -3809,7 +3806,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3822,7 +3819,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3847,7 +3844,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-TAYLOR SWIFT-REPUTATION.webp",
@@ -3870,8 +3867,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10x10INCH-TAYLOR SWIFT-REPUTATION.webp",
@@ -3882,7 +3879,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3895,7 +3892,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "pop-canon"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -3920,7 +3917,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-THE BEATLES-MEMBERS.webp",
@@ -3943,8 +3940,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-THE BEATLES-MEMBERS.webp",
@@ -3955,7 +3952,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -3968,7 +3965,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "the-classics"
    ],
    "featured": false,
-   "from": 149,
+   "from": 99,
    "rank": 999
   },
   {
@@ -4043,7 +4040,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-THE WEEKND-AFTER HOURS.webp",
@@ -4066,7 +4063,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -4079,7 +4076,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "three-am"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 0
   },
   {
@@ -4152,7 +4149,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3-POSTER-TRAVIS SCOTT-UTOPIA.webp",
@@ -4163,8 +4160,8 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 249,
-     "confirmPrice": true,
+     "price": 299,
+     "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
      "image": "10X10INCH-TRAVIS SCOTT-UTOPIA.webp",
@@ -4175,7 +4172,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
-     "price": 149,
+     "price": 99,
      "confirmPrice": false,
      "ratio": 0.6176,
      "badge": "POLAROID",
@@ -4188,7 +4185,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
     "drop-zone"
    ],
    "featured": true,
-   "from": 149,
+   "from": 99,
    "rank": 1
   },
   {
@@ -4226,7 +4223,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
      "label": "A3 poster",
      "size": "297 × 420mm",
      "price": 399,
-     "confirmPrice": true,
+     "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
      "image": "A3 POSTER-WWE-TRIPLE H.webp",
@@ -4370,7 +4367,7 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
    "price": 399,
    "badge": "A3",
    "ratio": 0.7072,
-   "confirmPrice": true
+   "confirmPrice": false
   },
   "poster-a5": {
    "label": "A5 poster",
@@ -4383,15 +4380,15 @@ html.crate-intro .hdr,html.crate-intro .needle,html.crate-intro #corners{opacity
   "print-10": {
    "label": "10×10 print",
    "size": "254 × 254mm",
-   "price": 249,
+   "price": 299,
    "badge": "10×10″",
    "ratio": 1.0,
-   "confirmPrice": true
+   "confirmPrice": false
   },
   "polaroid": {
    "label": "Polaroid card",
    "size": "[CONFIRM]",
-   "price": 149,
+   "price": 99,
    "badge": "POLAROID",
    "ratio": 0.6176,
    "confirmPrice": false
@@ -4780,7 +4777,6 @@ function grooveField() {
 /* ---------- preloader: black, the mark, and a very large counter ---------- */
 function initPre() {
   if (RM() || location.search.includes('nopre')) return;
-  if (/^#?\/?$/.test(location.hash)) return;   // the home page opens with the crate's own intro
   const el = document.createElement('div');
   el.id = 'pre';
   el.innerHTML = `<div class="pre__bar"></div>
@@ -4900,8 +4896,7 @@ function initGrounds() {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
       const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
-      // the crate has its own controls and hint; this one belonged to the hero
-      hint.hidden = !home || scrollY > innerHeight * 0.7 || !document.querySelector('.fhero');
+      hint.hidden = !home || scrollY > innerHeight * 0.7;
     }
     const mid = innerHeight * 0.5;
     const on = lights().some(el => { const r = el.getBoundingClientRect(); return r.top < mid && r.bottom > mid; });
@@ -5085,8 +5080,7 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    // the transparent header + hidden logo only make sense over the big hero record
-    const home = (location.hash === '#/' || location.hash === '' || location.hash === '#') && !!document.querySelector('.fhero');
+    const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
@@ -6569,6 +6563,52 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
+  <!-- 1 ============ THE FLEX ============
+       The brand's own standee, made kinetic: one record so large it
+       runs off every edge, the collage split behind it, the wordmark
+       and tagline set on the vinyl itself. -->
+  <section class="fhero" data-section="PASTFORWARD">
+    <div class="fhero__col">
+      <i style="background-image:url(${photo('col-g')})"></i>
+      <i style="background-image:url(${photo('col-r')})"></i>
+    </div>
+
+    <div class="fdisc" id="fdisc">
+      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
+      <div class="fdisc__spin" id="fdiscspin">
+        <div class="fdisc__gr"></div>
+        <div class="fdisc__gr2"></div>
+        <div class="fdisc__lab"></div>
+        <div class="fdisc__rule fdisc__rule--a"></div>
+        <div class="fdisc__rule fdisc__rule--b"></div>
+      </div>
+      <div class="fdisc__gloss"></div>
+      <div class="fdisc__sheen"></div>
+      <div class="fdisc__hole"></div>
+
+      <div class="fdisc__type">
+        <h1 class="fdisc__wm"><img src="${window.__WORDMARK__}" alt="PastForward" fetchpriority="high"></h1>
+        <div class="fdisc__tag">${TAGLINE}</div>
+      </div>
+
+      <!-- igloo-style annotation over the object -->
+      <div class="annot" id="heroannot">
+        <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
+          <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
+        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
+          <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
+        <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
+          <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
+      </div>
+    </div>
+
+    <div class="fhero__hint cap">A record that already had a life</div>
+    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
+    <div class="fhero__cta">
+      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
+    </div>
+  </section>
+
   ${crateHTML()}
 
   ${seam('in-ink')}
@@ -6579,7 +6619,7 @@ function viewHome() {
       <div class="cap">THE REST OF THE WALL</div>
       ${lockup('Everything', 'Posters & Polaroids', 'Wall Decor', 'lockup--left')}
       <p class="body-l dim reveal measure" style="margin-top:22px">One record starts it. The wall around it is where it gets personal.</p>
-      <div class="mono-xs dim" style="margin-top:14px;display:flex;gap:20px"><span>POSTERS FROM ₹199</span><span>POLAROID PACKS ₹149</span></div>
+      <div class="mono-xs dim" style="margin-top:14px;display:flex;gap:20px"><span>POSTERS FROM ${money(FMT['poster-a5'].price)}</span><span>POLAROIDS ${money(FMT.polaroid.price)} EACH</span></div>
     </div>
     <div class="wallbuild" id="wallbuild">
       <div class="wallbuild__inner">
@@ -6676,10 +6716,10 @@ function crateFacts(p) {
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
   return `
-  <!-- 4 ============ MAKE IT YOURS: THE CRATE ============
+  <!-- 3 ============ BESTSELLERS: THE CRATE ============
        Records on a diagonal, like flipping through a crate at the stall.
        Arrows (or a swipe) bring the next one to the front; click it to open it. -->
-  <section class="crate ground" id="crate" data-section="MAKE IT YOURS" style="--steps:${CRATE_SCROLL}">
+  <section class="crate ground" id="crate" data-section="BESTSELLERS" style="--steps:${CRATE_SCROLL}">
     <!-- a live wallpaper behind the records (wallpaper.js); the collage shows if WebGL can't -->
     <div class="crate__stage" tabindex="-1">
       <div class="crate__bg" aria-hidden="true">
@@ -6689,16 +6729,9 @@ function crateHTML() {
       </div>
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
-      <!-- the opening sequence (plays once, on first load of the home page) -->
-      <div class="crate__intro" aria-hidden="true">
-        <div class="ci-pill"><img class="ci-mark" src="${window.__WORDMARK__}" alt=""><span class="ci-state">Pressing</span><span class="ci-spin"></span></div>
-        <div class="ci-side ci-side--l">PastForward Records</div>
-        <div class="ci-side ci-side--r"><span class="ci-roll">${esc(list[list.length - 1].artist)}</span></div>
-        <div class="ci-count">${[0, 1, 2].map(k => `<span class="ci-slot" data-slot="${k}"><span class="ci-col">${k === 0 ? '<i>&nbsp;</i>' : ''}${Array.from({ length: 10 }, (_, d) => `<i>${d}</i>`).join('')}</span></span>`).join('')}</div>
-      </div>
       <div class="crate__meta">
-        <div class="cap crate__eyebrow">MAKE IT YOURS</div>
-        <h1 class="crate__head">Pick the one that's yours.</h1>
+        <div class="cap crate__eyebrow">BESTSELLERS</div>
+        <h2 class="crate__head">The ones everyone's taking home.</h2>
         <dl class="crate__rows" aria-live="polite">
           <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
@@ -6721,81 +6754,6 @@ function crateHTML() {
     </div>
   </section>`;
 }
-/* The opening sequence, after the reference's loader: a counter rolls 0→100 and drifts
-   up the screen, the first record turns from edge-on to face you, then everything
-   lands at once — the record grows into place, its neighbours slide in, the details,
-   controls, header and wallpaper arrive. Plays once per visit, only from the top of the
-   home page, never under reduced motion. Any scroll, key or tap skips ahead. */
-function playCrateIntro(root, api, list, onUnmount) {
-  const html = document.documentElement;
-  const skip = RM() || window.__crateIntroDone || scrollY > 20 || location.search.includes('nopre') || !api.setIntro;
-  if (skip) { window.__crateIntroDone = true; return; }
-  const ov = root.querySelector('.crate__intro');
-  const slots = [...root.querySelectorAll('.ci-slot')];
-  const count = root.querySelector('.ci-count'), roll = root.querySelector('.ci-roll');
-  root.classList.add('is-intro'); html.classList.add('crate-intro');
-  ov.classList.add('is-on');
-  api.setIntro(0, 0);
-  const lock = e => { e.preventDefault(); hurry(); };
-  const keys = e => { if ([' ', 'ArrowDown', 'PageDown', 'Enter', 'Escape'].includes(e.key)) { e.preventDefault(); hurry(); } };
-  addEventListener('wheel', lock, { passive: false });
-  addEventListener('touchmove', lock, { passive: false });
-  addEventListener('keydown', keys);
-  ov.addEventListener('pointerdown', hurry);
-  const COUNT = 2900, FLIP0 = 650, FLIP1 = 2700, LAND = 3150, BUILD = 1000, DONE = LAND + BUILD + 250;
-  let t0 = performance.now(), offset = 0, alive = true, landed = false, lastRoll = 0, ri = 0, shown = -1;
-  function hurry() { const t = performance.now() - t0 + offset; if (t < LAND - 150) offset += LAND - 150 - t; }
-  const cl = k => Math.max(0, Math.min(1, k)), io = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-  function setCount(n) {
-    if (n === shown) return; shown = n;
-    const str = String(n).padStart(3, ' ');
-    slots.forEach((el, k) => {
-      const ch = str[k];
-      // the first slot has a blank row on top so "  7" doesn't show leading zeros
-      const idx = k === 0 ? (ch === ' ' ? 0 : +ch + 1) : (ch === ' ' ? 0 : +ch);
-      el.style.setProperty('--n', idx);
-      el.classList.toggle('is-blank', ch === ' ' && k !== 0);
-    });
-  }
-  function finish(interrupted) {
-    if (!alive) return; alive = false;
-    // counted as played only once it's run its course: the first load renders home twice
-    // (the address gains its #/), and the first, torn-down render mustn't use it up
-    if (!interrupted) window.__crateIntroDone = true;
-    removeEventListener('wheel', lock); removeEventListener('touchmove', lock); removeEventListener('keydown', keys);
-    root.classList.remove('is-intro'); html.classList.remove('crate-intro');
-    api.setIntro(1, 1);
-    setTimeout(() => ov.remove(), 600);
-  }
-  onUnmount(() => { if (alive) finish(true); });
-  (function tick(now) {
-    if (!alive) return;
-    const t = now - t0 + offset;
-    // counter: eased count, drifting from low on the screen up toward the top
-    const kc = io(cl(t / COUNT));
-    setCount(Math.round(kc * 100));
-    count.style.setProperty('--x', (34 + 20 * kc).toFixed(2) + '%');
-    count.style.setProperty('--y', (76 - 62 * kc).toFixed(2) + '%');
-    // right label: the crate's artists flick past, landing on the first one
-    if (t < COUNT && now - lastRoll > 150) { lastRoll = now; roll.textContent = list[(ri++) % list.length].artist; roll.classList.remove('is-tick'); void roll.offsetWidth; roll.classList.add('is-tick'); }
-    if (t >= COUNT && roll.textContent !== list[0].artist) roll.textContent = list[0].artist;
-    // the record turns to face you while the count runs
-    const flip = cl((t - FLIP0) / (FLIP1 - FLIP0));
-    const build = cl((t - LAND) / BUILD);
-    api.setIntro(flip, build);
-    if (t >= LAND && !landed) {
-      landed = true;
-      ov.classList.add('is-out');            // counter, labels and pill leave
-      root.classList.add('is-landing');      // details, controls, header, wallpaper arrive
-      root.classList.remove('is-intro'); html.classList.remove('crate-intro');
-      ['.hdr', '.needle', '#corners'].forEach((sel, k) => { const el = document.querySelector(sel);
-        if (el) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, delay: 200 + k * 120, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' }); });
-    }
-    if (t >= DONE) { root.classList.remove('is-landing'); finish(); return; }
-    requestAnimationFrame(tick);
-  })(t0);
-}
-
 function mountCrateSection(onUnmount) {
   const root = document.getElementById('crate'); if (!root) return null;
   const list = crateList(), facts = list.map(crateFacts);
@@ -6846,7 +6804,6 @@ function mountCrateSection(onUnmount) {
     if (e.key === 'ArrowRight') { e.preventDefault(); api.next(); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); api.prev(); }
   });
-  playCrateIntro(root, api, list, onUnmount);
   return api;
 }
 
@@ -6884,6 +6841,55 @@ function filterProducts(params, routeFormats, requiredTag) {
   else if (sort === 'artist') list.sort((a, b) => a.artist.localeCompare(b.artist));
   else list.sort((a, b) => (b.featured - a.featured) || a.artist.localeCompare(b.artist));
   return list;
+}
+/* ---------- artist groups (vinyl, posters, polaroids pages) ----------
+   One card per artist instead of one per album: the artist's first design as the
+   cover, their name, how many albums, and a dropdown of the albums. Each album opens
+   its product page in the format being browsed. */
+const FMT_TAG = { 'poster-a3': 'A3', 'poster-a5': 'A5', 'print-10': '10×10', vinyl: '12″', polaroid: 'POLAROID' };
+function artistGroups(list) {
+  const map = new Map();
+  list.forEach(p => { if (!map.has(p.artist)) map.set(p.artist, []); map.get(p.artist).push(p); });
+  return [...map.entries()];
+}
+function artistCardHTML([artist, items], routeFormats, idx) {
+  const first = items[0];
+  const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
+  const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.ratio;
+  const cover = v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
+    : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
+    : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
+  const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
+  const from = Math.min(...prices), id = 'ag' + idx;
+  const n = items.length, word = n === 1 ? 'album' : 'albums';
+  const rows = items.map(p => {
+    const vs = routeFormats.map(f => variant(p, f)).filter(Boolean);
+    const v = vs[0];
+    const tags = vs.length > 1 ? vs.map(x => FMT_TAG[x.format]).join(' · ') : (v.format === 'vinyl' || v.format === 'polaroid' ? '' : FMT_TAG[v.format]);
+    const price = vs.length > 1 ? 'from ' + money(Math.min(...vs.map(x => x.price))) : money(v.price);
+    const thumb = v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
+      : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
+    return `<li class="ag__row">
+        <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
+          ${thumb}
+          <span class="ag__album">${albumOf(p)}<span class="ag__tags">${tags ? tags + ' · ' : ''}<span class="ag__price num">${price}</span></span></span>
+        </a>
+        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
+      </li>`;
+  }).join('');
+  return `<div class="ag" data-artist="${esc(artist)}">
+    <button class="ag__head" type="button" aria-expanded="false" aria-controls="${id}">
+      <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
+      <span class="ag__meta">
+        <span class="ag__name">${esc(artist)}</span>
+        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${money(from)}</span></span>
+      </span>
+      <span class="ag__chev" aria-hidden="true"></span>
+    </button>
+    <div class="ag__drop" id="${id}" role="region" aria-label="${esc(artist)} albums"><div class="ag__in">
+      <ul class="ag__list">${rows}</ul>
+    </div></div>
+  </div>`;
 }
 function viewCatalog(category, subType, params) {
   let routeFormats = [];
@@ -6948,6 +6954,9 @@ function viewCatalog(category, subType, params) {
   const posterTotal = P.filter(p => p.variants.some(v => ['poster-a3', 'poster-a5', 'print-10'].includes(v.format))).length;
   const on = (k, v) => params.getAll(k).includes(v) ? 'checked' : '';
   const shown = +(params.get('n') || 24);
+  const byArtist = category === 'vinyl' || category === 'posters' || category === 'polaroids';
+  const groups = byArtist ? artistGroups(list) : null;
+  const total = byArtist ? groups.length : list.length;
 
   let railContentHTML = '';
   if (category === 'collections') {
@@ -7037,7 +7046,7 @@ function viewCatalog(category, subType, params) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
               <span>Filter</span>
             </button>
-            <span class="mono dim num">${list.length} piece${list.length === 1 ? '' : 's'}</span>
+            <span class="mono dim num">${byArtist ? `${groups.length} artist${groups.length === 1 ? '' : 's'} · ` : ''}${list.length} piece${list.length === 1 ? '' : 's'}</span>
           </div>
           <select class="sort" id="sort" aria-label="Sort">
             ${[['featured', 'Featured'], ['price-asc', 'Price low→high'], ['price-desc', 'Price high→low'], ['artist', 'Artist A→Z']]
@@ -7045,8 +7054,10 @@ function viewCatalog(category, subType, params) {
           </select>
         </div>
         ${activePills(params)}
-        ${list.length ? `<div class="grid" id="grid">${list.slice(0, shown).map(p => cardHTML(p, targetFormat)).join('')}</div>
-          ${list.length > shown ? `<div style="text-align:center;margin-top:48px"><button class="btn btn--secondary" id="loadmore"><span class="btn__mag">Load more</span></button></div>` : ''}`
+        ${list.length ? `${byArtist
+            ? `<div class="grid ag-grid" id="agrid">${groups.slice(0, shown).map((g, i) => artistCardHTML(g, routeFormats, i)).join('')}</div>`
+            : `<div class="grid" id="grid">${list.slice(0, shown).map(p => cardHTML(p, targetFormat)).join('')}</div>`}
+          ${total > shown ? `<div style="text-align:center;margin-top:48px"><button class="btn btn--secondary" id="loadmore"><span class="btn__mag">Load more</span></button></div>` : ''}`
         : `<div style="padding:80px 0;text-align:center">
             <p class="d-s">Nothing matches that combination.</p>
             <p class="body-s dim" style="margin:8px 0 20px">Loosen a filter.</p>
@@ -7815,6 +7826,14 @@ function setParams(mut) {
   location.hash = path + (q ? '?' + q : '');
 }
 function mountCatalog(seg, params) {
+  // artist cards: one open at a time, height animated
+  $$('.ag__head').forEach(btn => btn.addEventListener('click', () => {
+    const card = btn.closest('.ag'), open = btn.getAttribute('aria-expanded') !== 'true';
+    $$('.ag.is-open').forEach(o => { if (o !== card) { o.classList.remove('is-open'); o.querySelector('.ag__head').setAttribute('aria-expanded', 'false'); } });
+    card.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    try { Sound.tick(); } catch (e) {}
+  }));
   const currentPath = '#' + (seg.join('/') || 'vinyl');
   const grid = $('#grid');
   const ftgl = $('#filtertgl'), rail = $('#rail');
@@ -8801,12 +8820,6 @@ export function mountCrate(root, items, opts = {}) {
   }
 
   /* ---- frame loop: only while on screen and something is changing ---- */
-  /* the opening sequence (driven from routes.js): flip 0→1 turns the first record from
-     edge-on to facing you, small and centred; build 0→1 grows it into place while the
-     neighbours slide in along the diagonal. Both rest at 1 when there's no intro. */
-  let introFlip = 1, introBuild = 1;
-  const ease = k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-  function setIntro(flip, build) { introFlip = flip; introBuild = build; dirty = true; wake(); }
   let raf = 0, last = performance.now(), visible = false, disposed = false;
   function wake() { if (!raf && visible && !disposed) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
@@ -8823,7 +8836,7 @@ export function mountCrate(root, items, opts = {}) {
 
     const a = Math.max(0, Math.min(N - 1, Math.round(visual)));
     if (a !== active) { active = a; onActive(items[a], a); }
-    if (touchOnly && !pointerIn && introBuild >= 1) {
+    if (touchOnly && !pointerIn) {
       // no hover on phones: the record that settles in front gets the loop
       const settled = Math.abs(visual - target) < 0.03 && !dragOffset;
       if (settled && drawnAround !== target) { chase = 2.2; drawOn(target); }
@@ -8834,8 +8847,7 @@ export function mountCrate(root, items, opts = {}) {
     const settling = spinBoost < 4;
     records.forEach((r, i) => {
       const d = i - visual;
-      const eB = ease(introBuild), eF = ease(introFlip), front = i === target;
-      const on = Math.abs(d) < 2.7 && (front ? introFlip > 0 : introBuild > 0.02);
+      const on = Math.abs(d) < 2.7;
       r.holder.visible = on;
       if (!on) return;
       r.holder.position.copy(STEP).multiplyScalar(d);
@@ -8843,23 +8855,18 @@ export function mountCrate(root, items, opts = {}) {
       r.holder.position.y += LIFT_Y;
       r.holder.position.x += SHIFT_X;
       r.holder.position.z += r.lift * 2.4;
-      if (introBuild < 1) {
-        if (front) r.holder.position.multiplyScalar(eB);                     // from the centre into its place
-        else r.holder.position.addScaledVector(STEP, Math.sign(d) * (1 - eB) * 2.2);   // neighbours slide in
-      }
       // records turn while the row moves, then come to rest with the art upright
       r.angle += spinBoost * (Math.abs(d) < 0.6 ? 1 : 0.6) * dt;
       if (settling) {
         const rest = Math.round(r.angle / 360) * 360, gap = rest - r.angle;
         if (Math.abs(gap) > 0.05) { r.angle += gap * (RM ? 1 : 1 - Math.exp(-dt * 2.6)); moving = true; } else r.angle = rest;
       }
-      r.spin.rotation.z = -(r.angle + (front ? 420 * Math.pow(1 - eF, 2) : 0)) * Math.PI / 180;   // unwinds to upright as it turns to face you
+      r.spin.rotation.z = -r.angle * Math.PI / 180;
       const want = i === hovered ? 1 : 0;
       r.hover += (want - r.hover) * (RM ? 1 : 1 - Math.exp(-dt * 10));
       if (Math.abs(r.hover - want) > 0.002) moving = true;
       r.tilt.rotation.set(LEAN_X - r.ty * 0.12 * r.hover, LEAN_Y + r.tx * 0.14 * r.hover, 0, "YXZ");
-      r.tilt.scale.setScalar((1 + 0.025 * r.hover) * (front && introBuild < 1 ? 0.5 + 0.5 * eB : 1));
-      if (front && introFlip < 1) r.tilt.rotation.y += (1 - eF) * Math.PI * 0.5;
+      r.tilt.scale.setScalar(1 + 0.025 * r.hover);
     });
     if (spinBoost > 0.5) moving = true;
 
@@ -8905,7 +8912,7 @@ export function mountCrate(root, items, opts = {}) {
     kit.textures.forEach(t => t.dispose()); studio.dispose();
     renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
   }
-  return { cleanup, goTo, next, prev, fromScroll, setIntro, get active() { return target; } };
+  return { cleanup, goTo, next, prev, fromScroll, get active() { return target; } };
 }
 window.mountCrate = mountCrate;
 </script></body></html>

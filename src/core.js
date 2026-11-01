@@ -361,7 +361,6 @@ function grooveField() {
 /* ---------- preloader: black, the mark, and a very large counter ---------- */
 function initPre() {
   if (RM() || location.search.includes('nopre')) return;
-  if (/^#?\/?$/.test(location.hash)) return;   // the home page opens with the crate's own intro
   const el = document.createElement('div');
   el.id = 'pre';
   el.innerHTML = `<div class="pre__bar"></div>
@@ -481,8 +480,7 @@ function initGrounds() {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
       const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
-      // the crate has its own controls and hint; this one belonged to the hero
-      hint.hidden = !home || scrollY > innerHeight * 0.7 || !document.querySelector('.fhero');
+      hint.hidden = !home || scrollY > innerHeight * 0.7;
     }
     const mid = innerHeight * 0.5;
     const on = lights().some(el => { const r = el.getBoundingClientRect(); return r.top < mid && r.bottom > mid; });
@@ -666,8 +664,7 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    // the transparent header + hidden logo only make sense over the big hero record
-    const home = (location.hash === '#/' || location.hash === '' || location.hash === '#') && !!document.querySelector('.fhero');
+    const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
