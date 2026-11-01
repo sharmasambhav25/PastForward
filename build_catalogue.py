@@ -21,9 +21,7 @@ NON_PRODUCT = {
 }
 # hard-excluded (customer name in filename / duplicates / ambiguous held back)
 DENY = {
-    'MANSI-10X10INCH-THANK U NEXT-ARIANA GRANDE': 'customer name in filename',
     'A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM) (1)': 'byte-identical duplicate',
-    'VINYL-MAROON-LOVE IS LIKE': 'ambiguous artist — Maroon 5 or Taylor Swift "Maroon" [CONFIRM]',
 }
 # colourway variants attached to a parent file
 COLOURWAY = {
@@ -38,6 +36,8 @@ OVERRIDE = {
     '10x10inch POSTER-TICKETS TO MY DOWNFALL-MGK': ('MGK', 'Tickets to My Downfall'),
     'A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM)':    ('Taylor Swift', 'august'),
     'VINYL-INDIGO-RM':                          ('RM', 'Indigo'),
+    'VINYL-MAROON-LOVE IS LIKE':                ('Maroon 5', 'Love Is Like'),
+    '10X10INCH-THANK U NEXT-ARIANA GRANDE':     ('Ariana Grande', 'thank u, next'),
     'A3-POSTER-Am I Dreaming-Spiderman':        ('Spider-Verse', 'Am I Dreaming'),
     'VINYLS-ARCTIC MONKEYS':                    ('Arctic Monkeys', '[CONFIRM]'),
     'VINYL-Sabrina Carpenter':                  ('Sabrina Carpenter', '[CONFIRM]'),
@@ -68,7 +68,7 @@ ARTIST_FIX = {
     'AVICII': 'Avicii', 'MARTIN GARRIX': 'Martin Garrix', 'SWEDISH HOUSE MAFIA': 'Swedish House Mafia',
     'ARCTIC MONKEYS': 'Arctic Monkeys', 'BUCKETHEAD': 'Buckethead', 'STRANGER THINGS': 'Stranger Things',
     'WWE': 'WWE', 'COCHISE': 'Cochise', 'LUCA BRASSI': 'Luca Brassi', 'ED SHEERAN': 'Ed Sheeran',
-    'SPIDERMAN': 'Spider-Verse', 'MAROON': 'Maroon [CONFIRM]',
+    'SPIDERMAN': 'Spider-Verse', 'MAROON': 'Maroon 5',
 }
 
 ALBUM_FIX = {

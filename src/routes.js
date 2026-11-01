@@ -230,10 +230,14 @@ function viewHome() {
 const CRATE_SCROLL = 3;   // records the page scroll moves through before carrying on down
 const FMT_SHORT = { 'poster-a3': 'POSTER', 'poster-a5': 'POSTER', 'print-10': 'PRINT', 'polaroid': 'POLAROID' };
 function crateList() {
+  // best-selling artists from the 2025 run lead, then the rest of the featured records
+  const TOP = ['The Weeknd', 'Travis Scott', 'Taylor Swift', 'Billie Eilish'];
   const ok = p => p.album !== '[CONFIRM]' && variant(p, 'vinyl');
-  const feat = withVinyl.filter(p => p.featured && ok(p)).sort((a, b) => a.rank - b.rank);
-  const rest = withVinyl.filter(p => !p.featured && ok(p)).sort((a, b) => b.variants.length - a.variants.length);
-  return feat.concat(rest).slice(0, 10);
+  const pool = withVinyl.filter(ok);
+  const lead = TOP.map(a => pool.find(p => p.artist === a && p.featured) || pool.find(p => p.artist === a)).filter(Boolean);
+  const rest = pool.filter(p => !lead.includes(p) && !TOP.includes(p.artist))
+    .sort((a, b) => (b.featured - a.featured) || (a.rank - b.rank) || (b.variants.length - a.variants.length));
+  return lead.concat(rest).slice(0, 10);
 }
 function crateFacts(p) {
   const col = COLS.find(c => p.tags.includes(c.slug));
@@ -653,7 +657,7 @@ function viewProduct(p, params) {
             const has = variant(p, k);
             return `<button data-fmt="${k}" class="${k === sel ? 'is-on' : ''}" ${has ? '' : 'disabled'} aria-pressed="${k === sel}">
               <span class="f-name">${esc(f.label)}</span>
-              <span class="f-size">${f.size === '[CONFIRM]' ? '[CONFIRM]' : esc(f.size)}</span>
+              <span class="f-size">${sizeOf(f) ? esc(sizeOf(f)) : 'Polaroid-style'}</span>
               <span class="f-price num">${has ? money(f.price) : '—'}</span></button>`;
           }).join('')}
         </div>
@@ -664,16 +668,16 @@ function viewProduct(p, params) {
         </div>
 
         <div class="spec" style="margin-top:32px">
-          <div id="whatyouget">${sel === 'vinyl' ? 'Upcycled 12-inch record, printed centre label' : sel === 'polaroid' ? 'Polaroid-style card, cream border' : '300gsm matte poster stock ' + CONFIRM('Paper stock not confirmed with the printer')}</div>
-          <div>Ready to hang</div>
-          <div>Ships in ${CONFIRM('Dispatch time not set')} business days across India</div>
+          <div id="whatyouget">${sel === 'vinyl' ? 'Upcycled 12-inch record, printed centre label' : sel === 'polaroid' ? 'Polaroid-style card, cream border' : FMT[sel].label + ', printed to order'}</div>
+          <div id="hangnote">${sel === 'vinyl' ? 'Wall hook included' : 'Ready for your wall'}</div>
+          <div>Delivered in ${DELIVERY} across India</div>
         </div>
 
         <div style="margin-top:28px">
           <div class="acc"><button aria-expanded="false">Shipping &amp; returns <span>+</span></button>
-            <div class="panel"><div class="panel__in">Delivery windows and the returns policy are still being set. ${CONFIRM('Shipping and returns terms to be supplied')} — see <a href="#/policies/shipping" style="color:var(--ember)">shipping</a>.</div></div></div>
-          <div class="acc"><button aria-expanded="false">How it hangs <span>+</span></button>
-            <div class="panel"><div class="panel__in">Mounting method ${CONFIRM('Adhesive strips, hooks, or nothing supplied — must match what actually ships')}. We will not promise a fixing we do not include.</div></div></div>
+            <div class="panel"><div class="panel__in">Delivered in ${DELIVERY} anywhere in India. If it arrives damaged, email us within 7 days of delivery and we'll put it right. Full details in <a href="#/policies/shipping" style="color:var(--ember)">shipping</a> and <a href="#/policies/returns" style="color:var(--ember)">returns</a>.</div></div></div>
+          <div class="acc" id="hangacc" ${sel === 'vinyl' ? '' : 'hidden'}><button aria-expanded="false">How it hangs <span>+</span></button>
+            <div class="panel"><div class="panel__in">Every record comes with a wall hook in the box. Put the hook up, hang the record on it, done.</div></div></div>
           <div class="acc"><button aria-expanded="false">Care <span>+</span></button>
             <div class="panel"><div class="panel__in">Wipe with a dry cloth. Keep it out of direct sunlight — same as the original.</div></div></div>
         </div>
@@ -709,9 +713,9 @@ function stageMedia(p, fmt) {
 function scaleSVG(sel) {
   const O = { 'poster-a3': [297, 420, 'A3 POSTER', '297 × 420 MM'], 'poster-a5': [148, 210, 'A5 POSTER', '148 × 210 MM'],
     'print-10': [254, 254, '10×10 PRINT', '254 × 254 MM'], vinyl: [305, 305, '12-INCH RECORD', '12-INCH'],
-    polaroid: [100, 162, 'POLAROID', 'SIZE [CONFIRM]'] };
+  };   // polaroid card left out until its size is measured
   const baseline = 470, order = [];
-  if (sel !== 'vinyl' && sel !== 'poster-a3') order.push(sel);
+  if (O[sel] && sel !== 'vinyl' && sel !== 'poster-a3') order.push(sel);
   order.push('poster-a3', 'vinyl');
   let x = 30; const nodes = [];
   order.forEach(k => {
@@ -765,7 +769,7 @@ function viewCustom() {
           <button class="btn btn--primary" style="justify-self:start"><span class="btn__mag">Send the request</span></button>
         </form>
         <div data-form-msg></div>
-        <p class="body-s dim" style="margin-top:24px">We'll come back to you within ${CONFIRM('Response time not set')} hours. If we can't print it, we'll say so straight.</p>
+        <p class="body-s dim" style="margin-top:24px">We usually reply right away. If we can't print it, we'll say so straight.</p>
         <div class="steps" style="margin-top:64px">
           ${[['01', 'You send the album'], ['02', 'We quote and mock it up'], ['03', 'We make it and ship it']].map(([n, t]) =>
             `<div class="reveal"><div class="mono num" style="color:var(--oxblood)">${n}</div>
@@ -781,7 +785,7 @@ function viewCustom() {
           <img src="${photo('printer')}" alt="Artwork printing to order" loading="lazy">
           <figcaption class="mono-xs dim">EVERY ORDER IS PRINTED TO ORDER</figcaption></figure>
         <h4 class="mono dim" style="margin:26px 0 14px">Formats we can make</h4>
-        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)} · ${f.size === '[CONFIRM]' ? '[CONFIRM]' : esc(f.size)}</div>`).join('')}</div>
+        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''}</div>`).join('')}</div>
         <p class="body-s dim" style="margin-top:20px">Custom pricing depends on the artwork and the format. We quote before anything is made.</p>
       </aside>
     </div></div>`;
@@ -878,11 +882,11 @@ function viewFaq() {
     ['Is it a real vinyl record?', `Yes. A real 12-inch upcycled record. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor.`],
     ['Can I play it?', `It's sold to hang, not to play. These are real records, so the grooves are real — but we make no promise about what's on them or how it sounds, and the label carries our artwork rather than the original. Treat it as a wall piece.`],
     ['Why upcycled and not new?', `Because a record that already had a life is the whole point of the name. It also means no two are identical, and nothing new gets pressed just to hang on a wall.`],
-    ['What sizes do you make?', `<div class="spec" style="margin-top:6px">${Object.values(FMT).map(f => `<div>${esc(f.label)} · ${f.size === '[CONFIRM]' ? CONFIRM('Polaroid card dimensions not measured yet') : esc(f.size)}</div>`).join('')}</div>`],
-    ['How does it hang?', `${CONFIRM('Mounting method not decided — adhesive strips, hooks, or nothing supplied')}`],
-    ['How long does delivery take?', `${CONFIRM('Dispatch and delivery windows not set')}, across India.`],
-    ['Do you ship outside India?', `${CONFIRM('International shipping not decided')}`],
-    ['Can I return it?', `${CONFIRM('Returns window and conditions not set')}`],
+    ['What sizes do you make?', `<div class="spec" style="margin-top:6px">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''}</div>`).join('')}</div>`],
+    ['How does a record hang?', 'Every record comes with a wall hook in the box. Put the hook up and hang the record on it.'],
+    ['How long does delivery take?', `${DELIVERY} from when you order, anywhere in India.`],
+    ['Do you ship outside India?', 'Not yet. We deliver anywhere in India for now.'],
+    ['What if it arrives damaged?', `Email <a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a> within 7 days of delivery with a photo, and we'll put it right. See <a href="#/policies/returns" style="color:var(--ember)">returns</a>.`],
     ['Can you make one that isn\'t on the site?', `Yes. That's what <a href="#/custom" style="color:var(--ember)">custom orders</a> are for — tell us the album and we'll quote you.`],
     ['How do I look after it?', `Wipe with a dry cloth. Keep it out of direct sunlight — same as the original.`]
   ];
@@ -899,7 +903,7 @@ function viewContact() {
     <div class="spec" style="margin-bottom:40px">
       <div>Order questions — DM <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" style="color:var(--ember)">@pastforward.shop</a></div>
       <div>Something not in the catalogue — <a href="#/custom" style="color:var(--ember)">custom orders</a></div>
-      <div>Email — ${CONFIRM('Contact email not set')}</div>
+      <div>Email — <a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a></div>
     </div>
     <form data-form="contact" data-success="Message sent. We'll reply." style="display:grid;gap:18px;max-width:520px">
       <label class="field"><span>Name</span><input name="name" required></label>
@@ -907,7 +911,7 @@ function viewContact() {
       <label class="field"><span>Message</span><textarea name="message" rows="4" required></textarea></label>
       <button class="btn btn--primary" style="justify-self:start"><span class="btn__mag">Send</span></button>
     </form><div data-form-msg></div>
-    <p class="body-s dim" style="margin-top:20px">We reply within ${CONFIRM('Response time not set')}.</p></div>`;
+    <p class="body-s dim" style="margin-top:20px">We usually reply right away.</p></div>`;
 }
 
 /* ============================== SEARCH / CART / WALL / POLICY / 404 ============================== */
@@ -929,7 +933,7 @@ function viewCart() {
       <div class="receipt" style="margin-top:32px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
         ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
-        <div class="row"><span>Shipping</span><span>${CONFIRM('Shipping cost not set')}</span></div>
+        <div class="row"><span>Shipping</span><span class="dim">Calculated at checkout</span></div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
       <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout</span></button>
@@ -948,16 +952,52 @@ function viewWall() {
     <div class="grid">${ratios.map((r, i) => `<div class="emptyframe" style="aspect-ratio:${r}">AWAITING WALL №${i + 1}</div>`).join('')}</div>
     <p class="mono-xs dim" style="margin-top:32px">This page is empty on purpose. Nothing here is a stock photo.</p></div>`;
 }
+/* Policy copy: drafted from PastForward's answers (Nov 2026). Edit here; each section is [heading, html]. */
+const POLICY_UPDATED = '1 November 2026';
+const mail = () => `<a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a>`;
+const POLICIES = {
+  shipping: ['Shipping', () => [
+    ['Where we deliver', 'We deliver anywhere in India.'],
+    ['How long it takes', `Every piece is made to order. Your order reaches you within ${DELIVERY} of being placed.`],
+    ['What it costs', 'Any delivery charge is shown at checkout, before you pay.'],
+    ['Your address', `Please check your delivery address and phone number before you order. If something's wrong, email ${mail()} as soon as you can and we'll fix it before it ships.`],
+    ['Questions', `Email ${mail()}. We usually reply right away.`],
+  ]],
+  returns: ['Returns', () => [
+    ['Made to order', "Each piece is printed and put together for your order, so we can't take returns if you change your mind."],
+    ['If it arrives damaged', `If your order arrives damaged, or isn't what you ordered, email ${mail()} within 7 days of delivery. Include your order details and photos of the piece and the packaging. We'll send a replacement, or refund you if we can't.`],
+    ['About the records', "Our records are upcycled: real vinyl that already had a life. Small surface marks on the record are part of that history and aren't counted as damage."],
+    ['Refunds', 'Approved refunds go back to the original payment method.'],
+  ]],
+  privacy: ['Privacy', () => [
+    ['What we collect', 'Only what you give us. When you order: your name, delivery address, phone number and email, so we can deliver. When you use a form: what you type in it, such as your name, email, WhatsApp number, message, or a link to the artwork you want. When you join the list: your email.'],
+    ['What we use it for', 'To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time.'],
+    ['Payments', 'Payments are handled by our payment provider. We never see or store your card or bank details.'],
+    ['Who we share it with', "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
+    ['Your cart and cookies', "Your cart is saved in your own browser so it's still there when you come back. This site doesn't use analytics or advertising trackers."],
+    ['Your rights', `You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email ${mail()}.`],
+  ]],
+  terms: ['Terms', () => [
+    ['Who we are', 'PastForward makes wall decor from music: upcycled vinyl records with album art at the centre, posters, prints and polaroid cards. By ordering from this site you agree to these terms.'],
+    ['The products', 'Our records are for hanging, not playing. Prints are made to order, and colours can look slightly different from how they appear on your screen.'],
+    ['Prices and orders', 'Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can\'t fulfil an order, we\'ll tell you and refund you in full.'],
+    ['Custom orders', 'When you send us an image or artwork to print, you confirm you have the right to use it.'],
+    ['Artwork and names', 'Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label.'],
+    ['Delivery and returns', 'See our <a href="#/policies/shipping" style="color:var(--ember)">shipping</a> and <a href="#/policies/returns" style="color:var(--ember)">returns</a> policies.'],
+    ['Changes', 'We may update these terms. The date at the top shows when they last changed.'],
+    ['The law', 'These terms are governed by the laws of India.'],
+  ]],
+};
 function viewPolicy(slug) {
-  const t = { shipping: 'Shipping', returns: 'Returns', privacy: 'Privacy', terms: 'Terms' }[slug];
-  if (!t) return view404();
+  const pol = POLICIES[slug];
+  if (!pol) return view404();
+  const [title, body] = pol;
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
-    <h1 class="d-l">${t}.</h1>
-    <div class="mono-xs dim" style="margin-top:14px">LAST UPDATED — ${CONFIRM('Not published yet')}</div>
-    <div style="border:1px dashed var(--border-2);padding:28px;margin-top:36px">
-      <p class="body-l" style="margin:0">${CONFIRM(t + ' policy copy must be supplied by PastForward')} — legal copy to be supplied by PastForward.</p>
-      <p class="body-s dim" style="margin:14px 0 0">This page is deliberately unwritten. Inventing a ${slug === 'returns' ? 'returns window' : slug === 'privacy' ? 'privacy commitment' : 'term'} would create an obligation nobody agreed to.</p>
-    </div></div>`;
+    <h1 class="d-l">${title}.</h1>
+    <div class="mono-xs dim" style="margin-top:14px">LAST UPDATED — ${POLICY_UPDATED.toUpperCase()}</div>
+    <div class="policy">${body().map(([h, t]) => `<section><h2 class="d-s">${h}</h2><p class="body-l dim">${t}</p></section>`).join('')}</div>
+    <nav class="policy__nav mono-xs" aria-label="Policies">${Object.entries(POLICIES).map(([k, [t]]) => `<a href="#/policies/${k}" class="${k === slug ? 'is-on' : ''}">${t}</a>`).join('')}</nav>
+  </div>`;
 }
 function view404() {
   const p = withVinyl[3] || withVinyl[0];
@@ -1488,7 +1528,9 @@ function mountProduct(p, params) {
     $('#barprice').textContent = money(v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
-      : '300gsm matte poster stock ' + CONFIRM('Paper stock not confirmed with the printer');
+      : FMT[f].label + ', printed to order';
+    const hn = $('#hangnote'); if (hn) hn.textContent = f === 'vinyl' ? 'Wall hook included' : 'Ready for your wall';
+    const ha = $('#hangacc'); if (ha) ha.hidden = f !== 'vinyl';
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f]); }

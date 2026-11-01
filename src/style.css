@@ -1829,3 +1829,10 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .ag__add:hover{background:var(--oxblood); border-color:var(--oxblood)}
 @media(prefers-reduced-motion:reduce){ .ag__drop{transition:none} .ag__head,.ag__chev{transition:none} }
 @media(max-width:767px){ .ag__thumb{width:36px; height:36px} .ag__thumb--rec .record{--size:36px !important; width:36px} .ag__link{gap:9px} .ag__add{width:28px; height:28px; margin-left:6px} .ag__meta{padding-right:32px} }
+/* policy pages */
+.policy{margin-top:40px; display:flex; flex-direction:column; gap:30px}
+.policy section{border-top:1px solid var(--border); padding-top:20px}
+.policy h2{margin:0 0 10px}
+.policy p{margin:0}
+.policy__nav{display:flex; flex-wrap:wrap; gap:22px; margin-top:56px; padding-top:20px; border-top:1px solid var(--border)}
+.policy__nav a{color:var(--muted)} .policy__nav a.is-on,.policy__nav a:hover{color:var(--cream)}

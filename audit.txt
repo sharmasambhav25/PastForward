@@ -7,6 +7,7 @@
 10X10INCH-PINK FLOYD-THE DARKSIDE OF THE MOON(1973).webp	print-10 · Pink Floyd · The Dark Side of the Moon (1973)
 10X10INCH-ROSE-APT.webp	print-10 · Rosé · APT.
 10X10INCH-TAYLOR SWIFT-LOVER.webp	print-10 · Taylor Swift · Lover
+10X10INCH-THANK U NEXT-ARIANA GRANDE.webp	print-10 · Ariana Grande · thank u, next
 10X10INCH-THE BEATLES-MEMBERS.webp	print-10 · The Beatles · Members
 10X10INCH-TRAVIS SCOTT-UTOPIA.webp	print-10 · Travis Scott · Utopia
 10x10INCH-TAYLOR SWIFT-REPUTATION.webp	print-10 · Taylor Swift · Reputation
@@ -60,7 +61,6 @@ A5-POSTER-TRAVIS-UTOPIA.webp	poster-a5 · Travis · Utopia
 A5-POSTER-Taylor Swift-Reputation.webp	poster-a5 · Taylor Swift · Reputation
 A5-POSTER-The Beatles-Members.webp	poster-a5 · The Beatles · Members
 A5-POSTER-The Weeknd-After Hours.webp	poster-a5 · The Weeknd · After Hours
-MANSI-10X10INCH-THANK U NEXT-ARIANA GRANDE.webp	EXCLUDED: customer name in filename
 POLAROID-ARIANA GRANDE-THANK YOU NEXT.webp	polaroid · Ariana Grande · thank u, next
 POLAROID-BILLIE EILISH-BAD GUY.webp	polaroid · Billie Eilish · Bad Guy
 POLAROID-BILLY JOEL-THE STRANGER.webp	polaroid · Billy Joel · The Stranger
@@ -111,7 +111,7 @@ VINYL-KARAN AUJLA-AT PEACE.webp	vinyl · Karan Aujla · At Peace
 VINYL-LANA DEL REY-BLUEBIRD.webp	vinyl · Lana Del Rey · Bluebird
 VINYL-LANA DEL REY-ULTRAVIOLENCE.webp	vinyl · Lana Del Rey · Ultraviolence
 VINYL-LISA-ROCKSTAR.webp	vinyl · Lisa · Rockstar
-VINYL-MAROON-LOVE IS LIKE.webp	EXCLUDED: ambiguous artist — Maroon 5 or Taylor Swift "Maroon" [CONFIRM]
+VINYL-MAROON-LOVE IS LIKE.webp	vinyl · Maroon 5 · Love Is Like
 VINYL-MARSHMELLO-HAPPIER.webp	vinyl · Marshmello · Happier
 VINYL-MARTIN GARRIX-SENTIO.webp	vinyl · Martin Garrix · Sentio
 VINYL-MGK-LOST AMERICANA.webp	vinyl · MGK · Lost Americana
