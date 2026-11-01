@@ -138,7 +138,11 @@ function viewHome() {
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
-      <a class="btn btn--primary" href="#/shop"><span class="btn__mag">Shop Now</span></a>
+      <a class="cta-shop" href="#/vinyl" data-cursor="SHOP">
+        <span class="cta-shop__disc" aria-hidden="true"><i></i></span>
+        <span class="cta-shop__txt">Shop now</span>
+        <span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+      </a>
     </div>
   </section>
 
@@ -399,21 +403,20 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
   const from = Math.min(...prices), id = 'ag' + idx;
   const n = items.length, word = n === 1 ? 'album' : 'albums';
-  const rows = items.map(p => {
-    const vs = routeFormats.map(f => variant(p, f)).filter(Boolean);
-    const v = vs[0];
-    const tags = vs.length > 1 ? vs.map(x => FMT_TAG[x.format]).join(' · ') : (v.format === 'vinyl' || v.format === 'polaroid' ? '' : FMT_TAG[v.format]);
-    const price = vs.length > 1 ? 'from ' + money(Math.min(...vs.map(x => x.price))) : money(v.price);
+  // one row per size, each with its own price, so a poster in three sizes reads as three clear options
+  const rows = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => {
+    const size = v.format === 'vinyl' || v.format === 'polaroid' ? '' : ({ 'poster-a3': 'A3 poster', 'poster-a5': 'A5 poster', 'print-10': '10×10 print' }[v.format]);
     const thumb = v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
       : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
     return `<li class="ag__row">
         <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
           ${thumb}
-          <span class="ag__album">${albumOf(p)}<span class="ag__tags">${tags ? tags + ' · ' : ''}<span class="ag__price num">${price}</span></span></span>
+          <span class="ag__album">${albumOf(p)}${size ? `<span class="ag__size">${esc(size)}</span>` : ''}</span>
+          <span class="ag__price num">${money(v.price)}</span>
         </a>
-        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
+        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}${size ? ', ' + esc(size) : ''} to cart">+</button>
       </li>`;
-  }).join('');
+  })).join('');
   return `<div class="ag" data-artist="${esc(artist)}">
     <button class="ag__head" type="button" aria-expanded="false" aria-controls="${id}">
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
@@ -1024,6 +1027,8 @@ window.__mount = function (seg, params) {
       const root = document.getElementById('crate');
       const onCrate = () => {
         const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
+        // 1 while the section is still rising into view, 0 once it's pinned: drives the fade-in from the hero
+        root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
         if (span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
       };
       const prev = window.__onScroll;

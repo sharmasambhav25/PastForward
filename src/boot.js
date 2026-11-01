@@ -66,6 +66,8 @@ function initChrome() {
 }
 
 function pfStart() {
+  // the realistic pressing (rendered once from the 3D record, brand/disc.webp) under every CSS record
+  if (window.__PHOTOS__ && window.__PHOTOS__.disc) document.documentElement.style.setProperty('--disc-img', `url(${window.__PHOTOS__.disc})`);
   document.body.insertAdjacentHTML('afterbegin', chromeHTML());
   const main = document.createElement('main');
   main.id = 'main'; main.setAttribute('tabindex', '-1');

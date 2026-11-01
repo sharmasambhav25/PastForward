@@ -208,11 +208,11 @@ export function mountVinyl(container) {
      canvas actually mapped onto the mesh — the hover "album scrub" feature below repaints
      liveCanvas and can always crossfade back to defaultLabelCanvas without recomputing it. */
   function makeLabelMaps() {
-    // PastForward's real label is crimson, not paper — match the CSS disc elsewhere on the site.
+    // a plain dark label: only ever seen for a moment before the first album's art arrives
     const defaultLabelCanvas = makeCanvas(1024);
     const ctx = defaultLabelCanvas.getContext("2d");
     const grad = ctx.createRadialGradient(390, 330, 60, 512, 512, 620);
-    grad.addColorStop(0, "#9C2A36"); grad.addColorStop(0.56, "#83202B"); grad.addColorStop(1, "#611420");
+    grad.addColorStop(0, "#1d1b1c"); grad.addColorStop(0.56, "#151314"); grad.addColorStop(1, "#0d0c0c");
     ctx.fillStyle = grad; ctx.fillRect(0, 0, 1024, 1024);
     const image = ctx.getImageData(0, 0, 1024, 1024);
     const height = makeCanvas(1024);
@@ -231,12 +231,6 @@ export function mountVinyl(container) {
       ctx.beginPath(); ctx.arc(512, 512, radius, 0, Math.PI * 2);
       ctx.lineWidth = radius === 445 ? 2 : 4; ctx.stroke();
     }
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#f3efe8";
-    ctx.font = "bold 58px Georgia, serif";
-    ctx.fillText("PASTFORWARD", 512, 470);
-    ctx.font = "18px Georgia, serif";
-    ctx.fillText("ESTD 2025", 512, 508);
 
     const liveCanvas = makeCanvas(1024);
     liveCanvas.getContext("2d").drawImage(defaultLabelCanvas, 0, 0);
