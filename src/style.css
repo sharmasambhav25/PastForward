@@ -1227,7 +1227,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 /* the crimson label, exactly as the flex has it */
 .fdisc__lab{position:absolute; left:50%; top:50%; width:41%; aspect-ratio:1;
   transform:translate(-50%,-50%); border-radius:50%;
-  background:radial-gradient(circle at 38% 32%,#9C2A36,#83202B 56%,#611420);
+  background:radial-gradient(circle at 38% 32%,#1d1b1c,#151314 56%,#0d0c0c);   /* dark until the 3D record and its album art take over */
   box-shadow:inset 0 0 60px rgba(0,0,0,.42), inset 0 0 0 1px rgba(0,0,0,.3)}
 .fdisc__lab::after{content:""; position:absolute; inset:0; border-radius:50%; opacity:.62;
   background:repeating-conic-gradient(from 0deg,rgba(0,0,0,.055) 0 .7deg,transparent .7deg 2.1deg),
@@ -1836,3 +1836,82 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .policy p{margin:0}
 .policy__nav{display:flex; flex-wrap:wrap; gap:22px; margin-top:56px; padding-top:20px; border-top:1px solid var(--border)}
 .policy__nav a{color:var(--muted)} .policy__nav a.is-on,.policy__nav a:hover{color:var(--cream)}
+
+/* ---------- every CSS record wears the realistic pressing ----------
+   brand/disc.webp is the 3D record rendered top-down without a label. It doesn't turn:
+   grooves look the same at any angle and the light should stay put, so only the label
+   (and the etched ring) rotate on top of it. */
+.record::before{content:""; position:absolute; inset:0; border-radius:50%; z-index:0;
+  background:var(--disc-img, radial-gradient(circle,#151414 0 17%,#090909 17% 96%,#1a1919 96%)) center/100% 100% no-repeat;
+  box-shadow:var(--sh-record)}
+.record__disc{background:none; box-shadow:none; z-index:1}
+.record__grooves,.record__grooves2,.record__deadwax,.record__sheen{display:none}
+.record__rim{box-shadow:inset 0 0 0 1px rgba(0,0,0,.55); background:none; z-index:2}
+.record__label{box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 0 0 3px rgba(255,255,255,.035), 0 2px 8px rgba(0,0,0,.6)}
+.wall__item .record::before{transition:transform 380ms var(--e-spring)} .wall__item:hover .record::before{transform:translateY(-16px) scale(1.06)}
+
+.fdisc__rule{display:none}
+/* dropdown rows: album + size on the left, the price in its own column */
+.ag__size{font-family:var(--mono); font-size:.56rem; letter-spacing:.14em; color:var(--muted); text-transform:uppercase}
+.ag__link .ag__price{flex:none; font-family:var(--mono); font-size:.74rem; color:var(--cream); margin-left:10px; white-space:nowrap}
+
+/* ---------- transitions between home sections ---------- */
+/* hero → bestsellers: the collage melts into the dark the contours rise out of */
+.fhero::before{content:""; position:absolute; left:0; right:0; bottom:0; height:40%; z-index:1; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(13,11,12,0), rgba(13,11,12,.8) 60%, #0d0b0c)}
+/* and over the record itself, only in the last strip, so the disc sinks into the dark instead of being cut */
+.fhero::after{content:""; position:absolute; left:0; right:0; bottom:0; height:16%; z-index:3; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(13,11,12,0), rgba(13,11,12,.55) 55%, #0d0b0c)}
+.crate{--enter:0; margin-top:-1px}
+.crate__wall{-webkit-mask-image:linear-gradient(to bottom, transparent calc(var(--enter) * 8%), #000 calc(var(--enter) * 62%));
+  mask-image:linear-gradient(to bottom, transparent calc(var(--enter) * 8%), #000 calc(var(--enter) * 62%))}
+.crate__stage{background:#0d0b0c}
+/* the wall photo → the red manifesto band → the drop: no hard edges */
+/* the stage already shades its photo with ::after; its <img> wrapper carries the fade into the red band */
+.stage__img::after{content:""; position:absolute; left:0; right:0; bottom:0; height:38%; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(18,7,8,0), #120708)}
+.stage__in{position:relative; z-index:2}
+[data-section="THE DROP"]::before{content:""; position:absolute; left:0; right:0; top:0; height:180px; z-index:1; pointer-events:none;
+  background:linear-gradient(to bottom, #120708, rgba(18,7,8,0))}
+
+/* ---------- hero call to action ---------- */
+.cta-shop{position:relative; display:inline-flex; align-items:center; gap:14px; height:66px; padding:0 9px 0 10px; border-radius:999px;
+  background:var(--cream); color:var(--ink); font-family:var(--mono); font-size:.8rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase;
+  box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.6); isolation:isolate; overflow:hidden;
+  transition:background .35s var(--e-out-expo), color .35s var(--e-out-expo), transform .45s var(--e-spring), box-shadow .35s}
+/* a sweep of light crosses it every few seconds */
+.cta-shop::before{content:""; position:absolute; top:0; bottom:0; left:-40%; width:30%; z-index:-1; pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.9), transparent); transform:skewX(-18deg);
+  animation:ctaSweep 4.2s cubic-bezier(.6,0,.2,1) 1.6s infinite}
+@keyframes ctaSweep{0%{left:-40%} 32%,100%{left:130%}}
+/* and a soft ring breathes out from it, so the eye finds it */
+.cta-shop::after{content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; z-index:-2;
+  box-shadow:0 0 0 0 rgba(192,53,63,.55); animation:ctaPulse 2.8s ease-out 1.2s infinite}
+@keyframes ctaPulse{0%{box-shadow:0 0 0 0 rgba(192,53,63,.55)} 70%,100%{box-shadow:0 0 0 18px rgba(192,53,63,0)}}
+.cta-shop__disc{width:46px; height:46px; border-radius:50%; flex:none; position:relative;
+  background:var(--disc-img, #0b0a0b) center/100% 100%; box-shadow:0 2px 8px rgba(0,0,0,.45); animation:ctaSpin 3.2s linear infinite}
+.cta-shop__disc i{position:absolute; inset:33%; border-radius:50%; background:radial-gradient(circle,#0b0a0b 0 10%, var(--ember) 12% 100%)}
+@keyframes ctaSpin{to{transform:rotate(360deg)}}
+.cta-shop__txt{padding:0 4px}
+.cta-shop__arrow{width:48px; height:48px; border-radius:50%; flex:none; display:grid; place-items:center; background:var(--oxblood); color:var(--cream);
+  transition:transform .45s var(--e-spring), background .3s}
+.cta-shop__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .45s var(--e-spring)}
+.cta-shop:hover{background:var(--ember); color:var(--cream); transform:translateY(-3px) scale(1.04); box-shadow:0 20px 50px rgba(192,53,63,.45), 0 0 0 1px var(--ember)}
+.cta-shop:hover .cta-shop__disc{animation-duration:.9s}
+.cta-shop:hover .cta-shop__arrow{background:var(--cream); color:var(--oxblood); transform:translateX(3px)}
+.cta-shop:hover .cta-shop__arrow svg{transform:translateX(2px)}
+.cta-shop:active{transform:translateY(-1px) scale(.97)}
+.cta-shop:focus-visible{outline:2px solid var(--cream); outline-offset:4px}
+@media(max-width:767px){ .cta-shop{height:58px; font-size:.72rem} .cta-shop__disc{width:40px; height:40px} .cta-shop__arrow{width:42px; height:42px} }
+@media(prefers-reduced-motion:reduce){ .cta-shop::before,.cta-shop::after,.cta-shop__disc{animation:none} }
+/* the red band's collage fades in under the wall photo instead of starting on a line */
+[data-section="WHY"]::after{content:""; position:absolute; left:0; right:0; top:0; height:150px; z-index:2; pointer-events:none;
+  background:linear-gradient(to bottom, #120708, rgba(18,7,8,0))}
+/* phones: an opened artist becomes a full-width panel, cover beside the name, albums below */
+@media(max-width:767px){
+  .ag.is-open{grid-column:1/-1}
+  .ag.is-open .ag__head{flex-direction:row; align-items:center; gap:16px}
+  .ag.is-open .ag__media{width:40%; flex:none}
+  .ag.is-open .ag__meta{flex:1}
+}
+.ag__album{overflow-wrap:break-word}

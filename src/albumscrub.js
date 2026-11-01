@@ -62,7 +62,7 @@ function mountAlbumScrub(containerEl, labelCanvas, ctx, opts) {
   var destroyed = false;
 
   var autoIdx = -1;
-  var lastAutoAdvance = performance.now();
+  var lastAutoAdvance = performance.now() - AUTO_INTERVAL_MS;   // first album goes up straight away, no placeholder label
   var userInteracting = false;
   var lastUserAction = 0;
 
