@@ -1915,3 +1915,43 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   .ag.is-open .ag__meta{flex:1}
 }
 .ag__album{overflow-wrap:break-word}
+
+/* ---- album → size step (posters) ---- */
+.ag__row--multi{display:block}
+.ag__pick{all:unset; box-sizing:border-box; cursor:pointer; width:100%; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
+.ag__pick:hover{color:var(--ember)}
+.ag__pick:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+.ag__pchev{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--border-2); display:grid; place-items:center; transition:transform .35s var(--e-out-expo), background .2s, border-color .2s}
+.ag__pchev::before{content:""; width:6px; height:6px; border-right:1.5px solid var(--cream); border-bottom:1.5px solid var(--cream); transform:translateY(-2px) rotate(45deg)}
+.ag__pick:hover .ag__pchev{border-color:var(--ember)}
+.ag__row.is-open .ag__pchev{transform:rotate(180deg); background:var(--oxblood); border-color:var(--oxblood)}
+.ag__row.is-open .ag__pick{color:var(--cream)}
+.ag__sizes{display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s var(--e-out-expo)}
+.ag__row.is-open .ag__sizes{grid-template-rows:1fr}
+.ag__sin{overflow:hidden; min-height:0}
+.ag__step{margin:0 0 6px 54px; color:var(--muted); letter-spacing:.16em}
+.ag__slist{list-style:none; margin:0 0 12px 54px; padding:0; display:flex; flex-direction:column; gap:6px}
+.ag__srow{display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:rgba(243,239,232,.025); transition:border-color .2s, background .2s}
+.ag__srow:hover{border-color:var(--ember); background:rgba(192,53,63,.08)}
+.ag__slink{flex:1; min-width:0; display:flex; align-items:center; gap:10px; padding:8px 0 8px 10px}
+.ag__badge{flex:none; min-width:44px; text-align:center; font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; padding:4px 6px; border:1px solid var(--border-2); color:var(--cream)}
+.ag__sname{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; font-size:.82rem; line-height:1.2}
+.ag__dim{font-family:var(--mono); font-size:.55rem; letter-spacing:.1em; color:var(--muted)}
+.ag__slink .ag__price{flex:none; font-family:var(--mono); font-size:.76rem; color:var(--cream); white-space:nowrap}
+.ag__sadd{flex:none; margin-right:8px; height:30px; padding:0 14px; border-radius:999px; border:1px solid var(--border-2); background:none; color:var(--cream); font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:background .2s, border-color .2s}
+.ag__sadd:hover,.ag__sadd:focus-visible{background:var(--oxblood); border-color:var(--oxblood)}
+@media(max-width:767px){ .ag__step,.ag__slist{margin-left:45px} .ag__pick{gap:9px} .ag__sadd{padding:0 11px; margin-right:6px} .ag__badge{min-width:38px} }
+@media(prefers-reduced-motion:reduce){ .ag__sizes,.ag__pchev{transition:none} }
+
+/* narrow artist cards (desktop grid): badge already names the size, so drop the label and indent */
+.ag__in{container-type:inline-size}
+@container (max-width:340px){
+  .ag__step,.ag__slist{margin-left:0}
+  .ag__slab{display:none}
+  .ag__dim{font-size:.6rem; color:rgba(243,239,232,.7)}
+  .ag__slink{gap:8px; padding-left:8px}
+  .ag__badge{min-width:40px; padding:4px}
+  .ag__sadd{width:30px; height:30px; padding:0; border-radius:50%; margin-right:6px}
+  .ag__saddt{font-size:0}
+  .ag__saddt::before{content:"+"; font-size:.95rem; letter-spacing:0}
+}

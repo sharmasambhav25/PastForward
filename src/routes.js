@@ -403,20 +403,47 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
   const from = Math.min(...prices), id = 'ag' + idx;
   const n = items.length, word = n === 1 ? 'album' : 'albums';
-  // one row per size, each with its own price, so a poster in three sizes reads as three clear options
-  const rows = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => {
-    const size = v.format === 'vinyl' || v.format === 'polaroid' ? '' : ({ 'poster-a3': 'A3 poster', 'poster-a5': 'A5 poster', 'print-10': '10×10 print' }[v.format]);
-    const thumb = v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
-      : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
-    return `<li class="ag__row">
+  // artist → album → size: an album with several sizes is its own step, so the list stays short
+  const thumbOf = (p, v) => v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
+    : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
+  const rows = items.map((p, k) => {
+    const vs = routeFormats.map(f => variant(p, f)).filter(Boolean);
+    if (!vs.length) return '';
+    if (vs.length === 1) {
+      const v = vs[0];
+      return `<li class="ag__row">
         <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
-          ${thumb}
-          <span class="ag__album">${albumOf(p)}${size ? `<span class="ag__size">${esc(size)}</span>` : ''}</span>
+          ${thumbOf(p, v)}
+          <span class="ag__album">${albumOf(p)}</span>
           <span class="ag__price num">${money(v.price)}</span>
         </a>
-        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}${size ? ', ' + esc(size) : ''} to cart">+</button>
+        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
       </li>`;
-  })).join('');
+    }
+    const sid = id + 's' + k, lo = Math.min(...vs.map(v => v.price));
+    const sizes = vs.map(v => {
+      const f = FMT[v.format] || {};
+      return `<li class="ag__srow">
+          <a class="ag__slink" href="#/product/${p.slug}?format=${v.format}">
+            <span class="ag__badge">${esc(f.badge || v.format)}</span>
+            <span class="ag__sname"><span class="ag__slab">${esc(f.label || '')}</span>${sizeOf(f) ? `<span class="ag__dim">${esc(sizeOf(f))}</span>` : ''}</span>
+            <span class="ag__price num">${money(v.price)}</span>
+          </a>
+          <button class="ag__sadd" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}, ${esc(f.label || '')} to cart"><span class="ag__saddt">Add</span></button>
+        </li>`;
+    }).join('');
+    return `<li class="ag__row ag__row--multi">
+        <button class="ag__pick" type="button" aria-expanded="false" aria-controls="${sid}">
+          ${thumbOf(p, vs[0])}
+          <span class="ag__album">${albumOf(p)}<span class="ag__size">${vs.length} sizes · from ${money(lo)}</span></span>
+          <span class="ag__pchev" aria-hidden="true"></span>
+        </button>
+        <div class="ag__sizes" id="${sid}" role="region" aria-label="${esc(albumText(p))} sizes"><div class="ag__sin">
+          <p class="ag__step mono-xs">Pick a size</p>
+          <ul class="ag__slist">${sizes}</ul>
+        </div></div>
+      </li>`;
+  }).join('');
   return `<div class="ag" data-artist="${esc(artist)}">
     <button class="ag__head" type="button" aria-expanded="false" aria-controls="${id}">
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
@@ -1409,6 +1436,14 @@ function mountCatalog(seg, params) {
     const card = btn.closest('.ag'), open = btn.getAttribute('aria-expanded') !== 'true';
     $$('.ag.is-open').forEach(o => { if (o !== card) { o.classList.remove('is-open'); o.querySelector('.ag__head').setAttribute('aria-expanded', 'false'); } });
     card.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    try { Sound.tick(); } catch (e) {}
+  }));
+  // album → size step inside an open artist card: one album open at a time
+  $$('.ag__pick').forEach(btn => btn.addEventListener('click', () => {
+    const row = btn.closest('.ag__row'), list = btn.closest('.ag__list'), open = btn.getAttribute('aria-expanded') !== 'true';
+    $$('.ag__row.is-open', list).forEach(o => { if (o !== row) { o.classList.remove('is-open'); o.querySelector('.ag__pick').setAttribute('aria-expanded', 'false'); } });
+    row.classList.toggle('is-open', open);
     btn.setAttribute('aria-expanded', String(open));
     try { Sound.tick(); } catch (e) {}
   }));
