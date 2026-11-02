@@ -1918,6 +1918,46 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   .ag.is-open .ag__meta{flex:1}
 }
 .ag__album{overflow-wrap:break-word}
+
+/* ---- album → size step (posters) ---- */
+.ag__row--multi{display:block}
+.ag__pick{all:unset; box-sizing:border-box; cursor:pointer; width:100%; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
+.ag__pick:hover{color:var(--ember)}
+.ag__pick:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+.ag__pchev{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--border-2); display:grid; place-items:center; transition:transform .35s var(--e-out-expo), background .2s, border-color .2s}
+.ag__pchev::before{content:""; width:6px; height:6px; border-right:1.5px solid var(--cream); border-bottom:1.5px solid var(--cream); transform:translateY(-2px) rotate(45deg)}
+.ag__pick:hover .ag__pchev{border-color:var(--ember)}
+.ag__row.is-open .ag__pchev{transform:rotate(180deg); background:var(--oxblood); border-color:var(--oxblood)}
+.ag__row.is-open .ag__pick{color:var(--cream)}
+.ag__sizes{display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s var(--e-out-expo)}
+.ag__row.is-open .ag__sizes{grid-template-rows:1fr}
+.ag__sin{overflow:hidden; min-height:0}
+.ag__step{margin:0 0 6px 54px; color:var(--muted); letter-spacing:.16em}
+.ag__slist{list-style:none; margin:0 0 12px 54px; padding:0; display:flex; flex-direction:column; gap:6px}
+.ag__srow{display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:rgba(243,239,232,.025); transition:border-color .2s, background .2s}
+.ag__srow:hover{border-color:var(--ember); background:rgba(192,53,63,.08)}
+.ag__slink{flex:1; min-width:0; display:flex; align-items:center; gap:10px; padding:8px 0 8px 10px}
+.ag__badge{flex:none; min-width:44px; text-align:center; font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; padding:4px 6px; border:1px solid var(--border-2); color:var(--cream)}
+.ag__sname{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; font-size:.82rem; line-height:1.2}
+.ag__dim{font-family:var(--mono); font-size:.55rem; letter-spacing:.1em; color:var(--muted)}
+.ag__slink .ag__price{flex:none; font-family:var(--mono); font-size:.76rem; color:var(--cream); white-space:nowrap}
+.ag__sadd{flex:none; margin-right:8px; height:30px; padding:0 14px; border-radius:999px; border:1px solid var(--border-2); background:none; color:var(--cream); font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:background .2s, border-color .2s}
+.ag__sadd:hover,.ag__sadd:focus-visible{background:var(--oxblood); border-color:var(--oxblood)}
+@media(max-width:767px){ .ag__step,.ag__slist{margin-left:45px} .ag__pick{gap:9px} .ag__sadd{padding:0 11px; margin-right:6px} .ag__badge{min-width:38px} }
+@media(prefers-reduced-motion:reduce){ .ag__sizes,.ag__pchev{transition:none} }
+
+/* narrow artist cards (desktop grid): badge already names the size, so drop the label and indent */
+.ag__in{container-type:inline-size}
+@container (max-width:340px){
+  .ag__step,.ag__slist{margin-left:0}
+  .ag__slab{display:none}
+  .ag__dim{font-size:.6rem; color:rgba(243,239,232,.7)}
+  .ag__slink{gap:8px; padding-left:8px}
+  .ag__badge{min-width:40px; padding:4px}
+  .ag__sadd{width:30px; height:30px; padding:0; border-radius:50%; margin-right:6px}
+  .ag__saddt{font-size:0}
+  .ag__saddt::before{content:"+"; font-size:.95rem; letter-spacing:0}
+}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -6995,20 +7035,47 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
   const from = Math.min(...prices), id = 'ag' + idx;
   const n = items.length, word = n === 1 ? 'album' : 'albums';
-  // one row per size, each with its own price, so a poster in three sizes reads as three clear options
-  const rows = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => {
-    const size = v.format === 'vinyl' || v.format === 'polaroid' ? '' : ({ 'poster-a3': 'A3 poster', 'poster-a5': 'A5 poster', 'print-10': '10×10 print' }[v.format]);
-    const thumb = v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
-      : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
-    return `<li class="ag__row">
+  // artist → album → size: an album with several sizes is its own step, so the list stays short
+  const thumbOf = (p, v) => v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
+    : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
+  const rows = items.map((p, k) => {
+    const vs = routeFormats.map(f => variant(p, f)).filter(Boolean);
+    if (!vs.length) return '';
+    if (vs.length === 1) {
+      const v = vs[0];
+      return `<li class="ag__row">
         <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
-          ${thumb}
-          <span class="ag__album">${albumOf(p)}${size ? `<span class="ag__size">${esc(size)}</span>` : ''}</span>
+          ${thumbOf(p, v)}
+          <span class="ag__album">${albumOf(p)}</span>
           <span class="ag__price num">${money(v.price)}</span>
         </a>
-        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}${size ? ', ' + esc(size) : ''} to cart">+</button>
+        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
       </li>`;
-  })).join('');
+    }
+    const sid = id + 's' + k, lo = Math.min(...vs.map(v => v.price));
+    const sizes = vs.map(v => {
+      const f = FMT[v.format] || {};
+      return `<li class="ag__srow">
+          <a class="ag__slink" href="#/product/${p.slug}?format=${v.format}">
+            <span class="ag__badge">${esc(f.badge || v.format)}</span>
+            <span class="ag__sname"><span class="ag__slab">${esc(f.label || '')}</span>${sizeOf(f) ? `<span class="ag__dim">${esc(sizeOf(f))}</span>` : ''}</span>
+            <span class="ag__price num">${money(v.price)}</span>
+          </a>
+          <button class="ag__sadd" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}, ${esc(f.label || '')} to cart"><span class="ag__saddt">Add</span></button>
+        </li>`;
+    }).join('');
+    return `<li class="ag__row ag__row--multi">
+        <button class="ag__pick" type="button" aria-expanded="false" aria-controls="${sid}">
+          ${thumbOf(p, vs[0])}
+          <span class="ag__album">${albumOf(p)}<span class="ag__size">${vs.length} sizes · from ${money(lo)}</span></span>
+          <span class="ag__pchev" aria-hidden="true"></span>
+        </button>
+        <div class="ag__sizes" id="${sid}" role="region" aria-label="${esc(albumText(p))} sizes"><div class="ag__sin">
+          <p class="ag__step mono-xs">Pick a size</p>
+          <ul class="ag__slist">${sizes}</ul>
+        </div></div>
+      </li>`;
+  }).join('');
   return `<div class="ag" data-artist="${esc(artist)}">
     <button class="ag__head" type="button" aria-expanded="false" aria-controls="${id}">
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
@@ -8001,6 +8068,14 @@ function mountCatalog(seg, params) {
     const card = btn.closest('.ag'), open = btn.getAttribute('aria-expanded') !== 'true';
     $$('.ag.is-open').forEach(o => { if (o !== card) { o.classList.remove('is-open'); o.querySelector('.ag__head').setAttribute('aria-expanded', 'false'); } });
     card.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    try { Sound.tick(); } catch (e) {}
+  }));
+  // album → size step inside an open artist card: one album open at a time
+  $$('.ag__pick').forEach(btn => btn.addEventListener('click', () => {
+    const row = btn.closest('.ag__row'), list = btn.closest('.ag__list'), open = btn.getAttribute('aria-expanded') !== 'true';
+    $$('.ag__row.is-open', list).forEach(o => { if (o !== row) { o.classList.remove('is-open'); o.querySelector('.ag__pick').setAttribute('aria-expanded', 'false'); } });
+    row.classList.toggle('is-open', open);
     btn.setAttribute('aria-expanded', String(open));
     try { Sound.tick(); } catch (e) {}
   }));
