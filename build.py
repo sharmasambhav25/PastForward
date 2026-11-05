@@ -109,7 +109,7 @@ def assemble(payload, standalone):
 <script>{albumscrub}</script>
 <script>{liquid}</script>
 <script>{wallpaper}</script>
-<script>{footerreveal}</script>
+
 <script>{routes}</script>
 <script>{boot}</script>
 {VINYL3D}'''
