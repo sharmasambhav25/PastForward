@@ -268,7 +268,6 @@ function chromeHTML() {
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
-      <a class="navlink" href="#/polaroids" data-nav="polaroids">Polaroids${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
@@ -319,8 +318,8 @@ function chromeHTML() {
       <a href="#/posters/a3" class="menu__pill">A3 Poster</a>
       <a href="#/posters/a5" class="menu__pill">A5 Poster</a>
       <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
+      <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
-    <a href="#/polaroids">Polaroids</a>
     <a href="#/collections/the-classics">Our Collections</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
@@ -346,7 +345,6 @@ function chromeHTML() {
     <div class="needle__label" id="needlelabel">HOME</div>
     <div class="needle__track"><div class="needle__fill" id="needlefill"></div></div>
   </div>
-  <div class="cursor" id="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__lbl"></span></div><div class="cursor__dot"></div></div>
   <canvas id="grain" aria-hidden="true"></canvas><div id="vignette" aria-hidden="true"></div>
   <div id="field" aria-hidden="true"></div>
   <div id="corners" aria-hidden="false">
@@ -505,7 +503,7 @@ function initGrounds() {
 }
 
 function footerHTML() {
-  return `<footer class="ftr"><div class="ftr__reveal" data-footer-reveal aria-hidden="true"></div><div class="wrap">
+  return `<footer class="ftr"><div class="wrap">
     <div class="ftr__grid">
       <div>
         <div class="hdr__mark hdr__mark--ftr"><img src="${window.__WORDMARK__}" alt="PastForward"></div>
@@ -652,6 +650,7 @@ function mountDragScroll(el) {
 }
 
 function initCursor() {
+  return;   // the site uses the normal system pointer
   const cur = $('#cursor'); if (!cur || !window.matchMedia('(hover:hover) and (pointer:fine)').matches || RM()) { if (cur) cur.style.display = 'none'; return; }
   const dot = $('.cursor__dot', cur), ring = $('.cursor__ring', cur), lbl = $('.cursor__lbl', cur);
   let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;

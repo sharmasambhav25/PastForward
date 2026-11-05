@@ -191,7 +191,7 @@ function viewHome() {
        Script over didone caps over grotesque, white, on a darkened
        photograph of the real wall. Straight out of the brand's own ads. -->
   <section class="stage" data-section="WALL DECOR">
-    <div class="stage__img"><img src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
+    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
@@ -203,12 +203,8 @@ function viewHome() {
 
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
-  <section class="ground g-crimson" data-section="WHY" style="padding-block:clamp(72px,11vw,150px);overflow:hidden">
-    ${col('r', 'col--soft')}
-    <div class="wrap" style="text-align:center">
-      <p class="manifesto reveal">Giving forgotten things a <b>future.</b> What once played the soundtrack to someone's youth now hangs on a <b>wall.</b></p>
-      <div class="cap" style="margin-top:40px">EST. 2025 · MASTERS' UNION</div>
-    </div>
+  <section class="why-strip" data-section="WHY">
+    <p class="why-strip__t">Giving forgotten things a <b>future.</b> What once played the soundtrack to someone's youth now hangs on a <b>wall.</b></p>
   </section>
 
   <!-- 12 ============ THE DROP ============ -->
