@@ -1958,6 +1958,22 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   .ag__saddt{font-size:0}
   .ag__saddt::before{content:"+"; font-size:.95rem; letter-spacing:0}
 }
+
+/* ---- size headings on the posters pages ---- */
+.stabs{display:flex; gap:8px; flex-wrap:wrap; margin:-6px 0 40px; padding-bottom:22px; border-bottom:1px solid var(--border)}
+.stab{display:flex; flex-direction:column; gap:4px; min-width:118px; padding:12px 18px 11px; border:1px solid var(--border-2); text-decoration:none; color:var(--cream); transition:border-color .2s, background .2s, transform .2s var(--e-ui)}
+.stab:hover{border-color:var(--ember); transform:translateY(-2px)}
+.stab__name{font-family:var(--display); font-size:1.18rem; line-height:1.1; letter-spacing:-.01em}
+.stab__meta{color:var(--muted); letter-spacing:.12em}
+.stab.is-on{background:var(--oxblood); border-color:var(--oxblood)}
+.stab.is-on .stab__meta{color:rgba(243,239,232,.78)}
+@media(max-width:767px){
+  .stabs{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin:-10px -16px 28px; padding:0 16px 16px; gap:6px}
+  .stabs::-webkit-scrollbar{display:none}
+  .stab{flex:none; min-width:0; padding:10px 14px 9px}
+  .stab__name{font-size:1rem}
+}
+@media(prefers-reduced-motion:reduce){ .stab{transition:none} }
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -1969,7 +1985,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -1982,7 +1998,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -1994,7 +2010,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2007,7 +2023,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "desi-lineage"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2019,7 +2035,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2032,7 +2048,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "desi-lineage"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2044,7 +2060,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2058,7 +2074,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    ],
    "featured": false,
    "confirmAlbum": true,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2082,7 +2098,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -2119,7 +2135,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2132,7 +2148,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "main-stage"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2144,7 +2160,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2156,7 +2172,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2180,7 +2196,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -2218,7 +2234,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2232,7 +2248,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "three-am"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2244,7 +2260,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2268,7 +2284,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -2305,7 +2321,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2318,7 +2334,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "k-wave"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2330,7 +2346,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2343,7 +2359,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2355,7 +2371,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2368,7 +2384,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2380,7 +2396,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2393,7 +2409,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2405,7 +2421,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2418,7 +2434,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "drop-zone"
    ],
    "featured": false,
-   "from": 399,
+   "from": 299,
    "rank": 999
   },
   {
@@ -2430,7 +2446,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2442,7 +2458,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2466,7 +2482,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -2503,7 +2519,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2540,7 +2556,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2602,7 +2618,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2615,7 +2631,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2627,7 +2643,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2640,7 +2656,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 399,
+   "from": 299,
    "rank": 999
   },
   {
@@ -2652,7 +2668,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2676,7 +2692,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -2713,7 +2729,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2725,7 +2741,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2762,7 +2778,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2775,7 +2791,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2787,7 +2803,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2800,7 +2816,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2837,7 +2853,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2850,7 +2866,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "k-wave"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2862,7 +2878,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2876,7 +2892,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "three-am"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2888,7 +2904,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2901,7 +2917,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2913,7 +2929,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2926,7 +2942,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "drop-zone"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -2938,7 +2954,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2951,7 +2967,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "desi-lineage"
    ],
    "featured": true,
-   "from": 899,
+   "from": 999,
    "rank": 4
   },
   {
@@ -2963,7 +2979,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -2975,7 +2991,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -2999,7 +3015,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3036,7 +3052,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3049,7 +3065,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "three-am"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3061,7 +3077,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3074,7 +3090,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "k-wave"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3086,7 +3102,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3099,7 +3115,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "drop-zone"
    ],
    "featured": false,
-   "from": 399,
+   "from": 299,
    "rank": 999
   },
   {
@@ -3111,7 +3127,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3122,7 +3138,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    ],
    "tags": [],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3134,7 +3150,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3171,7 +3187,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3184,7 +3200,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "main-stage"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3196,7 +3212,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3209,7 +3225,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "drop-zone"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3221,7 +3237,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3258,7 +3274,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3271,7 +3287,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "k-wave"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3283,7 +3299,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3332,7 +3348,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3345,7 +3361,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "pop-canon"
    ],
    "featured": true,
-   "from": 399,
+   "from": 299,
    "rank": 10
   },
   {
@@ -3357,7 +3373,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3369,7 +3385,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3393,7 +3409,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3430,7 +3446,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3467,7 +3483,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3479,7 +3495,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3516,7 +3532,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3529,7 +3545,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": true,
-   "from": 899,
+   "from": 999,
    "rank": 7
   },
   {
@@ -3541,7 +3557,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3554,7 +3570,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "k-wave"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3566,7 +3582,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3578,7 +3594,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3602,7 +3618,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3639,7 +3655,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3653,7 +3669,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
    ],
    "featured": false,
    "confirmAlbum": true,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3665,7 +3681,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3689,7 +3705,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3726,7 +3742,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3763,7 +3779,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3783,7 +3799,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "image": "A3-POSTER-Am I Dreaming-Spiderman-Black.webp"
     }
    ],
-   "from": 399,
+   "from": 299,
    "rank": 999
   },
   {
@@ -3795,7 +3811,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3808,7 +3824,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "off-genre"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3820,7 +3836,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3833,7 +3849,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "main-stage"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -3845,7 +3861,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3857,7 +3873,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3919,7 +3935,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -3931,7 +3947,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -3955,7 +3971,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -3992,7 +4008,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4004,7 +4020,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -4028,7 +4044,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -4065,7 +4081,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4077,7 +4093,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -4101,7 +4117,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -4138,7 +4154,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4151,7 +4167,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -4163,7 +4179,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4176,7 +4192,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "the-classics"
    ],
    "featured": true,
-   "from": 899,
+   "from": 999,
    "rank": 8
   },
   {
@@ -4188,7 +4204,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4200,7 +4216,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -4272,7 +4288,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4285,7 +4301,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "drop-zone"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -4297,7 +4313,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4309,7 +4325,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -4321,7 +4337,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
-     "price": 299,
+     "price": 249,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "10×10″",
@@ -4358,7 +4374,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "vinyl",
      "label": "Vinyl",
      "size": "12-inch record, ⌀305mm",
-     "price": 899,
+     "price": 999,
      "confirmPrice": false,
      "ratio": 1.0,
      "badge": "12″",
@@ -4371,7 +4387,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "off-genre"
    ],
    "featured": false,
-   "from": 899,
+   "from": 999,
    "rank": 999
   },
   {
@@ -4383,7 +4399,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
-     "price": 399,
+     "price": 299,
      "confirmPrice": false,
      "ratio": 0.7072,
      "badge": "A3",
@@ -4396,7 +4412,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
     "off-genre"
    ],
    "featured": false,
-   "from": 399,
+   "from": 299,
    "rank": 999
   }
  ],
@@ -4517,7 +4533,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   "vinyl": {
    "label": "Vinyl",
    "size": "12-inch record, ⌀305mm",
-   "price": 899,
+   "price": 999,
    "badge": "12″",
    "ratio": 1.0,
    "confirmPrice": false
@@ -4525,7 +4541,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   "poster-a3": {
    "label": "A3 poster",
    "size": "297 × 420mm",
-   "price": 399,
+   "price": 299,
    "badge": "A3",
    "ratio": 0.7072,
    "confirmPrice": false
@@ -4541,7 +4557,7 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   "print-10": {
    "label": "10×10 print",
    "size": "254 × 254mm",
-   "price": 299,
+   "price": 249,
    "badge": "10×10″",
    "ratio": 1.0,
    "confirmPrice": false
@@ -4582,6 +4598,14 @@ const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
+// the poster family, one heading per size (header menu + tabs on the posters pages)
+const SIZE_TABS = [
+  { key: 'all', name: 'All posters', href: '#/posters' },
+  { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '#/posters/a3', dim: '297 × 420mm' },
+  { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '#/posters/a5', dim: '148 × 210mm' },
+  { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '#/posters/10x10', dim: '254 × 254mm' },
+  { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '#/polaroids', dim: 'Pocket-size prints' },
+];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
 const CONTACT_EMAIL = 'contact@pastforward.shop';
 const DELIVERY = '7–10 days';
@@ -4744,7 +4768,7 @@ function cartMaths() {
   // bundles aren't on offer yet; set BUNDLE_ON = true when PastForward launches the set of three
   const BUNDLE_ON = false;
   const sets = BUNDLE_ON ? Math.floor(distinctVinyl / 3) : 0;
-  const saved = sets * (899 * 3 - 2199);
+  const saved = sets * (FMT.vinyl.price * 3 - 2199);
   return { sub, sets, saved, total: sub - saved };
 }
 function syncCart() {
@@ -7090,6 +7114,13 @@ function artistCardHTML([artist, items], routeFormats, idx) {
     </div></div>
   </div>`;
 }
+function sizeTabsHTML(active) {
+  const n = f => P.filter(p => p.variants.some(v => v.format === f)).length;
+  return `<nav class="stabs" aria-label="Poster sizes">${SIZE_TABS.map(t => `<a class="stab${t.key === active ? ' is-on' : ''}" href="${t.href}"${t.key === active ? ' aria-current="page"' : ''}>
+      <span class="stab__name">${t.short || t.name}</span>
+      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)} · ${n(t.f)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
+    </a>`).join('')}</nav>`;
+}
 function viewCatalog(category, subType, params) {
   let routeFormats = [];
   let h1 = '', sub = '';
@@ -7105,7 +7136,7 @@ function viewCatalog(category, subType, params) {
     routeFormats = ['polaroid'];
     targetFormat = 'polaroid';
     h1 = 'Polaroids.';
-    sub = 'Small, cheap, and the reason a wall stops looking planned.';
+    sub = `Small, cheap, and the reason a wall stops looking planned. ${money(FMT.polaroid.price)} each.`;
   } else if (category === 'posters') {
     h1 = 'Posters.';
     sub = 'A3 and A5 posters, and 10×10 square prints of the albums that mattered.';
@@ -7117,6 +7148,8 @@ function viewCatalog(category, subType, params) {
       else if (subType === '10x10' || subType === 'print-10' || subType === 'prints') selSizes = ['print-10'];
     }
 
+    const one = selSizes.length === 1 ? SIZE_TABS.find(t => t.f === selSizes[0]) : null;
+    if (one) { h1 = one.name + '.'; sub = `${one.dim} · ${money(FMT[one.f].price)} each. Pick an artist, then the album.`; }
     if (selSizes.length) {
       routeFormats = selSizes;
       targetFormat = selSizes.length === 1 ? selSizes[0] : 'posters';
@@ -7234,6 +7267,7 @@ function viewCatalog(category, subType, params) {
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
     </div>
+    ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (routeFormats.length === 1 ? (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key : 'all')) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
         ${railContentHTML}

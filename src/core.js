@@ -7,6 +7,14 @@ const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
+// the poster family, one heading per size (header menu + tabs on the posters pages)
+const SIZE_TABS = [
+  { key: 'all', name: 'All posters', href: '#/posters' },
+  { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '#/posters/a3', dim: '297 × 420mm' },
+  { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '#/posters/a5', dim: '148 × 210mm' },
+  { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '#/posters/10x10', dim: '254 × 254mm' },
+  { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '#/polaroids', dim: 'Pocket-size prints' },
+];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
 const CONTACT_EMAIL = 'contact@pastforward.shop';
 const DELIVERY = '7–10 days';
@@ -169,7 +177,7 @@ function cartMaths() {
   // bundles aren't on offer yet; set BUNDLE_ON = true when PastForward launches the set of three
   const BUNDLE_ON = false;
   const sets = BUNDLE_ON ? Math.floor(distinctVinyl / 3) : 0;
-  const saved = sets * (899 * 3 - 2199);
+  const saved = sets * (FMT.vinyl.price * 3 - 2199);
   return { sub, sets, saved, total: sub - saved };
 }
 function syncCart() {
