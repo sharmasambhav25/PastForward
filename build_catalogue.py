@@ -6,10 +6,10 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(ROOT, "img")
 
 FORMATS = {
-    'vinyl':     dict(label='Vinyl',        size='12-inch record, ⌀305mm',  price=899, ratio=1.0,    badge='12″'),
-    'poster-a3': dict(label='A3 poster',    size='297 × 420mm',            price=399, ratio=1/1.414, badge='A3'),
+    'vinyl':     dict(label='Vinyl',        size='12-inch record, ⌀305mm',  price=999, ratio=1.0,    badge='12″'),
+    'poster-a3': dict(label='A3 poster',    size='297 × 420mm',            price=299, ratio=1/1.414, badge='A3'),
     'poster-a5': dict(label='A5 poster',    size='148 × 210mm',            price=199, ratio=1/1.414, badge='A5'),
-    'print-10':  dict(label='10×10 print',  size='254 × 254mm',            price=299, ratio=1.0,    badge='10×10″'),
+    'print-10':  dict(label='10×10 print',  size='254 × 254mm',            price=249, ratio=1.0,    badge='10×10″'),
     'polaroid':  dict(label='Polaroid card',size='[CONFIRM]',              price=99, ratio=630/1020, badge='POLAROID'),
 }
 CONFIRM_PRICE = set()   # all prices confirmed by PastForward, Nov 2026

@@ -458,6 +458,13 @@ function artistCardHTML([artist, items], routeFormats, idx) {
     </div></div>
   </div>`;
 }
+function sizeTabsHTML(active) {
+  const n = f => P.filter(p => p.variants.some(v => v.format === f)).length;
+  return `<nav class="stabs" aria-label="Poster sizes">${SIZE_TABS.map(t => `<a class="stab${t.key === active ? ' is-on' : ''}" href="${t.href}"${t.key === active ? ' aria-current="page"' : ''}>
+      <span class="stab__name">${t.short || t.name}</span>
+      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)} · ${n(t.f)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
+    </a>`).join('')}</nav>`;
+}
 function viewCatalog(category, subType, params) {
   let routeFormats = [];
   let h1 = '', sub = '';
@@ -473,7 +480,7 @@ function viewCatalog(category, subType, params) {
     routeFormats = ['polaroid'];
     targetFormat = 'polaroid';
     h1 = 'Polaroids.';
-    sub = 'Small, cheap, and the reason a wall stops looking planned.';
+    sub = `Small, cheap, and the reason a wall stops looking planned. ${money(FMT.polaroid.price)} each.`;
   } else if (category === 'posters') {
     h1 = 'Posters.';
     sub = 'A3 and A5 posters, and 10×10 square prints of the albums that mattered.';
@@ -485,6 +492,8 @@ function viewCatalog(category, subType, params) {
       else if (subType === '10x10' || subType === 'print-10' || subType === 'prints') selSizes = ['print-10'];
     }
 
+    const one = selSizes.length === 1 ? SIZE_TABS.find(t => t.f === selSizes[0]) : null;
+    if (one) { h1 = one.name + '.'; sub = `${one.dim} · ${money(FMT[one.f].price)} each. Pick an artist, then the album.`; }
     if (selSizes.length) {
       routeFormats = selSizes;
       targetFormat = selSizes.length === 1 ? selSizes[0] : 'posters';
@@ -602,6 +611,7 @@ function viewCatalog(category, subType, params) {
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
     </div>
+    ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (routeFormats.length === 1 ? (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key : 'all')) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
         ${railContentHTML}

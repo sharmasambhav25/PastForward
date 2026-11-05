@@ -1955,3 +1955,19 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   .ag__saddt{font-size:0}
   .ag__saddt::before{content:"+"; font-size:.95rem; letter-spacing:0}
 }
+
+/* ---- size headings on the posters pages ---- */
+.stabs{display:flex; gap:8px; flex-wrap:wrap; margin:-6px 0 40px; padding-bottom:22px; border-bottom:1px solid var(--border)}
+.stab{display:flex; flex-direction:column; gap:4px; min-width:118px; padding:12px 18px 11px; border:1px solid var(--border-2); text-decoration:none; color:var(--cream); transition:border-color .2s, background .2s, transform .2s var(--e-ui)}
+.stab:hover{border-color:var(--ember); transform:translateY(-2px)}
+.stab__name{font-family:var(--display); font-size:1.18rem; line-height:1.1; letter-spacing:-.01em}
+.stab__meta{color:var(--muted); letter-spacing:.12em}
+.stab.is-on{background:var(--oxblood); border-color:var(--oxblood)}
+.stab.is-on .stab__meta{color:rgba(243,239,232,.78)}
+@media(max-width:767px){
+  .stabs{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin:-10px -16px 28px; padding:0 16px 16px; gap:6px}
+  .stabs::-webkit-scrollbar{display:none}
+  .stab{flex:none; min-width:0; padding:10px 14px 9px}
+  .stab__name{font-size:1rem}
+}
+@media(prefers-reduced-motion:reduce){ .stab{transition:none} }
