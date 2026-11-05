@@ -1980,11 +1980,9 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .stage__img::after{height:14%; background:linear-gradient(to bottom, rgba(13,11,12,0), #0d0b0c)}
 .stage::after{background:radial-gradient(60% 46% at 50% 50%, rgba(6,5,6,.42), transparent 75%)}
 @media(min-width:768px){
-  .stage{min-height:0; height:min(100vh, 1040px)}
-  .stage__img .stage__bg{display:block; position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-    filter:blur(26px) brightness(.32) saturate(.8); transform:scale(1.12)}
-  .stage__img .stage__fg{position:relative; display:block; width:auto; height:100%; max-width:100%; margin-inline:auto; object-fit:contain;
-    -webkit-mask-image:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent)}
+  /* full-width and landscape; taller than before so more of the wall shows */
+  .stage{min-height:0; height:min(112vh, 1100px)}
+  .stage__img .stage__fg{width:100%; height:100%; object-fit:cover; object-position:50% 42%}
 }
 
 /* ---- the manifesto, now a slim strip between the wall photo and the drop ---- */
