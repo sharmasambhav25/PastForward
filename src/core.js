@@ -6,6 +6,10 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
+// vinyl sale: the MRP is shown struck through beside the sale price, everywhere a vinyl price appears
+const MRP = { vinyl: 1299 };
+const priceHTML = (format, price) => MRP[format] && MRP[format] > price
+  ? `<s class="mrp num">${money(MRP[format])}</s> <span class="sale num">${money(price)}</span>` : money(price);
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
 // the poster family, one heading per size (header menu + tabs on the posters pages)
 const SIZE_TABS = [
@@ -126,7 +130,7 @@ function cardHTML(p, targetFormat) {
       <span class="card__artist">${esc(p.artist)}</span>
       <span class="card__album">${albumOf(p)}</span>
       <span class="card__size">${sizeText}</span>
-      <span class="card__price num">${money(v.price)}</span>
+      <span class="card__price num">${priceHTML(v.format, v.price)}</span>
     </div></a>`;
 }
 
@@ -263,12 +267,13 @@ function closeAll() {
 function chromeHTML() {
   return `
   <a class="skip" href="#main">Skip to content</a>
-  <header class="hdr" id="hdr"><div class="wrap hdr__in">
+  <header class="hdr" id="hdr"><a class="salebar" href="#/vinyl"><span class="salebar__tag">Vinyl sale</span> <span>Every record now</span> <span class="sale num">${money(FMT.vinyl.price)}</span> <s class="num">${money(MRP.vinyl)}</s> <span class="salebar__go">Shop vinyls →</span></a><div class="wrap hdr__in">
     <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
+      <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
@@ -321,6 +326,7 @@ function chromeHTML() {
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
     <a href="#/collections/the-classics">Our Collections</a>
+    <a href="#/custom">Custom</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
     <a href="#/contact">Contact</a>

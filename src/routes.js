@@ -277,7 +277,7 @@ function crateHTML() {
         <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">SCROLL OR USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
       <div class="crate__facts">
-        <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
+        <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span class="crate__price">${priceHTML('vinyl', variant(P.find(x => albumText(x) === f0.album) || P[0], 'vinyl').price)}</span></div></div>
         <div><div class="crate__fl"><span data-cm="otherLabel">${f0.otherLabel}</span></div><div class="crate__fv"><span data-cm="other">${esc(f0.other)}</span></div></div>
       </div>
       <div class="crate__nav">
@@ -305,7 +305,7 @@ function mountCrateSection(onUnmount) {
     openA.textContent = `Open ${facts[i].album} by ${facts[i].artist}`;
     if (i === shown) return; const dir = i > shown ? 1 : -1; shown = i;
     const f = facts[i];
-    ['album', 'artist', 'collection', 'price', 'otherLabel', 'other'].forEach((k, j) => {
+    ['album', 'artist', 'collection', 'otherLabel', 'other'].forEach((k, j) => {
       const el = cm(k); if (!el || el.textContent === f[k]) return;
       el.textContent = f[k];
       if (!RM()) el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
@@ -411,7 +411,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
         <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
           ${thumbOf(p, v)}
           <span class="ag__album">${albumOf(p)}</span>
-          <span class="ag__price num">${money(v.price)}</span>
+          <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
         </a>
         <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
       </li>`;
@@ -423,7 +423,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
           <a class="ag__slink" href="#/product/${p.slug}?format=${v.format}">
             <span class="ag__badge">${esc(f.badge || v.format)}</span>
             <span class="ag__sname"><span class="ag__slab">${esc(f.label || '')}</span>${sizeOf(f) ? `<span class="ag__dim">${esc(sizeOf(f))}</span>` : ''}</span>
-            <span class="ag__price num">${money(v.price)}</span>
+            <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
           </a>
           <button class="ag__sadd" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}, ${esc(f.label || '')} to cart"><span class="ag__saddt">Add</span></button>
         </li>`;
@@ -445,7 +445,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
       <span class="ag__meta">
         <span class="ag__name">${esc(artist)}</span>
-        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${money(from)}</span></span>
+        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
       </span>
       <span class="ag__chev" aria-hidden="true"></span>
     </button>
@@ -686,7 +686,7 @@ function viewProduct(p, params) {
       <div>
         <div class="card__artist">${esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
-        <div class="num" id="pdpprice" style="font-size:1.3rem">${money(v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
+        <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
 
         <div class="fmt" style="margin-top:28px">
           ${Object.entries(FMT).map(([k, f]) => {
@@ -694,7 +694,7 @@ function viewProduct(p, params) {
             return `<button data-fmt="${k}" class="${k === sel ? 'is-on' : ''}" ${has ? '' : 'disabled'} aria-pressed="${k === sel}">
               <span class="f-name">${esc(f.label)}</span>
               <span class="f-size">${sizeOf(f) ? esc(sizeOf(f)) : 'Polaroid-style'}</span>
-              <span class="f-price num">${has ? money(f.price) : '—'}</span></button>`;
+              <span class="f-price num">${has ? priceHTML(k, f.price) : '—'}</span></button>`;
           }).join('')}
         </div>
 
@@ -736,7 +736,7 @@ function viewProduct(p, params) {
     </section>
 
     <div class="buybar" id="buybar">
-      <span class="num" id="barprice">${money(v.price)}</span>
+      <span class="num" id="barprice">${priceHTML(v.format, v.price)}</span>
       <button class="btn btn--primary" style="flex:1" id="baradd"><span class="btn__mag">Add to cart</span></button>
     </div></div>`;
 }
@@ -1570,8 +1570,8 @@ function mountProduct(p, params) {
     if (f === 'vinyl') Sound.needleDrop(); else Sound.tick();
     $('#stagemedia').innerHTML = stageMedia(p, f);
     if (!RM()) mountRipple();
-    $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
-    $('#barprice').textContent = money(v.price);
+    $('#pdpprice').innerHTML = priceHTML(v.format, v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
+    $('#barprice').innerHTML = priceHTML(v.format, v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
       : FMT[f].label + ', printed to order';

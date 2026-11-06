@@ -1990,3 +1990,33 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .why-strip__t b{font-family:var(--display); font-weight:400; font-style:italic; text-transform:none; letter-spacing:0;
   font-size:1.5em; color:var(--ember)}
 [data-section="THE DROP"]::before{background:linear-gradient(to bottom, #0d0b0c, rgba(13,11,12,0))}
+
+/* ---- vinyl sale: struck MRP beside the sale price ---- */
+.mrp{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--ember); text-decoration-thickness:1.5px; font-size:.86em; margin-right:.2em}
+.sale{color:var(--cream)}
+.fmt .f-price .mrp{display:block; margin:0 0 1px}
+
+/* ---- slim sale bar above the header: the header grows by its height, so every --nav-h offset still clears it ---- */
+:root{--bar-h:28px}
+:root{--nav-h:calc(56px + var(--bar-h))}
+@media(min-width:480px){:root{--nav-h:calc(60px + var(--bar-h))}}
+@media(min-width:768px){:root{--nav-h:calc(64px + var(--bar-h))}}
+.hdr{flex-direction:column; align-items:stretch}
+.hdr__in{flex:1}
+.salebar{flex:none; height:var(--bar-h); display:flex; align-items:center; justify-content:center; gap:10px;
+  background:var(--oxblood); color:var(--cream); font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  text-decoration:none; white-space:nowrap; overflow:hidden; padding-inline:var(--gutter)}
+.salebar .sale{font-weight:600; font-size:1.18em; letter-spacing:.06em}
+.salebar s{opacity:.7; letter-spacing:.06em}
+.salebar__tag{background:var(--cream); color:var(--oxblood); padding:3px 7px; font-weight:600}
+.salebar__go{opacity:.85}
+.salebar:hover .salebar__go{opacity:1; text-decoration:underline}
+@media(max-width:600px){ .salebar{font-size:.56rem; gap:7px; letter-spacing:.1em} .salebar__go,.salebar>span:nth-child(2){display:none} }
+
+/* ---- hero: the collage behind the record, brighter ---- */
+.fhero__col>i{opacity:.72}
+.fhero__col>i:last-child{opacity:.76}
+.fhero__col::after{background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.62) 22%,rgba(6,5,6,.22) 62%,rgba(6,5,6,.04))}
+.ag__price .mrp{display:block; margin:0 0 1px; font-size:.82em; text-align:right}
+.ag__price{text-align:right; line-height:1.15}
+.ag__sub .mrp{margin-right:.35em}
