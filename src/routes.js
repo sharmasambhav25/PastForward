@@ -1074,7 +1074,7 @@ window.__mount = function (seg, params) {
       const onCrate = () => {
         const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
         // 1 while the section is still rising into view, 0 once it's pinned: drives the fade-in from the hero
-        root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
+        if (innerWidth >= 768) root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
         if (!window.matchMedia('(max-width:767px)').matches && span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
       };
       const prev = window.__onScroll;

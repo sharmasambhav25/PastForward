@@ -363,7 +363,8 @@ export function mountVinyl(container) {
 
   let frame, disposed = false, previousTime = performance.now();
   // skip drawing while the hero is scrolled out of view (the loop stays alive, the GPU rests)
-  let onScreen = true;
+  let onScreen = true, lastDraw = 0;
+  const PHONE = window.matchMedia('(max-width:767px)').matches;
   const visibility = new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { rootMargin: "80px" });
   visibility.observe(container);
   /* rotation is driven from outside — the page's existing drag-to-spin/momentum/
@@ -410,8 +411,13 @@ export function mountVinyl(container) {
 
     light.position.lerp(lightTarget, 1 - Math.exp(-6 * dt));
 
-    if (albumScrub && onScreen) albumScrub.update(now);
-    if (onScreen) renderer.render(scene, camera);
+    // phones: draw at ~30fps, and not at all while the page is being scrolled, so the GPU
+    // never competes with the scroll itself (iOS is very sensitive to this)
+    const lean = PHONE && (now - lastDraw < 31 || now - (window.__lastScrollAt || 0) < 140);
+    if (onScreen && !lean) {
+      if (albumScrub) albumScrub.update(now);
+      renderer.render(scene, camera); lastDraw = now;
+    }
     frame = requestAnimationFrame(animate);
   }
   frame = requestAnimationFrame(animate);

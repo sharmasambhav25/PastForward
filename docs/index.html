@@ -1883,14 +1883,14 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.6); isolation:isolate; overflow:hidden;
   transition:background .35s var(--e-out-expo), color .35s var(--e-out-expo), transform .45s var(--e-spring), box-shadow .35s}
 /* a sweep of light crosses it every few seconds */
-.cta-shop::before{content:""; position:absolute; top:0; bottom:0; left:-40%; width:30%; z-index:-1; pointer-events:none;
-  background:linear-gradient(100deg, transparent, rgba(255,255,255,.9), transparent); transform:skewX(-18deg);
+.cta-shop::before{content:""; position:absolute; top:0; bottom:0; left:0; width:30%; z-index:-1; pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.9), transparent); transform:translateX(-140%) skewX(-18deg);
   animation:ctaSweep 4.2s cubic-bezier(.6,0,.2,1) 1.6s infinite}
-@keyframes ctaSweep{0%{left:-40%} 32%,100%{left:130%}}
+@keyframes ctaSweep{0%{transform:translateX(-140%) skewX(-18deg)} 32%,100%{transform:translateX(440%) skewX(-18deg)}}
 /* and a soft ring breathes out from it, so the eye finds it */
 .cta-shop::after{content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; z-index:-2;
-  box-shadow:0 0 0 0 rgba(192,53,63,.55); animation:ctaPulse 2.8s ease-out 1.2s infinite}
-@keyframes ctaPulse{0%{box-shadow:0 0 0 0 rgba(192,53,63,.55)} 70%,100%{box-shadow:0 0 0 18px rgba(192,53,63,0)}}
+  border:2px solid rgba(192,53,63,.6); opacity:0; animation:ctaPulse 2.8s ease-out 1.2s infinite}
+@keyframes ctaPulse{0%{opacity:1; transform:scale(1)} 70%,100%{opacity:0; transform:scale(1.18,1.5)}}
 .cta-shop__disc{width:46px; height:46px; border-radius:50%; flex:none; position:relative;
   background:var(--disc-img, #0b0a0b) center/100% 100%; box-shadow:0 2px 8px rgba(0,0,0,.45); animation:ctaSpin 3.2s linear infinite}
 .cta-shop__disc i{position:absolute; inset:33%; border-radius:50%; background:radial-gradient(circle,#0b0a0b 0 10%, var(--ember) 12% 100%)}
@@ -2077,6 +2077,18 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 }
 @media(max-width:767px){
   .stage::after{background:radial-gradient(85% 42% at 50% 50%, rgba(6,5,6,.72), rgba(6,5,6,.2) 75%, transparent)}
+}
+
+/* ---- phones, pass 2: nothing that repaints while you scroll ---- */
+@media(max-width:767px){
+  /* the spray-paint filter is rendered on the CPU in Safari: plain glowing type on phones */
+  .salesec__now{filter:none; text-shadow:0 0 22px rgba(216,49,42,.45)}
+  .salesec::before{mix-blend-mode:normal; opacity:.35}
+  .salesec__tape .tape__t{box-shadow:none}
+  /* the fixed groove-ring layer and its light/dark flip */
+  #field{display:none}
+  /* the shine on the shop buttons is decoration: keep the spinning disc, drop the sweep */
+  .cta-shop::before{display:none}
 }
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
@@ -4959,7 +4971,7 @@ function closeAll() {
 }
 
 /* ---------- vinyl sale: running tape ribbon ---------- */
-function saleTapeRun(n = 6) {
+function saleTapeRun(n = 4) {
   const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span></span>`;
   return one.repeat(n);
 }
@@ -5401,12 +5413,12 @@ function initScroll() {
     hdr.classList.toggle('is-solid', hp >= 1);
     hdr.classList.toggle('is-hero', home && hp < .98);
     let name = '';
-    $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
+    if (window.innerWidth >= 1280) $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
     if (lab && name && lab.textContent !== name) { lab.textContent = name; }
     if (typeof window.__onGround === 'function') window.__onGround();
     if (typeof window.__onScroll === 'function') window.__onScroll(y);
   }
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+  addEventListener('scroll', () => { window.__lastScrollAt = performance.now(); if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
   addEventListener('resize', upd, { passive: true });
   upd();
 }
@@ -7624,7 +7636,7 @@ window.__mount = function (seg, params) {
       const onCrate = () => {
         const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
         // 1 while the section is still rising into view, 0 once it's pinned: drives the fade-in from the hero
-        root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
+        if (innerWidth >= 768) root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
         if (!window.matchMedia('(max-width:767px)').matches && span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
       };
       const prev = window.__onScroll;
@@ -8660,7 +8672,8 @@ export function mountVinyl(container) {
 
   let frame, disposed = false, previousTime = performance.now();
   // skip drawing while the hero is scrolled out of view (the loop stays alive, the GPU rests)
-  let onScreen = true;
+  let onScreen = true, lastDraw = 0;
+  const PHONE = window.matchMedia('(max-width:767px)').matches;
   const visibility = new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { rootMargin: "80px" });
   visibility.observe(container);
   /* rotation is driven from outside — the page's existing drag-to-spin/momentum/
@@ -8707,8 +8720,13 @@ export function mountVinyl(container) {
 
     light.position.lerp(lightTarget, 1 - Math.exp(-6 * dt));
 
-    if (albumScrub && onScreen) albumScrub.update(now);
-    if (onScreen) renderer.render(scene, camera);
+    // phones: draw at ~30fps, and not at all while the page is being scrolled, so the GPU
+    // never competes with the scroll itself (iOS is very sensitive to this)
+    const lean = PHONE && (now - lastDraw < 31 || now - (window.__lastScrollAt || 0) < 140);
+    if (onScreen && !lean) {
+      if (albumScrub) albumScrub.update(now);
+      renderer.render(scene, camera); lastDraw = now;
+    }
     frame = requestAnimationFrame(animate);
   }
   frame = requestAnimationFrame(animate);
