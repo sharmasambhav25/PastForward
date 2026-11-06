@@ -1145,16 +1145,11 @@ select.sort{background:var(--elevated); border:1px solid var(--border); padding:
   color:rgba(243,239,232,.62); text-shadow:0 1px 10px rgba(0,0,0,.75);
   transition:color 400ms var(--e-ui)}
 html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(237,231,221,.8)}
-html[data-light] #soundtgl b{color:var(--paper-ink)}
 #corners>*{position:absolute; pointer-events:auto}
-.cnr-bl{left:var(--gutter); bottom:20px}
 .cnr-br{right:var(--gutter); bottom:20px}
-#soundtgl{background:none; border:0; padding:8px 12px; margin:-8px -12px; cursor:pointer; color:inherit;
-  font:inherit; letter-spacing:inherit; text-transform:inherit; min-height:44px; display:inline-flex; align-items:center}
-#soundtgl b{font-weight:400; color:var(--cream)}
 @media(max-width:767px){
   #corners{font-size:.55rem}
-  .cnr-bl,.cnr-br{bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+  .cnr-br{bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
 }
 @media(max-width:1023px){
   body:has(.buybar.is-on) #corners,
@@ -2059,8 +2054,6 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   #grain,#vignette{display:none}
   .hdr,.hdr.is-solid{backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(12,9,10,.96)}
   .mega,.menu{backdrop-filter:none; -webkit-backdrop-filter:none}
-  /* the fixed sound toggle sat over text on every page; phones don't need it */
-  #corners .cnr-bl{display:none}
   /* hero: the tiny corner captions crowded the record */
   .fhero__hint,.fhero__hint2{display:none}
   /* bestsellers: one screen, not pinned — swipe or tap the arrows */

@@ -288,7 +288,7 @@ function chromeHTML() {
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
-      <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
+      <a class="navlink" href="#/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
@@ -341,7 +341,7 @@ function chromeHTML() {
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
     <a href="#/collections/the-classics">Our Collections</a>
-    <a href="#/custom">Custom</a>
+    <a href="#/custom">Custom Design</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
     <a href="#/contact">Contact</a>
@@ -369,7 +369,6 @@ function chromeHTML() {
   <canvas id="grain" aria-hidden="true"></canvas><div id="vignette" aria-hidden="true"></div>
   <div id="field" aria-hidden="true"></div>
   <div id="corners" aria-hidden="false">
-    <div class="cnr-bl"><button id="soundtgl" aria-pressed="false">SOUND <b>OFF</b></button></div>
     <div class="cnr-br" id="cnrscroll" hidden>SCROLL TO EXPLORE</div>
   </div>`;
 }
