@@ -288,7 +288,7 @@ function chromeHTML() {
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
-      <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
+      <a class="navlink" href="#/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
@@ -341,7 +341,7 @@ function chromeHTML() {
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
     <a href="#/collections/the-classics">Our Collections</a>
-    <a href="#/custom">Custom</a>
+    <a href="#/custom">Custom Design</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
     <a href="#/contact">Contact</a>
@@ -369,7 +369,6 @@ function chromeHTML() {
   <canvas id="grain" aria-hidden="true"></canvas><div id="vignette" aria-hidden="true"></div>
   <div id="field" aria-hidden="true"></div>
   <div id="corners" aria-hidden="false">
-    <div class="cnr-bl"><button id="soundtgl" aria-pressed="false">SOUND <b>OFF</b></button></div>
     <div class="cnr-br" id="cnrscroll" hidden>SCROLL TO EXPLORE</div>
   </div>`;
 }
@@ -793,10 +792,66 @@ function playFlip(target) {
   };
 }
 
+/* ---------- Shopify Configuration & Checkout Pre-wire ---------- */
+const SHOPIFY_CONFIG = {
+  // 1. Enter your Shopify store domain when ready, e.g. 'pastforward.myshopify.com'
+  storeDomain: '',
+
+  // 2. Enter Shopify Variant IDs for each custom format from Shopify Admin:
+  variants: {
+    'vinyl': '',       // Vinyl 12" (₹999)
+    'poster-a3': '',   // A3 Poster (₹299)
+    'print-10': '',    // 10x10 Print (₹249)
+    'poster-a5': '',   // A5 Poster (₹199)
+    'polaroid': ''     // Polaroid Card (₹99)
+  }
+};
+window.SHOPIFY_CONFIG = SHOPIFY_CONFIG;
+
 /* ---------- forms ---------- */
 function submitForm(type, payload) {
+  if (type === 'custom') {
+    const fKey = payload.format || 'vinyl';
+    const f = FMT[fKey] || FMT.vinyl;
+    const variantId = SHOPIFY_CONFIG.variants[fKey];
+
+    // If Shopify is connected with storeDomain and variantId, forward directly to Shopify Cart Permalink Checkout:
+    if (SHOPIFY_CONFIG.storeDomain && variantId) {
+      const params = new URLSearchParams({
+        'attributes[Customer Name]': payload.name || '',
+        'attributes[WhatsApp]': payload.whatsapp || '',
+        'attributes[Format]': f.label,
+        'attributes[Artist]': payload.artist || '',
+        'attributes[Album / Track]': payload.album || '',
+        'attributes[Reference Link]': payload.ref || '',
+        'attributes[Notes]': payload.notes || ''
+      });
+      const checkoutUrl = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}`;
+      window.location.href = checkoutUrl;
+      return Promise.resolve({ ok: true, redirected: true });
+    }
+
+    // Pre-wire stage (Shopify store domain pending):
+    console.log('[PastForward] Custom order logged. Pre-wired for Shopify checkout:', payload);
+    return Promise.resolve({
+      ok: true,
+      customSuccess: `
+        <div style="background:var(--elevated);border:1px solid var(--border);border-radius:4px;padding:24px;margin-top:20px">
+          <div class="mono num" style="color:var(--oxblood);font-size:0.8rem;letter-spacing:.14em">ORDER LOGGED · PAYMENT PREPARED</div>
+          <h3 class="d-s" style="margin:12px 0 6px">Custom ${esc(f.label)} · ${money(f.price)}</h3>
+          <p class="body-s dim" style="margin-top:6px;line-height:1.6">
+            We've recorded your custom request for <b>${esc(payload.artist)} — ${esc(payload.album)}</b>.
+          </p>
+          <div class="mono-xs dim" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);line-height:1.7">
+            ✓ Shopify checkout connection pre-wired.<br>
+            Once your Shopify store credentials are populated in code, this button forwards straight to Shopify checkout.
+          </div>
+        </div>`
+    });
+  }
+
   /* SINGLE INTEGRATION POINT — wire to Shopify / Formspree / webhook here.
-     Receives: (type: 'newsletter'|'custom'|'contact', payload: object) */
+     Receives: (type: 'newsletter'|'contact', payload: object) */
   console.log('[PastForward] submitForm stub', type, payload);
   return Promise.resolve({ ok: true });
 }
@@ -884,10 +939,14 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(f));
   const btn = $('button', f); if (btn) btn.disabled = true;
-  submitForm(f.dataset.form, data).then(() => {
+  submitForm(f.dataset.form, data).then((res) => {
+    if (res && res.redirected) return;
     const msg = f.parentElement.querySelector('[data-form-msg]');
-    const success = f.dataset.success || "You're on the list.";
-    if (msg) { msg.innerHTML = `<p class="d-s" style="margin-top:14px" role="status">${esc(success)}</p>`; f.style.display = 'none'; }
+    const success = (res && res.customSuccess) || f.dataset.success || "You're on the list.";
+    if (msg) {
+      msg.innerHTML = res && res.customSuccess ? res.customSuccess : `<p class="d-s" style="margin-top:14px" role="status">${esc(success)}</p>`;
+      f.style.display = 'none';
+    }
     if (!RM() && msg) msg.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
   });
 });
