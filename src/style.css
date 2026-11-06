@@ -2087,3 +2087,51 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   /* the shine on the shop buttons is decoration: keep the spinning disc, drop the sweep */
   .cta-shop::before{display:none}
 }
+
+/* ================= phones, pass 3 ================= */
+/* taps never trigger double-tap zoom */
+html{touch-action:manipulation; -webkit-text-size-adjust:100%}
+/* fixed card shapes: the image fits inside, rows line up */
+.ag__media>img,.ag__media .frame img,.ag__media .polaroid img{max-width:100%; max-height:100%; object-fit:contain}
+/* phone bestsellers: native swipe row */
+.cratem{padding:28px 0 34px; background:#0d0b0c}
+.cratem__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.55rem,7vw,2rem); line-height:1.05; margin:8px 0 18px}
+.cratem__row{list-style:none; margin:0; padding:4px var(--gutter) 10px; display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain}
+.cratem__row::-webkit-scrollbar{display:none}
+.cratem__item{flex:none; width:min(250px, 70vw); scroll-snap-align:center}
+.cratem__item a{display:flex; flex-direction:column; align-items:flex-start; gap:4px; color:var(--cream); text-decoration:none}
+.cratem__rec{--size:min(230px, 64vw) !important; width:min(230px, 64vw); height:min(230px, 64vw); margin:0 auto 14px; box-shadow:none}
+.cratem__n{color:var(--muted); letter-spacing:.2em}
+.cratem__album{font-family:var(--display); font-size:1.2rem; text-transform:uppercase; letter-spacing:-.01em; line-height:1.1}
+.cratem__artist{font-size:.9rem; color:rgba(243,239,232,.75)}
+.cratem__price{font-family:var(--mono); font-size:.9rem; margin-top:2px}
+.cratem__hint{margin:10px var(--gutter) 0; color:var(--muted); letter-spacing:.18em}
+@media(max-width:767px){
+  /* iOS zooms into any field under 16px when tapped */
+  input,select,textarea{font-size:16px !important}
+  /* sale section: no blurred glow on the giant price, no filters or shadows on the moving tapes */
+  .salesec__now{text-shadow:none}
+  .salesec__tape .tape__t{filter:none !important; box-shadow:none; font-size:1.05rem}
+  .salesec__tape--b .tape__t{background:#B8261F}
+  .salesec__tape{contain:paint; will-change:transform}
+  .salesec::before{display:none}
+  /* records: lighter shadows when there are dozens on one page */
+  :root{--sh-record:0 10px 22px rgba(0,0,0,.55)}
+  /* the four size tabs fit the screen */
+  .stabs{display:grid; grid-template-columns:repeat(4,1fr); overflow:visible; margin-inline:0; padding-inline:0}
+  .stab{min-width:0; padding:9px 8px 8px}
+  .stab__name{font-size:.95rem}
+  .stab__meta{font-size:.52rem; letter-spacing:.06em}
+}
+/* touch screens: hover lifts would stick after a tap */
+@media(hover:none){
+  .ag__head:hover,.card:hover .card__media>*,.ag__head:hover .ag__media--stack::before{transform:none}
+  .ag__head:hover .ag__media,.card:hover .card__media{box-shadow:var(--sh-card)}
+}
+
+/* phone hero: the photographed record + album-art label, no WebGL */
+.fdisc.is-css .fdisc__spin{background:var(--disc-img, #070707) center/100% 100% no-repeat}
+.fdisc.is-css .fdisc__gr,.fdisc.is-css .fdisc__gr2,.fdisc.is-css .fdisc__rule,.fdisc.is-css .fdisc__gloss,.fdisc.is-css .fdisc__sheen{display:none}
+.fdisc.is-css .fdisc__lab{width:37%; background-size:cover; background-position:center; transition:background-image .5s}
+.fdisc.is-css .fdisc__lab::after{opacity:.35}

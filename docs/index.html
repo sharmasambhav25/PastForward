@@ -2090,6 +2090,54 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   /* the shine on the shop buttons is decoration: keep the spinning disc, drop the sweep */
   .cta-shop::before{display:none}
 }
+
+/* ================= phones, pass 3 ================= */
+/* taps never trigger double-tap zoom */
+html{touch-action:manipulation; -webkit-text-size-adjust:100%}
+/* fixed card shapes: the image fits inside, rows line up */
+.ag__media>img,.ag__media .frame img,.ag__media .polaroid img{max-width:100%; max-height:100%; object-fit:contain}
+/* phone bestsellers: native swipe row */
+.cratem{padding:28px 0 34px; background:#0d0b0c}
+.cratem__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.55rem,7vw,2rem); line-height:1.05; margin:8px 0 18px}
+.cratem__row{list-style:none; margin:0; padding:4px var(--gutter) 10px; display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain}
+.cratem__row::-webkit-scrollbar{display:none}
+.cratem__item{flex:none; width:min(250px, 70vw); scroll-snap-align:center}
+.cratem__item a{display:flex; flex-direction:column; align-items:flex-start; gap:4px; color:var(--cream); text-decoration:none}
+.cratem__rec{--size:min(230px, 64vw) !important; width:min(230px, 64vw); height:min(230px, 64vw); margin:0 auto 14px; box-shadow:none}
+.cratem__n{color:var(--muted); letter-spacing:.2em}
+.cratem__album{font-family:var(--display); font-size:1.2rem; text-transform:uppercase; letter-spacing:-.01em; line-height:1.1}
+.cratem__artist{font-size:.9rem; color:rgba(243,239,232,.75)}
+.cratem__price{font-family:var(--mono); font-size:.9rem; margin-top:2px}
+.cratem__hint{margin:10px var(--gutter) 0; color:var(--muted); letter-spacing:.18em}
+@media(max-width:767px){
+  /* iOS zooms into any field under 16px when tapped */
+  input,select,textarea{font-size:16px !important}
+  /* sale section: no blurred glow on the giant price, no filters or shadows on the moving tapes */
+  .salesec__now{text-shadow:none}
+  .salesec__tape .tape__t{filter:none !important; box-shadow:none; font-size:1.05rem}
+  .salesec__tape--b .tape__t{background:#B8261F}
+  .salesec__tape{contain:paint; will-change:transform}
+  .salesec::before{display:none}
+  /* records: lighter shadows when there are dozens on one page */
+  :root{--sh-record:0 10px 22px rgba(0,0,0,.55)}
+  /* the four size tabs fit the screen */
+  .stabs{display:grid; grid-template-columns:repeat(4,1fr); overflow:visible; margin-inline:0; padding-inline:0}
+  .stab{min-width:0; padding:9px 8px 8px}
+  .stab__name{font-size:.95rem}
+  .stab__meta{font-size:.52rem; letter-spacing:.06em}
+}
+/* touch screens: hover lifts would stick after a tap */
+@media(hover:none){
+  .ag__head:hover,.card:hover .card__media>*,.ag__head:hover .ag__media--stack::before{transform:none}
+  .ag__head:hover .ag__media,.card:hover .card__media{box-shadow:var(--sh-card)}
+}
+
+/* phone hero: the photographed record + album-art label, no WebGL */
+.fdisc.is-css .fdisc__spin{background:var(--disc-img, #070707) center/100% 100% no-repeat}
+.fdisc.is-css .fdisc__gr,.fdisc.is-css .fdisc__gr2,.fdisc.is-css .fdisc__rule,.fdisc.is-css .fdisc__gloss,.fdisc.is-css .fdisc__sheen{display:none}
+.fdisc.is-css .fdisc__lab{width:37%; background-size:cover; background-position:center; transition:background-image .5s}
+.fdisc.is-css .fdisc__lab::after{opacity:.35}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -6708,12 +6756,12 @@ function viewHome() {
     </div>
   </section>
 
-  ${crateHTML()}
+  ${window.matchMedia('(max-width:767px)').matches ? crateMobileHTML() : crateHTML()}
 
   <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
   <section class="salesec" data-section="SALE">
-    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
-    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
+    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
+    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
     <div class="salesec__in">
       <p class="salesec__k">Vinyl sale · every record</p>
       <p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>
@@ -6823,6 +6871,27 @@ function crateFacts(p) {
     otherLabel: also.length ? 'ALSO AS' : 'ARRIVES',
     other: also.length ? also.join(' · ') : 'Ready to hang'
   };
+}
+/* phones: the bestsellers as a plain swipe row — native scroll-snap, no WebGL, no script */
+function crateMobileHTML() {
+  const list = crateList();
+  return `
+  <section class="cratem" data-section="BESTSELLERS">
+    <div class="wrap">
+      <div class="cap">BESTSELLERS</div>
+      <h2 class="cratem__head">The ones everyone's taking home.</h2>
+    </div>
+    <ul class="cratem__row">${list.map((p, i) => `
+      <li class="cratem__item"><a href="#/product/${p.slug}?format=vinyl">
+        ${recordHTML(p, { size: 230, cls: 'cratem__rec', eager: i < 2 })}
+        <span class="cratem__n mono-xs">${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}</span>
+        <span class="cratem__album">${esc(albumText(p))}</span>
+        <span class="cratem__artist">${esc(p.artist)}</span>
+        <span class="cratem__price num">${priceHTML('vinyl', variant(p, 'vinyl').price)}</span>
+      </a></li>`).join('')}
+    </ul>
+    <p class="cratem__hint mono-xs">Swipe for more →</p>
+  </section>`;
 }
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
@@ -6966,7 +7035,7 @@ function artistGroups(list) {
 function artistCardHTML([artist, items], routeFormats, idx) {
   const first = items[0];
   const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
-  const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.ratio;
+  const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? '4/5' : '3/4';
   const cover = v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
     : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
@@ -7742,7 +7811,7 @@ function mountHome() {
     if (!host) return;
     const glHost = document.getElementById('fdiscgl');
     let vinylApi = null;
-    if (glHost && window.mountVinyl) {
+    if (glHost && window.mountVinyl && !window.matchMedia('(max-width:767px)').matches) {
       try { vinylApi = window.mountVinyl(glHost); } catch (e) { vinylApi = null; }
     }
     if (vinylApi) {
@@ -7752,6 +7821,17 @@ function mountHome() {
     } else {
       const el = document.getElementById('fdiscspin');
       if (el) spins.push({ host, el, rate: 9, base: 9, angle: 0, kick: 0, mom: 0, boost: true });
+      // phones: the photographed record spins in CSS, and the label cycles through album art
+      const lab = host.querySelector('.fdisc__lab');
+      if (lab) {
+        host.classList.add('is-css');
+        const arts = crateList().map(p => imgSrc(variant(p, 'vinyl').image)).filter(Boolean);
+        let k = 0;
+        const show = () => { lab.style.backgroundImage = `url("${arts[k % arts.length]}")`; k++; };
+        show();
+        const id = setInterval(show, 2600);
+        onUnmount(() => clearInterval(id));
+      }
     }
   })();
 
