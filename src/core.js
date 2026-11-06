@@ -263,7 +263,7 @@ function closeAll() {
 }
 
 /* ---------- vinyl sale: running tape ribbon ---------- */
-function saleTapeRun(n = 6) {
+function saleTapeRun(n = 4) {
   const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span></span>`;
   return one.repeat(n);
 }
@@ -705,12 +705,12 @@ function initScroll() {
     hdr.classList.toggle('is-solid', hp >= 1);
     hdr.classList.toggle('is-hero', home && hp < .98);
     let name = '';
-    $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
+    if (window.innerWidth >= 1280) $$('[data-section]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= innerHeight * .5 && r.bottom > innerHeight * .35) name = s.dataset.section; });
     if (lab && name && lab.textContent !== name) { lab.textContent = name; }
     if (typeof window.__onGround === 'function') window.__onGround();
     if (typeof window.__onScroll === 'function') window.__onScroll(y);
   }
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+  addEventListener('scroll', () => { window.__lastScrollAt = performance.now(); if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
   addEventListener('resize', upd, { passive: true });
   upd();
 }
