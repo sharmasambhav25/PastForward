@@ -2003,15 +2003,20 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 @media(min-width:768px){:root{--nav-h:calc(64px + var(--bar-h))}}
 .hdr{flex-direction:column; align-items:stretch}
 .hdr__in{flex:1}
-.salebar{flex:none; height:var(--bar-h); display:flex; align-items:center; justify-content:center; gap:10px;
-  background:var(--oxblood); color:var(--cream); font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
-  text-decoration:none; white-space:nowrap; overflow:hidden; padding-inline:var(--gutter)}
-.salebar .sale{font-weight:600; font-size:1.18em; letter-spacing:.06em}
-.salebar s{opacity:.7; letter-spacing:.06em}
-.salebar__tag{background:var(--cream); color:var(--oxblood); padding:3px 7px; font-weight:600}
-.salebar__go{opacity:.85}
-.salebar:hover .salebar__go{opacity:1; text-decoration:underline}
-@media(max-width:600px){ .salebar{font-size:.56rem; gap:7px; letter-spacing:.1em} .salebar__go,.salebar>span:nth-child(2){display:none} }
+/* the sale ribbon: red caution tape, text running */
+.tape{--tape:#D8312A; display:block; overflow:hidden; background:var(--tape); color:#0b0809; text-decoration:none;
+  font-family:var(--shout); text-transform:uppercase; white-space:nowrap}
+.tape__t{display:inline-flex; will-change:transform; animation:tapeRun 38s linear infinite}
+.tape__i{display:inline-flex; align-items:center}
+.tape__i>*{padding-inline:.7em}
+.tape__i b{font-weight:400; letter-spacing:.04em}
+.tape__i s{text-decoration-thickness:2px; opacity:.6}
+.tape__i em{font-style:normal; background:#0b0809; color:var(--tape); padding:0 .3em}
+.tape__i>span::after{content:"✦"; margin-left:1.4em; font-size:.7em; vertical-align:.12em}
+@keyframes tapeRun{to{transform:translateX(-50%)}}
+.salebar.tape{flex:none; height:var(--bar-h); line-height:var(--bar-h); font-size:.98rem; letter-spacing:.06em}
+.salebar.tape:hover .tape__t{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){ .tape__t{animation:none} }
 
 /* ---- hero: the collage behind the record, brighter ---- */
 .fhero__col>i{opacity:.72}
@@ -2020,3 +2025,26 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .ag__price .mrp{display:block; margin:0 0 1px; font-size:.82em; text-align:right}
 .ag__price{text-align:right; line-height:1.15}
 .ag__sub .mrp{margin-right:.35em}
+
+/* ---- the sale section: two strips of tape crossing over a spray-painted price ---- */
+.salesec{--tape:#D8312A; position:relative; overflow:hidden; background:#0b0809; text-align:center;
+  padding:clamp(150px,16vw,220px) var(--gutter); isolation:isolate}
+.salesec::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
+  background:radial-gradient(60% 50% at 50% 55%, rgba(216,49,42,.22), transparent 70%)}
+.salesec__tape{position:absolute; left:-10%; right:-10%; z-index:3; pointer-events:none}
+.salesec__tape .tape__t{display:inline-flex; background:var(--tape); color:#0b0809; font-family:var(--shout); text-transform:uppercase;
+  font-size:clamp(1.1rem,2vw,1.6rem); line-height:2.1; white-space:nowrap; box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.salesec__tape--a{top:clamp(34px,5vw,64px); transform:rotate(-4deg)}
+.salesec__tape--b{top:clamp(52px,7vw,96px); transform:rotate(3.5deg)}
+.salesec__tape--b .tape__t{animation-direction:reverse; animation-duration:44s; filter:brightness(.88)}
+.salesec__in{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center}
+.salesec__k{margin:0; font-family:var(--shout); text-transform:uppercase; color:var(--tape); letter-spacing:.02em;
+  font-size:clamp(1.6rem,3.6vw,3rem); line-height:1}
+.salesec__was{margin:14px 0 0; font-family:var(--mono); text-transform:uppercase; letter-spacing:.2em; font-size:.8rem; color:rgba(243,239,232,.6)}
+.salesec__was s{text-decoration-color:var(--tape); text-decoration-thickness:2px; color:rgba(243,239,232,.8); font-size:1.15em}
+/* the price: sprayed on — soft edges, overspray halo, grain */
+.salesec__now{margin:4px 0 34px; font-family:var(--shout); color:var(--tape); line-height:.9; letter-spacing:-.01em;
+  font-size:clamp(7rem,21vw,17rem); filter:url(#spray);
+  text-shadow:0 0 18px rgba(216,49,42,.55), 0 0 60px rgba(216,49,42,.25)}
+.salesec .cta-shop{margin-top:0}
+@media(max-width:767px){ .salesec{padding-block:120px 110px} .salesec__now{margin-bottom:26px} }
