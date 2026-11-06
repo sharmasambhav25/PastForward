@@ -467,10 +467,9 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   </div>`;
 }
 function sizeTabsHTML(active) {
-  const n = f => P.filter(p => p.variants.some(v => v.format === f)).length;
   return `<nav class="stabs" aria-label="Poster sizes">${SIZE_TABS.map(t => `<a class="stab${t.key === active ? ' is-on' : ''}" href="${t.href}"${t.key === active ? ' aria-current="page"' : ''}>
       <span class="stab__name">${t.short || t.name}</span>
-      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)} · ${n(t.f)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
+      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
     </a>`).join('')}</nav>`;
 }
 function viewCatalog(category, subType, params) {
