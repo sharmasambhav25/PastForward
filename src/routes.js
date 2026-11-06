@@ -262,26 +262,73 @@ function crateFacts(p) {
     other: also.length ? also.join(' · ') : 'Ready to hang'
   };
 }
-/* phones: the bestsellers as a plain swipe row — native scroll-snap, no WebGL, no script */
+/* phones: the same crate — collage, big record, album panel, arrows — drawn with CSS records instead of WebGL */
 function crateMobileHTML() {
-  const list = crateList();
+  const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
   return `
-  <section class="cratem" data-section="BESTSELLERS">
-    <div class="wrap">
-      <div class="cap">BESTSELLERS</div>
-      <h2 class="cratem__head">The ones everyone's taking home.</h2>
+  <section class="crate crate--css" id="cratecss" data-section="BESTSELLERS">
+    <div class="crate__stage">
+      <div class="crate__bg" aria-hidden="true">
+        <i style="background-image:url(${photo('col-g')})"></i>
+        <i style="background-image:url(${photo('col-r')})"></i>
+      </div>
+      <div class="ccss" aria-hidden="true">${list.map((p, i) => `<a class="ccss__rec" data-i="${i}" href="#/product/${p.slug}?format=vinyl" tabindex="-1">${recordHTML(p, { size: 300, eager: i < 2 })}</a>`).join('')}</div>
+      <div class="crate__meta">
+        <div class="cap crate__eyebrow">BESTSELLERS</div>
+        <h2 class="crate__head">The ones everyone's taking home.</h2>
+        <dl class="crate__rows" aria-live="polite">
+          <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
+          <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
+        </dl>
+      </div>
+      <div class="crate__facts">
+        <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span class="crate__price">${priceHTML('vinyl', variant(list[0], 'vinyl').price)}</span></div></div>
+        <div><div class="crate__fl"><span data-cm="otherLabel">${f0.otherLabel}</span></div><div class="crate__fv"><span data-cm="other">${esc(f0.other)}</span></div></div>
+      </div>
+      <div class="crate__nav">
+        <button class="crate__arrow" type="button" data-crate-prev aria-label="Previous record" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="crate__count mono-xs" aria-hidden="true"><span data-cm="n">01</span> / ${String(n).padStart(2, '0')}</span>
+        <button class="crate__arrow" type="button" data-crate-next aria-label="Next record">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
     </div>
-    <ul class="cratem__row">${list.map((p, i) => `
-      <li class="cratem__item"><a href="#/product/${p.slug}?format=vinyl">
-        ${recordHTML(p, { size: 230, cls: 'cratem__rec', eager: i < 2 })}
-        <span class="cratem__n mono-xs">${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}</span>
-        <span class="cratem__album">${esc(albumText(p))}</span>
-        <span class="cratem__artist">${esc(p.artist)}</span>
-        <span class="cratem__price num">${priceHTML('vinyl', variant(p, 'vinyl').price)}</span>
-      </a></li>`).join('')}
-    </ul>
-    <p class="cratem__hint mono-xs">Swipe for more →</p>
   </section>`;
+}
+function mountCrateCss() {
+  const root = document.getElementById('cratecss'); if (!root) return;
+  const list = crateList(), facts = list.map(crateFacts), recs = [...root.querySelectorAll('.ccss__rec')];
+  const prevB = root.querySelector('[data-crate-prev]'), nextB = root.querySelector('[data-crate-next]');
+  const cm = k => root.querySelector(`[data-cm="${k}"]`);
+  let at = 0;
+  const place = () => {
+    recs.forEach((r, i) => {
+      const d = i - at;
+      r.classList.toggle('is-front', d === 0);
+      r.style.transform = d === 0 ? 'translate(-50%,-50%)'
+        : `translate(calc(-50% + ${d * 74}%), calc(-50% + ${-d * 16}%)) scale(${d > 0 ? 0.8 : 0.72})`;
+      r.style.opacity = Math.abs(d) > 1 ? 0 : d === 0 ? 1 : 0.5;
+      r.style.zIndex = 10 - Math.abs(d);
+      r.style.pointerEvents = d === 0 ? 'auto' : 'none';
+    });
+    const f = facts[at];
+    ['album', 'artist', 'otherLabel', 'other'].forEach(k => { const el = cm(k); if (el) el.textContent = f[k]; });
+    cm('n').textContent = String(at + 1).padStart(2, '0');
+    prevB.disabled = at === 0; nextB.disabled = at === list.length - 1;
+  };
+  const go = d => { const t = Math.max(0, Math.min(list.length - 1, at + d)); if (t !== at) { at = t; place(); try { Sound.tick(); } catch (e) {} } };
+  prevB.addEventListener('click', () => go(-1));
+  nextB.addEventListener('click', () => go(1));
+  // horizontal swipe on the stage; vertical drags stay page scrolls
+  let sx = 0, sy = 0, moved = false;
+  const stage = root.querySelector('.crate__stage');
+  stage.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; moved = false; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) { moved = true; go(dx < 0 ? 1 : -1); }
+  }, { passive: true });
+  recs.forEach(r => r.addEventListener('click', e => { if (moved) { e.preventDefault(); moved = false; } }));
+  place();
 }
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
@@ -1088,6 +1135,7 @@ window.__mount = function (seg, params) {
 
   if (page === 'home') {
     mountHome();
+    mountCrateCss();
     const crate = mountCrateSection(onUnmount);
     if (crate) {
       // the first CRATE_SCROLL records slide past as you scroll through the pinned section

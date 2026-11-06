@@ -2093,20 +2093,6 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 /* fixed card shapes: the image fits inside, rows line up */
 .ag__media>img,.ag__media .frame img,.ag__media .polaroid img{max-width:100%; max-height:100%; object-fit:contain}
-/* phone bestsellers: native swipe row */
-.cratem{padding:28px 0 34px; background:#0d0b0c}
-.cratem__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.55rem,7vw,2rem); line-height:1.05; margin:8px 0 18px}
-.cratem__row{list-style:none; margin:0; padding:4px var(--gutter) 10px; display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain}
-.cratem__row::-webkit-scrollbar{display:none}
-.cratem__item{flex:none; width:min(250px, 70vw); scroll-snap-align:center}
-.cratem__item a{display:flex; flex-direction:column; align-items:flex-start; gap:4px; color:var(--cream); text-decoration:none}
-.cratem__rec{--size:min(230px, 64vw) !important; width:min(230px, 64vw); height:min(230px, 64vw); margin:0 auto 14px; box-shadow:none}
-.cratem__n{color:var(--muted); letter-spacing:.2em}
-.cratem__album{font-family:var(--display); font-size:1.2rem; text-transform:uppercase; letter-spacing:-.01em; line-height:1.1}
-.cratem__artist{font-size:.9rem; color:rgba(243,239,232,.75)}
-.cratem__price{font-family:var(--mono); font-size:.9rem; margin-top:2px}
-.cratem__hint{margin:10px var(--gutter) 0; color:var(--muted); letter-spacing:.18em}
 @media(max-width:767px){
   /* iOS zooms into any field under 16px when tapped */
   input,select,textarea{font-size:16px !important}
@@ -2135,3 +2121,20 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .fdisc.is-css .fdisc__gr,.fdisc.is-css .fdisc__gr2,.fdisc.is-css .fdisc__rule,.fdisc.is-css .fdisc__gloss,.fdisc.is-css .fdisc__sheen{display:none}
 .fdisc.is-css .fdisc__lab{width:37%; background-size:cover; background-position:center; transition:background-image .5s}
 .fdisc.is-css .fdisc__lab::after{opacity:.35}
+
+/* phone hero: a real-size spindle hole */
+.fdisc.is-css .fdisc__hole{width:3.4%}
+/* phone bestsellers: the crate layout with CSS records */
+.crate--css{height:auto}
+.crate--css .crate__stage{position:relative; height:max(660px, 94svh); min-height:0}
+.crate--css .crate__bg>i{opacity:.34}
+.ccss{position:absolute; inset:0; z-index:2}
+.ccss__rec{position:absolute; left:50%; top:54%; width:min(78vw, 46svh); aspect-ratio:1; display:block;
+  transition:transform .6s cubic-bezier(.3,1.3,.5,1), opacity .45s; will-change:transform}
+.ccss__rec .record{--size:100% !important; width:100%; height:100%}
+.ccss__rec.is-front .record__disc{animation:ctaSpin 9s linear infinite}
+.ccss__rec.is-front::after{content:""; position:absolute; inset:-3%; border-radius:50%; border:2px solid rgba(192,53,63,.7); pointer-events:none}
+@media(prefers-reduced-motion:reduce){ .ccss__rec{transition:none} .ccss__rec.is-front .record__disc{animation:none} }
+.crate__count{white-space:nowrap}
+.crate--css .crate__fv{white-space:nowrap}
+.crate--css .crate__facts{gap:22px}
