@@ -20,15 +20,14 @@ routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
 cat   = open(f'{ROOT}/catalogue.json').read()
 
-def vinyl3d_module():
+def vinyl3d_module(three_url=None):
     """The WebGL hero disc, with Three.js self-hosted as a data: URI import —
     no CDN, so the module works identically offline, on GitHub Pages, or here."""
     src_path = os.path.join(SRC, 'vinyl3d.js')
     three_path = os.path.join(ROOT, 'vendor', 'three.module.min.js')
     if not os.path.exists(src_path) or not os.path.exists(three_path):
         return ''
-    three_b64 = base64.b64encode(open(three_path, 'rb').read()).decode()
-    three_uri = 'data:text/javascript;base64,' + three_b64
+    three_uri = three_url or ('data:text/javascript;base64,' + base64.b64encode(open(three_path, 'rb').read()).decode())
     js = open(src_path).read().replace('__THREE_IMPORT__', three_uri)
     crate = os.path.join(SRC, 'vinylcrate.js')
     if os.path.exists(crate):   # shares the module's THREE import and createVinylKit()
@@ -36,6 +35,7 @@ def vinyl3d_module():
     return f'<script type="module">{js}</script>'
 
 VINYL3D = vinyl3d_module()
+VINYL3D_SITE = vinyl3d_module('./vendor/three.module.min.js')
 
 FONT_FACES = [
     ('bodoni-moda-latin-400-normal.woff2', 'Bodoni Moda', 400, 'normal'),
@@ -75,6 +75,7 @@ DESC  = 'Real 12-inch records with the album pressed into the centre label, made
 WORDMARK = 'data:image/webp;base64,' + base64.b64encode(open(f'{ROOT}/brand/wordmark.webp','rb').read()).decode()
 
 PHOTOS = {}
+PHOTO_FILES = {}
 for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r', 'flex-mark', 'disc'})):
     if not os.path.isdir(_dir):
         continue
@@ -85,9 +86,10 @@ for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r
         if _keep is not None and _k not in _keep:
             continue
         PHOTOS[_k] = 'data:image/webp;base64,' + base64.b64encode(open(os.path.join(_dir, _f), 'rb').read()).decode()
+        PHOTO_FILES[_k] = os.path.join(_dir, _f)
 
-def js_payload(img_data=None, base=None, base_lg=None):
-    parts = [f'window.__CATALOGUE__ = {cat};', f'window.__WORDMARK__ = {json.dumps(WORDMARK)};', f'window.__PHOTOS__ = {json.dumps(PHOTOS)};']
+def js_payload(img_data=None, base=None, base_lg=None, photos=None, wordmark=None):
+    parts = [f'window.__CATALOGUE__ = {cat};', f'window.__WORDMARK__ = {json.dumps(wordmark or WORDMARK)};', f'window.__PHOTOS__ = {json.dumps(photos if photos is not None else PHOTOS)};']
     if img_data is not None:
         parts.append(f'window.__IMG_DATA__ = {json.dumps(img_data)};')
     else:
@@ -97,7 +99,7 @@ def js_payload(img_data=None, base=None, base_lg=None):
 
 FONT_CSS = font_css()
 
-def assemble(payload, standalone):
+def assemble(payload, standalone, vinyl3d=None):
     head = f'''<title>{TITLE}</title>
 <meta name="description" content="{DESC}">
 <style>{FONT_CSS}</style>
@@ -112,7 +114,7 @@ def assemble(payload, standalone):
 
 <script>{routes}</script>
 <script>{boot}</script>
-{VINYL3D}'''
+{vinyl3d if vinyl3d is not None else VINYL3D}'''
     if standalone:
         return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
@@ -136,9 +138,25 @@ open(f'{DIST}/artifact.html', 'w').write(art)
 # ---------- qa build: standalone doc using the same embedded data ----------
 qa = assemble(js_payload(img_data=data), True)
 open(f'{DIST}/qa.html', 'w').write(qa)
+# ---------- the live site (docs/, GitHub Pages): images and Three.js as separate, cacheable files ----------
 DOCS = os.path.join(ROOT, 'docs')
 if os.path.isdir(DOCS):
-    open(f'{DOCS}/index.html', 'w').write(qa)
+    import shutil
+    for sub in ('img', 'photos', 'vendor'):
+        d = os.path.join(DOCS, sub)
+        if os.path.isdir(d): shutil.rmtree(d)
+        os.makedirs(d)
+    for f in sorted(os.listdir(IMG)):
+        if f.endswith('.webp'): shutil.copy2(os.path.join(IMG, f), os.path.join(DOCS, 'img', f))
+    site_photos = {}
+    for k, path in PHOTO_FILES.items():
+        shutil.copy2(path, os.path.join(DOCS, 'photos', k + '.webp')); site_photos[k] = 'photos/' + k + '.webp'
+    shutil.copy2(f'{ROOT}/brand/wordmark.webp', os.path.join(DOCS, 'photos', 'wordmark.webp'))
+    shutil.copy2(os.path.join(ROOT, 'vendor', 'three.module.min.js'), os.path.join(DOCS, 'vendor', 'three.module.min.js'))
+    site = assemble(js_payload(base='img/', photos=site_photos, wordmark='photos/wordmark.webp'), True, VINYL3D_SITE)
+    site = site.replace('<head><meta charset="utf-8">', '<head><meta charset="utf-8"><link rel="preload" href="photos/wordmark.webp" as="image"><link rel="modulepreload" href="vendor/three.module.min.js">', 1)
+    open(f'{DOCS}/index.html', 'w').write(site)
+    print(f'{"docs/index.html":16} {os.path.getsize(f"{DOCS}/index.html")/1048576:.2f} MB (+ {len(os.listdir(os.path.join(DOCS, "img")))} images as files)')
 
 for n in ('index.html', 'artifact.html', 'qa.html'):
     print(f'{n:16} {os.path.getsize(f"{DIST}/{n}")/1048576:.2f} MB')

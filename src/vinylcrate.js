@@ -23,7 +23,7 @@ export function mountCrate(root, items, opts = {}) {
   const onOpen = opts.onOpen || (() => {});
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.matchMedia('(max-width:767px)').matches ? 1.5 : 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
@@ -93,7 +93,7 @@ export function mountCrate(root, items, opts = {}) {
     portrait = W / H < 0.8;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
     // the front record fills ~78% of the screen height (a phone: ~92% of its width), like the reference
-    const D = portrait ? 6 / (0.92 * 2 * t * camera.aspect) : 6 / (0.78 * 2 * t);
+    const D = portrait ? 6 / (0.74 * 2 * t * camera.aspect) : 6 / (0.78 * 2 * t);
     camera.position.set(0, 0, D);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
@@ -101,7 +101,7 @@ export function mountCrate(root, items, opts = {}) {
     const d1 = D - z1, visW = 2 * t * d1 * camera.aspect, visH = 2 * t * d1;
     // screen offset of the neighbour, as a share of the screen
     STEP.set(visW * (portrait ? 0.95 : 0.43), visH * (portrait ? 0.05 : 0.24), z1);
-    LIFT_Y = 2 * t * D * (portrait ? 0.05 : 0.035);
+    LIFT_Y = 2 * t * D * (portrait ? -0.035 : 0.035);   // phones: a touch low, clear of the title block
     SHIFT_X = portrait ? 0 : 2 * t * D * camera.aspect * 0.06;   // leave the info panel on the left clear
     dirty = true;
   }

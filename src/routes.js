@@ -336,7 +336,7 @@ function mountCrateSection(onUnmount) {
   }
   // the live wallpaper; ?wall=dots|chrome|blobs previews the other looks
   const wallHost = document.getElementById('cratewall');
-  if (wallHost && window.mountWallpaper) {
+  if (wallHost && window.mountWallpaper && !window.matchMedia('(max-width:767px)').matches) {
     try {
       const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(location.hash.split('?')[1] || '').get('wall') || 'contours';
       const wall = window.mountWallpaper(wallHost, { mode, focus: innerWidth / innerHeight < 0.8 ? [0.5, 0.48] : [0.56, 0.5], reducedMotion: RM() });
@@ -1075,7 +1075,7 @@ window.__mount = function (seg, params) {
         const r = root.getBoundingClientRect(), span = root.offsetHeight - innerHeight;
         // 1 while the section is still rising into view, 0 once it's pinned: drives the fade-in from the hero
         root.style.setProperty('--enter', Math.min(1, Math.max(0, r.top / innerHeight)).toFixed(3));
-        if (span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
+        if (!window.matchMedia('(max-width:767px)').matches && span > 0 && r.top < innerHeight && r.bottom > 0) crate.fromScroll(Math.min(1, Math.max(0, -r.top / span)) * CRATE_SCROLL);
       };
       const prev = window.__onScroll;
       window.__onScroll = y => { if (prev) prev(y); onCrate(); };
@@ -1554,7 +1554,10 @@ function mountProduct(p, params) {
   if (!p) return;
   /* the liquid backdrop: the album art flowing behind the page (see liquid.js) */
   const liq = $('#pliq');
-  if (liq && window.mountLiquid) {
+  if (liq && window.matchMedia('(max-width:767px)').matches) {
+    const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
+    liq.classList.add('pliq--static'); liq.style.backgroundImage = `url("${imgSrc(artV.image, true)}")`;
+  } else if (liq && window.mountLiquid) {
     const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
     try {
       const api = window.mountLiquid(liq, imgSrc(artV.image, true), { round: artV.format === 'vinyl', reducedMotion: RM() });
@@ -1573,7 +1576,7 @@ function mountProduct(p, params) {
     // record — wrapping it for the ripple shader would fight that, so skip it there.
     if (sel === 'vinyl') return;
     const img = $('#stagemedia img');
-    if (!img || !window.mountImageRipple) return;
+    if (!img || !window.mountImageRipple || window.matchMedia('(max-width:767px)').matches) return;
     try { rippleCleanup = window.mountImageRipple(img); } catch (e) { rippleCleanup = null; }
   };
   if (!RM()) mountRipple();
