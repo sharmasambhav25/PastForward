@@ -146,12 +146,12 @@ function viewHome() {
     </div>
   </section>
 
-  ${crateHTML()}
+  ${window.matchMedia('(max-width:767px)').matches ? crateMobileHTML() : crateHTML()}
 
   <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
   <section class="salesec" data-section="SALE">
-    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
-    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
+    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
+    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
     <div class="salesec__in">
       <p class="salesec__k">Vinyl sale · every record</p>
       <p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>
@@ -261,6 +261,27 @@ function crateFacts(p) {
     otherLabel: also.length ? 'ALSO AS' : 'ARRIVES',
     other: also.length ? also.join(' · ') : 'Ready to hang'
   };
+}
+/* phones: the bestsellers as a plain swipe row — native scroll-snap, no WebGL, no script */
+function crateMobileHTML() {
+  const list = crateList();
+  return `
+  <section class="cratem" data-section="BESTSELLERS">
+    <div class="wrap">
+      <div class="cap">BESTSELLERS</div>
+      <h2 class="cratem__head">The ones everyone's taking home.</h2>
+    </div>
+    <ul class="cratem__row">${list.map((p, i) => `
+      <li class="cratem__item"><a href="#/product/${p.slug}?format=vinyl">
+        ${recordHTML(p, { size: 230, cls: 'cratem__rec', eager: i < 2 })}
+        <span class="cratem__n mono-xs">${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}</span>
+        <span class="cratem__album">${esc(albumText(p))}</span>
+        <span class="cratem__artist">${esc(p.artist)}</span>
+        <span class="cratem__price num">${priceHTML('vinyl', variant(p, 'vinyl').price)}</span>
+      </a></li>`).join('')}
+    </ul>
+    <p class="cratem__hint mono-xs">Swipe for more →</p>
+  </section>`;
 }
 function crateHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
@@ -404,7 +425,7 @@ function artistGroups(list) {
 function artistCardHTML([artist, items], routeFormats, idx) {
   const first = items[0];
   const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
-  const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.ratio;
+  const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? '4/5' : '3/4';
   const cover = v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
     : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
@@ -1180,7 +1201,7 @@ function mountHome() {
     if (!host) return;
     const glHost = document.getElementById('fdiscgl');
     let vinylApi = null;
-    if (glHost && window.mountVinyl) {
+    if (glHost && window.mountVinyl && !window.matchMedia('(max-width:767px)').matches) {
       try { vinylApi = window.mountVinyl(glHost); } catch (e) { vinylApi = null; }
     }
     if (vinylApi) {
@@ -1190,6 +1211,17 @@ function mountHome() {
     } else {
       const el = document.getElementById('fdiscspin');
       if (el) spins.push({ host, el, rate: 9, base: 9, angle: 0, kick: 0, mom: 0, boost: true });
+      // phones: the photographed record spins in CSS, and the label cycles through album art
+      const lab = host.querySelector('.fdisc__lab');
+      if (lab) {
+        host.classList.add('is-css');
+        const arts = crateList().map(p => imgSrc(variant(p, 'vinyl').image)).filter(Boolean);
+        let k = 0;
+        const show = () => { lab.style.backgroundImage = `url("${arts[k % arts.length]}")`; k++; };
+        show();
+        const id = setInterval(show, 2600);
+        onUnmount(() => clearInterval(id));
+      }
     }
   })();
 
