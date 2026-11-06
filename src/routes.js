@@ -528,10 +528,9 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   </div>`;
 }
 function sizeTabsHTML(active) {
-  const n = f => P.filter(p => p.variants.some(v => v.format === f)).length;
   return `<nav class="stabs" aria-label="Poster sizes">${SIZE_TABS.map(t => `<a class="stab${t.key === active ? ' is-on' : ''}" href="${t.href}"${t.key === active ? ' aria-current="page"' : ''}>
       <span class="stab__name">${t.short || t.name}</span>
-      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)} · ${n(t.f)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
+      ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
     </a>`).join('')}</nav>`;
 }
 function viewCatalog(category, subType, params) {
@@ -855,33 +854,49 @@ function viewCollection(slug, params) {
 
 /* ============================== CUSTOM ============================== */
 function viewCustom() {
+  const defaultFormat = FMT.vinyl;
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
     <div style="display:grid;gap:56px" id="customgrid">
       <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
         <h1 class="d-l" style="max-width:14ch">Not in the catalogue? Say the word.</h1>
-        <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Tell us what it is and we'll quote you.</p>
+        <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Choose your format, enter the details, and confirm your piece.</p>
         <form data-form="custom" data-success="Got it. We'll be in touch." style="margin-top:40px;display:grid;gap:18px;max-width:560px">
           <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>Name</span><input name="name" required></label>
-            <label class="field"><span>Email</span><input name="email" type="email" required></label>
+            <label class="field"><span>Name</span><input name="name" required placeholder="Your name"></label>
+            <label class="field"><span>Email</span><input name="email" type="email" required placeholder="your@email.com"></label>
           </div>
           <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>WhatsApp (optional)</span><input name="whatsapp"></label>
-            <label class="field"><span>Format</span><select name="format">${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)}</option>`).join('')}</select></label>
+            <label class="field"><span>WhatsApp (for order confirmation)</span><input name="whatsapp" placeholder="+91 98765 43210" required></label>
+            <label class="field"><span>Format</span><select name="format" id="customformat">${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)} · ${money(f.price)}</option>`).join('')}</select></label>
           </div>
           <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>Artist</span><input name="artist" required></label>
-            <label class="field"><span>Album or track</span><input name="album" required></label>
+            <label class="field"><span>Artist</span><input name="artist" required placeholder="e.g. Travis Scott"></label>
+            <label class="field"><span>Album or track</span><input name="album" required placeholder="e.g. Utopia"></label>
           </div>
-          <label class="field"><span>Reference link (optional)</span><input name="ref"></label>
-          <label class="field"><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
-          <button class="btn btn--primary" style="justify-self:start"><span class="btn__mag">Send the request</span></button>
+          <label class="field"><span>Reference link (optional image or Spotify)</span><input name="ref" placeholder="https://..."></label>
+          <label class="field"><span>Notes or special requests</span><textarea name="notes" rows="3" placeholder="Tell us if you want specific album art, text, or styling"></textarea></label>
+
+          <!-- Price Summary Box -->
+          <div class="custom-summary" id="customsummary" style="background:var(--elevated);border:1px solid var(--border);border-radius:3px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+            <div>
+              <div class="mono-xs dim" style="letter-spacing:.12em;text-transform:uppercase" id="customsummaryformat">Format: ${esc(defaultFormat.label)} (${esc(defaultFormat.size)})</div>
+              <div class="body-s" style="margin-top:4px;color:var(--muted)">Includes custom design, printing & safe packaging</div>
+            </div>
+            <div style="text-align:right">
+              <div class="num" id="customsummaryprice" style="font-size:1.35rem;font-weight:600;color:var(--cream)">${money(defaultFormat.price)}</div>
+              <div class="mono-xs dim" style="font-size:.65rem;letter-spacing:.1em">CONFIRMED ON CHECKOUT</div>
+            </div>
+          </div>
+
+          <button class="btn btn--primary" id="customsubmitbtn" style="justify-self:start;margin-top:6px">
+            <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} & Confirm Order</span>
+          </button>
         </form>
         <div data-form-msg></div>
-        <p class="body-s dim" style="margin-top:24px">We usually reply right away. If we can't print it, we'll say so straight.</p>
+        <p class="body-s dim" style="margin-top:24px">Every piece is custom made and quality inspected before dispatch.</p>
         <div class="steps" style="margin-top:64px">
-          ${[['01', 'You send the album'], ['02', 'We quote and mock it up'], ['03', 'We make it and ship it']].map(([n, t]) =>
+          ${[['01', 'Choose format & album'], ['02', 'Pay to confirm your order'], ['03', 'We craft it and ship it']].map(([n, t]) =>
             `<div class="reveal"><div class="mono num" style="color:var(--oxblood)">${n}</div>
               <div class="d-s" style="margin-top:8px">${t}</div>${wave('wave--divider', 'margin-top:14px')}</div>`).join('')}
         </div>
@@ -895,23 +910,44 @@ function viewCustom() {
           <img src="${photo('printer')}" alt="Artwork printing to order" loading="lazy">
           <figcaption class="mono-xs dim">EVERY ORDER IS PRINTED TO ORDER</figcaption></figure>
         <h4 class="mono dim" style="margin:26px 0 14px">Formats we can make</h4>
-        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''}</div>`).join('')}</div>
-        <p class="body-s dim" style="margin-top:20px">Custom pricing depends on the artwork and the format. We quote before anything is made.</p>
+        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''} <span class="num" style="float:right;color:var(--cream)">${money(f.price)}</span></div>`).join('')}</div>
+        <p class="body-s dim" style="margin-top:20px">Orders are confirmed upon checkout so our studio can immediately begin production.</p>
       </aside>
     </div></div>`;
 }
 function mountCustom() {
   const host = $('#customlabel');
-  if (!host || !window.mountVinylLabel) return;
   const form = document.querySelector('form[data-form="custom"]');
   if (!form) return;
+
   const artistInput = form.querySelector('[name="artist"]'), titleInput = form.querySelector('[name="album"]');
-  let label;
-  try { label = window.mountVinylLabel(host, { artist: artistInput?.value, title: titleInput?.value }); }
-  catch (e) { return; }
-  const sync = () => label.update(artistInput?.value, titleInput?.value);
-  artistInput?.addEventListener('input', sync);
-  titleInput?.addEventListener('input', sync);
+  if (host && window.mountVinylLabel) {
+    let label;
+    try { label = window.mountVinylLabel(host, { artist: artistInput?.value, title: titleInput?.value }); }
+    catch (e) {}
+    const sync = () => label?.update(artistInput?.value, titleInput?.value);
+    artistInput?.addEventListener('input', sync);
+    titleInput?.addEventListener('input', sync);
+  }
+
+  // Dynamic pricing & summary sync
+  const formatSelect = form.querySelector('[name="format"]');
+  const btnText = document.getElementById('custombtntext');
+  const sumFormat = document.getElementById('customsummaryformat');
+  const sumPrice = document.getElementById('customsummaryprice');
+
+  const updatePrice = () => {
+    const fKey = formatSelect?.value || 'vinyl';
+    const f = FMT[fKey] || FMT.vinyl;
+    const priceFormatted = money(f.price);
+    if (btnText) btnText.textContent = `Pay ${priceFormatted} & Confirm Order`;
+    if (sumPrice) sumPrice.textContent = priceFormatted;
+    const sizeStr = f.size && f.size !== '[CONFIRM]' ? ` (${f.size})` : '';
+    if (sumFormat) sumFormat.textContent = `Format: ${f.label}${sizeStr}`;
+  };
+
+  formatSelect?.addEventListener('change', updatePrice);
+  updatePrice();
 }
 
 /* ============================== STORY ============================== */
