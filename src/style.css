@@ -2048,3 +2048,30 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
   text-shadow:0 0 18px rgba(216,49,42,.55), 0 0 60px rgba(216,49,42,.25)}
 .salesec .cta-shop{margin-top:0}
 @media(max-width:767px){ .salesec{padding-block:120px 110px} .salesec__now{margin-bottom:26px} }
+
+/* ================= phones: speed and layout pass ================= */
+/* the footer always paints above the product page's fixed album-art backdrop */
+.ftr{position:relative; z-index:2; background:var(--ink)}
+.pliq--static{background-size:cover; background-position:center; filter:blur(30px) brightness(.32) saturate(.9); transform:scale(1.2)}
+.emptyframe{min-width:0; text-align:center; padding:8px; overflow-wrap:anywhere}
+@media(max-width:767px){
+  /* heavy full-screen effects off: animated grain blended over everything, blurred glass bars */
+  #grain,#vignette{display:none}
+  .hdr,.hdr.is-solid{backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(12,9,10,.96)}
+  .mega,.menu{backdrop-filter:none; -webkit-backdrop-filter:none}
+  /* the fixed sound toggle sat over text on every page; phones don't need it */
+  #corners .cnr-bl{display:none}
+  /* hero: the tiny corner captions crowded the record */
+  .fhero__hint,.fhero__hint2{display:none}
+  /* bestsellers: one screen, not pinned — swipe or tap the arrows */
+  .crate{height:auto}
+  .crate__stage{position:relative; height:max(640px, 92svh); min-height:0}
+  /* bigger tap targets */
+  .ag__add{width:36px; height:36px; margin-left:4px}
+  .ag__meta{padding-right:40px}
+  .crate__arrow{width:58px; height:58px}
+  .footer-news,.ftr__grid>div:last-child{display:none}
+}
+@media(max-width:767px){
+  .stage::after{background:radial-gradient(85% 42% at 50% 50%, rgba(6,5,6,.72), rgba(6,5,6,.2) 75%, transparent)}
+}
