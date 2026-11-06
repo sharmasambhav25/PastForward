@@ -13,7 +13,6 @@ const priceHTML = (format, price) => MRP[format] && MRP[format] > price
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
 // the poster family, one heading per size (header menu + tabs on the posters pages)
 const SIZE_TABS = [
-  { key: 'all', name: 'All posters', href: '#/posters' },
   { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '#/posters/a3', dim: '297 × 420mm' },
   { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '#/posters/a5', dim: '148 × 210mm' },
   { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '#/posters/10x10', dim: '254 × 254mm' },
@@ -263,11 +262,27 @@ function closeAll() {
   if (lastFocus) { try { lastFocus.focus(); } catch (e) {} lastFocus = null; }
 }
 
+/* ---------- vinyl sale: running tape ribbon ---------- */
+function saleTapeRun(n = 6) {
+  const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span></span>`;
+  return one.repeat(n);
+}
+function saleRibbon() {
+  return `<a class="salebar tape" href="#/vinyl" aria-label="Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
+}
 /* ---------- chrome ---------- */
 function chromeHTML() {
   return `
   <a class="skip" href="#main">Skip to content</a>
-  <header class="hdr" id="hdr"><a class="salebar" href="#/vinyl"><span class="salebar__tag">Vinyl sale</span> <span>Every record now</span> <span class="sale num">${money(FMT.vinyl.price)}</span> <s class="num">${money(MRP.vinyl)}</s> <span class="salebar__go">Shop vinyls →</span></a><div class="wrap hdr__in">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <filter id="spray" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="1" seed="9" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.45" result="holes"/>
+      <feComposite in="rough" in2="holes" operator="in"/>
+    </filter></defs></svg>
+  <header class="hdr" id="hdr">${saleRibbon()}<div class="wrap hdr__in">
     <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>

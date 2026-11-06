@@ -2006,15 +2006,20 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 @media(min-width:768px){:root{--nav-h:calc(64px + var(--bar-h))}}
 .hdr{flex-direction:column; align-items:stretch}
 .hdr__in{flex:1}
-.salebar{flex:none; height:var(--bar-h); display:flex; align-items:center; justify-content:center; gap:10px;
-  background:var(--oxblood); color:var(--cream); font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
-  text-decoration:none; white-space:nowrap; overflow:hidden; padding-inline:var(--gutter)}
-.salebar .sale{font-weight:600; font-size:1.18em; letter-spacing:.06em}
-.salebar s{opacity:.7; letter-spacing:.06em}
-.salebar__tag{background:var(--cream); color:var(--oxblood); padding:3px 7px; font-weight:600}
-.salebar__go{opacity:.85}
-.salebar:hover .salebar__go{opacity:1; text-decoration:underline}
-@media(max-width:600px){ .salebar{font-size:.56rem; gap:7px; letter-spacing:.1em} .salebar__go,.salebar>span:nth-child(2){display:none} }
+/* the sale ribbon: red caution tape, text running */
+.tape{--tape:#D8312A; display:block; overflow:hidden; background:var(--tape); color:#0b0809; text-decoration:none;
+  font-family:var(--shout); text-transform:uppercase; white-space:nowrap}
+.tape__t{display:inline-flex; will-change:transform; animation:tapeRun 38s linear infinite}
+.tape__i{display:inline-flex; align-items:center}
+.tape__i>*{padding-inline:.7em}
+.tape__i b{font-weight:400; letter-spacing:.04em}
+.tape__i s{text-decoration-thickness:2px; opacity:.6}
+.tape__i em{font-style:normal; background:#0b0809; color:var(--tape); padding:0 .3em}
+.tape__i>span::after{content:"✦"; margin-left:1.4em; font-size:.7em; vertical-align:.12em}
+@keyframes tapeRun{to{transform:translateX(-50%)}}
+.salebar.tape{flex:none; height:var(--bar-h); line-height:var(--bar-h); font-size:.98rem; letter-spacing:.06em}
+.salebar.tape:hover .tape__t{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){ .tape__t{animation:none} }
 
 /* ---- hero: the collage behind the record, brighter ---- */
 .fhero__col>i{opacity:.72}
@@ -2023,6 +2028,29 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .ag__price .mrp{display:block; margin:0 0 1px; font-size:.82em; text-align:right}
 .ag__price{text-align:right; line-height:1.15}
 .ag__sub .mrp{margin-right:.35em}
+
+/* ---- the sale section: two strips of tape crossing over a spray-painted price ---- */
+.salesec{--tape:#D8312A; position:relative; overflow:hidden; background:#0b0809; text-align:center;
+  padding:clamp(150px,16vw,220px) var(--gutter); isolation:isolate}
+.salesec::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
+  background:radial-gradient(60% 50% at 50% 55%, rgba(216,49,42,.22), transparent 70%)}
+.salesec__tape{position:absolute; left:-10%; right:-10%; z-index:3; pointer-events:none}
+.salesec__tape .tape__t{display:inline-flex; background:var(--tape); color:#0b0809; font-family:var(--shout); text-transform:uppercase;
+  font-size:clamp(1.1rem,2vw,1.6rem); line-height:2.1; white-space:nowrap; box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.salesec__tape--a{top:clamp(34px,5vw,64px); transform:rotate(-4deg)}
+.salesec__tape--b{top:clamp(52px,7vw,96px); transform:rotate(3.5deg)}
+.salesec__tape--b .tape__t{animation-direction:reverse; animation-duration:44s; filter:brightness(.88)}
+.salesec__in{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center}
+.salesec__k{margin:0; font-family:var(--shout); text-transform:uppercase; color:var(--tape); letter-spacing:.02em;
+  font-size:clamp(1.6rem,3.6vw,3rem); line-height:1}
+.salesec__was{margin:14px 0 0; font-family:var(--mono); text-transform:uppercase; letter-spacing:.2em; font-size:.8rem; color:rgba(243,239,232,.6)}
+.salesec__was s{text-decoration-color:var(--tape); text-decoration-thickness:2px; color:rgba(243,239,232,.8); font-size:1.15em}
+/* the price: sprayed on — soft edges, overspray halo, grain */
+.salesec__now{margin:4px 0 34px; font-family:var(--shout); color:var(--tape); line-height:.9; letter-spacing:-.01em;
+  font-size:clamp(7rem,21vw,17rem); filter:url(#spray);
+  text-shadow:0 0 18px rgba(216,49,42,.55), 0 0 60px rgba(216,49,42,.25)}
+.salesec .cta-shop{margin-top:0}
+@media(max-width:767px){ .salesec{padding-block:120px 110px} .salesec__now{margin-bottom:26px} }
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -4653,7 +4681,6 @@ const priceHTML = (format, price) => MRP[format] && MRP[format] > price
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
 // the poster family, one heading per size (header menu + tabs on the posters pages)
 const SIZE_TABS = [
-  { key: 'all', name: 'All posters', href: '#/posters' },
   { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '#/posters/a3', dim: '297 × 420mm' },
   { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '#/posters/a5', dim: '148 × 210mm' },
   { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '#/posters/10x10', dim: '254 × 254mm' },
@@ -4903,11 +4930,27 @@ function closeAll() {
   if (lastFocus) { try { lastFocus.focus(); } catch (e) {} lastFocus = null; }
 }
 
+/* ---------- vinyl sale: running tape ribbon ---------- */
+function saleTapeRun(n = 6) {
+  const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span></span>`;
+  return one.repeat(n);
+}
+function saleRibbon() {
+  return `<a class="salebar tape" href="#/vinyl" aria-label="Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
+}
 /* ---------- chrome ---------- */
 function chromeHTML() {
   return `
   <a class="skip" href="#main">Skip to content</a>
-  <header class="hdr" id="hdr"><a class="salebar" href="#/vinyl"><span class="salebar__tag">Vinyl sale</span> <span>Every record now</span> <span class="sale num">${money(FMT.vinyl.price)}</span> <s class="num">${money(MRP.vinyl)}</s> <span class="salebar__go">Shop vinyls →</span></a><div class="wrap hdr__in">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <filter id="spray" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="1" seed="9" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.45" result="holes"/>
+      <feComposite in="rough" in2="holes" operator="in"/>
+    </filter></defs></svg>
+  <header class="hdr" id="hdr">${saleRibbon()}<div class="wrap hdr__in">
     <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
@@ -6627,6 +6670,18 @@ function viewHome() {
 
   ${crateHTML()}
 
+  <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
+  <section class="salesec" data-section="SALE">
+    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
+    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun()}${saleTapeRun()}</span></div>
+    <div class="salesec__in">
+      <p class="salesec__k">Vinyl sale · every record</p>
+      <p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>
+      <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
+      <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Shop the sale</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+    </div>
+  </section>
+
   ${seam('in-ink')}
 
   <!-- 5 ============ COMPANIONS ============ -->
@@ -6966,6 +7021,7 @@ function viewCatalog(category, subType, params) {
       else if (subType === 'a5' || subType === 'poster-a5') selSizes = ['poster-a5'];
       else if (subType === '10x10' || subType === 'print-10' || subType === 'prints') selSizes = ['print-10'];
     }
+    if (!selSizes.length) selSizes = ['poster-a3'];   // no "all posters" view: the posters page opens on A3
 
     const one = selSizes.length === 1 ? SIZE_TABS.find(t => t.f === selSizes[0]) : null;
     if (one) { h1 = one.name + '.'; sub = `${one.dim} · ${money(FMT[one.f].price)} each. Pick an artist, then the album.`; }
@@ -7086,7 +7142,7 @@ function viewCatalog(category, subType, params) {
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
     </div>
-    ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (routeFormats.length === 1 ? (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key : 'all')) : ''}
+    ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
         ${railContentHTML}
