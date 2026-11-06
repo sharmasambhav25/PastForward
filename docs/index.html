@@ -1993,6 +1993,36 @@ html[data-light] #soundtgl b{color:var(--paper-ink)}
 .why-strip__t b{font-family:var(--display); font-weight:400; font-style:italic; text-transform:none; letter-spacing:0;
   font-size:1.5em; color:var(--ember)}
 [data-section="THE DROP"]::before{background:linear-gradient(to bottom, #0d0b0c, rgba(13,11,12,0))}
+
+/* ---- vinyl sale: struck MRP beside the sale price ---- */
+.mrp{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--ember); text-decoration-thickness:1.5px; font-size:.86em; margin-right:.2em}
+.sale{color:var(--cream)}
+.fmt .f-price .mrp{display:block; margin:0 0 1px}
+
+/* ---- slim sale bar above the header: the header grows by its height, so every --nav-h offset still clears it ---- */
+:root{--bar-h:28px}
+:root{--nav-h:calc(56px + var(--bar-h))}
+@media(min-width:480px){:root{--nav-h:calc(60px + var(--bar-h))}}
+@media(min-width:768px){:root{--nav-h:calc(64px + var(--bar-h))}}
+.hdr{flex-direction:column; align-items:stretch}
+.hdr__in{flex:1}
+.salebar{flex:none; height:var(--bar-h); display:flex; align-items:center; justify-content:center; gap:10px;
+  background:var(--oxblood); color:var(--cream); font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  text-decoration:none; white-space:nowrap; overflow:hidden; padding-inline:var(--gutter)}
+.salebar .sale{font-weight:600; font-size:1.18em; letter-spacing:.06em}
+.salebar s{opacity:.7; letter-spacing:.06em}
+.salebar__tag{background:var(--cream); color:var(--oxblood); padding:3px 7px; font-weight:600}
+.salebar__go{opacity:.85}
+.salebar:hover .salebar__go{opacity:1; text-decoration:underline}
+@media(max-width:600px){ .salebar{font-size:.56rem; gap:7px; letter-spacing:.1em} .salebar__go,.salebar>span:nth-child(2){display:none} }
+
+/* ---- hero: the collage behind the record, brighter ---- */
+.fhero__col>i{opacity:.72}
+.fhero__col>i:last-child{opacity:.76}
+.fhero__col::after{background:radial-gradient(78% 62% at 50% 48%,rgba(6,5,6,.62) 22%,rgba(6,5,6,.22) 62%,rgba(6,5,6,.04))}
+.ag__price .mrp{display:block; margin:0 0 1px; font-size:.82em; text-align:right}
+.ag__price{text-align:right; line-height:1.15}
+.ag__sub .mrp{margin-right:.35em}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -4616,6 +4646,10 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
+// vinyl sale: the MRP is shown struck through beside the sale price, everywhere a vinyl price appears
+const MRP = { vinyl: 1299 };
+const priceHTML = (format, price) => MRP[format] && MRP[format] > price
+  ? `<s class="mrp num">${money(MRP[format])}</s> <span class="sale num">${money(price)}</span>` : money(price);
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
 // the poster family, one heading per size (header menu + tabs on the posters pages)
 const SIZE_TABS = [
@@ -4736,7 +4770,7 @@ function cardHTML(p, targetFormat) {
       <span class="card__artist">${esc(p.artist)}</span>
       <span class="card__album">${albumOf(p)}</span>
       <span class="card__size">${sizeText}</span>
-      <span class="card__price num">${money(v.price)}</span>
+      <span class="card__price num">${priceHTML(v.format, v.price)}</span>
     </div></a>`;
 }
 
@@ -4873,12 +4907,13 @@ function closeAll() {
 function chromeHTML() {
   return `
   <a class="skip" href="#main">Skip to content</a>
-  <header class="hdr" id="hdr"><div class="wrap hdr__in">
+  <header class="hdr" id="hdr"><a class="salebar" href="#/vinyl"><span class="salebar__tag">Vinyl sale</span> <span>Every record now</span> <span class="sale num">${money(FMT.vinyl.price)}</span> <s class="num">${money(MRP.vinyl)}</s> <span class="salebar__go">Shop vinyls →</span></a><div class="wrap hdr__in">
     <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
+      <a class="navlink" href="#/custom" data-nav="custom">Custom${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
@@ -4931,6 +4966,7 @@ function chromeHTML() {
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
     <a href="#/collections/the-classics">Our Collections</a>
+    <a href="#/custom">Custom</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
     <a href="#/contact">Contact</a>
@@ -6720,7 +6756,7 @@ function crateHTML() {
         <div class="crate__hint mono-xs" aria-hidden="true"><span class="crate__hint-d">SCROLL OR USE THE ARROWS TO FLIP THROUGH<br>CLICK THE RECORD TO OPEN IT</span><span class="crate__hint-m">SWIPE OR USE THE ARROWS · TAP TO OPEN</span></div>
       </div>
       <div class="crate__facts">
-        <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span data-cm="price">${f0.price}</span></div></div>
+        <div><div class="crate__fl">THE RECORD</div><div class="crate__fv"><span class="crate__price">${priceHTML('vinyl', variant(P.find(x => albumText(x) === f0.album) || P[0], 'vinyl').price)}</span></div></div>
         <div><div class="crate__fl"><span data-cm="otherLabel">${f0.otherLabel}</span></div><div class="crate__fv"><span data-cm="other">${esc(f0.other)}</span></div></div>
       </div>
       <div class="crate__nav">
@@ -6748,7 +6784,7 @@ function mountCrateSection(onUnmount) {
     openA.textContent = `Open ${facts[i].album} by ${facts[i].artist}`;
     if (i === shown) return; const dir = i > shown ? 1 : -1; shown = i;
     const f = facts[i];
-    ['album', 'artist', 'collection', 'price', 'otherLabel', 'other'].forEach((k, j) => {
+    ['album', 'artist', 'collection', 'otherLabel', 'other'].forEach((k, j) => {
       const el = cm(k); if (!el || el.textContent === f[k]) return;
       el.textContent = f[k];
       if (!RM()) el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
@@ -6854,7 +6890,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
         <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
           ${thumbOf(p, v)}
           <span class="ag__album">${albumOf(p)}</span>
-          <span class="ag__price num">${money(v.price)}</span>
+          <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
         </a>
         <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
       </li>`;
@@ -6866,7 +6902,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
           <a class="ag__slink" href="#/product/${p.slug}?format=${v.format}">
             <span class="ag__badge">${esc(f.badge || v.format)}</span>
             <span class="ag__sname"><span class="ag__slab">${esc(f.label || '')}</span>${sizeOf(f) ? `<span class="ag__dim">${esc(sizeOf(f))}</span>` : ''}</span>
-            <span class="ag__price num">${money(v.price)}</span>
+            <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
           </a>
           <button class="ag__sadd" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}, ${esc(f.label || '')} to cart"><span class="ag__saddt">Add</span></button>
         </li>`;
@@ -6888,7 +6924,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
       <span class="ag__meta">
         <span class="ag__name">${esc(artist)}</span>
-        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${money(from)}</span></span>
+        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
       </span>
       <span class="ag__chev" aria-hidden="true"></span>
     </button>
@@ -7129,7 +7165,7 @@ function viewProduct(p, params) {
       <div>
         <div class="card__artist">${esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
-        <div class="num" id="pdpprice" style="font-size:1.3rem">${money(v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
+        <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
 
         <div class="fmt" style="margin-top:28px">
           ${Object.entries(FMT).map(([k, f]) => {
@@ -7137,7 +7173,7 @@ function viewProduct(p, params) {
             return `<button data-fmt="${k}" class="${k === sel ? 'is-on' : ''}" ${has ? '' : 'disabled'} aria-pressed="${k === sel}">
               <span class="f-name">${esc(f.label)}</span>
               <span class="f-size">${sizeOf(f) ? esc(sizeOf(f)) : 'Polaroid-style'}</span>
-              <span class="f-price num">${has ? money(f.price) : '—'}</span></button>`;
+              <span class="f-price num">${has ? priceHTML(k, f.price) : '—'}</span></button>`;
           }).join('')}
         </div>
 
@@ -7179,7 +7215,7 @@ function viewProduct(p, params) {
     </section>
 
     <div class="buybar" id="buybar">
-      <span class="num" id="barprice">${money(v.price)}</span>
+      <span class="num" id="barprice">${priceHTML(v.format, v.price)}</span>
       <button class="btn btn--primary" style="flex:1" id="baradd"><span class="btn__mag">Add to cart</span></button>
     </div></div>`;
 }
@@ -8013,8 +8049,8 @@ function mountProduct(p, params) {
     if (f === 'vinyl') Sound.needleDrop(); else Sound.tick();
     $('#stagemedia').innerHTML = stageMedia(p, f);
     if (!RM()) mountRipple();
-    $('#pdpprice').innerHTML = money(v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
-    $('#barprice').textContent = money(v.price);
+    $('#pdpprice').innerHTML = priceHTML(v.format, v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
+    $('#barprice').innerHTML = priceHTML(v.format, v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
       : FMT[f].label + ', printed to order';
