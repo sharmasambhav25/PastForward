@@ -124,17 +124,9 @@ function viewHome() {
         <div class="fdisc__tag">${TAGLINE}</div>
       </div>
 
-      <!-- igloo-style annotation over the object -->
-      <div class="annot" id="heroannot">
-        <div class="annot__pt annot__pt--l" style="left:50%;top:50%;--ad:120ms">
-          <div class="annot__dot"></div><div class="annot__lab">SPINDLE HOLE</div></div>
-        <div class="annot__pt annot__pt--r" style="left:58%;top:50%;--ad:260ms">
-          <div class="annot__dot"></div><div class="annot__lab">PRINTED CENTRE LABEL</div></div>
-        <div class="annot__pt annot__pt--r" style="left:85%;top:31%;--ad:400ms">
-          <div class="annot__dot"></div><div class="annot__lab">ORIGINAL GROOVES, UNTOUCHED</div></div>
-      </div>
     </div>
 
+    <p class="fhero__tagm">${TAGLINE}</p>
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
@@ -146,7 +138,6 @@ function viewHome() {
     </div>
   </section>
 
-  ${window.matchMedia('(max-width:767px)').matches ? crateMobileHTML() : crateHTML()}
 
   <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
   <section class="salesec" data-section="SALE">
@@ -159,6 +150,8 @@ function viewHome() {
       <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Shop the sale</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
     </div>
   </section>
+
+  ${window.matchMedia('(max-width:767px)').matches ? '' : crateHTML()}
 
   ${seam('in-ink')}
 

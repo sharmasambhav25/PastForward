@@ -2138,3 +2138,12 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .crate__count{white-space:nowrap}
 .crate--css .crate__fv{white-space:nowrap}
 .crate--css .crate__facts{gap:22px}
+/* hero: no callout labels on the record; on phones the tagline sits under the record */
+.annot{display:none}
+.fhero__tagm{display:none}
+@media(max-width:767px){
+  .fdisc__tag{display:none}
+  .fhero__tagm{display:block; position:absolute; z-index:7; left:var(--gutter); right:var(--gutter); margin:0; text-align:center;
+    bottom:calc(clamp(44px, 6svh, 72px) + env(safe-area-inset-bottom, 0px) + 92px); color:var(--cream)}
+  .fhero__tagm .tagline{font-size:1.2rem; line-height:1.3}
+}
