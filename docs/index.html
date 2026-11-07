@@ -2143,6 +2143,8 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
     bottom:calc(clamp(44px, 6svh, 72px) + env(safe-area-inset-bottom, 0px) + 92px); color:var(--cream)}
   .fhero__tagm .tagline{font-size:1.2rem; line-height:1.3}
 }
+.ag__media .ag__photo{position:absolute; inset:0; width:100%; height:100%; max-width:none; max-height:none; object-fit:cover}
+.ag__media:has(.ag__photo){padding:0}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -4756,7 +4758,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
  ]
 };
 window.__WORDMARK__ = "photos/wordmark.webp";
-window.__PHOTOS__ = {"board-closeup": "photos/board-closeup.webp", "board-display": "photos/board-display.webp", "booth-standee": "photos/booth-standee.webp", "handling": "photos/handling.webp", "printer": "photos/printer.webp", "record-in-hand": "photos/record-in-hand.webp", "records-table": "photos/records-table.webp", "stall-red": "photos/stall-red.webp", "stall-red2": "photos/stall-red2.webp", "wall-full": "photos/wall-full.webp", "wall-person": "photos/wall-person.webp", "wall-white": "photos/wall-white.webp", "col-g": "photos/col-g.webp", "col-r": "photos/col-r.webp", "disc": "photos/disc.webp", "flex-mark": "photos/flex-mark.webp"};
+window.__PHOTOS__ = {"artist-the-weeknd": "photos/artist-the-weeknd.webp", "board-closeup": "photos/board-closeup.webp", "board-display": "photos/board-display.webp", "booth-standee": "photos/booth-standee.webp", "handling": "photos/handling.webp", "printer": "photos/printer.webp", "record-in-hand": "photos/record-in-hand.webp", "records-table": "photos/records-table.webp", "stall-red": "photos/stall-red.webp", "stall-red2": "photos/stall-red2.webp", "wall-full": "photos/wall-full.webp", "wall-person": "photos/wall-person.webp", "wall-white": "photos/wall-white.webp", "col-g": "photos/col-g.webp", "col-r": "photos/col-r.webp", "disc": "photos/disc.webp", "flex-mark": "photos/flex-mark.webp"};
 window.__IMG_BASE__ = "img/";
 window.__IMG_BASE_LG__ = null;</script>
 <script>/* ============================================================
@@ -7140,7 +7142,10 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const first = items[0];
   const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
   const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? '4/5' : '3/4';
-  const cover = v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
+  // artist cover photos for the vinyl section (photos/artist-<slug>.webp)
+  const artistPhoto = window.__PHOTOS__ && window.__PHOTOS__['artist-' + artist.toLowerCase().replace(/[^a-z0-9]+/g, '-')];
+  const cover = v0.format === 'vinyl' && artistPhoto ? `<img class="ag__photo" src="${artistPhoto}" alt="${esc(artist)} wall" loading="lazy" decoding="async">`
+    : v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
     : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));

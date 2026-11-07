@@ -2140,3 +2140,5 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
     bottom:calc(clamp(44px, 6svh, 72px) + env(safe-area-inset-bottom, 0px) + 92px); color:var(--cream)}
   .fhero__tagm .tagline{font-size:1.2rem; line-height:1.3}
 }
+.ag__media .ag__photo{position:absolute; inset:0; width:100%; height:100%; max-width:none; max-height:none; object-fit:cover}
+.ag__media:has(.ag__photo){padding:0}
