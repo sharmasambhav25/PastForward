@@ -466,7 +466,10 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const first = items[0];
   const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
   const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? '4/5' : '3/4';
-  const cover = v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
+  // artist cover photos for the vinyl section (photos/artist-<slug>.webp)
+  const artistPhoto = window.__PHOTOS__ && window.__PHOTOS__['artist-' + artist.toLowerCase().replace(/[^a-z0-9]+/g, '-')];
+  const cover = v0.format === 'vinyl' && artistPhoto ? `<img class="ag__photo" src="${artistPhoto}" alt="${esc(artist)} wall" loading="lazy" decoding="async">`
+    : v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
     : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
