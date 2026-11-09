@@ -188,7 +188,7 @@ function syncCart() {
   if (badge) { badge.textContent = n; badge.style.display = n ? 'grid' : 'none'; }
   const body = $('#drawerbody'); if (body) body.innerHTML = cartLinesHTML();
   const ft = $('#drawerft'); if (ft) ft.innerHTML = cartFootHTML();
-  if (location.hash.startsWith('#/cart')) render();
+  if (routeHash().startsWith('#/cart')) render();
 }
 function cartLinesHTML() {
   if (!cart.length) return `<div style="padding:56px 0;text-align:center">
@@ -511,7 +511,7 @@ function initGrounds() {
   const test = () => {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
-      const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
+      const home = routeHash() === '#/';
       hint.hidden = !home || scrollY > innerHeight * 0.7;
     }
     const mid = innerHeight * 0.5;
@@ -697,7 +697,7 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
+    const home = routeHash() === '#/';
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
@@ -871,7 +871,7 @@ function checkout(lines) {
 
 /* ---------- router ---------- */
 function parseHash() {
-  const raw = location.hash.replace(/^#/, '') || '/';
+  const raw = routeHash().replace(/^#/, '') || '/';
   const [path, q] = raw.split('?');
   return { path: path.replace(/\/+$/, '') || '/', params: new URLSearchParams(q || '') };
 }
@@ -923,16 +923,41 @@ function render() {
   if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
 }
-function go(hash) { location.hash = hash; }
+function go(hash) { navigate(hash); }
 
 /* ---------- global events ---------- */
 // jump (not glide) to the top: html has scroll-behavior:smooth, and a glide gets cut short
 // by the new page rendering, leaving you halfway down it
-/* The homepage shows as plain pastforward.shop, without a trailing #/ */
-function cleanHomeUrl() {
-  if (location.hash === '#/' || location.hash === '#') history.replaceState(null, '', location.pathname + location.search);
+/* ---------- URLs ----------
+   On the live site (window.__CLEAN_URLS__) pages live in the path: pastforward.shop/vinyl.
+   Old #/ links are converted on arrival. Other builds (artifact, file) keep #/ routing. */
+function cleanUrls() { return !!window.__CLEAN_URLS__ && /^https?:$/.test(location.protocol); }
+function routeHash() {
+  if (!cleanUrls()) return location.hash;
+  return '#' + (location.pathname.replace(/\/+$/, '') || '/') + location.search;
 }
-addEventListener('hashchange', () => { cleanHomeUrl(); scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); });
+function onRoute() { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); }
+function navigate(to) {
+  let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
+  if (!cleanUrls()) { location.hash = p; return; }
+  if (p === location.pathname + location.search) return;
+  history.pushState(null, '', p); onRoute();
+}
+function cleanHomeUrl() {
+  const h = location.hash;
+  if (cleanUrls() && h.startsWith('#/')) history.replaceState(null, '', h.slice(1));
+  else if (h === '#/' || h === '#') history.replaceState(null, '', location.pathname + location.search);
+}
+addEventListener('hashchange', () => { cleanHomeUrl(); onRoute(); });
+addEventListener('popstate', () => { if (cleanUrls()) onRoute(); });
+/* In-site #/ links navigate by path without a page reload. Registered on window so it
+   runs after the document click handlers below (which may preventDefault, e.g. Add to cart). */
+addEventListener('click', e => {
+  if (!cleanUrls() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest && e.target.closest('a[href^="#/"]');
+  if (!a || a.target === '_blank') return;
+  e.preventDefault(); navigate(a.getAttribute('href'));
+});
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);

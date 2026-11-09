@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="preload" href="photos/wordmark.webp" as="image"><link rel="modulepreload" href="vendor/three.module.min.js"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PastForward</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="preload" href="/photos/wordmark.webp" as="image"><link rel="modulepreload" href="/vendor/three.module.min.js"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PastForward</title>
 <meta name="description" content="Real 12-inch records with the album pressed into the centre label, made to hang. Posters, prints and polaroids of the albums that mattered.">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -2236,7 +2236,8 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
   .fmts__arr--prev{left:8px} .fmts__arr--next{right:8px}
 }
 .stage .cta-shop{margin-top:6px}
-</style></head><body><script>window.__CATALOGUE__ = {
+</style></head><body><script>window.__CLEAN_URLS__ = true;
+window.__CATALOGUE__ = {
  "products": [
   {
    "slug": "abba-little-things",
@@ -4980,9 +4981,9 @@ window.__SHOPIFY_VARIANTS__ = {
 "PF-WWE-THE-ROCK-VINYL": 46613010710572,
 "PF-WWE-TRIPLE-H-POSTER-A3": 46613010743340
 };
-window.__WORDMARK__ = "photos/wordmark.webp";
-window.__PHOTOS__ = {"artist-frank-ocean": "photos/artist-frank-ocean.webp", "artist-karan-aujla": "photos/artist-karan-aujla.webp", "artist-pink-floyd": "photos/artist-pink-floyd.webp", "artist-the-weeknd": "photos/artist-the-weeknd.webp", "board-closeup": "photos/board-closeup.webp", "board-display": "photos/board-display.webp", "booth-standee": "photos/booth-standee.webp", "handling": "photos/handling.webp", "printer": "photos/printer.webp", "record-in-hand": "photos/record-in-hand.webp", "records-table": "photos/records-table.webp", "stall-red": "photos/stall-red.webp", "stall-red2": "photos/stall-red2.webp", "wall-full": "photos/wall-full.webp", "wall-person": "photos/wall-person.webp", "wall-white": "photos/wall-white.webp", "col-g": "photos/col-g.webp", "col-r": "photos/col-r.webp", "disc": "photos/disc.webp", "flex-mark": "photos/flex-mark.webp"};
-window.__IMG_BASE__ = "img/";
+window.__WORDMARK__ = "/photos/wordmark.webp";
+window.__PHOTOS__ = {"artist-frank-ocean": "/photos/artist-frank-ocean.webp", "artist-karan-aujla": "/photos/artist-karan-aujla.webp", "artist-pink-floyd": "/photos/artist-pink-floyd.webp", "artist-the-weeknd": "/photos/artist-the-weeknd.webp", "board-closeup": "/photos/board-closeup.webp", "board-display": "/photos/board-display.webp", "booth-standee": "/photos/booth-standee.webp", "handling": "/photos/handling.webp", "printer": "/photos/printer.webp", "record-in-hand": "/photos/record-in-hand.webp", "records-table": "/photos/records-table.webp", "stall-red": "/photos/stall-red.webp", "stall-red2": "/photos/stall-red2.webp", "wall-full": "/photos/wall-full.webp", "wall-person": "/photos/wall-person.webp", "wall-white": "/photos/wall-white.webp", "col-g": "/photos/col-g.webp", "col-r": "/photos/col-r.webp", "disc": "/photos/disc.webp", "flex-mark": "/photos/flex-mark.webp"};
+window.__IMG_BASE__ = "/img/";
 window.__IMG_BASE_LG__ = null;</script>
 <script>/* ============================================================
    PastForward — core: helpers, components, chrome, router
@@ -5174,7 +5175,7 @@ function syncCart() {
   if (badge) { badge.textContent = n; badge.style.display = n ? 'grid' : 'none'; }
   const body = $('#drawerbody'); if (body) body.innerHTML = cartLinesHTML();
   const ft = $('#drawerft'); if (ft) ft.innerHTML = cartFootHTML();
-  if (location.hash.startsWith('#/cart')) render();
+  if (routeHash().startsWith('#/cart')) render();
 }
 function cartLinesHTML() {
   if (!cart.length) return `<div style="padding:56px 0;text-align:center">
@@ -5497,7 +5498,7 @@ function initGrounds() {
   const test = () => {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
-      const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
+      const home = routeHash() === '#/';
       hint.hidden = !home || scrollY > innerHeight * 0.7;
     }
     const mid = innerHeight * 0.5;
@@ -5683,7 +5684,7 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    const home = location.hash === '#/' || location.hash === '' || location.hash === '#';
+    const home = routeHash() === '#/';
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
@@ -5857,7 +5858,7 @@ function checkout(lines) {
 
 /* ---------- router ---------- */
 function parseHash() {
-  const raw = location.hash.replace(/^#/, '') || '/';
+  const raw = routeHash().replace(/^#/, '') || '/';
   const [path, q] = raw.split('?');
   return { path: path.replace(/\/+$/, '') || '/', params: new URLSearchParams(q || '') };
 }
@@ -5909,16 +5910,41 @@ function render() {
   if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
 }
-function go(hash) { location.hash = hash; }
+function go(hash) { navigate(hash); }
 
 /* ---------- global events ---------- */
 // jump (not glide) to the top: html has scroll-behavior:smooth, and a glide gets cut short
 // by the new page rendering, leaving you halfway down it
-/* The homepage shows as plain pastforward.shop, without a trailing #/ */
-function cleanHomeUrl() {
-  if (location.hash === '#/' || location.hash === '#') history.replaceState(null, '', location.pathname + location.search);
+/* ---------- URLs ----------
+   On the live site (window.__CLEAN_URLS__) pages live in the path: pastforward.shop/vinyl.
+   Old #/ links are converted on arrival. Other builds (artifact, file) keep #/ routing. */
+function cleanUrls() { return !!window.__CLEAN_URLS__ && /^https?:$/.test(location.protocol); }
+function routeHash() {
+  if (!cleanUrls()) return location.hash;
+  return '#' + (location.pathname.replace(/\/+$/, '') || '/') + location.search;
 }
-addEventListener('hashchange', () => { cleanHomeUrl(); scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); });
+function onRoute() { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); }
+function navigate(to) {
+  let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
+  if (!cleanUrls()) { location.hash = p; return; }
+  if (p === location.pathname + location.search) return;
+  history.pushState(null, '', p); onRoute();
+}
+function cleanHomeUrl() {
+  const h = location.hash;
+  if (cleanUrls() && h.startsWith('#/')) history.replaceState(null, '', h.slice(1));
+  else if (h === '#/' || h === '#') history.replaceState(null, '', location.pathname + location.search);
+}
+addEventListener('hashchange', () => { cleanHomeUrl(); onRoute(); });
+addEventListener('popstate', () => { if (cleanUrls()) onRoute(); });
+/* In-site #/ links navigate by path without a page reload. Registered on window so it
+   runs after the document click handlers below (which may preventDefault, e.g. Add to cart). */
+addEventListener('click', e => {
+  if (!cleanUrls() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest && e.target.closest('a[href^="#/"]');
+  if (!a || a.target === '_blank') return;
+  e.preventDefault(); navigate(a.getAttribute('href'));
+});
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
@@ -7349,7 +7375,7 @@ function mountCrateSection(onUnmount) {
   const wallHost = document.getElementById('cratewall');
   if (wallHost && window.mountWallpaper && !window.matchMedia('(max-width:767px)').matches) {
     try {
-      const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(location.hash.split('?')[1] || '').get('wall') || 'contours';
+      const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(routeHash().split('?')[1] || '').get('wall') || 'contours';
       const wall = window.mountWallpaper(wallHost, { mode, focus: innerWidth / innerHeight < 0.8 ? [0.5, 0.48] : [0.56, 0.5], reducedMotion: RM() });
       if (wall) { root.classList.add('crate--live'); onUnmount(() => wall.cleanup()); }
     } catch (e) {}
@@ -8510,7 +8536,7 @@ function mountHome() {
 function setParams(mut) {
   const { path, params } = parseHash(); mut(params);
   const q = params.toString();
-  location.hash = path + (q ? '?' + q : '');
+  navigate(path + (q ? '?' + q : ''));
 }
 function mountCatalog(seg, params) {
   // artist cards: one open at a time, height animated
@@ -8547,7 +8573,7 @@ function mountCatalog(seg, params) {
     if (path.startsWith('/posters')) targetPath = '/posters';
 
     if (inp.dataset.f === 'col_nav') {
-      location.hash = '#/collections/' + inp.value;
+      navigate('#/collections/' + inp.value);
       return;
     }
 
@@ -8574,7 +8600,7 @@ function mountCatalog(seg, params) {
     }
     pp.delete('n');
     const q = pp.toString();
-    location.hash = targetPath + (q ? '?' + q : '');
+    navigate(targetPath + (q ? '?' + q : ''));
   }));
   const sort = $('#sort'); if (sort) sort.addEventListener('change', () => setParams(pp => pp.set('sort', sort.value)));
   $$('[data-unset]').forEach(b => b.addEventListener('click', () => {
@@ -8585,12 +8611,12 @@ function mountCatalog(seg, params) {
     const cur = pp.getAll(k).filter(x => x !== v);
     pp.delete(k); cur.forEach(x => pp.append(k, x));
     const q = pp.toString();
-    location.hash = targetPath + (q ? '?' + q : '');
+    navigate(targetPath + (q ? '?' + q : ''));
   }));
   $$('[data-clear]').forEach(b => b.addEventListener('click', () => {
     const { path } = parseHash();
     const basePath = path.startsWith('/posters') ? '/posters' : path;
-    location.hash = basePath;
+    navigate(basePath);
   }));
   const more = $('#loadmore'); if (more) more.addEventListener('click', () => setParams(pp => pp.set('n', String((+(pp.get('n') || 24)) + 24))));
   // FLIP re-flow
@@ -8815,7 +8841,7 @@ else pfStart();
    page has zero runtime network dependency). The label texture uses
    only PastForward's own real microcopy — no invented track titles.
    ============================================================ */
-import * as THREE from "./vendor/three.module.min.js";
+import * as THREE from "/vendor/three.module.min.js";
 
 /* Everything that makes a record look like a real pressing, shared by the hero disc
    and the crate carousel: seeded noise, the groove/roughness/anisotropy maps and the
