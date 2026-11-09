@@ -794,7 +794,7 @@ function playFlip(target) {
 
 /* ---------- Shopify Configuration & Checkout Pre-wire ---------- */
 const SHOPIFY_CONFIG = {
-  storeDomain: '6gzxdq-ae.myshopify.com',
+  storeDomain: 'shop.pastforward.shop',
 
   // Catalogue SKU -> Shopify variant id (generated into shopify_variants.json, injected by build.py)
   variantIds: window.__SHOPIFY_VARIANTS__ || {},
