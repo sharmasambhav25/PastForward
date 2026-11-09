@@ -2212,3 +2212,20 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .fmts{overflow:clip}
 .fmts__strip{overflow:clip; overflow-clip-margin:30px}
 .fmts__bg{filter:blur(18px) brightness(.58) saturate(1.15)}
+
+/* real-size spindle holes (a 7mm hole in a 30cm record) */
+.record__spindle{left:48.9%; top:48.9%; width:2.2%; height:2.2%}
+.fdisc.is-css .fdisc__hole{width:2.4%}
+/* slider arrows */
+.fmts__arr{position:absolute; top:50%; z-index:3; width:52px; height:52px; margin-top:-26px; border-radius:50%; border:0; cursor:pointer;
+  display:grid; place-items:center; background:var(--cream); color:#0d0b0c; box-shadow:0 10px 30px rgba(0,0,0,.45); transition:background .2s, color .2s, transform .2s}
+.fmts__arr svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.fmts__arr:hover{background:var(--oxblood); color:var(--cream); transform:scale(1.06)}
+.fmts__arr:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+.fmts__arr--prev{left:calc(50% - clamp(170px,16vw,240px) * .375 - 13px - 78px)}
+.fmts__arr--next{right:calc(50% - clamp(170px,16vw,240px) * .375 - 13px - 78px)}
+@media(max-width:767px){
+  .fmts__arr{width:44px; height:44px; margin-top:-22px}
+  .fmts__arr--prev{left:8px} .fmts__arr--next{right:8px}
+}
+.stage .cta-shop{margin-top:6px}

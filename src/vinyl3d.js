@@ -153,7 +153,7 @@ export function createVinylKit(renderer) {
     const outline = new THREE.Shape();
     outline.absarc(0, 0, 2.99, 0, Math.PI * 2, false);
     const hole = new THREE.Path();
-    hole.absarc(0, 0, 0.085, 0, Math.PI * 2, true);
+    hole.absarc(0, 0, 0.037, 0, Math.PI * 2, true);
     outline.holes.push(hole);
     const bodyGeometry = new THREE.ExtrudeGeometry(outline, {
       depth: 0.055, steps: 1, bevelEnabled: true, bevelSegments: 3,
@@ -162,8 +162,8 @@ export function createVinylKit(renderer) {
     bodyGeometry.translate(0, 0, -0.035);
     return {
       bodyGeometry,
-      surfaceGeometry: new THREE.RingGeometry(0.085, 2.992, 200),
-      labelGeometry: new THREE.RingGeometry(0.085, 0.965, 128),
+      surfaceGeometry: new THREE.RingGeometry(0.037, 2.992, 200),
+      labelGeometry: new THREE.RingGeometry(0.037, 0.965, 128),
       bodyMaterial: new THREE.MeshPhysicalMaterial({ color: "#0a0a0b", roughness: 0.2, metalness: 0, ior: 1.5 }),
       vinylMaterial: new THREE.MeshPhysicalMaterial({
         ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,
@@ -248,7 +248,7 @@ export function mountVinyl(container) {
   const outline = new THREE.Shape();
   outline.absarc(0, 0, 2.99, 0, Math.PI * 2, false);
   const hole = new THREE.Path();
-  hole.absarc(0, 0, 0.085, 0, Math.PI * 2, true);
+  hole.absarc(0, 0, 0.037, 0, Math.PI * 2, true);
   outline.holes.push(hole);
   const bodyGeometry = new THREE.ExtrudeGeometry(outline, {
     depth: 0.055, steps: 1, bevelEnabled: true, bevelSegments: 3,
@@ -267,14 +267,14 @@ export function mountVinyl(container) {
     ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,   // roughnessMap carries the real values
     anisotropy: 0.85, bumpScale: 0.04, ior: 1.5, specularIntensity: 1
   });
-  const surface = new THREE.Mesh(new THREE.RingGeometry(0.085, 2.992, 256), vinylMaterial);
+  const surface = new THREE.Mesh(new THREE.RingGeometry(0.037, 2.992, 256), vinylMaterial);
   surface.position.z = 0.030;
   record.add(surface);
 
   const labelBuild = makeLabelMaps();
   /* the label is printed paper: show the art at its true colour (emissive, not tone-mapped)
      and let the moving light add a little on top, instead of the art only existing where lit */
-  const label = new THREE.Mesh(new THREE.RingGeometry(0.085, 0.965, 192), new THREE.MeshStandardMaterial({
+  const label = new THREE.Mesh(new THREE.RingGeometry(0.037, 0.965, 192), new THREE.MeshStandardMaterial({
     ...labelBuild.maps, roughness: 0.9, metalness: 0, bumpScale: 0.0012,
     color: new THREE.Color(0.14, 0.14, 0.14),   // light only adds a gentle sheen, never blows the art out
     emissive: "#ffffff", emissiveMap: labelBuild.maps.map, emissiveIntensity: 0.9,

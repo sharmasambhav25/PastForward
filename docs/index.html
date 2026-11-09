@@ -2215,6 +2215,23 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .fmts{overflow:clip}
 .fmts__strip{overflow:clip; overflow-clip-margin:30px}
 .fmts__bg{filter:blur(18px) brightness(.58) saturate(1.15)}
+
+/* real-size spindle holes (a 7mm hole in a 30cm record) */
+.record__spindle{left:48.9%; top:48.9%; width:2.2%; height:2.2%}
+.fdisc.is-css .fdisc__hole{width:2.4%}
+/* slider arrows */
+.fmts__arr{position:absolute; top:50%; z-index:3; width:52px; height:52px; margin-top:-26px; border-radius:50%; border:0; cursor:pointer;
+  display:grid; place-items:center; background:var(--cream); color:#0d0b0c; box-shadow:0 10px 30px rgba(0,0,0,.45); transition:background .2s, color .2s, transform .2s}
+.fmts__arr svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.fmts__arr:hover{background:var(--oxblood); color:var(--cream); transform:scale(1.06)}
+.fmts__arr:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+.fmts__arr--prev{left:calc(50% - clamp(170px,16vw,240px) * .375 - 13px - 78px)}
+.fmts__arr--next{right:calc(50% - clamp(170px,16vw,240px) * .375 - 13px - 78px)}
+@media(max-width:767px){
+  .fmts__arr{width:44px; height:44px; margin-top:-22px}
+  .fmts__arr--prev{left:8px} .fmts__arr--next{right:8px}
+}
+.stage .cta-shop{margin-top:6px}
 </style></head><body><script>window.__CATALOGUE__ = {
  "products": [
   {
@@ -6910,7 +6927,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        <a class="btn btn--primary" href="#/vinyl"><span class="btn__mag">Build your wall</span></a>
+        <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Build your wall</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -6991,6 +7008,8 @@ function formatsHTML() {
       <div class="cap fmts__cap">EVERYTHING · POSTERS &amp; POLAROIDS · <span data-fn>01</span> / ${String(S.length).padStart(2, '0')}</div>
       <div class="fmts__titles">${S.map((x, i) => `<h2 class="fmts__t${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}>${esc(x.t)}</h2>`).join('')}</div>
       <div class="fmts__strip">
+        <button class="fmts__arr fmts__arr--prev" type="button" data-fp aria-label="Previous design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="fmts__arr fmts__arr--next" type="button" data-fx aria-label="Next design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="fmts__track">${Array.from({ length: reps }, (_, r) => S.map((x, i) => `<button class="fmts__th" type="button" data-k="${r * S.length + i}" aria-label="${esc(x.t)} by ${esc(x.by)}"${r === 1 ? '' : ' tabindex="-1"'}><img src="${x.img}" alt="" loading="lazy" decoding="async"></button>`).join('')).join('')}</div>
         <span class="fmts__frame" aria-hidden="true"></span>
       </div>
@@ -7021,19 +7040,20 @@ function mountFormats() {
     clearTimeout(go.t); go.t = setTimeout(() => { if (k < n || k >= 2 * n) { k = n + (k % n); place(false); } }, 650);
     restart();
   };
-  const restart = () => { clearInterval(timer); if (!reduce && visible && !hold) timer = setInterval(() => go(k + 1), 4500); };
+  // always moves on by itself while on screen; a click/swipe just restarts the 4s count
+  const restart = () => { clearInterval(timer); if (visible) timer = setInterval(() => go(k + 1), 4000); };
+  root.querySelector('[data-fp]').addEventListener('click', () => go(k - 1));
+  root.querySelector('[data-fx]').addEventListener('click', () => go(k + 1));
   ths.forEach(t => {
     t.addEventListener('click', () => go(+t.dataset.k));
     t.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') e.preventDefault(); });   // no focus-scroll on touch
   });
-  root.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hold = true; restart(); } });
-  root.addEventListener('pointerleave', () => { hold = false; restart(); });
   root.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(k + 1); if (e.key === 'ArrowLeft') go(k - 1); });
   let sx = 0, sy = 0;
   root.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
   root.addEventListener('touchend', e => { const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) go(k + (dx < 0 ? 1 : -1)); }, { passive: true });
-  const io = new IntersectionObserver(en => { visible = en[0].isIntersecting; restart(); }, { threshold: .35 });
+  const io = new IntersectionObserver(en => { visible = en[0].isIntersecting; restart(); }, { threshold: .15 });
   io.observe(root); onUnmount(() => { io.disconnect(); clearInterval(timer); clearTimeout(go.t); });
   const onR = () => place(false); addEventListener('resize', onR); onUnmount(() => removeEventListener('resize', onR));
   place(false);
@@ -8796,7 +8816,7 @@ export function createVinylKit(renderer) {
     const outline = new THREE.Shape();
     outline.absarc(0, 0, 2.99, 0, Math.PI * 2, false);
     const hole = new THREE.Path();
-    hole.absarc(0, 0, 0.085, 0, Math.PI * 2, true);
+    hole.absarc(0, 0, 0.037, 0, Math.PI * 2, true);
     outline.holes.push(hole);
     const bodyGeometry = new THREE.ExtrudeGeometry(outline, {
       depth: 0.055, steps: 1, bevelEnabled: true, bevelSegments: 3,
@@ -8805,8 +8825,8 @@ export function createVinylKit(renderer) {
     bodyGeometry.translate(0, 0, -0.035);
     return {
       bodyGeometry,
-      surfaceGeometry: new THREE.RingGeometry(0.085, 2.992, 200),
-      labelGeometry: new THREE.RingGeometry(0.085, 0.965, 128),
+      surfaceGeometry: new THREE.RingGeometry(0.037, 2.992, 200),
+      labelGeometry: new THREE.RingGeometry(0.037, 0.965, 128),
       bodyMaterial: new THREE.MeshPhysicalMaterial({ color: "#0a0a0b", roughness: 0.2, metalness: 0, ior: 1.5 }),
       vinylMaterial: new THREE.MeshPhysicalMaterial({
         ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,
@@ -8891,7 +8911,7 @@ export function mountVinyl(container) {
   const outline = new THREE.Shape();
   outline.absarc(0, 0, 2.99, 0, Math.PI * 2, false);
   const hole = new THREE.Path();
-  hole.absarc(0, 0, 0.085, 0, Math.PI * 2, true);
+  hole.absarc(0, 0, 0.037, 0, Math.PI * 2, true);
   outline.holes.push(hole);
   const bodyGeometry = new THREE.ExtrudeGeometry(outline, {
     depth: 0.055, steps: 1, bevelEnabled: true, bevelSegments: 3,
@@ -8910,14 +8930,14 @@ export function mountVinyl(container) {
     ...makeVinylMaps(), color: "#ffffff", metalness: 0, roughness: 1,   // roughnessMap carries the real values
     anisotropy: 0.85, bumpScale: 0.04, ior: 1.5, specularIntensity: 1
   });
-  const surface = new THREE.Mesh(new THREE.RingGeometry(0.085, 2.992, 256), vinylMaterial);
+  const surface = new THREE.Mesh(new THREE.RingGeometry(0.037, 2.992, 256), vinylMaterial);
   surface.position.z = 0.030;
   record.add(surface);
 
   const labelBuild = makeLabelMaps();
   /* the label is printed paper: show the art at its true colour (emissive, not tone-mapped)
      and let the moving light add a little on top, instead of the art only existing where lit */
-  const label = new THREE.Mesh(new THREE.RingGeometry(0.085, 0.965, 192), new THREE.MeshStandardMaterial({
+  const label = new THREE.Mesh(new THREE.RingGeometry(0.037, 0.965, 192), new THREE.MeshStandardMaterial({
     ...labelBuild.maps, roughness: 0.9, metalness: 0, bumpScale: 0.0012,
     color: new THREE.Color(0.14, 0.14, 0.14),   // light only adds a gentle sheen, never blows the art out
     emissive: "#ffffff", emissiveMap: labelBuild.maps.map, emissiveIntensity: 0.9,
