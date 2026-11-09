@@ -19,6 +19,7 @@ footerreveal = open(f'{SRC}/footerreveal.js').read()
 routes= open(f'{SRC}/routes.js').read()
 boot  = open(f'{SRC}/boot.js').read()
 cat   = open(f'{ROOT}/catalogue.json').read()
+shopify_variants = open(f'{ROOT}/shopify_variants.json').read()   # SKU -> Shopify variant id
 
 def vinyl3d_module(three_url=None):
     """The WebGL hero disc, with Three.js self-hosted as a data: URI import —
@@ -89,7 +90,7 @@ for _dir, _keep in ((f'{ROOT}/photos', None), (f'{ROOT}/brand', {'col-g', 'col-r
         PHOTO_FILES[_k] = os.path.join(_dir, _f)
 
 def js_payload(img_data=None, base=None, base_lg=None, photos=None, wordmark=None):
-    parts = [f'window.__CATALOGUE__ = {cat};', f'window.__WORDMARK__ = {json.dumps(wordmark or WORDMARK)};', f'window.__PHOTOS__ = {json.dumps(photos if photos is not None else PHOTOS)};']
+    parts = [f'window.__CATALOGUE__ = {cat};', f'window.__SHOPIFY_VARIANTS__ = {shopify_variants};', f'window.__WORDMARK__ = {json.dumps(wordmark or WORDMARK)};', f'window.__PHOTOS__ = {json.dumps(photos if photos is not None else PHOTOS)};']
     if img_data is not None:
         parts.append(f'window.__IMG_DATA__ = {json.dumps(img_data)};')
     else:

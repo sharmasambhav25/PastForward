@@ -217,7 +217,7 @@ function cartFootHTML() {
       ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span></button>
-    <p class="mono-xs dim" style="margin:12px 0 0;line-height:1.7">Checkout is the next step we're wiring. Everything before it works.</p>`;
+    <p class="mono-xs dim" style="margin:12px 0 0;line-height:1.7">You'll pay on our secure checkout.</p>`;
 }
 
 /* ---------- toast ---------- */
@@ -794,10 +794,12 @@ function playFlip(target) {
 
 /* ---------- Shopify Configuration & Checkout Pre-wire ---------- */
 const SHOPIFY_CONFIG = {
-  // 1. Enter your Shopify store domain when ready, e.g. 'pastforward.myshopify.com'
-  storeDomain: '',
+  storeDomain: '6gzxdq-ae.myshopify.com',
 
-  // 2. Enter Shopify Variant IDs for each custom format from Shopify Admin:
+  // Catalogue SKU -> Shopify variant id (generated into shopify_variants.json, injected by build.py)
+  variantIds: window.__SHOPIFY_VARIANTS__ || {},
+
+  // Shopify Variant IDs for each custom-order format (not set up yet):
   variants: {
     'vinyl': '',       // Vinyl 12" (₹999)
     'poster-a3': '',   // A3 Poster (₹299)
@@ -856,10 +858,15 @@ function submitForm(type, payload) {
   return Promise.resolve({ ok: true });
 }
 function checkout(lines) {
-  /* SINGLE INTEGRATION POINT — build a Shopify permalink / cart payload and redirect.
-     Needs: [{ sku, slug, format, qty, price }] */
-  console.log('[PastForward] checkout stub', lines);
-  toast('Checkout is not wired yet — this is the integration point');
+  /* Sends the cart to Shopify checkout through a cart permalink: /cart/{variantId}:{qty},... */
+  const ids = SHOPIFY_CONFIG.variantIds, parts = [];
+  for (const l of lines) {
+    const id = ids[l.sku];
+    if (!id) { toast('Sorry, one item in your crate can’t be checked out right now.'); return; }
+    parts.push(id + ':' + l.qty);
+  }
+  if (!parts.length) return;
+  window.location.href = 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',');
 }
 
 /* ---------- router ---------- */
