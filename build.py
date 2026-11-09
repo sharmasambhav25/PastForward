@@ -103,6 +103,10 @@ FONT_CSS = font_css()
 def assemble(payload, standalone, vinyl3d=None):
     head = f'''<title>{TITLE}</title>
 <meta name="description" content="{DESC}">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <style>{FONT_CSS}</style>
 <style>{css}</style>'''
     body = f'''<script>{payload}</script>
@@ -154,6 +158,11 @@ if os.path.isdir(DOCS):
         shutil.copy2(path, os.path.join(DOCS, 'photos', k + '.webp')); site_photos[k] = 'photos/' + k + '.webp'
     shutil.copy2(f'{ROOT}/brand/wordmark.webp', os.path.join(DOCS, 'photos', 'wordmark.webp'))
     shutil.copy2(os.path.join(ROOT, 'vendor', 'three.module.min.js'), os.path.join(DOCS, 'vendor', 'three.module.min.js'))
+    for fav in ('favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png', 'favicon.png'):
+        fav_src = os.path.join(ROOT, 'brand', fav)
+        if os.path.exists(fav_src):
+            shutil.copy2(fav_src, os.path.join(DOCS, fav))
+            shutil.copy2(fav_src, os.path.join(DIST, fav))
     site = assemble(js_payload(base='img/', photos=site_photos, wordmark='photos/wordmark.webp'), True, VINYL3D_SITE)
     site = site.replace('<head><meta charset="utf-8">', '<head><meta charset="utf-8"><link rel="preload" href="photos/wordmark.webp" as="image"><link rel="modulepreload" href="vendor/three.module.min.js">', 1)
     open(f'{DOCS}/index.html', 'w').write(site)
