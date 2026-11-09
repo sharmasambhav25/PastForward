@@ -439,7 +439,7 @@ function mountCrateSection(onUnmount) {
   const wallHost = document.getElementById('cratewall');
   if (wallHost && window.mountWallpaper && !window.matchMedia('(max-width:767px)').matches) {
     try {
-      const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(location.hash.split('?')[1] || '').get('wall') || 'contours';
+      const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(routeHash().split('?')[1] || '').get('wall') || 'contours';
       const wall = window.mountWallpaper(wallHost, { mode, focus: innerWidth / innerHeight < 0.8 ? [0.5, 0.48] : [0.56, 0.5], reducedMotion: RM() });
       if (wall) { root.classList.add('crate--live'); onUnmount(() => wall.cleanup()); }
     } catch (e) {}
@@ -1600,7 +1600,7 @@ function mountHome() {
 function setParams(mut) {
   const { path, params } = parseHash(); mut(params);
   const q = params.toString();
-  location.hash = path + (q ? '?' + q : '');
+  navigate(path + (q ? '?' + q : ''));
 }
 function mountCatalog(seg, params) {
   // artist cards: one open at a time, height animated
@@ -1637,7 +1637,7 @@ function mountCatalog(seg, params) {
     if (path.startsWith('/posters')) targetPath = '/posters';
 
     if (inp.dataset.f === 'col_nav') {
-      location.hash = '#/collections/' + inp.value;
+      navigate('#/collections/' + inp.value);
       return;
     }
 
@@ -1664,7 +1664,7 @@ function mountCatalog(seg, params) {
     }
     pp.delete('n');
     const q = pp.toString();
-    location.hash = targetPath + (q ? '?' + q : '');
+    navigate(targetPath + (q ? '?' + q : ''));
   }));
   const sort = $('#sort'); if (sort) sort.addEventListener('change', () => setParams(pp => pp.set('sort', sort.value)));
   $$('[data-unset]').forEach(b => b.addEventListener('click', () => {
@@ -1675,12 +1675,12 @@ function mountCatalog(seg, params) {
     const cur = pp.getAll(k).filter(x => x !== v);
     pp.delete(k); cur.forEach(x => pp.append(k, x));
     const q = pp.toString();
-    location.hash = targetPath + (q ? '?' + q : '');
+    navigate(targetPath + (q ? '?' + q : ''));
   }));
   $$('[data-clear]').forEach(b => b.addEventListener('click', () => {
     const { path } = parseHash();
     const basePath = path.startsWith('/posters') ? '/posters' : path;
-    location.hash = basePath;
+    navigate(basePath);
   }));
   const more = $('#loadmore'); if (more) more.addEventListener('click', () => setParams(pp => pp.set('n', String((+(pp.get('n') || 24)) + 24))));
   // FLIP re-flow

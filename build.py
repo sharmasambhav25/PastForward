@@ -36,7 +36,7 @@ def vinyl3d_module(three_url=None):
     return f'<script type="module">{js}</script>'
 
 VINYL3D = vinyl3d_module()
-VINYL3D_SITE = vinyl3d_module('./vendor/three.module.min.js')
+VINYL3D_SITE = vinyl3d_module('/vendor/three.module.min.js')
 
 FONT_FACES = [
     ('bodoni-moda-latin-400-normal.woff2', 'Bodoni Moda', 400, 'normal'),
@@ -155,7 +155,7 @@ if os.path.isdir(DOCS):
         if f.endswith('.webp'): shutil.copy2(os.path.join(IMG, f), os.path.join(DOCS, 'img', f))
     site_photos = {}
     for k, path in PHOTO_FILES.items():
-        shutil.copy2(path, os.path.join(DOCS, 'photos', k + '.webp')); site_photos[k] = 'photos/' + k + '.webp'
+        shutil.copy2(path, os.path.join(DOCS, 'photos', k + '.webp')); site_photos[k] = '/photos/' + k + '.webp'
     shutil.copy2(f'{ROOT}/brand/wordmark.webp', os.path.join(DOCS, 'photos', 'wordmark.webp'))
     shutil.copy2(os.path.join(ROOT, 'vendor', 'three.module.min.js'), os.path.join(DOCS, 'vendor', 'three.module.min.js'))
     for fav in ('favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png', 'favicon.png'):
@@ -163,9 +163,10 @@ if os.path.isdir(DOCS):
         if os.path.exists(fav_src):
             shutil.copy2(fav_src, os.path.join(DOCS, fav))
             shutil.copy2(fav_src, os.path.join(DIST, fav))
-    site = assemble(js_payload(base='img/', photos=site_photos, wordmark='photos/wordmark.webp'), True, VINYL3D_SITE)
-    site = site.replace('<head><meta charset="utf-8">', '<head><meta charset="utf-8"><link rel="preload" href="photos/wordmark.webp" as="image"><link rel="modulepreload" href="vendor/three.module.min.js">', 1)
+    site = assemble('window.__CLEAN_URLS__ = true;\n' + js_payload(base='/img/', photos=site_photos, wordmark='/photos/wordmark.webp'), True, VINYL3D_SITE)
+    site = site.replace('<head><meta charset="utf-8">', '<head><meta charset="utf-8"><link rel="preload" href="/photos/wordmark.webp" as="image"><link rel="modulepreload" href="/vendor/three.module.min.js">', 1)
     open(f'{DOCS}/index.html', 'w').write(site)
+    open(f'{DOCS}/404.html', 'w').write(site)   # GitHub Pages serves this for /vinyl etc.; the app routes by path
     print(f'{"docs/index.html":16} {os.path.getsize(f"{DOCS}/index.html")/1048576:.2f} MB (+ {len(os.listdir(os.path.join(DOCS, "img")))} images as files)')
 
 for n in ('index.html', 'artifact.html', 'qa.html'):
