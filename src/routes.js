@@ -153,44 +153,8 @@ function viewHome() {
 
   ${window.matchMedia('(max-width:767px)').matches ? '' : crateHTML()}
 
-  ${seam('in-ink')}
-
-  <!-- 5 ============ COMPANIONS ============ -->
-  <section class="sec ground g-paper" data-section="THE REST OF THE WALL" style="padding-bottom:clamp(56px,7vw,96px)">
-    <div class="wrap">
-      <div class="cap">THE REST OF THE WALL</div>
-      ${lockup('Everything', 'Posters & Polaroids', 'Wall Decor', 'lockup--left')}
-      <p class="body-l dim reveal measure" style="margin-top:22px">One record starts it. The wall around it is where it gets personal.</p>
-      <div class="mono-xs dim" style="margin-top:14px;display:flex;gap:20px"><span>POSTERS FROM ${money(FMT['poster-a5'].price)}</span><span>POLAROIDS ${money(FMT.polaroid.price)} EACH</span></div>
-    </div>
-    <div class="wallbuild" id="wallbuild">
-      <div class="wallbuild__inner">
-        ${posters.map((p, i) => {
-          const v = variant(p, 'poster-a3');
-          const pos = ['left:1%;top:8%;width:27%;--rot:-1.4deg;--par:.10',
-                       'left:31%;top:0%;width:31%;--rot:.8deg;--par:.20',
-                       'right:2%;top:14%;width:23%;--rot:-.6deg;--par:.05'][i];
-          return `<a class="wb wb--poster" href="#/product/${p.slug}" style="${pos}" data-cursor="VIEW" data-par>
-            ${frameHTML(v, { style: 'width:100%;aspect-ratio:.707' })}
-            <span class="wb__tag mono-xs">${esc(p.artist)} · A3</span></a>`;
-        }).join('')}
-        ${polas.map((p, i) => {
-          const v = variant(p, 'polaroid');
-          const pos = ['left:22%;top:47%;width:14%;--rot:-7deg;--par:.30',
-                       'left:57%;top:41%;width:13%;--rot:5deg;--par:.26',
-                       'left:7%;top:55%;width:12.5%;--rot:3deg;--par:.36',
-                       'right:10%;top:52%;width:13.5%;--rot:-4.5deg;--par:.22',
-                       'left:40%;top:58%;width:12%;--rot:8deg;--par:.42'][i];
-          return `<a class="wb wb--pola" href="#/product/${p.slug}" style="${pos}" data-cursor="VIEW" data-par>
-            ${polaroidHTML(v, { style: 'width:100%' })}
-            <span class="wb__tag mono-xs">${esc(p.artist)}</span></a>`;
-        }).join('')}
-      </div>
-      <div class="wallbuild__floor"></div>
-    </div>
-  </section>
-
-  ${seam('to-ink')}
+  <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
+  ${formatsHTML()}
 
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
@@ -256,6 +220,79 @@ function crateFacts(p) {
   };
 }
 /* phones: the same crate — collage, big record, album panel, arrows — drawn with CSS records instead of WebGL */
+/* the rest of the wall: a full-bleed slider, one slide per format (blurred photo, big title, framed thumbnail strip) */
+// the slides are the designs themselves: the poster is the thumbnail and, blurred, the background
+const FORMAT_SLIDES = () => {
+  const plan = [['poster-a3', 4], ['print-10', 3], ['poster-a5', 3], ['polaroid', 2]], used = new Set(), out = [];
+  const label = { 'poster-a3': 'A3 poster', 'poster-a5': 'A5 poster', 'print-10': '10×10 print', polaroid: 'Polaroid' };
+  plan.forEach(([f, n]) => {
+    P.filter(p => !used.has(p.slug) && variant(p, f)).slice(0, n).forEach(p => {
+      used.add(p.slug); const v = variant(p, f);
+      out.push({ t: albumText(p), by: p.artist, img: imgSrc(v.image), fmt: label[f], price: v.price, href: `#/product/${p.slug}?format=${f}` });
+    });
+  });
+  // interleave the formats so neighbours differ
+  return out.sort((x, y) => (out.indexOf(x) % 4) - (out.indexOf(y) % 4) || out.indexOf(x) - out.indexOf(y));
+};
+function formatsHTML() {
+  const S = FORMAT_SLIDES(), reps = 3;
+  return `
+  <section class="fmts" id="fmts" data-section="THE REST OF THE WALL" aria-roledescription="carousel" aria-label="Posters and polaroids">
+    <div class="fmts__bgs" aria-hidden="true">${S.map((x, i) => `<img class="fmts__bg${i === 0 ? ' is-on' : ''}" src="${x.img}" alt="" loading="lazy" decoding="async">`).join('')}</div>
+    <i class="fmts__plus fmts__plus--tl" aria-hidden="true"></i><i class="fmts__plus fmts__plus--tr" aria-hidden="true"></i>
+    <i class="fmts__plus fmts__plus--bl" aria-hidden="true"></i><i class="fmts__plus fmts__plus--br" aria-hidden="true"></i>
+    <div class="fmts__in">
+      <div class="cap fmts__cap">EVERYTHING · POSTERS &amp; POLAROIDS · <span data-fn>01</span> / ${String(S.length).padStart(2, '0')}</div>
+      <div class="fmts__titles">${S.map((x, i) => `<h2 class="fmts__t${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}>${esc(x.t)}</h2>`).join('')}</div>
+      <div class="fmts__strip">
+        <div class="fmts__track">${Array.from({ length: reps }, (_, r) => S.map((x, i) => `<button class="fmts__th" type="button" data-k="${r * S.length + i}" aria-label="${esc(x.t)} by ${esc(x.by)}"${r === 1 ? '' : ' tabindex="-1"'}><img src="${x.img}" alt="" loading="lazy" decoding="async"></button>`).join('')).join('')}</div>
+        <span class="fmts__frame" aria-hidden="true"></span>
+      </div>
+      <div class="fmts__caps">${S.map((x, i) => `<div class="fmts__c${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}><p>${esc(x.by)} · ${esc(x.fmt)} · <span class="num">${money(x.price)}</span></p><a class="fmts__go" href="${x.href}"${i ? ' tabindex="-1"' : ''}>View this design <span aria-hidden="true">→</span></a></div>`).join('')}</div>
+    </div>
+  </section>`;
+}
+function mountFormats() {
+  const root = document.getElementById('fmts'); if (!root) return;
+  const n = FORMAT_SLIDES().length, track = root.querySelector('.fmts__track'), ths = [...root.querySelectorAll('.fmts__th')];
+  const bgs = [...root.querySelectorAll('.fmts__bg')], ts = [...root.querySelectorAll('.fmts__t')], cs = [...root.querySelectorAll('.fmts__c')];
+  const fn = root.querySelector('[data-fn]'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let k = n, timer = 0, visible = false, hold = false;
+  const place = (animate = true) => {
+    const th = ths[k], strip = track.parentElement;
+    track.style.transition = animate && !reduce ? '' : 'none';
+    track.style.transform = `translateX(${strip.clientWidth / 2 - (th.offsetLeft + th.offsetWidth / 2)}px)`;
+    if (!animate) { track.offsetWidth; track.style.transition = ''; }
+    const i = k % n;
+    ths.forEach((t, j) => t.classList.toggle('is-on', j === k));
+    [bgs, ts, cs].forEach(list => list.forEach((el, j) => { el.classList.toggle('is-on', j === i); if (el.tagName !== 'IMG') el.setAttribute('aria-hidden', j === i ? 'false' : 'true'); }));
+    cs.forEach((c, j) => c.querySelector('a').tabIndex = j === i ? 0 : -1);
+    fn.textContent = String(i + 1).padStart(2, '0');
+  };
+  const go = to => {
+    k = to; place(true);
+    // stay in the middle copy so the strip never runs out
+    clearTimeout(go.t); go.t = setTimeout(() => { if (k < n || k >= 2 * n) { k = n + (k % n); place(false); } }, 650);
+    restart();
+  };
+  const restart = () => { clearInterval(timer); if (!reduce && visible && !hold) timer = setInterval(() => go(k + 1), 4500); };
+  ths.forEach(t => {
+    t.addEventListener('click', () => go(+t.dataset.k));
+    t.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') e.preventDefault(); });   // no focus-scroll on touch
+  });
+  root.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hold = true; restart(); } });
+  root.addEventListener('pointerleave', () => { hold = false; restart(); });
+  root.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(k + 1); if (e.key === 'ArrowLeft') go(k - 1); });
+  let sx = 0, sy = 0;
+  root.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  root.addEventListener('touchend', e => { const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) go(k + (dx < 0 ? 1 : -1)); }, { passive: true });
+  const io = new IntersectionObserver(en => { visible = en[0].isIntersecting; restart(); }, { threshold: .35 });
+  io.observe(root); onUnmount(() => { io.disconnect(); clearInterval(timer); clearTimeout(go.t); });
+  const onR = () => place(false); addEventListener('resize', onR); onUnmount(() => removeEventListener('resize', onR));
+  place(false);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => place(false));
+}
 function crateMobileHTML() {
   const list = crateList(), f0 = crateFacts(list[0]), n = list.length;
   return `
@@ -1168,6 +1205,7 @@ window.__mount = function (seg, params) {
   if (page === 'home') {
     mountHome();
     mountCrateCss();
+    mountFormats();
     const crate = mountCrateSection(onUnmount);
     if (crate) {
       // the first CRATE_SCROLL records slide past as you scroll through the pinned section
