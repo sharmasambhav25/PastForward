@@ -768,7 +768,8 @@ function bindEffects(root = document) {
 /* ---------- FLIP: card → PDP ---------- */
 let flipSource = null;
 function captureFlip(card) {
-  const media = $('[data-media]', card); if (!media || RM()) return;
+  // phones: no card-to-page zoom (the small card image blown up across a page change reads as a glitch)
+  const media = $('[data-media]', card); if (!media || RM() || window.matchMedia('(max-width:767px)').matches) return;
   const r = media.getBoundingClientRect();
   flipSource = { html: media.innerHTML, rect: r };
 }

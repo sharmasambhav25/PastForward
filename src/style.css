@@ -2229,3 +2229,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
   .fmts__arr--prev{left:8px} .fmts__arr--next{right:8px}
 }
 .stage .cta-shop{margin-top:6px}
+
+/* hero record: sideways drags spin it on touch screens, vertical drags still scroll */
+.fhero .fdisc{touch-action:pan-y}
+@media(hover:none){ .card:hover{transform:none} .card:hover .card__media{box-shadow:none} }

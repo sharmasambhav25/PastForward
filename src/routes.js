@@ -1386,8 +1386,9 @@ function mountHome() {
     if (RM()) return;
     s.host.setAttribute('data-cursor', 'SPIN');
     s.host.style.cursor = 'grab';
+    // touch: a sideways drag spins the record; an up/down drag stays a page scroll (touch-action: pan-y)
     s.host.addEventListener('pointerdown', e => {
-      if (e.pointerType === 'touch') return;      // never fight touch scrolling
+      if (e.pointerType === 'touch') { s.pend = { x: e.clientX, y: e.clientY, id: e.pointerId, e }; return; }
       e.preventDefault();
       s.dragging = true; s.mom = 0; s.kick = 0;
       s.stopping = false; s.stopped = true;        // a dragged record is under the user's control
@@ -1398,6 +1399,17 @@ function mountHome() {
       Sound.scratchStart();
     });
     s.host.addEventListener('pointermove', e => {
+      if (s.pend && !s.dragging) {
+        const dx = e.clientX - s.pend.x, dy = e.clientY - s.pend.y;
+        if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { s.pend = null; return; }
+        if (Math.abs(dx) < 8) return;
+        s.pend = null;
+        s.dragging = true; s.mom = 0; s.kick = 0; s.stopping = false; s.stopped = true;
+        s.grabAngle = angleAt(s.host, e); s.grabFrom = s.angle;
+        s.lastA = s.grabAngle; s.lastT = performance.now(); s.vel = 0;
+        try { s.host.setPointerCapture(e.pointerId); } catch (_) {}
+        Sound.scratchStart();
+      }
       if (!s.dragging) return;
       let cur = angleAt(s.host, e);
       let d = cur - s.lastA;
@@ -1408,6 +1420,7 @@ function mountHome() {
       Sound.scratchUpdate(s.vel);
     });
     const release = () => {
+      s.pend = null;
       if (!s.dragging) return;
       s.dragging = false;
       s.host.style.cursor = 'grab';
