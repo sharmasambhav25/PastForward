@@ -164,7 +164,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        <a class="btn btn--primary" href="#/vinyl"><span class="btn__mag">Build your wall</span></a>
+        <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Build your wall</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -245,6 +245,8 @@ function formatsHTML() {
       <div class="cap fmts__cap">EVERYTHING · POSTERS &amp; POLAROIDS · <span data-fn>01</span> / ${String(S.length).padStart(2, '0')}</div>
       <div class="fmts__titles">${S.map((x, i) => `<h2 class="fmts__t${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}>${esc(x.t)}</h2>`).join('')}</div>
       <div class="fmts__strip">
+        <button class="fmts__arr fmts__arr--prev" type="button" data-fp aria-label="Previous design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="fmts__arr fmts__arr--next" type="button" data-fx aria-label="Next design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="fmts__track">${Array.from({ length: reps }, (_, r) => S.map((x, i) => `<button class="fmts__th" type="button" data-k="${r * S.length + i}" aria-label="${esc(x.t)} by ${esc(x.by)}"${r === 1 ? '' : ' tabindex="-1"'}><img src="${x.img}" alt="" loading="lazy" decoding="async"></button>`).join('')).join('')}</div>
         <span class="fmts__frame" aria-hidden="true"></span>
       </div>
@@ -275,19 +277,20 @@ function mountFormats() {
     clearTimeout(go.t); go.t = setTimeout(() => { if (k < n || k >= 2 * n) { k = n + (k % n); place(false); } }, 650);
     restart();
   };
-  const restart = () => { clearInterval(timer); if (!reduce && visible && !hold) timer = setInterval(() => go(k + 1), 4500); };
+  // always moves on by itself while on screen; a click/swipe just restarts the 4s count
+  const restart = () => { clearInterval(timer); if (visible) timer = setInterval(() => go(k + 1), 4000); };
+  root.querySelector('[data-fp]').addEventListener('click', () => go(k - 1));
+  root.querySelector('[data-fx]').addEventListener('click', () => go(k + 1));
   ths.forEach(t => {
     t.addEventListener('click', () => go(+t.dataset.k));
     t.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') e.preventDefault(); });   // no focus-scroll on touch
   });
-  root.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hold = true; restart(); } });
-  root.addEventListener('pointerleave', () => { hold = false; restart(); });
   root.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(k + 1); if (e.key === 'ArrowLeft') go(k - 1); });
   let sx = 0, sy = 0;
   root.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
   root.addEventListener('touchend', e => { const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) go(k + (dx < 0 ? 1 : -1)); }, { passive: true });
-  const io = new IntersectionObserver(en => { visible = en[0].isIntersecting; restart(); }, { threshold: .35 });
+  const io = new IntersectionObserver(en => { visible = en[0].isIntersecting; restart(); }, { threshold: .15 });
   io.observe(root); onUnmount(() => { io.disconnect(); clearInterval(timer); clearTimeout(go.t); });
   const onR = () => place(false); addEventListener('resize', onR); onUnmount(() => removeEventListener('resize', onR));
   place(false);
