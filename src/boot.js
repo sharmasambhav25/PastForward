@@ -75,7 +75,7 @@ function pfStart() {
   document.body.insertAdjacentHTML('beforeend', footerHTML());
   initChrome(); initGrain(); initCursor(); initScroll(); grooveField(); initSound(); initGrounds(); initPre();
   syncCart();
-  if (!location.hash) location.hash = '/';
+  cleanHomeUrl();
   render();
   bindEffects(document);
   if (new URLSearchParams(location.search).get('openmenu') === '1') {

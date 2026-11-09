@@ -928,7 +928,11 @@ function go(hash) { location.hash = hash; }
 /* ---------- global events ---------- */
 // jump (not glide) to the top: html has scroll-behavior:smooth, and a glide gets cut short
 // by the new page rendering, leaving you halfway down it
-addEventListener('hashchange', () => { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); });
+/* The homepage shows as plain pastforward.shop, without a trailing #/ */
+function cleanHomeUrl() {
+  if (location.hash === '#/' || location.hash === '#') history.replaceState(null, '', location.pathname + location.search);
+}
+addEventListener('hashchange', () => { cleanHomeUrl(); scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); });
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
