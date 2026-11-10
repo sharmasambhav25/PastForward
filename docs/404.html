@@ -2,6 +2,12 @@
 <meta name="description" content="Authentic 12-inch upcycled vinyl records with album art pressed into the centre label. Custom posters & polaroids made to order. Shipped across India.">
 <link rel="canonical" href="https://pastforward.shop/">
 
+<!-- AI Agent & Search Discovery Links (AEO / GEO Standards) -->
+<link rel="llms-txt" href="https://pastforward.shop/llms.txt">
+<link rel="alternate" type="text/markdown" href="https://pastforward.shop/llms.txt" title="LLM Context">
+<link rel="alternate" type="text/markdown" href="https://pastforward.shop/pricing.md" title="Machine-Readable Pricing">
+<link rel="alternate" type="text/markdown" href="https://pastforward.shop/about.md" title="About PastForward">
+
 <!-- OpenGraph / Social / WhatsApp -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PastForward">
@@ -40,6 +46,21 @@
       "url": "https://pastforward.shop/",
       "logo": "https://pastforward.shop/photos/wordmark.webp",
       "description": "Authentic 12-inch upcycled vinyl records with album art pressed into the centre label. Custom posters & polaroids made to order. Shipped across India.",
+      "email": "team@pastforward.shop",
+      "sameAs": [
+        "https://instagram.com/pastforward.shop",
+        "https://shop.pastforward.shop"
+      ],
+      "knowsAbout": [
+        "Upcycled Vinyl Records",
+        "Music Wall Art",
+        "Custom Album Art Posters",
+        "Album Cover Vinyl Art",
+        "Vintage Room Decor",
+        "Aesthetic Music Posters",
+        "Taylor Swift Posters",
+        "Hip Hop Room Decor"
+      ],
       "areaServed": {
         "@type": "Country",
         "name": "India"
@@ -53,6 +74,11 @@
       "description": "Authentic 12-inch upcycled vinyl records with album art pressed into the centre label. Custom posters & polaroids made to order. Shipped across India.",
       "publisher": {
         "@id": "https://pastforward.shop/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://pastforward.shop/#/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     },
     {
@@ -65,6 +91,45 @@
       "priceRange": "\u20b999 - \u20b9999",
       "currenciesAccepted": "INR",
       "paymentAccepted": "UPI, Credit Card, Debit Card, Net Banking",
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 7,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": "0",
+          "currency": "INR"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "IN"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "businessDays": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ]
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 3,
+            "maxValue": 7,
+            "unitCode": "d"
+          }
+        }
+      },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "PastForward Music Art & Vinyl Catalog",
@@ -74,53 +139,168 @@
             "itemOffered": {
               "@type": "Product",
               "name": "Upcycled 12-inch Vinyl Record Art",
-              "description": "Authentic upcycled 12-inch vinyl record with custom album centre label, wall-mounted."
+              "description": "Authentic upcycled 12-inch vinyl record with custom album centre label, wall-mounted.",
+              "image": "https://pastforward.shop/brand/disc.webp"
             },
             "price": "999",
-            "priceCurrency": "INR"
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/UsedCondition"
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Product",
               "name": "A3 Music Art Poster (297 \u00d7 420mm)",
-              "description": "Gallery-grade 300 GSM matte music art poster print."
+              "description": "Gallery-grade 300 GSM matte music art poster print.",
+              "image": "https://pastforward.shop/photos/wordmark.webp"
             },
             "price": "299",
-            "priceCurrency": "INR"
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition"
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Product",
               "name": "10\u00d710 Music Art Print (254 \u00d7 254mm)",
-              "description": "Square format vinyl-sleeve scale art print."
+              "description": "Square format vinyl-sleeve scale art print.",
+              "image": "https://pastforward.shop/photos/wordmark.webp"
             },
             "price": "249",
-            "priceCurrency": "INR"
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition"
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Product",
               "name": "A5 Music Poster (148 \u00d7 210mm)",
-              "description": "Compact fine art desk print."
+              "description": "Compact fine art desk print.",
+              "image": "https://pastforward.shop/photos/wordmark.webp"
             },
             "price": "199",
-            "priceCurrency": "INR"
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition"
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Product",
               "name": "Polaroid Music Card",
-              "description": "Keepsake mini print on cardstock with cream border."
+              "description": "Keepsake mini print on cardstock with cream border.",
+              "image": "https://pastforward.shop/photos/wordmark.webp"
             },
             "price": "99",
-            "priceCurrency": "INR"
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition"
           }
         ]
       }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://pastforward.shop/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Are PastForward vinyl records real 12-inch vinyl?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Every PastForward vinyl record is an authentic, reclaimed vintage 12-inch (30cm) phonograph record. Instead of pressing virgin plastics, we rescue vintage records and press iconic, high-resolution album artwork into the centre label, engineered specifically for wall display."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can upcycled vinyl records actually play music on a turntable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "PastForward vinyl records are crafted and sold exclusively as decorative wall art, not playable audio. While the vinyl discs feature authentic microgrooves from their vintage history, the audio contents vary and the centre label carries visual album art. Each record includes a pre-mounted wall hanger."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you hang an upcycled vinyl record on a wall?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every PastForward vinyl record includes a discreet wall-mounting hook mounted to the reverse side. Simply hammer a small picture nail or place an adhesive hook on your wall and hang the record flush without adhesive damage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I order a custom music poster or personalized vinyl record?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. PastForward's Custom Studio creates made-to-order pieces for any artist, album, mixtape, personal Spotify playlist, or original artwork across all formats (12-inch Vinyl, A3, 10\u00d710, A5, and Polaroid) with custom proofing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What materials and paper weight are used for PastForward posters?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our art prints and posters are printed on heavyweight 300 GSM gallery-grade matte cardstock using fade-resistant, rich-pigment inks. The matte finish eliminates glare under room lighting, rendering sharp typography and album artwork."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does shipping take across India and what are the delivery charges?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "PastForward ships to all pin codes across India within 5 to 7 business days via courier partners including Delhivery, Blue Dart, and Xpressbees. We accept UPI (Google Pay, PhonePe, Paytm), credit/debit cards, and Net Banking with order tracking provided via email and SMS."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are vinyl records and posters protected during shipping?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All items are packed in reinforced, unbendable multi-ply corrugated cardboard mailers with edge guards and water-resistant bubble sleeves, engineered to prevent warping, corner bending, or transit damage across Indian courier networks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the return or damaged item replacement policy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If any piece arrives damaged or defective, email team@pastforward.shop or message @pastforward.shop on Instagram within 7 days of delivery with a photo of the package, and we will dispatch a free replacement immediately."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pastforward.shop/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://pastforward.shop/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Upcycled Vinyl Records",
+          "item": "https://pastforward.shop/vinyl"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Music Posters",
+          "item": "https://pastforward.shop/posters"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Custom Studio",
+          "item": "https://pastforward.shop/custom"
+        }
+      ]
     }
   ]
 }
@@ -2364,116 +2544,248 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .fhero .fdisc{touch-action:pan-y}
 @media(hover:none){ .card:hover{transform:none} .card:hover .card__media{box-shadow:none} }
 </style></head><body><div id="pf-seo" style="max-width:960px;margin:0 auto;padding:40px 24px;font-family:system-ui,-apple-system,sans-serif;color:#ede7dd;line-height:1.7">
-  <header style="margin-bottom:28px">
-    <h1 style="font-size:2rem;line-height:1.2;margin:0 0 16px;color:#f3efe8">PastForward — Upcycled Vinyl Records & Music Art</h1>
-    <p style="font-size:1.1rem;color:#e0a6a0;margin:0 0 20px">Authentic 12-inch upcycled vinyl records and fine music art posters, handcrafted to order and shipped across India.</p>
+  <header style="margin-bottom:32px;border-bottom:1px solid rgba(243,233,222,0.15);padding-bottom:24px">
+    <h1 style="font-size:2.2rem;line-height:1.2;margin:0 0 16px;color:#f3efe8">PastForward — Upcycled Vinyl Records & Custom Music Wall Art</h1>
+    <p style="font-size:1.15rem;color:#e0a6a0;margin:0 0 16px;font-weight:500">Authentic 12-inch upcycled vinyl records and 300 GSM gallery-grade music posters, handcrafted to order and shipped across India.</p>
+    <p style="font-size:0.95rem;color:#c9c0b5;margin:0">Over 67 iconic album artworks across Hip-Hop, Pop, Rock, and Punjabi music. Formats range from ₹99 polaroids to ₹999 ready-to-hang 12-inch vinyl discs with 5–7 day pan-India delivery.</p>
   </header>
 
-  <section style="margin-bottom:32px">
-    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Handcrafted Upcycled Vinyl Records & Wall Art</h2>
-    <p>PastForward rescues authentic, vintage 12-inch vinyl records and presses iconic music album artwork directly into the centre label, engineered ready to hang with included wall hooks. Each piece turns memorable albums into tangible display art for bedroom, studio, and living room walls. Beyond vinyl, we produce gallery-grade A3 music posters, square 10×10 prints, and polaroid cards on premium 300 GSM matte cardstock.</p>
+  <!-- Definition Block (AEO Snippet for 'What is upcycled vinyl wall art?') -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:12px">What is Upcycled Vinyl Wall Art?</h2>
+    <p style="font-size:1.05rem;line-height:1.75;background:rgba(255,255,255,0.03);padding:18px 20px;border-left:3px solid #e0a6a0;border-radius:2px">
+      <strong>Upcycled vinyl wall art</strong> is decorative interior artwork created by reclaiming vintage, authentic 12-inch phonograph records and permanently pressing iconic music album artwork into their centre labels. Complete with pre-installed wall-mounting brackets, each piece transforms timeless music albums into tangible, gallery-worthy vinyl art designed specifically for bedroom, studio, and living room wall decor.
+    </p>
+    <p style="font-size:0.95rem;color:#c9c0b5;margin-top:12px">
+      By rescuing authentic vintage vinyl discs rather than pressing virgin plastics, PastForward preserves authentic record microgrooves while creating eco-conscious music memorabilia. Beyond vinyl, our studio crafts heavy 300 GSM matte art posters, 1:1 vinyl-sleeve square prints, and retro polaroid cards.
+    </p>
   </section>
 
-  <section style="margin-bottom:32px">
-    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Catalogue Formats & Pricing in India</h2>
-    <p>Every piece in our catalogue is printed, inspected, and shipped in rigid protective packaging across India:</p>
-    <ul style="padding-left:24px;margin:0 0 16px">
-      <li><strong>Upcycled 12-Inch Vinyl Record Art</strong> — ₹999 (Authentic 12" vintage vinyl with printed centre label; wall-mounting hook included).</li>
-      <li><strong>A3 Music Art Poster (297 × 420mm)</strong> — ₹299 (Gallery-grade 300 GSM matte art print).</li>
-      <li><strong>10×10 Square Vinyl Art Print (254 × 254mm)</strong> — ₹249 (True square format matching classic vinyl sleeve proportions).</li>
-      <li><strong>A5 Music Poster (148 × 210mm)</strong> — ₹199 (Compact fine art desk or wall print).</li>
-      <li><strong>Polaroid Keepsake Music Card</strong> — ₹99 (Heavyweight cardstock with retro cream border).</li>
+  <!-- Format & Sizing Comparison Table Block (AEO Table Snippet) -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:14px">Format & Sizing Comparison: Which Music Wall Art Fits Your Room?</h2>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.95rem;min-width:600px">
+        <thead>
+          <tr style="border-bottom:2px solid rgba(243,233,222,0.25);text-align:left;color:#f3efe8">
+            <th style="padding:10px 8px">Format</th>
+            <th style="padding:10px 8px">Dimensions</th>
+            <th style="padding:10px 8px">Material & Finish</th>
+            <th style="padding:10px 8px">Wall Mounting</th>
+            <th style="padding:10px 8px">Price (INR)</th>
+            <th style="padding:10px 8px">Best Suited For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(243,233,222,0.12)">
+            <td style="padding:12px 8px"><strong>Upcycled 12" Vinyl</strong></td>
+            <td style="padding:12px 8px">12-inch (⌀305mm)</td>
+            <td style="padding:12px 8px">Authentic vintage vinyl record + UV matte centre label</td>
+            <td style="padding:12px 8px">Wall hook included (ready to hang)</td>
+            <td style="padding:12px 8px;color:#e0a6a0;font-weight:600">₹999</td>
+            <td style="padding:12px 8px">Focal wall centerpiece, audiophile aesthetic, premium gift</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(243,233,222,0.12)">
+            <td style="padding:12px 8px"><strong>A3 Music Poster</strong></td>
+            <td style="padding:12px 8px">297 × 420mm (11.7 × 16.5")</td>
+            <td style="padding:12px 8px">300 GSM gallery-grade matte art cardstock</td>
+            <td style="padding:12px 8px">Fits standard A3 frame or clips</td>
+            <td style="padding:12px 8px;color:#e0a6a0;font-weight:600">₹299</td>
+            <td style="padding:12px 8px">Framed gallery wall, bedroom focal point</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(243,233,222,0.12)">
+            <td style="padding:12px 8px"><strong>10×10 Square Print</strong></td>
+            <td style="padding:12px 8px">254 × 254mm (10 × 10")</td>
+            <td style="padding:12px 8px">300 GSM matte cardstock (vinyl sleeve scale)</td>
+            <td style="padding:12px 8px">Square frame or display ledge</td>
+            <td style="padding:12px 8px;color:#e0a6a0;font-weight:600">₹249</td>
+            <td style="padding:12px 8px">Symmetrical album grids, record collector shelves</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(243,233,222,0.12)">
+            <td style="padding:12px 8px"><strong>A5 Music Poster</strong></td>
+            <td style="padding:12px 8px">148 × 210mm (5.8 × 8.3")</td>
+            <td style="padding:12px 8px">300 GSM matte cardstock</td>
+            <td style="padding:12px 8px">Desk frame, pinboard, or collage</td>
+            <td style="padding:12px 8px;color:#e0a6a0;font-weight:600">₹199</td>
+            <td style="padding:12px 8px">Desk art, study corners, compact dorm rooms</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 8px"><strong>Polaroid Keepsake Card</strong></td>
+            <td style="padding:12px 8px">88 × 107mm</td>
+            <td style="padding:12px 8px">Heavyweight textured card with retro cream border</td>
+            <td style="padding:12px 8px">Fairy-light clip, desk stand, phone case</td>
+            <td style="padding:12px 8px;color:#e0a6a0;font-weight:600">₹99</td>
+            <td style="padding:12px 8px">Gift add-ons, collectible keepsakes, travel diaries</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.9rem;color:#c9c0b5"><em>* Automatic bundle discounts apply when adding three or more records or posters to your crate at checkout.</em></p>
+  </section>
+
+  <!-- Step-by-Step Block (AEO Process Snippet) -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:12px">How to Order Custom Album Art & Playlist Prints in India</h2>
+    <p style="margin-bottom:14px">Looking for an album, EP, personal mixtape, or Spotify playlist that isn't in our standard catalogue? Here is how our custom made-to-order studio works:</p>
+    <ol style="padding-left:24px;margin:0 0 16px;line-height:1.8">
+      <li><strong>Select Your Format</strong>: Choose your desired display medium — authentic 12-inch upcycled vinyl (₹999), A3 fine art poster (₹299), 10×10 square print (₹249), A5 mini print (₹199), or polaroid card (₹99).</li>
+      <li><strong>Submit Album or Playlist Details</strong>: Enter your artist name, album title, tracklist, personal Spotify link, or upload your own high-resolution cover artwork in the <a href="/custom" style="color:#e0a6a0">Custom Studio</a>.</li>
+      <li><strong>Design Verification & Label Alignment</strong>: Our design team verifies image resolution, color profile, and circular centre-label cropping for maximum clarity.</li>
+      <li><strong>Handcrafted Production</strong>: We hand-clean a reclaimed vintage vinyl disc or print on 300 GSM gallery matte paper using fade-resistant archival pigment inks.</li>
+      <li><strong>Protective Packaging & Fast Delivery</strong>: Dispatched in unbendable multi-ply cardboard mailers and delivered across India within 5 to 7 business days.</li>
+    </ol>
+  </section>
+
+  <!-- Evidence & Specifications Block (GEO Research Pillar: Statistics & Specifics) -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:12px">Craftsmanship, Materials & Pan-India Delivery Guarantees</h2>
+    <ul style="padding-left:24px;margin:0 0 16px;line-height:1.8">
+      <li><strong>100% Genuine Vintage 12" Vinyl</strong>: Rescued authentic 305mm phonograph records with real playable microgrooves. Zero virgin vinyl plastic manufactured.</li>
+      <li><strong>Museum-Quality 300 GSM Matte Paper</strong>: Heavyweight, reflection-free art cardstock rendering deep blacks and saturated album color palettes without glare under room lighting.</li>
+      <li><strong>Ready-to-Hang Wall Mounts</strong>: Every 12-inch vinyl disc includes an engineered mounting hook on the reverse for flush wall hanging with zero adhesive damage.</li>
+      <li><strong>Unbendable Multi-Ply Packaging</strong>: Engineered reinforced mailers with corner protectors and water-resistant bubble sleeves prevent transit damage.</li>
+      <li><strong>Pan-India Courier Network</strong>: Dispatched via premier logistics partners (Delhivery, Blue Dart, Xpressbees) to all 19,000+ postal codes with end-to-end SMS tracking.</li>
+      <li><strong>7-Day Replacement Guarantee</strong>: Free doorstep replacement if any piece arrives damaged during transit.</li>
     </ul>
   </section>
 
-  <section style="margin-bottom:32px">
-    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Featured Album Artworks in the Catalogue</h2>
-    <p>Browse our complete online catalogue and order individual artist covers directly:</p>
-    <ul style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;padding-left:24px;margin:0 0 20px">
-      <li><a href="/product/abba-little-things" style="color:#e0a6a0;text-decoration:none">Little Things by ABBA</a></li>
-      <li><a href="/product/anuv-jain-alag-aasman" style="color:#e0a6a0;text-decoration:none">Alag Aasman by Anuv Jain</a></li>
-      <li><a href="/product/ap-dhillon-dil-nu" style="color:#e0a6a0;text-decoration:none">Dil Nu by AP Dhillon</a></li>
-      <li><a href="/product/arctic-monkeys" style="color:#e0a6a0;text-decoration:none">[CONFIRM] by Arctic Monkeys</a></li>
-      <li><a href="/product/ariana-grande-thank-u-next" style="color:#e0a6a0;text-decoration:none">thank u, next by Ariana Grande</a></li>
-      <li><a href="/product/avicii-avici-01" style="color:#e0a6a0;text-decoration:none">Avīci (01) by Avicii</a></li>
-      <li><a href="/product/billie-eilish-bad-guy" style="color:#e0a6a0;text-decoration:none">Bad Guy by Billie Eilish</a></li>
-      <li><a href="/product/billie-eilish-happier-than-ever" style="color:#e0a6a0;text-decoration:none">Happier Than Ever by Billie Eilish</a></li>
-      <li><a href="/product/billy-joel-the-stranger" style="color:#e0a6a0;text-decoration:none">The Stranger by Billy Joel</a></li>
-      <li><a href="/product/blackpink-the-album" style="color:#e0a6a0;text-decoration:none">The Album by BLACKPINK</a></li>
-      <li><a href="/product/buckethead-soothsayer" style="color:#e0a6a0;text-decoration:none">Soothsayer by Buckethead</a></li>
-      <li><a href="/product/charli-xcx-crash" style="color:#e0a6a0;text-decoration:none">Crash by Charli XCX</a></li>
-      <li><a href="/product/charlie-puth-nine-track-mind" style="color:#e0a6a0;text-decoration:none">Nine Track Mind by Charlie Puth</a></li>
-      <li><a href="/product/cochise-tell-em" style="color:#e0a6a0;text-decoration:none">Tell Em' by Cochise</a></li>
-      <li><a href="/product/coldplay-parachutes-yellow" style="color:#e0a6a0;text-decoration:none">Parachutes / Yellow by Coldplay</a></li>
-      <li><a href="/product/diljit-dosanjh-don" style="color:#e0a6a0;text-decoration:none">Don by Diljit Dosanjh</a></li>
-      <li><a href="/product/drake-one-dance" style="color:#e0a6a0;text-decoration:none">One Dance by Drake</a></li>
-      <li><a href="/product/dua-lipa-future-nostalgia" style="color:#e0a6a0;text-decoration:none">Future Nostalgia by Dua Lipa</a></li>
-      <li><a href="/product/dua-lipa-houdini" style="color:#e0a6a0;text-decoration:none">Houdini by Dua Lipa</a></li>
-      <li><a href="/product/ed-sheeran-sapphire" style="color:#e0a6a0;text-decoration:none">Sapphire by Ed Sheeran</a></li>
-      <li><a href="/product/eminem-the-death-of-slim-shady" style="color:#e0a6a0;text-decoration:none">The Death of Slim Shady by Eminem</a></li>
-      <li><a href="/product/frank-ocean-blonde" style="color:#e0a6a0;text-decoration:none">Blonde by Frank Ocean</a></li>
-      <li><a href="/product/guns-n-roses-appetite-for-destruction" style="color:#e0a6a0;text-decoration:none">Appetite for Destruction by Guns N' Roses</a></li>
-      <li><a href="/product/harry-styles-fine-line" style="color:#e0a6a0;text-decoration:none">Fine Line by Harry Styles</a></li>
-      <li><a href="/product/harry-styles-fine-line-watermelon-sugar" style="color:#e0a6a0;text-decoration:none">Fine Line / Watermelon Sugar by Harry Styles</a></li>
-      <li><a href="/product/jennie-mantra" style="color:#e0a6a0;text-decoration:none">Mantra by Jennie</a></li>
-      <li><a href="/product/juice-wrld-goodbye-good-riddance" style="color:#e0a6a0;text-decoration:none">Goodbye & Good Riddance by Juice WRLD</a></li>
-      <li><a href="/product/justin-bieber-changes" style="color:#e0a6a0;text-decoration:none">Changes by Justin Bieber</a></li>
-      <li><a href="/product/kanye-west-graduation" style="color:#e0a6a0;text-decoration:none">Graduation by Kanye West</a></li>
-      <li><a href="/product/karan-aujla-at-peace" style="color:#e0a6a0;text-decoration:none">At Peace by Karan Aujla</a></li>
-      <li><a href="/product/lana-del-rey-bluebird" style="color:#e0a6a0;text-decoration:none">Bluebird by Lana Del Rey</a></li>
-      <li><a href="/product/lana-del-rey-ultraviolence" style="color:#e0a6a0;text-decoration:none">Ultraviolence by Lana Del Rey</a></li>
-      <li><a href="/product/lisa-rockstar" style="color:#e0a6a0;text-decoration:none">Rockstar by Lisa</a></li>
-      <li><a href="/product/luca-brassi-neni-stress" style="color:#e0a6a0;text-decoration:none">Neni Stress by Luca Brassi</a></li>
-      <li><a href="/product/maroon-5-love-is-like" style="color:#e0a6a0;text-decoration:none">Love Is Like by Maroon 5</a></li>
-      <li><a href="/product/marshmello-happier" style="color:#e0a6a0;text-decoration:none">Happier by Marshmello</a></li>
-      <li><a href="/product/martin-garrix-sentio" style="color:#e0a6a0;text-decoration:none">Sentio by Martin Garrix</a></li>
-      <li><a href="/product/mgk-lost-americana" style="color:#e0a6a0;text-decoration:none">Lost Americana by MGK</a></li>
-      <li><a href="/product/mgk-tickets-to-my-downfall" style="color:#e0a6a0;text-decoration:none">Tickets to My Downfall by MGK</a></li>
-      <li><a href="/product/newjeans-super-shy" style="color:#e0a6a0;text-decoration:none">Super Shy by NewJeans</a></li>
-      <li><a href="/product/nirvana-nevermind" style="color:#e0a6a0;text-decoration:none">Nevermind by Nirvana</a></li>
-      <li><a href="/product/olivia-rodrigo-guts-bad-idea-right" style="color:#e0a6a0;text-decoration:none">GUTS / Bad Idea Right by Olivia Rodrigo</a></li>
-      <li><a href="/product/pink-floyd-the-dark-side-of-the-moon-1973" style="color:#e0a6a0;text-decoration:none">The Dark Side of the Moon (1973) by Pink Floyd</a></li>
-      <li><a href="/product/post-malone-chemical" style="color:#e0a6a0;text-decoration:none">Chemical by Post Malone</a></li>
-      <li><a href="/product/post-malone-sunflower" style="color:#e0a6a0;text-decoration:none">Sunflower by Post Malone</a></li>
-      <li><a href="/product/queen-bohemian-rhapsody" style="color:#e0a6a0;text-decoration:none">Bohemian Rhapsody by Queen</a></li>
-      <li><a href="/product/rm-indigo" style="color:#e0a6a0;text-decoration:none">Indigo by RM</a></li>
-      <li><a href="/product/rose-apt" style="color:#e0a6a0;text-decoration:none">APT. by Rosé</a></li>
-      <li><a href="/product/sabrina-carpenter" style="color:#e0a6a0;text-decoration:none">[CONFIRM] by Sabrina Carpenter</a></li>
-      <li><a href="/product/sabrina-carpenter-espresso" style="color:#e0a6a0;text-decoration:none">Espresso by Sabrina Carpenter</a></li>
-      <li><a href="/product/seedhe-maut-lunch-break-11k" style="color:#e0a6a0;text-decoration:none">Lunch Break / 11K by Seedhe Maut</a></li>
-      <li><a href="/product/spider-verse-am-i-dreaming" style="color:#e0a6a0;text-decoration:none">Am I Dreaming by Spider-Verse</a></li>
-      <li><a href="/product/stranger-things-season-4" style="color:#e0a6a0;text-decoration:none">Season 4 by Stranger Things</a></li>
-      <li><a href="/product/swedish-house-mafia-dont-you-worry-child" style="color:#e0a6a0;text-decoration:none">Don't You Worry Child by Swedish House Mafia</a></li>
-      <li><a href="/product/taylor-swift-1989" style="color:#e0a6a0;text-decoration:none">1989 by Taylor Swift</a></li>
-      <li><a href="/product/taylor-swift-august" style="color:#e0a6a0;text-decoration:none">august by Taylor Swift</a></li>
-      <li><a href="/product/taylor-swift-lover" style="color:#e0a6a0;text-decoration:none">Lover by Taylor Swift</a></li>
-      <li><a href="/product/taylor-swift-reputation" style="color:#e0a6a0;text-decoration:none">Reputation by Taylor Swift</a></li>
-      <li><a href="/product/the-beatles-members" style="color:#e0a6a0;text-decoration:none">Members by The Beatles</a></li>
-      <li><a href="/product/the-strokes-comedown-machine" style="color:#e0a6a0;text-decoration:none">Comedown Machine by The Strokes</a></li>
-      <li><a href="/product/the-strokes-is-this-it" style="color:#e0a6a0;text-decoration:none">Is This It by The Strokes</a></li>
-      <li><a href="/product/the-weeknd-after-hours" style="color:#e0a6a0;text-decoration:none">After Hours by The Weeknd</a></li>
-      <li><a href="/product/travis-utopia" style="color:#e0a6a0;text-decoration:none">Utopia by Travis</a></li>
-      <li><a href="/product/travis-scott-rodeo" style="color:#e0a6a0;text-decoration:none">Rodeo by Travis Scott</a></li>
-      <li><a href="/product/travis-scott-utopia" style="color:#e0a6a0;text-decoration:none">Utopia by Travis Scott</a></li>
-      <li><a href="/product/wwe-the-rock" style="color:#e0a6a0;text-decoration:none">The Rock by WWE</a></li>
-      <li><a href="/product/wwe-triple-h" style="color:#e0a6a0;text-decoration:none">Triple H by WWE</a></li>
+  <!-- FAQ Section (AEO Question Answering matching FAQPage JSON-LD) -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:14px">Frequently Asked Questions About PastForward Music Art & Vinyl</h2>
+    
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">Are PastForward vinyl records real 12-inch vinyl?</h3>
+      <p style="margin:0;color:#c9c0b5">Yes. Every PastForward vinyl record is an authentic, reclaimed vintage 12-inch (30cm) phonograph record. Instead of pressing virgin plastics, we rescue vintage records and press iconic, high-resolution album artwork into the centre label, engineered specifically for wall display.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">Can upcycled vinyl records actually play music on a turntable?</h3>
+      <p style="margin:0;color:#c9c0b5">PastForward vinyl records are crafted and sold exclusively as decorative wall art, not playable audio. While the vinyl discs feature authentic microgrooves from their vintage history, the audio contents vary and the centre label carries visual album art. Each record includes a pre-mounted wall hanger.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">How do you hang an upcycled vinyl record on a wall?</h3>
+      <p style="margin:0;color:#c9c0b5">Every PastForward vinyl record includes a discreet wall-mounting hook mounted to the reverse side. Simply hammer a small picture nail or place an adhesive hook on your wall and hang the record flush without adhesive damage.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">Can I order a custom music poster or personalized vinyl record?</h3>
+      <p style="margin:0;color:#c9c0b5">Yes. PastForward's Custom Studio creates made-to-order pieces for any artist, album, mixtape, personal Spotify playlist, or original artwork across all formats (12-inch Vinyl, A3, 10×10, A5, and Polaroid) with custom proofing.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">What materials and paper weight are used for PastForward posters?</h3>
+      <p style="margin:0;color:#c9c0b5">Our art prints and posters are printed on heavyweight 300 GSM gallery-grade matte cardstock using fade-resistant, rich-pigment inks. The matte finish eliminates glare under room lighting, rendering sharp typography and album artwork.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">How long does shipping take across India and what payment methods are accepted?</h3>
+      <p style="margin:0;color:#c9c0b5">PastForward ships to all pin codes across India within 5 to 7 business days via courier partners including Delhivery, Blue Dart, and Xpressbees. We accept UPI (Google Pay, PhonePe, Paytm), credit/debit cards, and Net Banking with order tracking provided via email and SMS.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">How are vinyl records and posters protected during shipping?</h3>
+      <p style="margin:0;color:#c9c0b5">All items are packed in reinforced, unbendable multi-ply corrugated cardboard mailers with edge guards and water-resistant bubble sleeves, engineered to prevent warping, corner bending, or transit damage across Indian courier networks.</p>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.1rem;color:#f3efe8;margin:0 0 6px">What is the return or damaged item replacement policy?</h3>
+      <p style="margin:0;color:#c9c0b5">If any piece arrives damaged or defective, email team@pastforward.shop or message @pastforward.shop on Instagram within 7 days of delivery with a photo of the package, and we will dispatch a free replacement immediately.</p>
+    </div>
+  </section>
+
+  <!-- Complete Catalogue Directory by Artist & Album (Topical Authority) -->
+  <section style="margin-bottom:36px">
+    <h2 style="font-size:1.4rem;color:#f3efe8;margin-bottom:12px">Featured Album Artworks in the Catalogue (67 Titles)</h2>
+    <p style="color:#c9c0b5;margin-bottom:14px">Browse our complete online catalogue and order individual artist covers directly:</p>
+    <ul style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;padding-left:20px;margin:0 0 20px">
+      <li style="margin-bottom:6px"><a href="/product/abba-little-things" style="color:#e0a6a0;text-decoration:none"><strong>Little Things</strong> — ABBA <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/anuv-jain-alag-aasman" style="color:#e0a6a0;text-decoration:none"><strong>Alag Aasman</strong> — Anuv Jain <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/ap-dhillon-dil-nu" style="color:#e0a6a0;text-decoration:none"><strong>Dil Nu</strong> — AP Dhillon <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/arctic-monkeys" style="color:#e0a6a0;text-decoration:none"><strong>[CONFIRM]</strong> — Arctic Monkeys <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/ariana-grande-thank-u-next" style="color:#e0a6a0;text-decoration:none"><strong>thank u, next</strong> — Ariana Grande <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/avicii-avici-01" style="color:#e0a6a0;text-decoration:none"><strong>Avīci (01)</strong> — Avicii <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/billie-eilish-bad-guy" style="color:#e0a6a0;text-decoration:none"><strong>Bad Guy</strong> — Billie Eilish <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/billie-eilish-happier-than-ever" style="color:#e0a6a0;text-decoration:none"><strong>Happier Than Ever</strong> — Billie Eilish <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/billy-joel-the-stranger" style="color:#e0a6a0;text-decoration:none"><strong>The Stranger</strong> — Billy Joel <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/blackpink-the-album" style="color:#e0a6a0;text-decoration:none"><strong>The Album</strong> — BLACKPINK <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/buckethead-soothsayer" style="color:#e0a6a0;text-decoration:none"><strong>Soothsayer</strong> — Buckethead <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/charli-xcx-crash" style="color:#e0a6a0;text-decoration:none"><strong>Crash</strong> — Charli XCX <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/charlie-puth-nine-track-mind" style="color:#e0a6a0;text-decoration:none"><strong>Nine Track Mind</strong> — Charlie Puth <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/cochise-tell-em" style="color:#e0a6a0;text-decoration:none"><strong>Tell Em'</strong> — Cochise <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/coldplay-parachutes-yellow" style="color:#e0a6a0;text-decoration:none"><strong>Parachutes / Yellow</strong> — Coldplay <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/diljit-dosanjh-don" style="color:#e0a6a0;text-decoration:none"><strong>Don</strong> — Diljit Dosanjh <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/drake-one-dance" style="color:#e0a6a0;text-decoration:none"><strong>One Dance</strong> — Drake <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/dua-lipa-future-nostalgia" style="color:#e0a6a0;text-decoration:none"><strong>Future Nostalgia</strong> — Dua Lipa <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/dua-lipa-houdini" style="color:#e0a6a0;text-decoration:none"><strong>Houdini</strong> — Dua Lipa <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/ed-sheeran-sapphire" style="color:#e0a6a0;text-decoration:none"><strong>Sapphire</strong> — Ed Sheeran <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/eminem-the-death-of-slim-shady" style="color:#e0a6a0;text-decoration:none"><strong>The Death of Slim Shady</strong> — Eminem <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/frank-ocean-blonde" style="color:#e0a6a0;text-decoration:none"><strong>Blonde</strong> — Frank Ocean <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/guns-n-roses-appetite-for-destruction" style="color:#e0a6a0;text-decoration:none"><strong>Appetite for Destruction</strong> — Guns N' Roses <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/harry-styles-fine-line" style="color:#e0a6a0;text-decoration:none"><strong>Fine Line</strong> — Harry Styles <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/harry-styles-fine-line-watermelon-sugar" style="color:#e0a6a0;text-decoration:none"><strong>Fine Line / Watermelon Sugar</strong> — Harry Styles <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/jennie-mantra" style="color:#e0a6a0;text-decoration:none"><strong>Mantra</strong> — Jennie <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/juice-wrld-goodbye-good-riddance" style="color:#e0a6a0;text-decoration:none"><strong>Goodbye & Good Riddance</strong> — Juice WRLD <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/justin-bieber-changes" style="color:#e0a6a0;text-decoration:none"><strong>Changes</strong> — Justin Bieber <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/kanye-west-graduation" style="color:#e0a6a0;text-decoration:none"><strong>Graduation</strong> — Kanye West <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/karan-aujla-at-peace" style="color:#e0a6a0;text-decoration:none"><strong>At Peace</strong> — Karan Aujla <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/lana-del-rey-bluebird" style="color:#e0a6a0;text-decoration:none"><strong>Bluebird</strong> — Lana Del Rey <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/lana-del-rey-ultraviolence" style="color:#e0a6a0;text-decoration:none"><strong>Ultraviolence</strong> — Lana Del Rey <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/lisa-rockstar" style="color:#e0a6a0;text-decoration:none"><strong>Rockstar</strong> — Lisa <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/luca-brassi-neni-stress" style="color:#e0a6a0;text-decoration:none"><strong>Neni Stress</strong> — Luca Brassi <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/maroon-5-love-is-like" style="color:#e0a6a0;text-decoration:none"><strong>Love Is Like</strong> — Maroon 5 <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/marshmello-happier" style="color:#e0a6a0;text-decoration:none"><strong>Happier</strong> — Marshmello <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/martin-garrix-sentio" style="color:#e0a6a0;text-decoration:none"><strong>Sentio</strong> — Martin Garrix <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/mgk-lost-americana" style="color:#e0a6a0;text-decoration:none"><strong>Lost Americana</strong> — MGK <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/mgk-tickets-to-my-downfall" style="color:#e0a6a0;text-decoration:none"><strong>Tickets to My Downfall</strong> — MGK <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/newjeans-super-shy" style="color:#e0a6a0;text-decoration:none"><strong>Super Shy</strong> — NewJeans <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/nirvana-nevermind" style="color:#e0a6a0;text-decoration:none"><strong>Nevermind</strong> — Nirvana <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/olivia-rodrigo-guts-bad-idea-right" style="color:#e0a6a0;text-decoration:none"><strong>GUTS / Bad Idea Right</strong> — Olivia Rodrigo <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/pink-floyd-the-dark-side-of-the-moon-1973" style="color:#e0a6a0;text-decoration:none"><strong>The Dark Side of the Moon (1973)</strong> — Pink Floyd <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/post-malone-chemical" style="color:#e0a6a0;text-decoration:none"><strong>Chemical</strong> — Post Malone <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/post-malone-sunflower" style="color:#e0a6a0;text-decoration:none"><strong>Sunflower</strong> — Post Malone <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/queen-bohemian-rhapsody" style="color:#e0a6a0;text-decoration:none"><strong>Bohemian Rhapsody</strong> — Queen <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/rm-indigo" style="color:#e0a6a0;text-decoration:none"><strong>Indigo</strong> — RM <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/rose-apt" style="color:#e0a6a0;text-decoration:none"><strong>APT.</strong> — Rosé <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/sabrina-carpenter" style="color:#e0a6a0;text-decoration:none"><strong>[CONFIRM]</strong> — Sabrina Carpenter <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/sabrina-carpenter-espresso" style="color:#e0a6a0;text-decoration:none"><strong>Espresso</strong> — Sabrina Carpenter <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/seedhe-maut-lunch-break-11k" style="color:#e0a6a0;text-decoration:none"><strong>Lunch Break / 11K</strong> — Seedhe Maut <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/spider-verse-am-i-dreaming" style="color:#e0a6a0;text-decoration:none"><strong>Am I Dreaming</strong> — Spider-Verse <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/stranger-things-season-4" style="color:#e0a6a0;text-decoration:none"><strong>Season 4</strong> — Stranger Things <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/swedish-house-mafia-dont-you-worry-child" style="color:#e0a6a0;text-decoration:none"><strong>Don't You Worry Child</strong> — Swedish House Mafia <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/taylor-swift-1989" style="color:#e0a6a0;text-decoration:none"><strong>1989</strong> — Taylor Swift <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/taylor-swift-august" style="color:#e0a6a0;text-decoration:none"><strong>august</strong> — Taylor Swift <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/taylor-swift-lover" style="color:#e0a6a0;text-decoration:none"><strong>Lover</strong> — Taylor Swift <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/taylor-swift-reputation" style="color:#e0a6a0;text-decoration:none"><strong>Reputation</strong> — Taylor Swift <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/the-beatles-members" style="color:#e0a6a0;text-decoration:none"><strong>Members</strong> — The Beatles <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/the-strokes-comedown-machine" style="color:#e0a6a0;text-decoration:none"><strong>Comedown Machine</strong> — The Strokes <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/the-strokes-is-this-it" style="color:#e0a6a0;text-decoration:none"><strong>Is This It</strong> — The Strokes <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/the-weeknd-after-hours" style="color:#e0a6a0;text-decoration:none"><strong>After Hours</strong> — The Weeknd <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/travis-utopia" style="color:#e0a6a0;text-decoration:none"><strong>Utopia</strong> — Travis <span style="opacity:0.65;font-size:0.85em">(from ₹199)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/travis-scott-rodeo" style="color:#e0a6a0;text-decoration:none"><strong>Rodeo</strong> — Travis Scott <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/travis-scott-utopia" style="color:#e0a6a0;text-decoration:none"><strong>Utopia</strong> — Travis Scott <span style="opacity:0.65;font-size:0.85em">(from ₹99)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/wwe-the-rock" style="color:#e0a6a0;text-decoration:none"><strong>The Rock</strong> — WWE <span style="opacity:0.65;font-size:0.85em">(from ₹999)</span></a></li>
+      <li style="margin-bottom:6px"><a href="/product/wwe-triple-h" style="color:#e0a6a0;text-decoration:none"><strong>Triple H</strong> — WWE <span style="opacity:0.65;font-size:0.85em">(from ₹299)</span></a></li>
     </ul>
   </section>
 
-  <section style="margin-bottom:32px">
-    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Custom Made-To-Order Designs</h2>
-    <p>Looking for an album, mixtape, personal playlist, or song that is not in our standard catalogue? Our custom studio prints and presses any requested artwork to your selected format. Request a custom design through our <a href="/custom" style="color:#e0a6a0">Custom Studio</a>.</p>
-  </section>
-
+  <!-- Machine-Readable Discovery & Quick Navigation -->
   <nav style="border-top:1px solid rgba(243,233,222,0.15);padding-top:20px;font-size:0.95rem">
     <p><strong>Quick Navigation:</strong>
-      <a href="/vinyl" style="color:#e0a6a0;margin:0 8px">Vinyl Records</a> · 
-      <a href="/posters" style="color:#e0a6a0;margin:0 8px">Music Posters</a> · 
-      <a href="/polaroids" style="color:#e0a6a0;margin:0 8px">Polaroid Cards</a> · 
-      <a href="/custom" style="color:#e0a6a0;margin:0 8px">Custom Design</a> · 
-      <a href="/story" style="color:#e0a6a0;margin:0 8px">Our Story</a> · 
-      <a href="/faq" style="color:#e0a6a0;margin:0 8px">FAQ</a> · 
-      <a href="/contact" style="color:#e0a6a0;margin:0 8px">Contact</a>
+      <a href="/vinyl" style="color:#e0a6a0;margin:0 6px">Vinyl Records</a> · 
+      <a href="/posters" style="color:#e0a6a0;margin:0 6px">Music Posters</a> · 
+      <a href="/polaroids" style="color:#e0a6a0;margin:0 6px">Polaroid Cards</a> · 
+      <a href="/custom" style="color:#e0a6a0;margin:0 6px">Custom Studio</a> · 
+      <a href="/story" style="color:#e0a6a0;margin:0 6px">Our Story</a> · 
+      <a href="/faq" style="color:#e0a6a0;margin:0 6px">FAQ</a> · 
+      <a href="/contact" style="color:#e0a6a0;margin:0 6px">Contact</a>
+    </p>
+    <p style="margin-top:10px;color:#a59d94;font-size:0.85rem">
+      <strong>AI Agent & Machine Resources:</strong>
+      <a href="/pricing.md" style="color:#e0a6a0;margin:0 6px">pricing.md (Structured Data)</a> · 
+      <a href="/about.md" style="color:#e0a6a0;margin:0 6px">about.md (Provenance)</a> · 
+      <a href="/llms.txt" style="color:#e0a6a0;margin:0 6px">llms.txt (LLM Summary)</a> · 
+      <a href="/llms-full.txt" style="color:#e0a6a0;margin:0 6px">llms-full.txt (Full Knowledge Base)</a>
     </p>
   </nav>
 </div>
@@ -5767,7 +6079,8 @@ function footerHTML() {
         <a href="#/vinyl">Vinyls</a><a href="#/posters">Posters</a>
         <a href="#/posters/10x10">10×10 Format</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
       <div><h4>Brand</h4>
-        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a></div>
+        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a>
+        <a href="/pricing.md">Pricing Guide</a><a href="/llms.txt">AI Context</a></div>
       <div><h4>Newsletter</h4>
         <p class="body-s dim" style="margin:0 0 12px">New records, limited runs, no spam.</p>
         <form data-form="newsletter" style="display:flex;gap:8px;flex-wrap:wrap">
