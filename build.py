@@ -21,6 +21,41 @@ boot  = open(f'{SRC}/boot.js').read()
 cat   = open(f'{ROOT}/catalogue.json').read()
 shopify_variants = open(f'{ROOT}/shopify_variants.json').read()   # SKU -> Shopify variant id
 
+cat_data = json.loads(cat)
+crawler_product_items = '\n'.join([
+    f'        <li><a href="/product/{p["slug"]}" style="color:#e0a6a0">{p.get("album", "")} by {p.get("artist", "")}</a></li>'
+    for p in cat_data.get('products', []) if p.get('slug')
+])
+
+CRAWLER_FALLBACK_HTML = f'''<noscript>
+  <div style="max-width:840px;margin:40px auto;padding:24px;font-family:sans-serif;color:#f3efe8;background:#121011;border:1px solid rgba(243,233,222,0.1);border-radius:6px;line-height:1.6">
+    <h1 style="color:#ede7dd">PastForward — Upcycled Vinyl Records & Custom Music Album Art</h1>
+    <p>Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Posters, prints, and polaroids of the albums that mattered. Custom made to order with pan-India delivery.</p>
+    <h2>Catalogue Formats & Pricing (INR)</h2>
+    <ul>
+      <li><b>Upcycled 12-inch Vinyl Record Art</b>: ₹999 (Wall hook included, ready to hang)</li>
+      <li><b>A3 Music Art Poster (297 × 420mm)</b>: ₹299 (Gallery-grade 300 GSM matte print)</li>
+      <li><b>10×10 Music Art Print (254 × 254mm)</b>: ₹249 (Classic vinyl sleeve scale)</li>
+      <li><b>A5 Music Poster (148 × 210mm)</b>: ₹199 (Compact fine art desk print)</li>
+      <li><b>Polaroid Music Card</b>: ₹99 (Keepsake card with retro cream border)</li>
+    </ul>
+    <h2>Popular Album Artworks</h2>
+    <ul>
+{crawler_product_items}
+    </ul>
+    <h2>Navigation</h2>
+    <p>
+      <a href="/vinyl" style="color:#e0a6a0">Vinyl Records</a> · 
+      <a href="/posters" style="color:#e0a6a0">Posters</a> · 
+      <a href="/polaroids" style="color:#e0a6a0">Polaroids</a> · 
+      <a href="/custom" style="color:#e0a6a0">Custom Design</a> · 
+      <a href="/story" style="color:#e0a6a0">Our Story</a> · 
+      <a href="/faq" style="color:#e0a6a0">FAQ</a> · 
+      <a href="/contact" style="color:#e0a6a0">Contact</a>
+    </p>
+  </div>
+</noscript>'''
+
 def vinyl3d_module(three_url=None):
     """The WebGL hero disc, with Three.js self-hosted as a data: URI import —
     no CDN, so the module works identically offline, on GitHub Pages, or here."""
@@ -236,7 +271,8 @@ def assemble(payload, standalone, vinyl3d=None):
 
 <style>{FONT_CSS}</style>
 <style>{css}</style>'''
-    body = f'''<script>{payload}</script>
+    body = f'''{CRAWLER_FALLBACK_HTML}
+<script>{payload}</script>
 <script>{core}</script>
 <script>{ripple}</script>
 <script>{vinyllabel}</script>
