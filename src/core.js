@@ -217,7 +217,7 @@ function cartFootHTML() {
       ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span></button>
-    <p class="mono-xs dim" style="margin:12px 0 0;line-height:1.7">You'll pay on our secure checkout.</p>`;
+    <p class="mono-xs dim" style="margin:12px 0 0;line-height:1.7">🔒 Secure payment via Shopify · UPI, Cards, Net Banking</p>`;
 }
 
 /* ---------- toast ---------- */
@@ -793,20 +793,21 @@ function playFlip(target) {
   };
 }
 
-/* ---------- Shopify Configuration & Checkout Pre-wire ---------- */
+/* ---------- Shopify Configuration & Checkout Integration ---------- */
 const SHOPIFY_CONFIG = {
-  storeDomain: 'shop.pastforward.shop',
+  storeDomain: window.SHOPIFY_STORE_DOMAIN || 'shop.pastforward.shop',
 
   // Catalogue SKU -> Shopify variant id (generated into shopify_variants.json, injected by build.py)
   variantIds: window.__SHOPIFY_VARIANTS__ || {},
 
-  // Shopify Variant IDs for each custom-order format (not set up yet):
+  // Shopify Variant IDs for each custom-order format:
+  // Dynamically resolves from shopify_variants.json (by SKU or format key)
   variants: {
-    'vinyl': '',       // Vinyl 12" (₹999)
-    'poster-a3': '',   // A3 Poster (₹299)
-    'print-10': '',    // 10x10 Print (₹249)
-    'poster-a5': '',   // A5 Poster (₹199)
-    'polaroid': ''     // Polaroid Card (₹99)
+    'vinyl': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-VINYL'] || window.__SHOPIFY_VARIANTS__['vinyl'])) || '',
+    'poster-a3': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A3'] || window.__SHOPIFY_VARIANTS__['poster-a3'])) || '',
+    'print-10': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-PRINT-10'] || window.__SHOPIFY_VARIANTS__['print-10'])) || '',
+    'poster-a5': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A5'] || window.__SHOPIFY_VARIANTS__['poster-a5'])) || '',
+    'polaroid': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POLAROID'] || window.__SHOPIFY_VARIANTS__['polaroid'])) || ''
   }
 };
 window.SHOPIFY_CONFIG = SHOPIFY_CONFIG;
@@ -816,38 +817,79 @@ function submitForm(type, payload) {
   if (type === 'custom') {
     const fKey = payload.format || 'vinyl';
     const f = FMT[fKey] || FMT.vinyl;
-    const variantId = SHOPIFY_CONFIG.variants[fKey];
+    const variantId = SHOPIFY_CONFIG.variants[fKey] ||
+      (SHOPIFY_CONFIG.variantIds && (
+        SHOPIFY_CONFIG.variantIds[`PF-CUSTOM-${fKey.toUpperCase()}`] ||
+        SHOPIFY_CONFIG.variantIds[`PF-CUSTOM-${fKey.replace(/-/g, '_').toUpperCase()}`] ||
+        SHOPIFY_CONFIG.variantIds[fKey]
+      ));
 
     // If Shopify is connected with storeDomain and variantId, forward directly to Shopify Cart Permalink Checkout:
     if (SHOPIFY_CONFIG.storeDomain && variantId) {
-      const params = new URLSearchParams({
-        'attributes[Customer Name]': payload.name || '',
-        'attributes[WhatsApp]': payload.whatsapp || '',
-        'attributes[Format]': f.label,
-        'attributes[Artist]': payload.artist || '',
-        'attributes[Album / Track]': payload.album || '',
-        'attributes[Reference Link]': payload.ref || '',
-        'attributes[Notes]': payload.notes || ''
-      });
+      const btn = document.getElementById('customsubmitbtn');
+      const btnText = document.getElementById('custombtntext');
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.textContent = 'Redirecting to secure checkout...';
+
+      const params = new URLSearchParams();
+      if (payload.email) params.set('checkout[email]', payload.email);
+      if (payload.name) params.set('checkout[shipping_address][first_name]', payload.name);
+      if (payload.whatsapp) params.set('checkout[shipping_address][phone]', payload.whatsapp);
+
+      // Cart attributes: displayed in Shopify Admin Order Details
+      params.set('attributes[Customer Name]', payload.name || '');
+      params.set('attributes[Email]', payload.email || '');
+      params.set('attributes[WhatsApp]', payload.whatsapp || '');
+      params.set('attributes[Format]', f.label);
+      params.set('attributes[Artist]', payload.artist || '');
+      params.set('attributes[Album / Track]', payload.album || '');
+      if (payload.ref) params.set('attributes[Reference Link]', payload.ref);
+      if (payload.notes) params.set('attributes[Notes]', payload.notes);
+
+      // Order summary note
+      const noteParts = [
+        `CUSTOM ORDER: ${payload.artist || 'N/A'} — ${payload.album || 'N/A'} (${f.label})`,
+        `Customer: ${payload.name || 'N/A'} | Email: ${payload.email || 'N/A'} | WhatsApp: ${payload.whatsapp || 'N/A'}`
+      ];
+      if (payload.ref) noteParts.push(`Reference Link: ${payload.ref}`);
+      if (payload.notes) noteParts.push(`Notes: ${payload.notes}`);
+      params.set('note', noteParts.join('\n'));
+
       const checkoutUrl = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}`;
       window.location.href = checkoutUrl;
       return Promise.resolve({ ok: true, redirected: true });
     }
 
-    // Pre-wire stage (Shopify store domain pending):
-    console.log('[PastForward] Custom order logged. Pre-wired for Shopify checkout:', payload);
+    // Direct fallback if custom variant ID is not yet linked:
+    console.log('[PastForward] Custom order logged:', payload);
+    const waText = encodeURIComponent(
+      `Hi PastForward! I'd like to place a custom order:\n\n` +
+      `• Artist: ${payload.artist || ''}\n` +
+      `• Album / Track: ${payload.album || ''}\n` +
+      `• Format: ${f.label} (${money(f.price)})\n` +
+      `• Name: ${payload.name || ''}\n` +
+      `• Email: ${payload.email || ''}\n` +
+      `• WhatsApp: ${payload.whatsapp || ''}\n` +
+      (payload.ref ? `• Reference: ${payload.ref}\n` : '') +
+      (payload.notes ? `• Notes: ${payload.notes}\n` : '') +
+      `\nPlease confirm payment link.`
+    );
     return Promise.resolve({
       ok: true,
       customSuccess: `
         <div style="background:var(--elevated);border:1px solid var(--border);border-radius:4px;padding:24px;margin-top:20px">
-          <div class="mono num" style="color:var(--oxblood);font-size:0.8rem;letter-spacing:.14em">ORDER LOGGED · PAYMENT PREPARED</div>
+          <div class="mono num" style="color:var(--oxblood);font-size:0.8rem;letter-spacing:.14em">ORDER LOGGED · PAYMENT LINK</div>
           <h3 class="d-s" style="margin:12px 0 6px">Custom ${esc(f.label)} · ${money(f.price)}</h3>
           <p class="body-s dim" style="margin-top:6px;line-height:1.6">
             We've recorded your custom request for <b>${esc(payload.artist)} — ${esc(payload.album)}</b>.
           </p>
+          <div style="margin-top:18px">
+            <a href="https://wa.me/917073273751?text=${waText}" target="_blank" rel="noopener" class="btn btn--primary" style="display:inline-flex;align-items:center;gap:8px">
+              <span class="btn__mag">Pay via WhatsApp & Confirm</span>
+            </a>
+          </div>
           <div class="mono-xs dim" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);line-height:1.7">
-            ✓ Shopify checkout connection pre-wired.<br>
-            Once your Shopify store credentials are populated in code, this button forwards straight to Shopify checkout.
+            A payment link is also being sent to your WhatsApp (${esc(payload.whatsapp || payload.email)}).
           </div>
         </div>`
     });
@@ -867,6 +909,15 @@ function checkout(lines) {
     parts.push(id + ':' + l.qty);
   }
   if (!parts.length) return;
+
+  // Visual feedback on checkout buttons
+  const checkBtns = document.querySelectorAll('[data-checkout]');
+  checkBtns.forEach(b => {
+    b.disabled = true;
+    const span = b.querySelector('.btn__mag');
+    if (span) span.textContent = 'Redirecting to checkout...';
+  });
+
   window.location.href = 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',');
 }
 
@@ -878,34 +929,175 @@ function parseHash() {
 }
 window.__unmounts = [];
 function onUnmount(fn) { window.__unmounts.push(fn); }
+function updatePageSEO({ title, description, canonical, ogImage, product }) {
+  document.title = title;
+
+  // 1. Meta Description
+  let metaDesc = $('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta');
+    metaDesc.name = 'description';
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.content = description;
+
+  // 2. Canonical Tag
+  let linkCanonical = $('link[rel="canonical"]');
+  if (!linkCanonical) {
+    linkCanonical = document.createElement('link');
+    linkCanonical.rel = 'canonical';
+    document.head.appendChild(linkCanonical);
+  }
+  linkCanonical.href = canonical;
+
+  // 3. OpenGraph Tags
+  const setMeta = (prop, content) => {
+    let el = $(`meta[property="${prop}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute('property', prop); document.head.appendChild(el); }
+    el.content = content;
+  };
+  setMeta('og:title', title);
+  setMeta('og:description', description);
+  setMeta('og:url', canonical);
+  if (ogImage) setMeta('og:image', ogImage);
+
+  // 4. Twitter Card Tags
+  const setTwitter = (name, content) => {
+    let el = $(`meta[name="${name}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute('name', name); document.head.appendChild(el); }
+    el.content = content;
+  };
+  setTwitter('twitter:title', title);
+  setTwitter('twitter:description', description);
+  if (ogImage) setTwitter('twitter:image', ogImage);
+
+  // 5. Dynamic Product Schema.org JSON-LD
+  let schemaScript = document.getElementById('dynamic-product-schema');
+  if (product) {
+    if (!schemaScript) {
+      schemaScript = document.createElement('script');
+      schemaScript.id = 'dynamic-product-schema';
+      schemaScript.type = 'application/ld+json';
+      document.head.appendChild(schemaScript);
+    }
+    const v = primary(product);
+    schemaScript.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": `${albumText(product)} by ${product.artist} — Upcycled Vinyl Record & Poster Art`,
+      "image": ogImage || "https://pastforward.shop/photos/wordmark.webp",
+      "description": description,
+      "brand": {
+        "@type": "Brand",
+        "name": "PastForward"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": v ? String(v.price) : "999",
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "url": canonical
+      }
+    });
+  } else if (schemaScript) {
+    schemaScript.remove();
+  }
+}
+
 function render() {
   const { path, params } = parseHash();
   const seg = path.split('/').filter(Boolean);
   const main = $('#main');
-  let out, title = 'PastForward — designed from memory, made for now';
-  if (!seg.length) { out = viewHome(); }
-  else if (seg[0] === 'vinyl') { out = viewCatalog('vinyl', null, params); title = 'Vinyls | PastForward'; }
-  else if (seg[0] === 'posters') { out = viewCatalog('posters', seg[1], params); title = 'Posters | PastForward'; }
-  else if (seg[0] === 'polaroids') { out = viewCatalog('polaroids', null, params); title = 'Polaroids | PastForward'; }
-  else if (seg[0] === 'shop') { location.replace('#/vinyl'); return; }
-  else if (seg[0] === 'product' && bySlug[seg[1]]) { const p = bySlug[seg[1]]; out = viewProduct(p, params); title = `${albumText(p)} — ${p.artist} | PastForward`; }
+  let out, title = 'PastForward — Upcycled Vinyl Records & Custom Music Album Art';
+  let desc = 'Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted & shipped across India.';
+  let canonical = 'https://pastforward.shop' + (path === '/' ? '/' : path);
+  let ogImage = 'https://pastforward.shop/photos/wordmark.webp';
+  let currentProduct = null;
+
+  if (!seg.length) {
+    out = viewHome();
+  }
+  else if (seg[0] === 'vinyl') {
+    out = viewCatalog('vinyl', null, params);
+    title = 'Upcycled Vinyl Records | PastForward — 12-Inch Real Records Made to Hang';
+    desc = 'Shop authentic vintage 12-inch vinyl records upcycled with album covers pressed into the centre label. Wall hook included, ready to hang. Pan-India shipping.';
+  }
+  else if (seg[0] === 'posters') {
+    out = viewCatalog('posters', seg[1], params);
+    title = 'Music Posters & Fine Art Prints | PastForward — 300 GSM Gallery Wall Art';
+    desc = 'Explore gallery-grade A3, A5, and 10x10 music art prints of the albums that mattered. Premium 300 GSM matte cardstock with rich color reproduction.';
+  }
+  else if (seg[0] === 'polaroids') {
+    out = viewCatalog('polaroids', null, params);
+    title = 'Music Polaroid Art Cards | PastForward — Keepsake Mini Prints';
+    desc = 'Collectible mini album art cards printed on heavyweight cardstock with a classic retro cream border. Perfect for desks, phone cases, and pinboards.';
+  }
+  else if (seg[0] === 'shop') {
+    location.replace('#/vinyl');
+    return;
+  }
+  else if (seg[0] === 'product' && bySlug[seg[1]]) {
+    const p = bySlug[seg[1]];
+    currentProduct = p;
+    out = viewProduct(p, params);
+    const alb = albumText(p);
+    title = `${alb} by ${p.artist} — Upcycled Vinyl Record & Posters | PastForward`;
+    desc = `Buy ${alb} by ${p.artist} on authentic 12-inch upcycled vinyl, A3/A5 music poster, or polaroid. Handcrafted display art with pan-India delivery.`;
+    const vPrimary = primary(p);
+    if (vPrimary && vPrimary.image) {
+      ogImage = imgSrc(vPrimary.image, true);
+    }
+  }
   else if (seg[0] === 'collections') {
     const colSlug = seg[1] || 'the-classics';
     out = viewCatalog('collections', colSlug, params);
     const c = COLS.find(x => x.slug === colSlug);
     title = `${c ? c.name : 'Collection'} | PastForward`;
+    desc = `Explore the ${c ? c.name : 'curated'} collection of vinyl records, prints, and music artwork at PastForward.`;
   }
-  else if (seg[0] === 'custom') { out = viewCustom(); title = 'Custom orders | PastForward'; }
-  else if (seg[0] === 'story') { out = viewStory(); title = 'Our story | PastForward'; }
-  else if (seg[0] === 'faq') { out = viewFaq(); title = 'FAQ | PastForward'; }
-  else if (seg[0] === 'contact') { out = viewContact(); title = 'Contact | PastForward'; }
-  else if (seg[0] === 'search') { out = viewSearch(params); title = 'Search | PastForward'; }
-  else if (seg[0] === 'cart') { out = viewCart(); title = 'The crate | PastForward'; }
-  else if (seg[0] === 'wall') { out = viewWall(); title = 'Customer walls | PastForward'; }
-  else if (seg[0] === 'policies') { out = viewPolicy(seg[1]); }
-  else { out = view404(); title = 'Not found | PastForward'; }
+  else if (seg[0] === 'custom') {
+    out = viewCustom();
+    title = 'Custom Album Artwork & Made-To-Order Vinyl | PastForward';
+    desc = 'Turn any album, playlist, or personal mixtape into custom upcycled vinyl or gallery poster wall art. Handcrafted to order and shipped across India.';
+  }
+  else if (seg[0] === 'story') {
+    out = viewStory();
+    title = 'Our Story & Craft | PastForward — Preserving Music Tangibly';
+    desc = 'Why we rescue vintage 12-inch vinyl records and press iconic album art into centre labels. Made to hang, designed from memory.';
+  }
+  else if (seg[0] === 'faq') {
+    out = viewFaq();
+    title = 'Frequently Asked Questions | PastForward';
+    desc = 'Answers to common questions about materials, authentic 12-inch vinyl, frame sizing, pan-India delivery, and custom made-to-order album art.';
+  }
+  else if (seg[0] === 'contact') {
+    out = viewContact();
+    title = 'Contact & Support | PastForward';
+    desc = 'Get in touch with PastForward for custom artwork inquiries, bulk orders, or shipping support.';
+  }
+  else if (seg[0] === 'search') {
+    out = viewSearch(params);
+    title = 'Search Music & Album Art | PastForward';
+  }
+  else if (seg[0] === 'cart') {
+    out = viewCart();
+    title = 'Your Crate | PastForward';
+  }
+  else if (seg[0] === 'wall') {
+    out = viewWall();
+    title = 'Customer Wall Gallery | PastForward';
+    desc = 'See real customer bedroom and living room wall setups featuring PastForward upcycled vinyl records and framed posters.';
+  }
+  else if (seg[0] === 'policies') {
+    out = viewPolicy(seg[1]);
+    title = 'Store Policies & Shipping | PastForward';
+  }
+  else {
+    out = view404();
+    title = 'Page Not Found | PastForward';
+  }
 
-  document.title = title;
+  updatePageSEO({ title, description: desc, canonical, ogImage, product: currentProduct });
   // tear down the page we're leaving: WebGL contexts, frame loops, observers
   (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
   main.innerHTML = out;

@@ -796,10 +796,10 @@ function viewProduct(p, params) {
         </div>
         <div class="pdp__thumbs">
           ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}" aria-label="${esc(x.label)}">
-            <img src="${imgSrc(x.image)}" alt=""><span>${esc(x.badge)}</span></button>`).join('')}
-          ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt=""></button>`).join('')}
+            <img src="${imgSrc(x.image)}" alt="${esc(albumOf(p))} ${esc(x.label)} artwork by PastForward"><span>${esc(x.badge)}</span></button>`).join('')}
+          ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt="${esc(albumOf(p))} ${esc(c.name)} colourway by PastForward"></button>`).join('')}
           ${photo(FORMAT_PHOTO[sel]) ? `<button class="pdp__thumb pdp__thumb--photo" data-shot aria-label="Photograph of the real thing">
-            <img src="${photo(FORMAT_PHOTO[sel])}" alt=""><span>PHOTO</span></button>` : ''}
+            <img src="${photo(FORMAT_PHOTO[sel])}" alt="PastForward ${esc(FMT[sel].label)} real product photograph"><span>PHOTO</span></button>` : ''}
         </div>
       </div>
       <div>
@@ -938,6 +938,7 @@ function viewCustom() {
           <button class="btn btn--primary" id="customsubmitbtn" style="justify-self:start;margin-top:6px">
             <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} & Confirm Order</span>
           </button>
+          <div class="mono-xs dim" style="margin-top:10px;line-height:1.6">🔒 Payments processed securely via Shopify · UPI (GPay / PhonePe / Paytm), Cards &amp; Net Banking</div>
         </form>
         <div data-form-msg></div>
         <p class="body-s dim" style="margin-top:24px">Every piece is custom made and quality inspected before dispatch.</p>
@@ -1128,8 +1129,10 @@ function viewCart() {
         <div class="row"><span>Shipping</span><span class="dim">Calculated at checkout</span></div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
-      <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout</span></button>
-      <p class="mono-xs dim" style="margin-top:14px;line-height:1.8">Checkout is the next step we're wiring. Everything before it works.</p>
+      <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout · Pay Securely</span></button>
+      <div class="mono-xs dim" style="margin-top:14px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>🔒 Secure checkout via Shopify</span> · <span>UPI (GPay / PhonePe / Paytm), Cards, Net Banking & COD</span>
+      </div>
       <h2 class="d-s" style="margin:64px 0 20px">You might also want</h2>
       <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`}</div>`;
 }
