@@ -70,8 +70,106 @@ def font_css():
 
 FONTS = ''
 
-TITLE = 'PastForward'
-DESC  = 'Real 12-inch records with the album pressed into the centre label, made to hang. Posters, prints and polaroids of the albums that mattered.'
+TITLE = 'PastForward — Upcycled Vinyl Records & Custom Music Album Art'
+DESC  = 'Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted & shipped across India.'
+
+CANONICAL_URL = 'https://pastforward.shop/'
+PREVIEW_IMAGE = 'https://pastforward.shop/photos/wordmark.webp'
+
+SCHEMA_JSON_LD = json.dumps({
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://pastforward.shop/#organization",
+            "name": "PastForward",
+            "url": "https://pastforward.shop/",
+            "logo": PREVIEW_IMAGE,
+            "description": DESC,
+            "areaServed": {
+                "@type": "Country",
+                "name": "India"
+            }
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://pastforward.shop/#website",
+            "url": "https://pastforward.shop/",
+            "name": "PastForward",
+            "description": DESC,
+            "publisher": {
+                "@id": "https://pastforward.shop/#organization"
+            }
+        },
+        {
+            "@type": "Store",
+            "@id": "https://pastforward.shop/#store",
+            "name": "PastForward",
+            "url": "https://pastforward.shop/",
+            "image": PREVIEW_IMAGE,
+            "description": DESC,
+            "priceRange": "₹99 - ₹999",
+            "currenciesAccepted": "INR",
+            "paymentAccepted": "UPI, Credit Card, Debit Card, Net Banking",
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "PastForward Music Art & Vinyl Catalog",
+                "itemListElement": [
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "Upcycled 12-inch Vinyl Record Art",
+                            "description": "Authentic upcycled 12-inch vinyl record with custom album centre label, wall-mounted."
+                        },
+                        "price": "999",
+                        "priceCurrency": "INR"
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "A3 Music Art Poster (297 × 420mm)",
+                            "description": "Gallery-grade 300 GSM matte music art poster print."
+                        },
+                        "price": "299",
+                        "priceCurrency": "INR"
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "10×10 Music Art Print (254 × 254mm)",
+                            "description": "Square format vinyl-sleeve scale art print."
+                        },
+                        "price": "249",
+                        "priceCurrency": "INR"
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "A5 Music Poster (148 × 210mm)",
+                            "description": "Compact fine art desk print."
+                        },
+                        "price": "199",
+                        "priceCurrency": "INR"
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "Polaroid Music Card",
+                            "description": "Keepsake mini print on cardstock with cream border."
+                        },
+                        "price": "99",
+                        "priceCurrency": "INR"
+                    }
+                ]
+            }
+        }
+    ]
+}, indent=2)
 
 WORDMARK = 'data:image/webp;base64,' + base64.b64encode(open(f'{ROOT}/brand/wordmark.webp','rb').read()).decode()
 
@@ -103,10 +201,39 @@ FONT_CSS = font_css()
 def assemble(payload, standalone, vinyl3d=None):
     head = f'''<title>{TITLE}</title>
 <meta name="description" content="{DESC}">
+<link rel="canonical" href="{CANONICAL_URL}">
+
+<!-- OpenGraph / Social / WhatsApp -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PastForward">
+<meta property="og:url" content="{CANONICAL_URL}">
+<meta property="og:title" content="{TITLE}">
+<meta property="og:description" content="{DESC}">
+<meta property="og:image" content="{PREVIEW_IMAGE}">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="{CANONICAL_URL}">
+<meta name="twitter:title" content="{TITLE}">
+<meta name="twitter:description" content="{DESC}">
+<meta name="twitter:image" content="{PREVIEW_IMAGE}">
+
+<!-- Regional & Geo SEO -->
+<meta name="geo.region" content="IN">
+<meta name="geo.placename" content="India">
+
+<!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Structured Data (Schema.org JSON-LD) -->
+<script type="application/ld+json">
+{SCHEMA_JSON_LD}
+</script>
+
 <style>{FONT_CSS}</style>
 <style>{css}</style>'''
     body = f'''<script>{payload}</script>
@@ -168,6 +295,87 @@ if os.path.isdir(DOCS):
     open(f'{DOCS}/index.html', 'w').write(site)
     open(f'{DOCS}/404.html', 'w').write(site)   # GitHub Pages serves this for /vinyl etc.; the app routes by path
     print(f'{"docs/index.html":16} {os.path.getsize(f"{DOCS}/index.html")/1048576:.2f} MB (+ {len(os.listdir(os.path.join(DOCS, "img")))} images as files)')
+
+    # ---------- SEO & GEO Artifacts: sitemap.xml, robots.txt, llms.txt ----------
+    cat_obj = json.loads(cat)
+    products = cat_obj.get('products', [])
+
+    # 1. Sitemap.xml
+    sitemap_lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        '  <url><loc>https://pastforward.shop/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>',
+        '  <url><loc>https://pastforward.shop/vinyl</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>',
+        '  <url><loc>https://pastforward.shop/posters</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>',
+        '  <url><loc>https://pastforward.shop/polaroids</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>',
+        '  <url><loc>https://pastforward.shop/custom</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>',
+        '  <url><loc>https://pastforward.shop/story</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>',
+        '  <url><loc>https://pastforward.shop/faq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>',
+        '  <url><loc>https://pastforward.shop/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>',
+        '  <url><loc>https://pastforward.shop/wall</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>'
+    ]
+    for p in products:
+        slug = p.get('slug')
+        if slug:
+            sitemap_lines.append(f'  <url><loc>https://pastforward.shop/product/{slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>')
+    sitemap_lines.append('</urlset>')
+    open(f'{DOCS}/sitemap.xml', 'w').write('\n'.join(sitemap_lines))
+    print(f'{"docs/sitemap.xml":16} Generated with {len(products) + 9} URLs')
+
+    # 2. Robots.txt
+    robots_txt = """User-agent: *
+Allow: /
+
+# Generative Engine Optimization (AI Crawlers)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://pastforward.shop/sitemap.xml
+"""
+    open(f'{DOCS}/robots.txt', 'w').write(robots_txt)
+    print(f'{"docs/robots.txt":16} Generated with AI crawler allow rules')
+
+    # 3. LLMs.txt (GEO standard for AI assistants)
+    llms_txt = """# PastForward
+
+> Real 12-inch upcycled vinyl records with album art pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted and shipped across India.
+
+- **Website**: https://pastforward.shop
+- **Checkout & Store Domain**: https://shop.pastforward.shop
+- **Location**: India (Pan-India delivery)
+- **Primary Currency**: INR (₹)
+- **Contact**: team@pastforward.shop
+
+## Formats & Pricing
+- **Upcycled Vinyl Record (12-inch)**: ₹999. Authentic vintage 12-inch vinyl record with high-grade printed centre label artwork. Wall hook included; ready to hang out of the box.
+- **A3 Music Art Poster (297 × 420mm)**: ₹299. Gallery-grade 300 GSM matte poster print.
+- **10×10 Square Music Art Print (254 × 254mm)**: ₹249. Scaled to classic vinyl sleeve dimensions.
+- **A5 Music Poster (148 × 210mm)**: ₹199. Compact fine art desk print.
+- **Polaroid Music Card**: ₹99. Heavyweight cardstock keepsake mini print with retro cream border.
+
+## Key Offerings & Artists
+- **Catalogue Artists**: Pink Floyd, Travis Scott, Taylor Swift, Billie Eilish, Frank Ocean, The Weeknd, Lana Del Rey, Eminem, Kendrick Lamar, Nirvana, Arctic Monkeys, AP Dhillon, Diljit Dosanjh, and more.
+- **Custom Design Piece ("Made to Order")**: Upload or request any artist, album, mixtape, or personal playlist. PastForward designs, inspects, and presses custom orders to the buyer's requested format.
+- **Bundle Discounts**: Set of three vinyl or poster prints automatically unlocks bundle savings in the crate.
+
+## Ordering & Fulfillment
+- **Checkout Process**: Secure payment handled via Shopify on `shop.pastforward.shop`. Accepts UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, and Net Banking.
+- **Packaging**: Rigid cardboard mailers and protective bubble sleeves engineered to prevent warping or edge bends during transit across India.
+"""
+    open(f'{DOCS}/llms.txt', 'w').write(llms_txt)
+    print(f'{"docs/llms.txt":16} Generated for Generative Engine Optimization')
 
 for n in ('index.html', 'artifact.html', 'qa.html'):
     print(f'{n:16} {os.path.getsize(f"{DIST}/{n}")/1048576:.2f} MB')
