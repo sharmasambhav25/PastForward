@@ -23,38 +23,58 @@ shopify_variants = open(f'{ROOT}/shopify_variants.json').read()   # SKU -> Shopi
 
 cat_data = json.loads(cat)
 crawler_product_items = '\n'.join([
-    f'        <li><a href="/product/{p["slug"]}" style="color:#e0a6a0">{p.get("album", "")} by {p.get("artist", "")}</a></li>'
+    f'      <li><a href="/product/{p["slug"]}" style="color:#e0a6a0;text-decoration:none">{p.get("album", "")} by {p.get("artist", "")}</a></li>'
     for p in cat_data.get('products', []) if p.get('slug')
 ])
 
-CRAWLER_FALLBACK_HTML = f'''<noscript>
-  <div style="max-width:840px;margin:40px auto;padding:24px;font-family:sans-serif;color:#f3efe8;background:#121011;border:1px solid rgba(243,233,222,0.1);border-radius:6px;line-height:1.6">
-    <h1 style="color:#ede7dd">PastForward — Upcycled Vinyl Records & Custom Music Album Art</h1>
-    <p>Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Posters, prints, and polaroids of the albums that mattered. Custom made to order with pan-India delivery.</p>
-    <h2>Catalogue Formats & Pricing (INR)</h2>
-    <ul>
-      <li><b>Upcycled 12-inch Vinyl Record Art</b>: ₹999 (Wall hook included, ready to hang)</li>
-      <li><b>A3 Music Art Poster (297 × 420mm)</b>: ₹299 (Gallery-grade 300 GSM matte print)</li>
-      <li><b>10×10 Music Art Print (254 × 254mm)</b>: ₹249 (Classic vinyl sleeve scale)</li>
-      <li><b>A5 Music Poster (148 × 210mm)</b>: ₹199 (Compact fine art desk print)</li>
-      <li><b>Polaroid Music Card</b>: ₹99 (Keepsake card with retro cream border)</li>
+CRAWLER_FALLBACK_HTML = f'''<div id="pf-seo" style="max-width:960px;margin:0 auto;padding:40px 24px;font-family:system-ui,-apple-system,sans-serif;color:#ede7dd;line-height:1.7">
+  <header style="margin-bottom:28px">
+    <h1 style="font-size:2rem;line-height:1.2;margin:0 0 16px;color:#f3efe8">PastForward — Upcycled Vinyl Records & Music Art</h1>
+    <p style="font-size:1.1rem;color:#e0a6a0;margin:0 0 20px">Authentic 12-inch upcycled vinyl records and fine music art posters, handcrafted to order and shipped across India.</p>
+  </header>
+
+  <section style="margin-bottom:32px">
+    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Handcrafted Upcycled Vinyl Records & Wall Art</h2>
+    <p>PastForward rescues authentic, vintage 12-inch vinyl records and presses iconic music album artwork directly into the centre label, engineered ready to hang with included wall hooks. Each piece turns memorable albums into tangible display art for bedroom, studio, and living room walls. Beyond vinyl, we produce gallery-grade A3 music posters, square 10×10 prints, and polaroid cards on premium 300 GSM matte cardstock.</p>
+  </section>
+
+  <section style="margin-bottom:32px">
+    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Catalogue Formats & Pricing in India</h2>
+    <p>Every piece in our catalogue is printed, inspected, and shipped in rigid protective packaging across India:</p>
+    <ul style="padding-left:24px;margin:0 0 16px">
+      <li><strong>Upcycled 12-Inch Vinyl Record Art</strong> — ₹999 (Authentic 12" vintage vinyl with printed centre label; wall-mounting hook included).</li>
+      <li><strong>A3 Music Art Poster (297 × 420mm)</strong> — ₹299 (Gallery-grade 300 GSM matte art print).</li>
+      <li><strong>10×10 Square Vinyl Art Print (254 × 254mm)</strong> — ₹249 (True square format matching classic vinyl sleeve proportions).</li>
+      <li><strong>A5 Music Poster (148 × 210mm)</strong> — ₹199 (Compact fine art desk or wall print).</li>
+      <li><strong>Polaroid Keepsake Music Card</strong> — ₹99 (Heavyweight cardstock with retro cream border).</li>
     </ul>
-    <h2>Popular Album Artworks</h2>
-    <ul>
+  </section>
+
+  <section style="margin-bottom:32px">
+    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Featured Album Artworks in the Catalogue</h2>
+    <p>Browse our complete online catalogue and order individual artist covers directly:</p>
+    <ul style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;padding-left:24px;margin:0 0 20px">
 {crawler_product_items}
     </ul>
-    <h2>Navigation</h2>
-    <p>
-      <a href="/vinyl" style="color:#e0a6a0">Vinyl Records</a> · 
-      <a href="/posters" style="color:#e0a6a0">Posters</a> · 
-      <a href="/polaroids" style="color:#e0a6a0">Polaroids</a> · 
-      <a href="/custom" style="color:#e0a6a0">Custom Design</a> · 
-      <a href="/story" style="color:#e0a6a0">Our Story</a> · 
-      <a href="/faq" style="color:#e0a6a0">FAQ</a> · 
-      <a href="/contact" style="color:#e0a6a0">Contact</a>
+  </section>
+
+  <section style="margin-bottom:32px">
+    <h2 style="font-size:1.35rem;color:#f3efe8;margin-bottom:12px">Custom Made-To-Order Designs</h2>
+    <p>Looking for an album, mixtape, personal playlist, or song that is not in our standard catalogue? Our custom studio prints and presses any requested artwork to your selected format. Request a custom design through our <a href="/custom" style="color:#e0a6a0">Custom Studio</a>.</p>
+  </section>
+
+  <nav style="border-top:1px solid rgba(243,233,222,0.15);padding-top:20px;font-size:0.95rem">
+    <p><strong>Quick Navigation:</strong>
+      <a href="/vinyl" style="color:#e0a6a0;margin:0 8px">Vinyl Records</a> · 
+      <a href="/posters" style="color:#e0a6a0;margin:0 8px">Music Posters</a> · 
+      <a href="/polaroids" style="color:#e0a6a0;margin:0 8px">Polaroid Cards</a> · 
+      <a href="/custom" style="color:#e0a6a0;margin:0 8px">Custom Design</a> · 
+      <a href="/story" style="color:#e0a6a0;margin:0 8px">Our Story</a> · 
+      <a href="/faq" style="color:#e0a6a0;margin:0 8px">FAQ</a> · 
+      <a href="/contact" style="color:#e0a6a0;margin:0 8px">Contact</a>
     </p>
-  </div>
-</noscript>'''
+  </nav>
+</div>'''
 
 def vinyl3d_module(three_url=None):
     """The WebGL hero disc, with Three.js self-hosted as a data: URI import —
@@ -105,8 +125,8 @@ def font_css():
 
 FONTS = ''
 
-TITLE = 'PastForward — Upcycled Vinyl Records & Custom Music Album Art'
-DESC  = 'Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted & shipped across India.'
+TITLE = 'PastForward — Upcycled Vinyl Records & Music Art'
+DESC  = 'Authentic 12-inch upcycled vinyl records with album art pressed into the centre label. Custom posters & polaroids made to order. Shipped across India.'
 
 CANONICAL_URL = 'https://pastforward.shop/'
 PREVIEW_IMAGE = 'https://pastforward.shop/photos/wordmark.webp'
