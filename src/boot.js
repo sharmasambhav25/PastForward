@@ -66,6 +66,8 @@ function initChrome() {
 }
 
 function pfStart() {
+  const seoEl = document.getElementById('pf-seo');
+  if (seoEl) seoEl.remove();
   // the realistic pressing (rendered once from the 3D record, brand/disc.webp) under every CSS record
   if (window.__PHOTOS__ && window.__PHOTOS__.disc) document.documentElement.style.setProperty('--disc-img', `url(${window.__PHOTOS__.disc})`);
   document.body.insertAdjacentHTML('afterbegin', chromeHTML());
