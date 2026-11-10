@@ -1,14 +1,33 @@
 User-agent: *
 Allow: /
 
-# Generative Engine Optimization (AI Crawlers)
+# Search Discovery Bots (AI Search Engines & Answer Engines)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: meta-webindexer
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Model Training & Ingestion Bots
 User-agent: GPTBot
 Allow: /
 
 User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
 Allow: /
 
 User-agent: Google-Extended
@@ -16,5 +35,24 @@ Allow: /
 
 User-agent: CCBot
 Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# User-Triggered Retrieval Fetchers
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Discovery Files for AI Agents
+# LLMs Context: https://pastforward.shop/llms.txt
+# Full LLMs Context: https://pastforward.shop/llms-full.txt
+# Machine-Readable Pricing: https://pastforward.shop/pricing.md
+# Machine-Readable About: https://pastforward.shop/about.md
 
 Sitemap: https://pastforward.shop/sitemap.xml
