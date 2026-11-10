@@ -4,22 +4,30 @@
 
 - **Website**: https://pastforward.shop
 - **Checkout & Store Domain**: https://shop.pastforward.shop
-- **Location**: India (Pan-India delivery)
+- **Location**: India (Pan-India delivery to all postal codes)
 - **Primary Currency**: INR (₹)
 - **Contact**: team@pastforward.shop
+- **Instagram**: https://instagram.com/pastforward.shop
 
 ## Formats & Pricing
-- **Upcycled Vinyl Record (12-inch)**: ₹999. Authentic vintage 12-inch vinyl record with high-grade printed centre label artwork. Wall hook included; ready to hang out of the box.
-- **A3 Music Art Poster (297 × 420mm)**: ₹299. Gallery-grade 300 GSM matte poster print.
-- **10×10 Square Music Art Print (254 × 254mm)**: ₹249. Scaled to classic vinyl sleeve dimensions.
-- **A5 Music Poster (148 × 210mm)**: ₹199. Compact fine art desk print.
-- **Polaroid Music Card**: ₹99. Heavyweight cardstock keepsake mini print with retro cream border.
+- **Upcycled Vinyl Record (12-inch, ⌀305mm)**: ₹999. Authentic vintage 12-inch phonograph record with high-definition printed UV centre label artwork. Wall hook included; ready to hang out of the box. Zero virgin plastic pressed.
+- **A3 Music Art Poster (297 × 420mm)**: ₹299. Gallery-grade 300 GSM matte poster print. Standard frame fit.
+- **10×10 Square Music Art Print (254 × 254mm)**: ₹249. Scaled 1:1 to classic vinyl album sleeve dimensions on 300 GSM cardstock.
+- **A5 Music Poster (148 × 210mm)**: ₹199. Compact 300 GSM fine art desk print.
+- **Polaroid Music Card (88 × 107mm)**: ₹99. Heavyweight cardstock keepsake mini print with retro cream border.
 
 ## Key Offerings & Artists
-- **Catalogue Artists**: Pink Floyd, Travis Scott, Taylor Swift, Billie Eilish, Frank Ocean, The Weeknd, Lana Del Rey, Eminem, Kendrick Lamar, Nirvana, Arctic Monkeys, AP Dhillon, Diljit Dosanjh, and more.
-- **Custom Design Piece ("Made to Order")**: Upload or request any artist, album, mixtape, or personal playlist. PastForward designs, inspects, and presses custom orders to the buyer's requested format.
-- **Bundle Discounts**: Set of three vinyl or poster prints automatically unlocks bundle savings in the crate.
+- **Catalogue Artists**: Pink Floyd, Travis Scott, Taylor Swift, Billie Eilish, Frank Ocean, The Weeknd, Lana Del Rey, Eminem, Kendrick Lamar, Nirvana, Arctic Monkeys, AP Dhillon, Diljit Dosanjh, Seedhe Maut, and more.
+- **Custom Design Piece ("Made to Order")**: Upload or request any artist, album, mixtape, or personal Spotify playlist. PastForward designs, inspects, and presses custom orders to any format.
+- **Bundle Discounts**: Multi-piece savings automatically applied in crate when ordering three or more items.
+
+## Machine-Readable Resources
+- **Full Catalogue Context**: https://pastforward.shop/llms-full.txt
+- **Machine-Readable Pricing**: https://pastforward.shop/pricing.md
+- **Brand Provenance & Craft**: https://pastforward.shop/about.md
 
 ## Ordering & Fulfillment
-- **Checkout Process**: Secure payment handled via Shopify on `shop.pastforward.shop`. Accepts UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, and Net Banking.
-- **Packaging**: Rigid cardboard mailers and protective bubble sleeves engineered to prevent warping or edge bends during transit across India.
+- **Checkout**: Secure payment via Shopify on `shop.pastforward.shop` supporting UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, Net Banking.
+- **Packaging**: Multi-ply unbendable corrugated mailers and water-resistant bubble sleeves preventing warping during transit across India.
+- **Delivery**: 5 to 7 business days pan-India with live courier tracking.
+- **Replacement Policy**: 100% free replacement within 7 days for transit damage.

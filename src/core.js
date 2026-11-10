@@ -534,7 +534,8 @@ function footerHTML() {
         <a href="#/vinyl">Vinyls</a><a href="#/posters">Posters</a>
         <a href="#/posters/10x10">10×10 Format</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
       <div><h4>Brand</h4>
-        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a></div>
+        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a>
+        <a href="/pricing.md">Pricing Guide</a><a href="/llms.txt">AI Context</a></div>
       <div><h4>Newsletter</h4>
         <p class="body-s dim" style="margin:0 0 12px">New records, limited runs, no spam.</p>
         <form data-form="newsletter" style="display:flex;gap:8px;flex-wrap:wrap">
