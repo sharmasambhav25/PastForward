@@ -120,7 +120,10 @@ function viewHome() {
       <div class="fdisc__hole"></div>
 
       <div class="fdisc__type">
-        <h1 class="fdisc__wm"><img src="${window.__WORDMARK__}" alt="PastForward" fetchpriority="high"></h1>
+        <h1 class="fdisc__wm">
+          <img src="${window.__WORDMARK__}" alt="PastForward — Upcycled Vinyl Records & Custom Music Album Art" fetchpriority="high">
+          <span class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</span>
+        </h1>
         <div class="fdisc__tag">${TAGLINE}</div>
       </div>
 
