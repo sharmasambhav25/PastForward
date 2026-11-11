@@ -404,8 +404,8 @@ function chromeHTML() {
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
-      <a class="navlink" href="#/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
       <a class="navlink navlink--hot" href="#/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
+      <a class="navlink" href="#/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
       <a class="navlink" href="#/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
@@ -458,8 +458,8 @@ function chromeHTML() {
       <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
-    <a href="#/build-your-wall">Build Your Wall</a>
     <a href="#/bundles">Bundles <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
+    <a href="#/build-your-wall">Build Your Wall</a>
     <a href="#/collections/the-classics">Collections</a>
     <a href="#/custom">Custom Design</a>
     <a href="#/story">Our Story</a>
@@ -1202,7 +1202,7 @@ function render(opt = {}) {
   else if (seg[0] === 'search') out = viewSearch(params);
   else if (seg[0] === 'cart') out = viewCart();
   else if (seg[0] === 'wall') out = viewWall();
-  else if (seg[0] === 'build-your-wall') out = viewBuildWall(params);
+  else if (seg[0] === 'build-your-wall') out = viewBuildWall();
   else if (seg[0] === 'bundles') out = viewBundles();
   else if (seg[0] === 'policies' && SITE.policies[seg[1]]) out = viewPolicy(seg[1]);
   else { out = view404(); m = { title: 'Page not found | PastForward', desc: (M['/'] || {}).desc || '' }; noindex = true; canonical = ORIGIN + '/'; seg = ['404']; }

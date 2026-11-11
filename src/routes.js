@@ -138,8 +138,6 @@ function viewHome() {
   </section>
 
 
-  ${bundleStripHTML()}
-
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
        photograph of the real wall. Straight out of the brand's own ads. -->
@@ -1252,7 +1250,8 @@ window.__mount = function (seg, params) {
   if (page === 'search') mountSearchPage();
   if (page === 'custom') mountCustom();
   if (page === 'story') mountStory();
-  if (page === 'build-your-wall') mountBuildWall(params);
+  if (page === 'build-your-wall') mountBuildWall();
+  if (page === 'bundles') mountBundles();
   mountAccordions();
   mountMarquees();
 };
@@ -1818,6 +1817,8 @@ function mountProduct(p, params) {
   };
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
+  const pbw = $('#pdpbundle');
+  if (pbw) pbw.addEventListener('click', e => { const b = e.target.closest('[data-addpair]'); if (b) addMany([wallLine(p.slug, 'vinyl'), wallLine(p.slug, 'poster-a3')], b); });
   const buy = $('#pdpbuy');
   if (buy) buy.addEventListener('click', () => { const v = variant(p, sel); checkout([{ sku: v.sku, qty, price: v.price }], buy); });
   // the buy bar shows whenever the real button isn't on screen, including on arrival when it sits below the fold
@@ -1920,6 +1921,7 @@ function viewBundles() {
     <h1 class="shout-h">Bundles.</h1>
     <p class="body-l dim measure" style="margin:14px 0 8px">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
+    ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
       ${ctaShop('Build your wall', '#/build-your-wall', 'Try it on a wall first')}</div>
   </div>`;
@@ -1930,42 +1932,69 @@ const WALL_SETS = [
   { name: 'After Hours, twice', note: 'The record and its A3 poster', lines: [['vinyl', 'the-weeknd-after-hours'], ['poster-a3', 'the-weeknd-after-hours']] },
   { name: 'The poster wall', note: 'Three A3 posters in a row', lines: ['frank-ocean-blonde', 'travis-scott-utopia', 'sabrina-carpenter-espresso'].map(s => ['poster-a3', s]) }
 ];
-const WALL_LAYOUTS = {
-  trio: { name: 'Three records', slots: ['vinyl', 'vinyl', 'vinyl'] },
-  pair: { name: 'Record + poster', slots: ['vinyl', 'poster-a3'] },
-  posters: { name: 'Three posters', slots: ['poster-a3', 'poster-a3', 'poster-a3'] }
-};
-const WALL_COLOURS = [['plaster', '#E7DFD2', 'Plaster'], ['sage', '#A7B19A', 'Sage'], ['clay', '#B5704F', 'Clay'], ['night', '#1E1A1B', 'Night']];
+const WALL_COLOURS = [['#E9E2D6', 'Plaster'], ['#AEB8A2', 'Sage'], ['#C08566', 'Clay'], ['#2B2728', 'Charcoal']];
 function setPriceHTML(lines) {
   const pr = linesPrice(lines);
   return `<span class="num">${money(pr.total)}</span>${pr.b ? ` <s class="dim num">${money(pr.sub)}</s>` : ''}`;
 }
-function viewBuildWall(params) {
-  const sets = WALL_SETS.map(s => ({ ...s, items: s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean) })).filter(s => s.items.length === s.lines.length);
-  const lay = WALL_LAYOUTS[params.get('layout')] ? params.get('layout') : 'trio';
+function wallSets() {
+  return WALL_SETS.map(s => ({ ...s, items: s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean) })).filter(s => s.items.length === s.lines.length);
+}
+/* ready-made sets: shown on the Bundles page */
+function readyWallsHTML() {
+  const sets = wallSets(); if (!sets.length) return '';
+  return `<section class="bsets" id="sets" aria-label="Ready-made sets">
+    <h2 class="shout-h shout-h--sm">Ready-made sets.</h2>
+    <div class="bw__sets">${sets.map((s, i) => `<article class="wset reveal">
+      <div class="wset__wall" style="--wall:${WALL_COLOURS[i % 3][0]}">${miniWallHTML(s.items)}</div>
+      <div class="wset__meta"><h3 class="wset__h">${esc(s.name)}</h3><p class="mono-xs dim">${esc(s.note)}</p>
+        <p class="wset__p">${setPriceHTML(s.items)}</p>
+        <button class="btn btn--primary wset__add" data-addset="${i}"><span class="btn__mag">Add the set</span></button></div>
+    </article>`).join('')}</div></section>`;
+}
+function mountBundles() {
+  const sets = wallSets();
+  $$('[data-addset]').forEach(b => b.addEventListener('click', () => {
+    addMany(sets[+b.dataset.addset].items, b);
+    const t = b.querySelector('.btn__mag'); t.textContent = 'Added'; setTimeout(() => { t.textContent = 'Add the set'; }, 1400);
+  }));
+}
+
+/* ---------- build your wall: a blank wall, hang anything, drag it around ---------- */
+/* real sizes in millimetres, so pieces are in proportion to each other and to the wall */
+const WALL_PIECE = {
+  vinyl: { w: 305, h: 305, one: 'record', a: 'a record' },
+  'poster-a3': { w: 297, h: 420, one: 'A3 poster', a: 'an A3 poster' },
+  'poster-a5': { w: 148, h: 210, one: 'A5 poster', a: 'an A5 poster' },
+  'print-10': { w: 254, h: 254, one: '10×10 print', a: 'a 10×10 print' },
+  polaroid: { w: 102, h: 165, one: 'polaroid', a: 'a polaroid' }
+};
+const WALL_KEY = 'pf_wall_v1';
+function viewBuildWall() {
   return `<div class="bw">
   <div class="wrap" style="padding-top:calc(var(--nav-h) + 48px)">
     <p class="cap">Build your own wall</p>
     <h1 class="shout-h">Build your wall.</h1>
-    <p class="body-l dim measure" style="margin:12px 0 0">Start with a ready-made set, or pick every piece yourself and see it on a wall before it reaches yours. Bundle prices apply on their own.</p>
+    <p class="body-l dim measure" style="margin:12px 0 0">A blank wall. Hang as many records, posters and polaroids as you like, drag them where you want them, then send the whole wall to your crate.</p>
   </div>
-  <section class="wrap bw__sets" aria-label="Ready-made walls">
-    ${sets.map((s, i) => `<article class="wset reveal">
-      <div class="wset__wall" style="--wall:${WALL_COLOURS[i % 3][1]}">${miniWallHTML(s.items)}</div>
-      <div class="wset__meta"><h2 class="wset__h">${esc(s.name)}</h2><p class="mono-xs dim">${esc(s.note)}</p>
-        <p class="wset__p">${setPriceHTML(s.items)}</p>
-        <button class="btn btn--primary wset__add" data-addset="${i}"><span class="btn__mag">Add the set</span></button></div>
-    </article>`).join('')}
-  </section>
   <section class="bw__build" id="builder" aria-label="Wall builder">
     <div class="wrap">
-      <h2 class="shout-h shout-h--sm">Or pick every piece.</h2>
       <div class="bw__ctrls">
-        <div class="bw__tabs" role="tablist" aria-label="Layout">${Object.entries(WALL_LAYOUTS).map(([k, L]) => `<button role="tab" data-lay="${k}" aria-selected="${k === lay}" class="${k === lay ? 'is-on' : ''}">${esc(L.name)}</button>`).join('')}</div>
-        <div class="bw__cols" aria-label="Wall colour">${WALL_COLOURS.map(([k, c, n], i) => `<button data-wallc="${c}" class="${i ? '' : 'is-on'}" style="--c:${c}" aria-label="${n} wall" aria-pressed="${!i}"></button>`).join('')}</div>
+        <div class="bw__adds" aria-label="Add to the wall">${Object.keys(WALL_PIECE).filter(f => FMT[f] && P.some(p => variant(p, f))).map(f =>
+          `<button class="bw__addb" data-wadd="${f}"><b>+</b><span>${esc(WALL_PIECE[f].one)}</span><i class="num">${money(FMT[f].price)}</i></button>`).join('')}</div>
+        <div class="bw__cols" aria-label="Wall colour">${WALL_COLOURS.map(([c, n], i) => `<button data-wallc="${c}" class="${i ? '' : 'is-on'}" style="--c:${c}" aria-label="${n} wall" aria-pressed="${!i}"></button>`).join('')}</div>
       </div>
-      <div class="bw__wall" id="bwwall" style="--wall:${WALL_COLOURS[0][1]}" data-lay="${lay}"></div>
-      <div class="bw__hint mono-xs dim">Tap a space on the wall to choose what hangs there.</div>
+      <div class="room" id="bwroom" style="--wall:${WALL_COLOURS[0][0]}">
+        <div class="room__wall"></div>
+        <div class="room__hang" id="bwwall"></div>
+        <div class="room__light" aria-hidden="true"></div>
+        <div class="room__skirt" aria-hidden="true"></div>
+        <div class="room__floor" aria-hidden="true"></div>
+        <div class="room__side" aria-hidden="true"><i class="room__vase"></i><i class="room__books"></i><span></span><span></span><span></span></div>
+        <div class="room__empty" id="bwempty"><b>Your wall is empty.</b><span>Add a record or a poster to start, or</span>
+          <button class="room__surprise" data-wsurprise>hang a few for me</button></div>
+      </div>
+      <div class="bw__hint mono-xs dim">Drag a piece to move it · tap it to swap or take it down</div>
     </div>
     <div class="bw__bar" id="bwbar"></div>
   </section>
@@ -1978,85 +2007,129 @@ function viewBuildWall(params) {
   </div>
   </div>`;
 }
-function mountBuildWall(params) {
-  const sets = WALL_SETS.map(s => s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean));
-  $$('[data-addset]').forEach(b => b.addEventListener('click', () => {
-    addMany(sets[+b.dataset.addset], b);
-    const t = b.querySelector('.btn__mag'); t.textContent = 'Added'; setTimeout(() => { t.textContent = 'Add the set'; }, 1400);
-  }));
-  const wall = $('#bwwall'), bar = $('#bwbar'), pick = $('#bwpick'); if (!wall) return;
-  let lay = wall.dataset.lay, picks = [], slot = 0;
-  const fmtWord = f => f === 'vinyl' ? 'record' : 'A3 poster';
-  const slotsOf = () => WALL_LAYOUTS[lay].slots;
-  const lines = () => picks.map((s, i) => s && wallLine(s, slotsOf()[i])).filter(Boolean);
-  function draw() {
-    wall.dataset.lay = lay;
-    wall.innerHTML = slotsOf().map((f, i) => {
-      const p = picks[i] && bySlug[picks[i]], v = p && variant(p, f);
-      const art = !v ? `<span class="bw__empty"><b>+</b><span>Add a ${fmtWord(f)}</span></span>`
-        : f === 'vinyl' ? recordHTML(p, { size: 260 }) : frameHTML(v, { style: 'aspect-ratio:' + v.ratio });
-      return `<button class="bw__slot bw__slot--${f}${v ? ' is-full' : ''}" data-slot="${i}" aria-label="${v ? 'Change ' + esc(albumText(p)) : 'Choose a ' + fmtWord(f)}">${art}${v ? `<span class="bw__cap mono-xs">${esc(p.artist)} · ${esc(albumText(p))}</span>` : ''}</button>`;
-    }).join('');
-    const L = lines(), need = slotsOf().length, pr = linesPrice(L);
+function mountBuildWall() {
+  const wall = $('#bwwall'), room = $('#bwroom'), bar = $('#bwbar'), pick = $('#bwpick'); if (!wall) return;
+  const MM = isPhone() ? 1250 : 2150;                 // how wide the wall is, in millimetres
+  let pieces = [], sel = -1, pickFor = { f: 'vinyl', i: -1 };
+  try { pieces = (JSON.parse(localStorage.getItem(WALL_KEY)) || []).filter(x => bySlug[x.slug] && variant(bySlug[x.slug], x.format) && WALL_PIECE[x.format]); } catch (e) { pieces = []; }
+  const save = () => { try { localStorage.setItem(WALL_KEY, JSON.stringify(pieces)); } catch (e) {} };
+  /* a piece's width and height as fractions of the hanging area */
+  const dims = f => { const r = wall.getBoundingClientRect(), w = WALL_PIECE[f].w / MM; return { w, h: (WALL_PIECE[f].h / MM) * (r.width / Math.max(1, r.height)) }; };
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const fit = (x, y, f) => { const d = dims(f); return { x: clamp(x, d.w / 2 + .01, 1 - d.w / 2 - .01), y: clamp(y, d.h / 2 + .02, 1 - d.h / 2 - .02) }; };
+  /* the free spot nearest the middle of the wall */
+  function spot(f) {
+    const d = dims(f), gap = .018, c = [];
+    for (let y = d.h / 2 + .03; y <= 1 - d.h / 2 - .03; y += .04) for (let x = d.w / 2 + .02; x <= 1 - d.w / 2 - .02; x += .02) c.push([x, y]);
+    c.sort((a, b) => (Math.abs(a[0] - .5) * 1.1 + Math.abs(a[1] - .46) * 1.6) - (Math.abs(b[0] - .5) * 1.1 + Math.abs(b[1] - .46) * 1.6));
+    const free = c.find(([x, y]) => pieces.every(p => { const e = dims(p.format); return Math.abs(p.x - x) > (d.w + e.w) / 2 + gap || Math.abs(p.y - y) > (d.h + e.h) / 2 + gap * 2; }));
+    return free ? { x: free[0], y: free[1] } : fit(.5 + (Math.random() - .5) * .5, .45 + (Math.random() - .5) * .4, f);
+  }
+  const tilt = f => +(((Math.random() - .5) * (f === 'polaroid' ? 9 : f === 'vinyl' ? 0 : 2.4))).toFixed(2);
+  function pieceHTML(x, i) {
+    const p = bySlug[x.slug], v = variant(p, x.format), d = WALL_PIECE[x.format];
+    const art = x.format === 'vinyl' ? recordHTML(p, { size: 300 })
+      : `<span class="wp__paper"><img src="${imgSrc(v.image, !isPhone())}" alt="" draggable="false" decoding="async"></span>${x.format === 'polaroid' ? '<i class="wp__tape"></i>' : '<i class="wp__tape wp__tape--l"></i><i class="wp__tape wp__tape--r"></i>'}`;
+    return `<div class="wp wp--${x.format}${i === sel ? ' is-sel' : ''}" data-i="${i}" role="button" tabindex="0"
+      aria-label="${esc(p.artist)}, ${esc(albumText(p))}, ${esc(d.one)}" style="left:${(x.x * 100).toFixed(2)}%;top:${(x.y * 100).toFixed(2)}%;width:${(d.w / MM * 100).toFixed(3)}%;aspect-ratio:${d.w}/${d.h};--r:${x.r || 0}deg">
+      <div class="wp__in">${art}</div>
+      ${i === sel ? `<div class="wp__ctl${x.y < .3 ? ' wp__ctl--below' : ''}"><span class="wp__name">${esc(albumText(p))}</span><button data-wswap="${i}">Swap</button><button data-wrm="${i}">Take down</button></div>` : ''}
+    </div>`;
+  }
+  const lines = () => { const m = {}; pieces.forEach(x => { const k = x.slug + '|' + x.format; if (m[k]) m[k].qty++; else m[k] = { ...wallLine(x.slug, x.format) }; }); return Object.values(m); };
+  function drawBar() {
+    const L = lines(), n = pieces.length, pr = linesPrice(L);
     bar.innerHTML = `<div class="wrap bw__barin">
-      <div class="bw__count mono-xs"><b class="num">${L.length}</b> of ${need} picked${pr.b ? ` · <span class="ok">${esc(pr.b.name)} bundle</span>` : ''}</div>
-      <div class="bw__price">${L.length ? setPriceHTML(L) : '<span class="dim">—</span>'}</div>
-      <button class="btn btn--secondary bw__fill" data-bwfill>Fill it for me</button>
-      <button class="btn btn--primary bw__go" data-bwgo ${L.length === need ? '' : 'disabled'}><span class="btn__mag">${L.length === need ? (isPhone() ? 'Add the wall' : 'Add the wall to the crate') : `Pick ${need - L.length} more`}</span></button></div>`;
+      <div class="bw__count mono-xs"><b class="num">${n}</b> ${n === 1 ? 'piece' : 'pieces'} on the wall</div>
+      <div class="bw__price">${n ? setPriceHTML(L) : '<span class="dim">—</span>'}</div>
+      <button class="btn btn--secondary bw__fill" data-wclear ${n ? '' : 'disabled'}>Clear</button>
+      <button class="btn btn--primary bw__go" data-bwgo ${n ? '' : 'disabled'}><span class="btn__mag">${n ? (isPhone() ? 'Add the wall' : 'Add the wall to the crate') : 'Hang something first'}</span></button></div>`;
   }
-  function options(f) {
-    const pairOnly = lay === 'pair';
-    return P.filter(p => variant(p, f) && (!pairOnly || (variant(p, 'vinyl') && variant(p, 'poster-a3'))));
+  function draw() {
+    wall.innerHTML = pieces.map(pieceHTML).join('');
+    $('#bwempty').hidden = pieces.length > 0;
+    drawBar(); save();
   }
+  function hang(slug, f) {
+    const s = spot(f); pieces.push({ slug, format: f, x: s.x, y: s.y, r: tilt(f) }); sel = -1; draw(); Sound.tick();
+    const el = wall.lastElementChild;
+    if (el && !RM()) el.querySelector('.wp__in').animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.3,1.5,.5,1)' });
+  }
+  /* ---- picker ---- */
+  const options = f => P.filter(p => variant(p, f));
   function fillGrid() {
-    const f = slotsOf()[slot], q = $('#bwpickq').value.trim().toLowerCase();
+    const f = pickFor.f, q = $('#bwpickq').value.trim().toLowerCase();
     const list = options(f).filter(p => !q || (p.artist + ' ' + albumText(p)).toLowerCase().includes(q));
-    $('#bwpickgrid').innerHTML = list.length ? list.map(p => `<button class="bwopt${picks[slot] === p.slug ? ' is-on' : ''}" data-pickslug="${p.slug}">
+    $('#bwpickgrid').innerHTML = list.length ? list.map(p => `<button class="bwopt" data-pickslug="${p.slug}">
         <span class="bwopt__img"><img src="${imgSrc(variant(p, f).image)}" alt="" loading="lazy" decoding="async"></span>
         <span class="bwopt__a">${esc(p.artist)}</span><span class="bwopt__b">${esc(albumText(p))}</span></button>`).join('')
       : '<p class="dim">Nothing by that name. Try another spelling.</p>';
   }
-  function openPick(i) {
-    slot = i; $('#bwpickt').textContent = lay === 'pair' ? 'Choose the album' : `Choose a ${fmtWord(slotsOf()[i])}`;
+  function openPick(f, i = -1) {
+    pickFor = { f, i }; $('#bwpickt').textContent = 'Choose ' + WALL_PIECE[f].a;
     $('#bwpickq').value = ''; fillGrid(); pick.hidden = false; document.body.style.overflow = 'hidden';
     requestAnimationFrame(() => pick.classList.add('is-open'));
     if (!isPhone()) $('#bwpickq').focus();
   }
   function closePick() { pick.classList.remove('is-open'); document.body.style.overflow = ''; setTimeout(() => { pick.hidden = true; }, 260); }
-  wall.addEventListener('click', e => { const s = e.target.closest('[data-slot]'); if (s) { Sound.tick(); openPick(+s.dataset.slot); } });
   $('#bwpickq').addEventListener('input', fillGrid);
   pick.addEventListener('click', e => {
     if (e.target === pick || e.target.closest('[data-bwclose]')) return closePick();
     const o = e.target.closest('[data-pickslug]'); if (!o) return;
-    const s = o.dataset.pickslug;
-    if (lay === 'pair') picks = [s, s]; else picks[slot] = s;
-    closePick(); draw(); Sound.tick();
-    const nx = slotsOf().findIndex((_, i) => !picks[i]);
-    const el = wall.querySelector(`[data-slot="${slot}"]`);
-    if (el && !RM()) el.animate([{ transform: 'scale(.86)', opacity: .4 }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' });
-    if (nx >= 0 && lay !== 'pair') wall.querySelector(`[data-slot="${nx}"]`).classList.add('is-next');
+    closePick();
+    if (pickFor.i >= 0 && pieces[pickFor.i]) { pieces[pickFor.i].slug = o.dataset.pickslug; sel = -1; draw(); Sound.tick(); }
+    else hang(o.dataset.pickslug, pickFor.f);
   });
-  addEventListener('keydown', function esc(e) { if (!document.body.contains(pick)) return removeEventListener('keydown', esc); if (e.key === 'Escape' && !pick.hidden) closePick(); });
-  $$('[data-lay]').forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.lay === lay) return;
-    lay = b.dataset.lay; picks = [];
-    $$('[data-lay]').forEach(x => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-selected', x === b); });
-    replaceUrl('/build-your-wall?layout=' + lay); draw();
-  }));
+  const onKey = e => { if (!document.body.contains(pick)) return removeEventListener('keydown', onKey); if (e.key === 'Escape') { if (!pick.hidden) closePick(); else if (sel >= 0) { sel = -1; draw(); } } };
+  addEventListener('keydown', onKey);
+  $$('[data-wadd]').forEach(b => b.addEventListener('click', () => { Sound.tick(); openPick(b.dataset.wadd); }));
+  /* ---- drag, select ---- */
+  let drag = null;
+  wall.addEventListener('pointerdown', e => {
+    if (e.target.closest('.wp__ctl')) return;
+    const el = e.target.closest('.wp'); if (!el) { if (sel >= 0) { sel = -1; draw(); } return; }
+    if (e.button) return;
+    const i = +el.dataset.i, r = wall.getBoundingClientRect();
+    drag = { el, i, sx: e.clientX, sy: e.clientY, px: pieces[i].x, py: pieces[i].y, r, moved: false };
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  wall.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+    if (!drag.moved) { drag.moved = true; drag.el.classList.add('is-drag'); const c = drag.el.querySelector('.wp__ctl'); if (c) c.remove(); }
+    const p = pieces[drag.i], q = fit(drag.px + dx / drag.r.width, drag.py + dy / drag.r.height, p.format);
+    p.x = q.x; p.y = q.y; drag.el.style.left = (q.x * 100) + '%'; drag.el.style.top = (q.y * 100) + '%';
+  });
+  const drop = () => {
+    if (!drag) return; const d = drag; drag = null;
+    if (!d.moved) { sel = sel === d.i ? -1 : d.i; draw(); return; }
+    pieces.push(pieces.splice(d.i, 1)[0]); sel = -1; draw(); Sound.tick();   // the one you moved hangs on top
+  };
+  wall.addEventListener('pointerup', drop); wall.addEventListener('pointercancel', drop);
+  wall.addEventListener('dragstart', e => e.preventDefault());
+  wall.addEventListener('keydown', e => { const el = e.target.closest('.wp'); if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); sel = +el.dataset.i; draw(); } });
+  wall.addEventListener('click', e => {
+    const sw = e.target.closest('[data-wswap]'), rm = e.target.closest('[data-wrm]');
+    if (sw) openPick(pieces[+sw.dataset.wswap].format, +sw.dataset.wswap);
+    if (rm) { pieces.splice(+rm.dataset.wrm, 1); sel = -1; draw(); Sound.tick(); }
+  });
   $$('[data-wallc]').forEach(b => b.addEventListener('click', () => {
-    wall.style.setProperty('--wall', b.dataset.wallc);
+    room.style.setProperty('--wall', b.dataset.wallc); room.classList.toggle('room--dark', b.dataset.wallc === '#2B2728');
     $$('[data-wallc]').forEach(x => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', x === b); });
   }));
+  room.addEventListener('click', e => {
+    if (!e.target.closest('[data-wsurprise]')) return;
+    const want = isPhone() ? ['vinyl', 'vinyl', 'poster-a3', 'polaroid', 'polaroid'] : ['vinyl', 'vinyl', 'vinyl', 'poster-a3', 'poster-a3', 'polaroid', 'polaroid', 'polaroid'];
+    const used = new Set();
+    want.forEach(f => { const pool = options(f).filter(p => !used.has(p.slug)); const p = pool[Math.floor(Math.random() * Math.min(pool.length, 14))]; if (!p) return; used.add(p.slug); const s = spot(f); pieces.push({ slug: p.slug, format: f, x: s.x, y: s.y, r: tilt(f) }); });
+    draw(); Sound.tick();
+    if (!RM()) $$('.wp__in', wall).forEach((el, k) => el.animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, delay: k * 70, fill: 'backwards', easing: 'cubic-bezier(.3,1.5,.5,1)' }));
+  });
   bar.addEventListener('click', e => {
-    if (e.target.closest('[data-bwfill]')) {
-      const f = slotsOf()[0], pool = options(f).filter(p => p.featured).concat(options(f)).filter((p, i, a) => a.indexOf(p) === i);
-      const used = new Set(picks.filter(Boolean));
-      if (lay === 'pair') { const p = pool[Math.floor(Math.random() * pool.length)]; picks = [p.slug, p.slug]; }
-      else slotsOf().forEach((_, i) => { if (!picks[i]) { const free = pool.filter(p => !used.has(p.slug)); const p = free[Math.floor(Math.random() * Math.min(free.length, 12))]; if (p) { picks[i] = p.slug; used.add(p.slug); } } });
-      draw(); Sound.tick(); return;
-    }
+    if (e.target.closest('[data-wclear]')) { pieces = []; sel = -1; draw(); return; }
     const go = e.target.closest('[data-bwgo]');
-    if (go && !go.disabled) { addMany(lines(), go); }
+    if (go && !go.disabled) { addMany(lines(), go); const t = go.querySelector('.btn__mag'); t.textContent = 'Added to the crate'; setTimeout(drawBar, 1600); }
   });
   draw();
 }
@@ -2066,6 +2139,6 @@ function pdpBundleHTML(p, f) {
   const both = variant(p, 'vinyl') && variant(p, 'poster-a3');
   const b = LIVE_BUNDLES.find(x => x.pair && both && (f === 'vinyl' || f === 'poster-a3')) || LIVE_BUNDLES.find(x => (x.need || {})[f]);
   if (!b) return '';
-  const href = b.pair ? `#/build-your-wall?layout=pair` : b.href;
-  return `<a class="pdpb" href="${href}"><span class="pdpb__k mono-xs">Bundle</span><span>${esc(b.name)} for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">save ${money(b.off)} →</span></a>`;
+  if (b.pair) return `<button class="pdpb" data-addpair="${p.slug}"><span class="pdpb__k mono-xs">Bundle</span><span>The record + its A3 poster for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">add both · save ${money(b.off)} →</span></button>`;
+  return `<a class="pdpb" href="${b.href}"><span class="pdpb__k mono-xs">Bundle</span><span>${esc(b.name)} for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">save ${money(b.off)} →</span></a>`;
 }
