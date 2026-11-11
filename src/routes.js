@@ -161,10 +161,11 @@ function viewHome() {
     <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
     <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
     <div class="salesec__in">
-      <p class="salesec__k">Vinyl sale · every record</p>
-      <p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>
+      ${MRP.vinyl > FMT.vinyl.price
+        ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
+        : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
       <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
-      <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Shop the sale</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+      <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">${MRP.vinyl > FMT.vinyl.price ? 'Shop the sale' : 'Shop vinyls'}</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
       ${assureHTML('vinyl', 'assure--band')}
     </div>
   </section>
