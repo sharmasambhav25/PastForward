@@ -218,14 +218,45 @@ function flyToCart(originEl, onLand) {
   ], { duration: 620, easing: 'cubic-bezier(.32,.8,.42,1)' });
   anim.onfinish = () => { ghost.remove(); if (onLand) onLand(); };
 }
+/* ---------- bundles (site.json > bundles) ----------
+   Shopify takes one discount code per order and each bundle code applies once,
+   so the crate gets the single bundle that saves the most. */
+const BUNDLES = ((SITE.bundles || {}).list || []);
+const LIVE_BUNDLES = BUNDLES.filter(b => b.live);
+function bundleCounts(lines) {
+  const n = {}; lines.forEach(l => { n[l.format] = (n[l.format] || 0) + l.qty; }); return n;
+}
+function bundleFits(b, lines) {
+  if (b.pair) return lines.some(l => l.format === 'vinyl' && lines.some(x => x.slug === l.slug && x.format === 'poster-a3'));
+  const n = bundleCounts(lines);
+  return Object.entries(b.need || {}).every(([f, k]) => (n[f] || 0) >= k);
+}
+function bestBundle(lines) {
+  return LIVE_BUNDLES.filter(b => bundleFits(b, lines)).sort((a, b) => b.off - a.off)[0] || null;
+}
+/* the closest bundle that would save more than what the crate gets now: "add 1 more record" */
+function bundleNudge(lines, current) {
+  const n = bundleCounts(lines); let best = null;
+  LIVE_BUNDLES.forEach(b => {
+    if (b.pair || (current && b.off <= current.off)) return;
+    const [f, k] = Object.entries(b.need || {})[0] || []; if (!f) return;
+    const left = k - (n[f] || 0);
+    if (left > 0 && left < k && left <= 2 && (!best || b.off > best.b.off)) best = { b, f, left };
+  });
+  return best;
+}
+function bundleWord(f, k) {
+  const w = { vinyl: ['record', 'records'], 'poster-a3': ['A3 poster', 'A3 posters'], 'poster-a5': ['A5 poster', 'A5 posters'], polaroid: ['polaroid', 'polaroids'] }[f] || ['piece', 'pieces'];
+  return k === 1 ? w[0] : w[1];
+}
 function cartMaths() {
   let sub = 0; cart.forEach(l => sub += l.price * l.qty);
-  const distinctVinyl = new Set(cart.filter(l => l.format === 'vinyl').map(l => l.slug)).size;
-  // bundles aren't on offer yet; set BUNDLE_ON = true when PastForward launches the set of three
-  const BUNDLE_ON = false;
-  const sets = BUNDLE_ON ? Math.floor(distinctVinyl / 3) : 0;
-  const saved = sets * (FMT.vinyl.price * 3 - 2199);
-  return { sub, sets, saved, total: sub - saved };
+  const bundle = bestBundle(cart), saved = bundle ? bundle.off : 0;
+  return { sub, bundle, saved, sets: bundle ? 1 : 0, total: sub - saved, nudge: bundleNudge(cart, bundle) };
+}
+function bundleRowsHTML(m) {
+  const nudge = m.nudge ? `<a class="bnudge" href="${m.nudge.b.href}" data-close>Add ${m.nudge.left} more ${bundleWord(m.nudge.f, m.nudge.left)} · <b>${esc(m.nudge.b.name)} for ${money(m.nudge.b.price)}</b><span aria-hidden="true">→</span></a>` : '';
+  return (m.bundle ? `<div class="row bundle-row"><span>Bundle · ${esc(m.bundle.name)}</span><span>−${money(m.saved)}</span></div>` : '') + nudge;
 }
 function syncCart() {
   const n = cartCount(), badge = $('#cartcount');
@@ -282,7 +313,7 @@ function cartFootHTML() {
   const m = cartMaths();
   return `${addonHTML()}<div class="receipt" style="margin-bottom:16px">
       <div class="row"><span>${cartCount()} in the crate</span><span>${money(m.sub)}</span></div>
-      ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
+      ${bundleRowsHTML(m)}
       <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span></button>
@@ -339,7 +370,9 @@ function saleTapeRun(n = 4) {
   const one = onSale
     ? `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span>${ship}</span>`
     : `<span class="tape__i"><b>Every record</b><span><em>${money(FMT.vinyl.price)}</em></span><b>Wall hook</b><span>included</span>${ship}</span>`;
-  return one.repeat(n);
+  const b = LIVE_BUNDLES[0];
+  const bun = b ? `<span class="tape__i"><b>BUNDLE</b><span>${esc(b.name)} <em>${money(b.price)}</em></span></span>` : '';
+  return (one + bun).repeat(n);
 }
 function saleRibbon() {
   return `<a class="salebar tape" href="#/vinyl" aria-label="${MRP.vinyl > FMT.vinyl.price ? `Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}` : `Every record ${money(FMT.vinyl.price)}`}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
@@ -371,7 +404,8 @@ function chromeHTML() {
     <nav class="hdr__nav" aria-label="Main">
       <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
-      <button class="navlink" id="megabtn" data-nav="collection" aria-expanded="false" style="background:none;border:0;cursor:pointer">Our Collections${wave('wave--under')}</button>
+      <a class="navlink" href="#/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
+      <a class="navlink navlink--hot" href="#/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
       <a class="navlink" href="#/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
       <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
@@ -424,7 +458,9 @@ function chromeHTML() {
       <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
-    <a href="#/collections/the-classics">Our Collections</a>
+    <a href="#/build-your-wall">Build Your Wall</a>
+    <a href="#/bundles">Bundles <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
+    <a href="#/collections/the-classics">Collections</a>
     <a href="#/custom">Custom Design</a>
     <a href="#/story">Our Story</a>
     <a href="#/faq">FAQ</a>
@@ -1052,13 +1088,15 @@ function checkoutUrl(lines) {
     parts.push(id + ':' + l.qty);
   }
   if (!parts.length) return null;
-  const tags = Track.params();
-  return 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',') + (tags ? '?' + tags : '');
+  const b = lines.every(l => l.format) ? bestBundle(lines) : null;
+  const q = [b ? 'discount=' + encodeURIComponent(b.code) : '', Track.params()].filter(Boolean).join('&');
+  return 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',') + (q ? '?' + q : '');
 }
 function checkout(lines, btn) {
   const url = checkoutUrl(lines);
   if (!url) { toast('Sorry, one item in your crate can’t be checked out right now.'); return; }
-  Track.checkout(lines, lines.reduce((n, l) => n + l.price * l.qty, 0));
+  const bb = lines.every(l => l.format) ? bestBundle(lines) : null;
+  Track.checkout(lines, lines.reduce((n, l) => n + l.price * l.qty, 0) - (bb ? bb.off : 0));
   (btn ? [btn] : $$('[data-checkout]')).forEach(b => {
     b.disabled = true;
     const span = b.querySelector('.btn__mag');
@@ -1164,6 +1202,8 @@ function render(opt = {}) {
   else if (seg[0] === 'search') out = viewSearch(params);
   else if (seg[0] === 'cart') out = viewCart();
   else if (seg[0] === 'wall') out = viewWall();
+  else if (seg[0] === 'build-your-wall') out = viewBuildWall(params);
+  else if (seg[0] === 'bundles') out = viewBundles();
   else if (seg[0] === 'policies' && SITE.policies[seg[1]]) out = viewPolicy(seg[1]);
   else { out = view404(); m = { title: 'Page not found | PastForward', desc: (M['/'] || {}).desc || '' }; noindex = true; canonical = ORIGIN + '/'; seg = ['404']; }
 

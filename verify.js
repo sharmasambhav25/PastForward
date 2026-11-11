@@ -79,13 +79,13 @@ const BANNED = /\b(elevate|transform your room|curated collection|premium|aesthe
   const slugs = await page.evaluate(() => Array.from(document.querySelectorAll('[data-add]')).slice(0, 3).map(b => b.dataset.add));
   for (const s of slugs) await page.evaluate(a => addToCart(a.split('|')[0], a.split('|')[1]), s);
   const maths = await page.evaluate(() => cartMaths());
-  // bundles are switched off (BUNDLE_ON in core.js): three records are simply three prices
-  if (maths.sets !== 0 || maths.saved !== 0) fails.push(`a bundle discount applied while bundles are off (sets=${maths.sets}, saved=${maths.saved})`);
-  if (maths.sub !== 2997 || maths.total !== 2997) fails.push(`cart maths wrong: sub ${maths.sub}, total ${maths.total}`);
+  // three records = the "any 3 records" bundle (site.json > bundles): ₹2,997 → ₹2,499
+  if (!maths.bundle || maths.bundle.code !== 'BUNDLE3REC' || maths.saved !== 498) fails.push(`3-record bundle not applied (saved=${maths.saved})`);
+  if (maths.sub !== 2997 || maths.total !== 2499) fails.push(`cart maths wrong: sub ${maths.sub}, total ${maths.total}`);
   notes.push(`cart 3 vinyl → sub ${maths.sub}, saved ${maths.saved}, total ${maths.total}`);
   // the checkout link carries every line to Shopify
   const co = await page.evaluate(() => checkoutUrl(cart.map(l => ({ ...l, sku: variant(bySlug[l.slug], l.format).sku }))));
-  if (!/^https:\/\/shop\.pastforward\.shop\/cart\/\d+:1,\d+:1,\d+:1$/.test(co || '')) fails.push(`checkout link malformed: ${co}`);
+  if (!/^https:\/\/shop\.pastforward\.shop\/cart\/\d+:1,\d+:1,\d+:1\?discount=BUNDLE3REC$/.test(co || '')) fails.push(`checkout link malformed: ${co}`);
   notes.push(`checkout link → ${co}`);
   // every product on the site can be checked out
   const orphans = await page.evaluate(() => P.flatMap(p => p.variants).filter(v => !window.__SHOPIFY_VARIANTS__[v.sku]).map(v => v.sku));

@@ -18,6 +18,79 @@
   "payments": "UPI, cards and net banking",
   "cod": false,
 
+  "bundles": {
+    "_note": "Bundle prices. Each one is a Shopify discount code (Admin > Discounts) that applies once per order; the site applies the single best one at checkout via ?discount=CODE. Set live:false until the code exists in Shopify.",
+    "list": [
+      {
+        "id": "records3",
+        "code": "BUNDLE3REC",
+        "name": "Any 3 records",
+        "short": "3 records",
+        "need": {
+          "vinyl": 3
+        },
+        "price": 2499,
+        "off": 498,
+        "live": true,
+        "href": "#/vinyl",
+        "blurb": "Three 12-inch records, any albums. The classic trio for one wall."
+      },
+      {
+        "id": "pair",
+        "code": "BUNDLEPAIR",
+        "name": "A record + its A3 poster",
+        "short": "Record + poster",
+        "pair": true,
+        "price": 1149,
+        "off": 149,
+        "live": false,
+        "href": "#/build-your-wall?layout=pair",
+        "blurb": "The album on vinyl and the same album as an A3 poster, hung side by side."
+      },
+      {
+        "id": "a3x3",
+        "code": "BUNDLE3A3",
+        "name": "Any 3 A3 posters",
+        "short": "3 A3 posters",
+        "need": {
+          "poster-a3": 3
+        },
+        "price": 749,
+        "off": 148,
+        "live": true,
+        "href": "#/posters/a3",
+        "blurb": "Three A3 posters, 297 × 420mm. A full row for less than the price of a record."
+      },
+      {
+        "id": "a5x5",
+        "code": "BUNDLE5A5",
+        "name": "Any 5 A5 posters",
+        "short": "5 A5 posters",
+        "need": {
+          "poster-a5": 5
+        },
+        "price": 799,
+        "off": 196,
+        "live": false,
+        "href": "#/posters/a5",
+        "blurb": "Five A5 posters for a desk, a shelf or a small gallery wall."
+      },
+      {
+        "id": "pol10",
+        "code": "BUNDLE10POL",
+        "name": "10 polaroids",
+        "short": "10 polaroids",
+        "need": {
+          "polaroid": 10
+        },
+        "price": 699,
+        "off": 291,
+        "live": false,
+        "href": "#/polaroids",
+        "blurb": "Ten polaroid-style cards for a string of lights, a mirror or a corkboard."
+      }
+    ]
+  },
   "mrp": { "vinyl": 1299 },
 
   "forms": {
@@ -84,6 +157,14 @@
       "title": "Your Crate | PastForward",
       "desc": "The records, posters and polaroids in your crate.",
       "noindex": true
+    },
+    "/bundles": {
+      "title": "Bundles: 3 Vinyl Records for ₹2,499 & More | PastForward",
+      "desc": "Wall decor bundles: any 3 vinyl records for ₹2,499, 3 A3 posters for ₹749 and more. The bundle price is applied at checkout. Free delivery across India."
+    },
+    "/build-your-wall": {
+      "title": "Build Your Own Vinyl Record Wall | PastForward",
+      "desc": "Pick the records and posters, see them on a wall, and add the whole wall to your cart. Ready-made sets and bundle prices included."
     },
     "/wall": {
       "title": "Send Us a Wall | PastForward",
