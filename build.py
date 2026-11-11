@@ -319,7 +319,7 @@ def single_file(payload, standalone):
 <script type="module">{vinyl3d_source(THREE_DATA)}</script>'''
     if standalone:
         return ('<!doctype html><html lang="en" class="js"><head><meta charset="utf-8">'
-                '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+                '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">'
                 f'{head}</head><body>{body}</body></html>')
     return head + '\n' + body
 
@@ -478,7 +478,7 @@ def fb_simple(h1, paras, extra=''):
 def page(*, title, desc, canonical, og_image, body, ld, noindex=False):
     preload = ''.join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>' for f in FONT_PRELOAD)
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
 {head_common(title, desc, canonical, og_image, noindex)}
 <link rel="icon" href="/favicon.ico" sizes="any">
