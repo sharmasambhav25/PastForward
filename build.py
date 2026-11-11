@@ -462,6 +462,9 @@ def build_site():
         if os.path.exists(src):
             shutil.copy2(src, os.path.join(DOCS, fav))
             shutil.copy2(src, os.path.join(DIST, fav))
+    # Google Search Console ownership files (URL-prefix property https://pastforward.shop/). Keep them, or the property unverifies.
+    for name in SITE.get('googleVerification', []):
+        write(os.path.join(DOCS, name), f'google-site-verification: {name}')
     write(os.path.join(DOCS, '.nojekyll'), '')   # serve the folder as-is; no Jekyll pass, nothing renamed or dropped
     og_default = URL + ('/og.jpg' if os.path.exists(os.path.join(ROOT, 'brand', 'og.jpg')) else '/apple-touch-icon.png')
 
