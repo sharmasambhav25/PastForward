@@ -43,7 +43,7 @@
         "pair": true,
         "price": 1149,
         "off": 149,
-        "live": false,
+        "live": true,
         "href": "#/build-your-wall?layout=pair",
         "blurb": "The album on vinyl and the same album as an A3 poster, hung side by side."
       },
@@ -71,7 +71,7 @@
         },
         "price": 799,
         "off": 196,
-        "live": false,
+        "live": true,
         "href": "#/posters/a5",
         "blurb": "Five A5 posters for a desk, a shelf or a small gallery wall."
       },
@@ -85,7 +85,7 @@
         },
         "price": 699,
         "off": 291,
-        "live": false,
+        "live": true,
         "href": "#/polaroids",
         "blurb": "Ten polaroid-style cards for a string of lights, a mirror or a corkboard."
       }
