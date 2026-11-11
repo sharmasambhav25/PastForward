@@ -133,11 +133,7 @@ function viewHome() {
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
-      <a class="cta-shop" href="#/vinyl" data-cursor="SHOP">
-        <span class="cta-shop__disc" aria-hidden="true"><i></i></span>
-        <span class="cta-shop__txt">Shop now</span>
-        <span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-      </a>
+      ${ctaShop('Shop now', '#/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
     </div>
   </section>
 
@@ -150,7 +146,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Build your wall</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+        ${ctaShop('Build your wall', '#/vinyl', 'Start with a record')}
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -165,7 +161,7 @@ function viewHome() {
         ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
         : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
       <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
-      <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">${MRP.vinyl > FMT.vinyl.price ? 'Shop the sale' : 'Shop vinyls'}</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+      ${MRP.vinyl > FMT.vinyl.price ? ctaShop('Shop the sale', '#/vinyl', `Save ${money(MRP.vinyl - FMT.vinyl.price)} a record`) : ctaShop('Shop vinyls', '#/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
       ${assureHTML('vinyl', 'assure--band')}
     </div>
   </section>
@@ -202,8 +198,7 @@ function bestHTML(n = 6) {
   return `
   <section class="best sec ground" data-section="BESTSELLERS">
     <div class="wrap">
-      <div class="cap">BESTSELLERS</div>
-      <h2 class="d-m reveal" style="margin:10px 0 22px">The ones everyone's taking home.</h2>
+      <h2 class="best__h reveal">Bestsellers</h2>
       <div class="grid best__grid">${list.map(p => cardHTML(p, 'vinyl')).join('')}</div>
       <div style="text-align:center;margin-top:28px">
         <a class="btn btn--secondary" href="#/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
@@ -269,7 +264,7 @@ function formatsHTML() {
         <div class="fmts__track">${Array.from({ length: reps }, (_, r) => S.map((x, i) => `<button class="fmts__th" type="button" data-k="${r * S.length + i}" aria-label="${esc(x.t)} by ${esc(x.by)}"${r === 1 ? '' : ' tabindex="-1"'}><img src="${x.img}" alt="" loading="lazy" decoding="async"></button>`).join('')).join('')}</div>
         <span class="fmts__frame" aria-hidden="true"></span>
       </div>
-      <div class="fmts__caps">${S.map((x, i) => `<div class="fmts__c${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}><p>${esc(x.by)} · ${esc(x.fmt)} · <span class="num">${money(x.price)}</span></p><a class="fmts__go" href="${x.href}"${i ? ' tabindex="-1"' : ''}>View this design <span aria-hidden="true">→</span></a></div>`).join('')}</div>
+      <div class="fmts__caps">${S.map((x, i) => `<div class="fmts__c${i === 0 ? ' is-on' : ''}"${i ? ' aria-hidden="true"' : ''}><p>${esc(x.by)} · ${esc(x.fmt)} · <span class="num">${money(x.price)}</span></p>${ctaShop('View this design', x.href, '', { sm: true, cls: 'fmts__go', attrs: i ? ' tabindex="-1"' : '' })}</div>`).join('')}</div>
     </div>
   </section>`;
 }
@@ -326,8 +321,7 @@ function crateMobileHTML() {
       </div>
       <div class="ccss" aria-hidden="true">${list.map((p, i) => `<a class="ccss__rec" data-i="${i}" href="#/product/${p.slug}?format=vinyl" tabindex="-1">${recordHTML(p, { size: 300, eager: i < 2 })}</a>`).join('')}</div>
       <div class="crate__meta">
-        <div class="cap crate__eyebrow">BESTSELLERS</div>
-        <h2 class="crate__head">The ones everyone's taking home.</h2>
+        <h2 class="crate__head">Bestsellers</h2>
         <dl class="crate__rows" aria-live="polite">
           <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
@@ -399,8 +393,7 @@ function crateHTML() {
       <div class="crate__gl" aria-hidden="true"></div>
       <svg class="crate__scribble" aria-hidden="true"><path pathLength="1"/></svg>
       <div class="crate__meta">
-        <div class="cap crate__eyebrow">BESTSELLERS</div>
-        <h2 class="crate__head">The ones everyone's taking home.</h2>
+        <h2 class="crate__head">Bestsellers</h2>
         <dl class="crate__rows" aria-live="polite">
           <div><dt>ALBUM</dt><dd><span data-cm="album">${esc(f0.album)}</span></dd></div>
           <div><dt>ARTIST</dt><dd><span data-cm="artist">${esc(f0.artist)}</span></dd></div>
@@ -551,59 +544,20 @@ function artistCardHTML([artist, items], routeFormats, idx) {
       <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart">+</button>
     </div>`;
   }
-  // artist → album → size: an album with several sizes is its own step, so the list stays short
-  const thumbOf = (p, v) => v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
-    : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
-  const rows = items.map((p, k) => {
-    const vs = routeFormats.map(f => variant(p, f)).filter(Boolean);
-    if (!vs.length) return '';
-    if (vs.length === 1) {
-      const v = vs[0];
-      return `<li class="ag__row">
-        <a class="ag__link" href="#/product/${p.slug}?format=${v.format}">
-          ${thumbOf(p, v)}
-          <span class="ag__album">${albumOf(p)}</span>
-          <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
-        </a>
-        <button class="ag__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart">+</button>
-      </li>`;
-    }
-    const sid = id + 's' + k, lo = Math.min(...vs.map(v => v.price));
-    const sizes = vs.map(v => {
-      const f = FMT[v.format] || {};
-      return `<li class="ag__srow">
-          <a class="ag__slink" href="#/product/${p.slug}?format=${v.format}">
-            <span class="ag__badge">${esc(f.badge || v.format)}</span>
-            <span class="ag__sname"><span class="ag__slab">${esc(f.label || '')}</span>${sizeOf(f) ? `<span class="ag__dim">${esc(sizeOf(f))}</span>` : ''}</span>
-            <span class="ag__price num">${priceHTML(v.format, v.price)}</span>
-          </a>
-          <button class="ag__sadd" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))}, ${esc(f.label || '')} to cart"><span class="ag__saddt">Add</span></button>
-        </li>`;
-    }).join('');
-    return `<li class="ag__row ag__row--multi">
-        <button class="ag__pick" type="button" aria-expanded="false" aria-controls="${sid}">
-          ${thumbOf(p, vs[0])}
-          <span class="ag__album">${albumOf(p)}<span class="ag__size">${vs.length} sizes · from ${money(lo)}</span></span>
-          <span class="ag__pchev" aria-hidden="true"></span>
-        </button>
-        <div class="ag__sizes" id="${sid}" role="region" aria-label="${esc(albumText(p))} sizes"><div class="ag__sin">
-          <p class="ag__step mono-xs">Pick a size</p>
-          <ul class="ag__slist">${sizes}</ul>
-        </div></div>
-      </li>`;
-  }).join('');
-  return `<div class="ag" data-artist="${esc(artist)}">
-    <button class="ag__head" type="button" aria-expanded="false" aria-controls="${id}">
+  // Several albums (or several sizes): the card opens the lead album's own page, and the albums
+  // are chosen there (see albumPickHTML). No dropdown step on the catalogue.
+  const lead = items.find(p => routeFormats.some(f => variant(p, f))) || first;
+  const lv = routeFormats.map(f => variant(lead, f)).find(Boolean) || primary(lead);
+  return `<div class="ag ag--go" data-artist="${esc(artist)}">
+    <a class="ag__head" href="#/product/${lead.slug}?format=${lv.format}" aria-label="${esc(artist)}: ${n} ${word}, from ${money(from)}">
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
       <span class="ag__meta">
         <span class="ag__name">${esc(artist)}</span>
-        <span class="ag__sub mono-xs"><span>${n} ${word}</span><span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
+        ${n === 1 ? `<span class="ag__alb">${albumOf(lead)}</span>` : ''}
+        <span class="ag__sub mono-xs">${n > 1 ? `<span>${n} ${word}</span>` : ''}<span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
       </span>
-      <span class="ag__chev" aria-hidden="true"></span>
-    </button>
-    <div class="ag__drop" id="${id}" role="region" aria-label="${esc(artist)} albums"><div class="ag__in">
-      <ul class="ag__list">${rows}</ul>
-    </div></div>
+      <span class="ag__chev ag__chev--go" aria-hidden="true"></span>
+    </a>
   </div>`;
 }
 function sizeTabsHTML(active) {
@@ -846,6 +800,27 @@ function formatFromParams(p, params) {
   return primary(p).format;
 }
 function artistSlug(s) { return String(s).toLowerCase().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+/* The albums by this artist, chosen on the product page itself. The catalogue's artist card lands
+   on one album; this is where the others are. Each link keeps the format being looked at when that
+   album comes in it. */
+function albumPickInner(p, sel) {
+  const all = P.filter(x => x.artist === p.artist);
+  return all.map(x => {
+    const v = variant(x, sel) || primary(x), on = x.slug === p.slug;
+    // a small record of its own (the full record component is built for 200px and up)
+    const th = `<span class="apick__th${v.format === 'vinyl' ? ' apick__th--rec' : ''}"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
+    return `<a class="apick__a${on ? ' is-on' : ''}" href="#/product/${x.slug}?format=${v.format}"${on ? ' aria-current="true"' : ''}>
+      ${th}<span class="apick__n">${albumOf(x)}${!on && v.format !== sel ? `<span class="apick__f">${x.variants.length === 1 ? esc(FMT[v.format].label) + ' only' : 'Not in ' + esc(FMT[sel].label)}</span>` : ''}</span></a>`;
+  }).join('');
+}
+function albumPickHTML(p, sel) {
+  const n = P.filter(x => x.artist === p.artist).length;
+  if (n < 2) return '';
+  return `<nav class="apick" id="apick" aria-label="Albums by ${esc(p.artist)}">
+    <p class="apick__k mono-xs"><b>Choose the album</b><span>${esc(p.artist)} · ${n} to pick from</span></p>
+    <div class="apick__row" id="apickrow">${albumPickInner(p, sel)}</div>
+  </nav>`;
+}
 function viewProduct(p, params) {
   const sel = formatFromParams(p, params);
   const v = variant(p, sel);
@@ -858,8 +833,9 @@ function viewProduct(p, params) {
       <span><a href="#/vinyl">CATALOGUE</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span></span>
       <button class="pdp__share" type="button" data-share>Share <span aria-hidden="true">↗</span></button>
     </div>
-    <div class="pdp">
-      <div>
+    <div class="pdp${P.filter(x => x.artist === p.artist).length > 1 ? ' pdp--pick' : ''}">
+      ${albumPickHTML(p, sel)}
+      <div class="pdp__media">
         <div class="pdp__stage" id="stage"><div class="roomlight"></div>
           <div id="stagemedia" style="position:relative">${stageMedia(p, sel)}</div>
         </div>
@@ -871,7 +847,7 @@ function viewProduct(p, params) {
             <img src="${photo(FORMAT_PHOTO[sel])}" alt="PastForward ${esc(FMT[sel].label)} real product photograph"><span>PHOTO</span></button>` : ''}
         </div>
       </div>
-      <div>
+      <div class="pdp__info">
         <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="#/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
@@ -1662,22 +1638,6 @@ function setParams(mut, opt = {}) {
   if (opt.silent) replaceUrl(to); else navigate(to, { replace: true, keepScroll: true });
 }
 function mountCatalog(seg, params) {
-  // artist cards: one open at a time, height animated
-  $$('.ag__head').forEach(btn => btn.addEventListener('click', () => {
-    const card = btn.closest('.ag'), open = btn.getAttribute('aria-expanded') !== 'true';
-    $$('.ag.is-open').forEach(o => { if (o !== card) { o.classList.remove('is-open'); o.querySelector('.ag__head').setAttribute('aria-expanded', 'false'); } });
-    card.classList.toggle('is-open', open);
-    btn.setAttribute('aria-expanded', String(open));
-    try { Sound.tick(); } catch (e) {}
-  }));
-  // album → size step inside an open artist card: one album open at a time
-  $$('.ag__pick').forEach(btn => btn.addEventListener('click', () => {
-    const row = btn.closest('.ag__row'), list = btn.closest('.ag__list'), open = btn.getAttribute('aria-expanded') !== 'true';
-    $$('.ag__row.is-open', list).forEach(o => { if (o !== row) { o.classList.remove('is-open'); o.querySelector('.ag__pick').setAttribute('aria-expanded', 'false'); } });
-    row.classList.toggle('is-open', open);
-    btn.setAttribute('aria-expanded', String(open));
-    try { Sound.tick(); } catch (e) {}
-  }));
   const currentPath = '#' + (seg.join('/') || 'vinyl');
   const grid = $('#grid');
   const ftgl = $('#filtertgl'), rail = $('#rail');
@@ -1809,12 +1769,26 @@ function mountProduct(p, params) {
     const ha = $('#hangacc'); if (ha) ha.hidden = f !== 'vinyl';
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
+    if (pick) pick.innerHTML = albumPickInner(p, f);
     const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f]); }
     $('#scaleview').innerHTML = scaleSVG(f);
     drawScale();
     setParams(pp => pp.set('format', f), { silent: true });   // the address follows; the page stays put
     Track.view(p, v);
   };
+  // another album by the same artist: the page swaps in place (no scroll jump, no extra back-button stop)
+  const pick = $('#apickrow');
+  if (pick) {
+    pick.addEventListener('click', e => {
+      const a = e.target.closest('.apick__a'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      if (a.classList.contains('is-on')) return;
+      try { Sound.tick(); } catch (err) {}
+      navigate(a.getAttribute('href'), { replace: true, keepScroll: true });
+    });
+    const on = $('.apick__a.is-on', pick);   // keep the chosen album in view when the row scrolls sideways
+    if (on && pick.scrollWidth > pick.clientWidth) pick.scrollLeft = Math.max(0, on.offsetLeft - (pick.clientWidth - on.offsetWidth) / 2);
+  }
   $$('.fmt button').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
   $$('.pdp__thumb[data-fmt]').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
   $$('.pdp__thumb[data-cw]').forEach(b => b.addEventListener('click', () => {

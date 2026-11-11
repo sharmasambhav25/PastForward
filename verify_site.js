@@ -196,6 +196,25 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
   const f = await page.evaluate(() => ({ y: scrollY, h: history.length, q: location.search, n: document.querySelectorAll('.ag').length }));
   if (f.h !== h0 || f.y < 200) fails.push(`filtering jumped to the top or added history (y=${f.y})`);
   if (!/collection=the-classics/.test(f.q) || f.n >= cat.cards) fails.push('collection filter did not apply');
+  // an artist with several albums: the card opens an album's page, and the other albums are chosen there, in place
+  {
+    await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag--go');
+    if (await page.evaluate(() => document.querySelectorAll('.ag__drop, .ag__pick').length)) fails.push('the catalogue still has album dropdowns');
+    const before = await page.evaluate(() => history.length);
+    await page.click('.ag--go .ag__head >> nth=0'); await page.waitForSelector('#apick .apick__a');
+    const a0 = await page.evaluate(() => ({ path: location.pathname, n: document.querySelectorAll('.apick__a').length, on: document.querySelectorAll('.apick__a.is-on').length,
+      artists: new Set([...document.querySelectorAll('.apick__a')].map(a => bySlug[a.getAttribute('href').split('/product/')[1].split('?')[0]].artist)).size, h: history.length }));
+    if (!/^\/product\//.test(a0.path) || a0.n < 2 || a0.on !== 1 || a0.artists !== 1) fails.push(`artist card -> album chooser is wrong: ${JSON.stringify(a0)}`);
+    await page.evaluate(() => scrollTo(0, 120));
+    await page.click('.apick__a:not(.is-on) >> nth=0'); await page.waitForFunction(p0 => location.pathname !== p0 && document.querySelector('#pdpadd'), a0.path);
+    const a1 = await page.evaluate(() => ({ path: location.pathname, h: history.length, y: scrollY, title: document.querySelector('h1').textContent, on: (document.querySelector('.apick__a.is-on .apick__n') || {}).textContent, sw: document.documentElement.scrollWidth, vw: innerWidth }));
+    if (a1.h !== a0.h) fails.push('choosing another album added a back-button stop');
+    if (a1.y < 60) fails.push('choosing another album jumped to the top');
+    if (!a1.on || !a1.on.startsWith(a1.title.trim())) fails.push(`the chooser does not mark the album on show: ${JSON.stringify(a1)}`);
+    if (a1.sw > a1.vw) fails.push('the album chooser makes the product page scroll sideways');
+    notes.push(`album chooser: ${a0.n} albums, ${a0.path} -> ${a1.path}`);
+    await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag');
+  }
   await page.click('.ag--solo .ag__head >> nth=0'); await page.waitForSelector('#pdpadd');
   // forms: the custom order and contact forms hand over a real, written message
   await page.goto(BASE + '/custom', { waitUntil: 'load' }); await page.waitForSelector('form[data-form="custom"]');
