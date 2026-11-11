@@ -478,11 +478,12 @@ function mountCrateSection(onUnmount) {
 
 /* ============================== CATALOGUE ============================== */
 const FORMAT_ROUTES = { vinyl: ['vinyl'], posters: ['poster-a3', 'poster-a5', 'print-10'], prints: ['print-10'], polaroids: ['polaroid'] };
-function filterProducts(params, routeFormats, requiredTag) {
+function filterProducts(params, routeFormats, requiredTag, only) {
   const fmts = (params.getAll('format').length ? params.getAll('format') : routeFormats) || [];
   const cols = params.getAll('collection');
   const price = params.get('price');
   let list = P.filter(p => {
+    if (only && !only.has(p.slug)) return false;
     if (requiredTag && !p.tags.includes(requiredTag)) return false;
     if (fmts.length && !p.variants.some(v => fmts.includes(v.format))) return false;
     if (cols.length && !cols.some(c => p.tags.includes(c))) return false;
@@ -616,6 +617,7 @@ function viewCatalog(category, subType, params) {
   let h1 = '', sub = '';
   let targetFormat = null;
   let requiredTag = null;
+  let only = null, landing = null;
 
   if (category === 'vinyl') {
     routeFormats = ['vinyl'];
@@ -665,6 +667,15 @@ function viewCatalog(category, subType, params) {
       targetFormat = null;
       routeFormats = [];
     }
+  } else if (category === 'landing') {
+    // a page written for a search ("vinyl record wall decor") or an artist: a fixed set of products
+    landing = subType;
+    only = new Set(landing.items);
+    h1 = esc(landing.h1);
+    sub = esc(landing.sub);
+    const reqFmts = params.getAll('format');
+    routeFormats = reqFmts.length ? reqFmts : (landing.formats || []);
+    targetFormat = routeFormats.length === 1 ? routeFormats[0] : (routeFormats.length ? routeFormats : null);
   } else {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
@@ -672,7 +683,7 @@ function viewCatalog(category, subType, params) {
     sub = 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.';
   }
 
-  const list = filterProducts(params, routeFormats, requiredTag);
+  const list = filterProducts(params, routeFormats, requiredTag, only);
   const cnt = f => P.filter(p => p.variants.some(v => v.format === f)).length;
   const posterTotal = P.filter(p => p.variants.some(v => ['poster-a3', 'poster-a5', 'print-10'].includes(v.format))).length;
   const on = (k, v) => params.getAll(k).includes(v) ? 'checked' : '';
@@ -682,7 +693,15 @@ function viewCatalog(category, subType, params) {
   const total = byArtist ? groups.length : list.length;
 
   let railContentHTML = '';
-  if (category === 'collections') {
+  if (category === 'landing') {
+    const inPage = P.filter(p => only.has(p.slug));
+    const fmtOpts = [['vinyl', 'Vinyls'], ['poster-a3', 'A3 Poster'], ['poster-a5', 'A5 Poster'], ['print-10', '10×10 Format'], ['polaroid', 'Polaroids']]
+      .filter(([v]) => !(landing.formats || []).length || landing.formats.includes(v))
+      .map(([v, l]) => [v, l, inPage.filter(p => p.variants.some(x => x.format === v)).length]).filter(x => x[2]);
+    railContentHTML = fmtOpts.length > 1 ? `<div class="rail__grp"><h4>Format</h4>
+      ${fmtOpts.map(([v, l, count]) => `<label class="chk"><input type="checkbox" data-f="format" value="${v}" ${on('format', v)}><span>${l}</span><span class="n num">${count}</span></label>`).join('')}
+    </div>` : '';
+  } else if (category === 'collections') {
     const colSlug = requiredTag;
     const countInCol = f => P.filter(p => p.tags.includes(colSlug) && p.variants.some(v => v.format === f)).length;
     railContentHTML = `
@@ -787,7 +806,15 @@ function viewCatalog(category, subType, params) {
             <p class="body-s dim" style="margin:8px 0 20px">Loosen a filter.</p>
             <button class="btn btn--secondary" data-clear><span class="btn__mag">Clear all</span></button></div>`}
       </div>
-    </div></div>`;
+    </div>${landing ? landingCopyHTML(landing) : ''}</div>`;
+}
+function landingCopyHTML(L) {
+  const secs = (L.sections || []).map(([h, t]) => `<div><h2 class="d-s">${esc(h)}</h2><p class="dim">${t}</p></div>`).join('');
+  const faq = (L.faq || []).map(([q, a]) => `<div><h3 class="body-l">${esc(q)}</h3><p class="dim">${a}</p></div>`).join('');
+  return `<section class="lcopy">
+    ${secs ? `<div class="lcopy__grid">${secs}</div>` : ''}
+    ${faq ? `<div class="lcopy__faq"><h2 class="mono-xs dim">Questions</h2>${faq}</div>` : ''}
+  </section>`;
 }
 function viewShop(routeKey, params) {
   return viewCatalog(routeKey || 'vinyl', null, params);
@@ -818,6 +845,7 @@ function formatFromParams(p, params) {
   if (vid) { const v = p.variants.find(x => String((window.__SHOPIFY_VARIANTS__ || {})[x.sku]) === vid); if (v) return v.format; }
   return primary(p).format;
 }
+function artistSlug(s) { return String(s).toLowerCase().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 function viewProduct(p, params) {
   const sel = formatFromParams(p, params);
   const v = variant(p, sel);
@@ -844,7 +872,7 @@ function viewProduct(p, params) {
         </div>
       </div>
       <div>
-        <div class="card__artist">${esc(p.artist)}</div>
+        <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="#/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
         <p class="pdp__blurb" id="pdpblurb">${esc((p.blurbs || {})[sel] || '')}</p>
@@ -1237,7 +1265,8 @@ window.__mount = function (seg, params) {
       onCrate();
     }
   }
-  if (page === 'vinyl' || page === 'posters' || page === 'polaroids' || page === 'shop' || page === 'collections') mountCatalog(seg, params);
+  if (page === 'vinyl' || page === 'posters' || page === 'polaroids' || page === 'shop' || page === 'collections'
+      || page === 'artist' || (SITE.landing || {})['/' + page]) mountCatalog(seg, params);
   if (page === 'product') mountProduct(bySlug[seg[1]], params);
   if (page === 'collections') mountCollection();
   if (page === 'search') mountSearchPage();

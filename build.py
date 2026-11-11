@@ -56,6 +56,8 @@ SHOPIFY_VARIANTS = json.loads(read(f'{ROOT}/shopify_variants.json'))   # SKU -> 
 RAW_SITE = json.loads(read(f'{SRC}/site.json'))
 
 P = CAT['products']
+for _p in P:   # the same artist filed under two names (site.json "artistAlias")
+    _p['artist'] = {k: v for k, v in RAW_SITE.get('artistAlias', {}).items() if not k.startswith('_')}.get(_p['artist'], _p['artist'])
 FMT = CAT['formats']
 COLS = CAT['collections']
 BY_SLUG = {p['slug']: p for p in P}
@@ -139,28 +141,73 @@ def blurb(p, f):
     art = 'an' if meta['label'][0].lower() in 'aeiou' else 'a'
     return f"{n} as {art} {meta['label']}, {meta['size']}. Printed to order."
 
-KIND = {'vinyl': 'Vinyl Record', 'poster-a3': 'Poster', 'poster-a5': 'Poster', 'print-10': 'Print', 'polaroid': 'Polaroid'}
+KIND = {'vinyl': 'Vinyl Wall Art', 'poster-a3': 'Poster', 'poster-a5': 'Poster', 'print-10': 'Print', 'polaroid': 'Polaroid'}
 def join_words(xs):
     xs = list(xs)
     return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' & ' + xs[-1]
 
 def product_seo(p):
+    """Titles lead with the words people search: artist, album, then what it is."""
     kinds = list(dict.fromkeys(KIND[v['format']] for v in p['variants']))
-    title = f"{name_of(p)} — {join_words(kinds)} | PastForward"
+    lead = f"{p['artist']} {album_of(p)}" if album_of(p) else p['artist']
+    title = f"{lead} {join_words(kinds)} | PastForward"
     def option(v):
         noun = 'upcycled 12-inch vinyl record' if v['format'] == 'vinyl' else v['label']
         return f"{'an' if noun[0].lower() in 'aeiou' else 'a'} {noun} ({money(v['price'])})"
     opts = [option(v) for v in p['variants']]
     lst = opts[0] if len(opts) == 1 else ', '.join(opts[:-1]) + ' or ' + opts[-1]
-    desc = f"{name_of(p)} as {lst}. Delivered across India in {SITE['delivery']}."
+    desc = f"{name_of(p)} wall art: {lst}. Free delivery across India in {SITE['delivery']}." if SITE['shipping'].get('free') and not SITE['shipping'].get('freeFrom') \
+        else f"{name_of(p)} wall art: {lst}. Delivered across India in {SITE['delivery']}."
     return {'title': title, 'desc': desc}
 
 for p in P:
     p['seo'] = product_seo(p)
     p['blurbs'] = {v['format']: blurb(p, v['format']) for v in p['variants']}
+COL_SEO = {k: v for k, v in SITE.get('collectionSeo', {}).items()}
 for c in COLS:
-    c['seo'] = {'title': f"{c['name']} | PastForward",
+    c['seo'] = COL_SEO.get(c['slug']) or {'title': f"{c['name']} | PastForward",
                 'desc': f"{c['desc']} Upcycled vinyl records, posters and polaroids from the {c['name']} collection, delivered across India."}
+
+def slugify(s):
+    return re.sub(r'[^a-z0-9]+', '-', s.lower().replace("'", '')).strip('-')
+
+def featured_order(ps):
+    return sorted(ps, key=lambda p: (-int(bool(p.get('featured'))), p['artist'].lower()))
+
+# ---- artist pages: only for artists with more than one design. A one-album artist already has
+# a product page that carries every format; a second page with the same single product would be thin.
+ARTIST_PAGES = {}
+for name in sorted({p['artist'] for p in P}, key=str.lower):
+    ps = [p for p in P if p['artist'] == name]
+    if len(ps) < 2:
+        continue
+    kinds = list(dict.fromkeys(KIND[v['format']] for p in ps for v in p['variants']))
+    plural = {'Poster': 'Posters', 'Print': 'Prints', 'Polaroid': 'Polaroids'}
+    words = [plural.get(k, k) for k in kinds]
+    albums = [album_of(p) for p in ps if album_of(p)]
+    album_list = join_words(dict.fromkeys(albums))
+    ARTIST_PAGES[slugify(name)] = {
+        'name': name,
+        'title': f"{name} {join_words(words)} | PastForward",
+        'desc': f"{name} wall art: {album_list} as {join_words([w.lower() for w in words])}. From {money(min(v['price'] for p in ps for v in p['variants']))}, delivered across India in {SITE['delivery']}.",
+        'h1': f"{name}.",
+        'sub': f"{album_list}. Every {name} piece we make, in one place.",
+        'items': [p['slug'] for p in ps],
+        'sections': [[f"{name} on your wall",
+                      f"Pick the album, then the format: a real upcycled 12-inch record with the cover on the centre label ({money(FMT['vinyl']['price'])}), "
+                      f"an A3 poster ({money(FMT['poster-a3']['price'])}), an A5 poster ({money(FMT['poster-a5']['price'])}), a 10×10 print ({money(FMT['print-10']['price'])}) "
+                      f"or a polaroid card ({money(FMT['polaroid']['price'])}), depending on what each album comes in. {SITE['shipping']['line']} Delivery takes {SITE['delivery']}."]],
+        'faq': [],
+    }
+SITE['artistPages'] = ARTIST_PAGES
+
+# ---- landing pages (site.json "landing"): resolve each one to the products it shows
+def landing_items(L):
+    fmts, cap = L.get('formats') or [], L.get('maxPrice')
+    ok = lambda v: (not fmts or v['format'] in fmts) and (cap is None or v['price'] <= cap)
+    return [p['slug'] for p in featured_order(P) if any(ok(v) for v in p['variants'])]
+for path, L in SITE.get('landing', {}).items():
+    L['items'] = landing_items(L)
 
 CAT_JSON = json.dumps(CAT, ensure_ascii=False, separators=(',', ':'))
 
@@ -352,8 +399,14 @@ def graph(*nodes):
 NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/posters/a5'), ('10×10 prints', '/posters/10x10'),
        ('Polaroids', '/polaroids'), ('Custom orders', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
 
+def popular_links():
+    out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
+    out += [(A['name'], f'/artist/{slug}') for slug, A in SITE.get('artistPages', {}).items()]
+    return out
+
 def fb_nav():
     return '<nav><p>' + ' · '.join(f'<a href="{u}">{esc(n)}</a>' for n, u in NAV) + '</p><p>' + \
+        ' · '.join(f'<a href="{u}">{esc(n)}</a>' for n, u in popular_links()) + '</p><p>' + \
         ' · '.join(f'<a href="/policies/{k}">{esc(v[0])}</a>' for k, v in SITE['policies'].items()) + '</p></nav>'
 
 def fb_facts():
@@ -397,9 +450,26 @@ def fb_product(p):
     out.append('</ul>' + fb_facts())
     if more:
         out.append(f"<h2>More from {esc(p['artist'])}</h2>{fb_products(more)}")
+    if slugify(p['artist']) in SITE['artistPages']:
+        out.append(f"<p><a href=\"/artist/{slugify(p['artist'])}\">Everything by {esc(p['artist'])}</a></p>")
     if also:
         out.append(f"<h2>Also in <a href=\"/collections/{col['slug']}\">{esc(col['name'])}</a></h2>{fb_products(also)}")
     return fb_wrap(''.join(out))
+
+def fb_landing(L, products):
+    fmts = L.get('formats') or None
+    copy = ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in L.get('sections', []))
+    faq = ''.join(f'<h3>{esc(q)}</h3><p>{site_links(a)}</p>' for q, a in L.get('faq', []))
+    return fb_wrap(f"<h1>{esc(L['h1'].rstrip('.'))}</h1><p>{esc(L['sub'])}</p>{fb_facts()}"
+                   f"{fb_products(products, fmts)}{copy}" + (f'<h2>Questions</h2>{faq}' if faq else ''))
+
+def landing_ld(L, path, products):
+    name = L['h1'].rstrip('.')
+    nodes = [crumbs(('Home', '/'), (name, path)), list_ld(name, products, L.get('formats') or None)]
+    if L.get('faq'):
+        nodes.append({'@type': 'FAQPage', '@id': URL + path + '#faq', 'mainEntity': [
+            {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in L['faq']]})
+    return graph(*nodes)
 
 def fb_simple(h1, paras, extra=''):
     return fb_wrap(f'<h1>{esc(h1)}</h1>' + ''.join(f'<p>{x}</p>' for x in paras) + extra)
@@ -434,7 +504,7 @@ def build_site():
     today = datetime.date.today().isoformat()
 
     # ---- start clean: everything the build owns under docs/
-    for sub in ('assets', 'fonts', 'img', 'photos', 'vendor', 'product', 'collections', 'policies', 'posters'):
+    for sub in ('assets', 'fonts', 'img', 'photos', 'vendor', 'product', 'collections', 'policies', 'posters', 'artist'):
         d = os.path.join(DOCS, sub)
         if os.path.isdir(d):
             shutil.rmtree(d)
@@ -517,6 +587,17 @@ def build_site():
     c0 = next(c for c in COLS if c['slug'] == 'the-classics')
     add('/collections', 'collections/index.html', title=c0['seo']['title'], desc=c0['seo']['desc'], canonical='/collections/the-classics',
         body=fb_listing(c0['name'], c0['desc'], collection_products(c0['slug'])), ld=graph())
+
+    # landing pages written for searches, and one page per artist with more than one design
+    for path, L in SITE.get('landing', {}).items():
+        prods = [BY_SLUG[s] for s in L['items']]
+        add(path, path.strip('/') + '.html', title=L['title'], desc=L['desc'], body=fb_landing(L, prods),
+            ld=landing_ld(L, path, prods), og_image=abs_img(prods[0]['variants'][0]['image']) if prods else None)
+    for slug, A in SITE.get('artistPages', {}).items():
+        path = f'/artist/{slug}'
+        prods = [BY_SLUG[s] for s in A['items']]
+        add(path, f'artist/{slug}.html', title=A['title'], desc=A['desc'], body=fb_landing(A, prods),
+            ld=landing_ld(A, path, prods), og_image=abs_img(prods[0]['variants'][0]['image']))
 
     # products
     for p in P:
