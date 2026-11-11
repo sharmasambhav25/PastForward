@@ -60,8 +60,8 @@
       "desc": "Polaroid-style album cards with a cream border, on 300 GSM card. {{PRICE_POLAROID}} each, delivered across India."
     },
     "/custom": {
-      "title": "Custom Vinyl Wall Art & Album Posters, Made to Order | PastForward",
-      "desc": "Not in the catalogue? Tell us the artist and album and we make it as an upcycled 12-inch record, poster, print or polaroid."
+      "title": "Custom Vinyl Record Wall Art of Any Album, Made to Order | PastForward",
+      "desc": "Custom vinyl for your wall: any artist, album or song set into the label of a real 12-inch record, {{PRICE_VINYL}}. Also as posters, prints and polaroids. Delivered across India."
     },
     "/story": {
       "title": "Our Story | PastForward",
@@ -371,5 +371,41 @@
   "siteVerification": {
     "_note": "Search-engine ownership tags written into every page head. Removing one unverifies that property.",
     "msvalidate.01": "9EEC977CBB1F91E65E67039AD0FF8959"
+  },
+
+  "customCopy": {
+    "_note": "Words under the custom order form, written for searches like 'custom vinyl'. Same shape as a landing page.",
+    "sections": [
+      [
+        "Custom vinyl, from any album",
+        "Name the artist and the album, or a single song, and we set its artwork into the centre label of a real 12-inch upcycled record. It costs the same as any record in the catalogue: {{PRICE_VINYL}}, with a wall hook in the box."
+      ],
+      [
+        "Or as a poster, print or polaroid",
+        "The same request works in every format: an A3 poster ({{PRICE_A3}}), an A5 poster ({{PRICE_A5}}), a 10×10 print ({{PRICE_10}}) or a polaroid card ({{PRICE_POLAROID}})."
+      ],
+      [
+        "How it works",
+        "Send the request above. We confirm the artwork with you before anything is made, then it's made and sent anywhere in India. {{SHIPPING_LINE}}"
+      ]
+    ],
+    "faq": [
+      [
+        "Can I get a song instead of a whole album?",
+        "Yes. Put the song in the album field and tell us in the notes."
+      ],
+      [
+        "Can you add text, like a name or a date?",
+        "Ask in the notes. We'll tell you what's possible when we confirm the artwork."
+      ],
+      [
+        "Does a custom record play?",
+        "No. Like every record we make, it's sold to hang, not to play."
+      ],
+      [
+        "Does custom cost extra?",
+        "No. A custom piece costs the same as that format in the catalogue."
+      ]
+    ]
   }
 }
