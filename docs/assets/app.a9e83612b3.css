@@ -2366,3 +2366,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .lcopy__more a:hover, .ftr__more a:hover{color:var(--cream)}
 .ftr__more{display:flex; flex-wrap:wrap; gap:6px 20px; margin-top:40px}
 .ftr .ftr__more a{display:inline; padding:0; font-size:inherit}
+/* iPhone: no double-tap zoom anywhere (touch-action isn't inherited in every Safari, so set it on everything) */
+html,body,*{touch-action:manipulation}
+.fhero .fdisc{touch-action:pan-y}
+.fmts,.crate__stage,.cratem__row{touch-action:pan-x pan-y}
