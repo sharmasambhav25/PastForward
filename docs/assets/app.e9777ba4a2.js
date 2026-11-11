@@ -1088,6 +1088,8 @@ function render(opt = {}) {
     replaceUrl('/product/' + seg[1] + (params.toString() ? '?' + params.toString() : ''));
     return render(opt);
   }
+  // the Shopify-only custom product lives on our Custom page
+  if ((seg[0] === 'product' || seg[0] === 'products') && seg[1] === 'custom-album-artwork') { replaceUrl('/custom'); return render(opt); }
   // products that were renamed keep their old address
   if (seg[0] === 'product' && !bySlug[seg[1]] && CAT.aliases && bySlug[CAT.aliases[seg[1]]]) {
     replaceUrl('/product/' + CAT.aliases[seg[1]] + (params.toString() ? '?' + params.toString() : ''));
