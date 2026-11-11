@@ -1,33 +1,28 @@
 # PastForward
 
-> Real 12-inch upcycled vinyl records with album art pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted and shipped across India.
+> Real 12-inch upcycled records with the album printed on the centre label, made to hang. Posters, prints and polaroids too. Delivered across India.
+
+PastForward makes wall decor from music. The main product is an upcycled record: a real 12-inch vinyl record that already had a life, cleaned up, with album artwork printed on the centre label. It is sold to hang on a wall, not to play, and comes with a wall hook. The same designs are also sold as posters, square prints and polaroid-style cards. Anything not in the catalogue can be requested as a custom order.
 
 - **Website**: https://pastforward.shop
-- **Checkout & Store Domain**: https://shop.pastforward.shop
-- **Location**: India (Pan-India delivery to all postal codes)
-- **Primary Currency**: INR (₹)
-- **Contact**: team@pastforward.shop
-- **Instagram**: https://instagram.com/pastforward.shop
+- **Delivers to**: India only
+- **Delivery time**: 7–10 days from order
+- **Delivery cost**: Delivery is free, anywhere in India.
+- **Payment**: UPI, cards and net banking. Cash on delivery isn't available yet.
+- **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
+- **Contact**: contact@pastforward.shop · Instagram @pastforward.shop
 
-## Formats & Pricing
-- **Upcycled Vinyl Record (12-inch, ⌀305mm)**: ₹999. Authentic vintage 12-inch phonograph record with high-definition printed UV centre label artwork. Wall hook included; ready to hang out of the box. Zero virgin plastic pressed.
-- **A3 Music Art Poster (297 × 420mm)**: ₹299. Gallery-grade 300 GSM matte poster print. Standard frame fit.
-- **10×10 Square Music Art Print (254 × 254mm)**: ₹249. Scaled 1:1 to classic vinyl album sleeve dimensions on 300 GSM cardstock.
-- **A5 Music Poster (148 × 210mm)**: ₹199. Compact 300 GSM fine art desk print.
-- **Polaroid Music Card (88 × 107mm)**: ₹99. Heavyweight cardstock keepsake mini print with retro cream border.
+## Formats and prices
+- **Vinyl** (12-inch record, ⌀305mm): ₹999
+- **A3 poster** (297 × 420mm): ₹299
+- **A5 poster** (148 × 210mm): ₹199
+- **10×10 print** (254 × 254mm): ₹249
+- **Polaroid card**: ₹99
 
-## Key Offerings & Artists
-- **Catalogue Artists**: Pink Floyd, Travis Scott, Taylor Swift, Billie Eilish, Frank Ocean, The Weeknd, Lana Del Rey, Eminem, Kendrick Lamar, Nirvana, Arctic Monkeys, AP Dhillon, Diljit Dosanjh, Seedhe Maut, and more.
-- **Custom Design Piece ("Made to Order")**: Upload or request any artist, album, mixtape, or personal Spotify playlist. PastForward designs, inspects, and presses custom orders to any format.
-- **Bundle Discounts**: Multi-piece savings automatically applied in crate when ordering three or more items.
-
-## Machine-Readable Resources
-- **Full Catalogue Context**: https://pastforward.shop/llms-full.txt
-- **Machine-Readable Pricing**: https://pastforward.shop/pricing.md
-- **Brand Provenance & Craft**: https://pastforward.shop/about.md
-
-## Ordering & Fulfillment
-- **Checkout**: Secure payment via Shopify on `shop.pastforward.shop` supporting UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, Net Banking.
-- **Packaging**: Multi-ply unbendable corrugated mailers and water-resistant bubble sleeves preventing warping during transit across India.
-- **Delivery**: 5 to 7 business days pan-India with live courier tracking.
-- **Replacement Policy**: 100% free replacement within 7 days for transit damage.
+## Pages
+- [Vinyls](https://pastforward.shop/vinyl)
+- [A3 posters](https://pastforward.shop/posters/a3) · [A5 posters](https://pastforward.shop/posters/a5) · [10×10 prints](https://pastforward.shop/posters/10x10)
+- [Polaroids](https://pastforward.shop/polaroids)
+- [Custom orders](https://pastforward.shop/custom)
+- [Questions](https://pastforward.shop/faq)
+- [Full catalogue for assistants](https://pastforward.shop/llms-full.txt)

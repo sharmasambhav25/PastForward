@@ -2234,3 +2234,115 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 /* hero record: sideways drags spin it on touch screens, vertical drags still scroll */
 .fhero .fdisc{touch-action:pan-y}
 @media(hover:none){ .card:hover{transform:none} .card:hover .card__media{box-shadow:none} }
+
+/* ============================================================
+   Nov 2026 — the sell-through pass
+   Reassurance, a faster way to buy, phones first. Everything here
+   states only what src/site.json says is true.
+   ============================================================ */
+
+/* ---- before the app boots: the mark on black, painted by the HTML itself ---- */
+#boot{display:none}
+.js #boot{position:fixed; inset:0; z-index:989; background:#050405; display:grid; place-items:center;
+  transition:opacity 380ms var(--e-out-expo)}
+.js #boot img{width:min(340px,54vw); height:auto}
+#boot.is-out{opacity:0; pointer-events:none}
+#pre.pre--warm .pre__mark{opacity:1; animation:none}   /* the mark is already on screen; don't fade it in twice */
+
+/* ---- the page as plain HTML, for anything that reads it without running scripts ---- */
+#pf-seo{max-width:880px; margin:0 auto; padding:48px 24px 64px; line-height:1.7}
+#pf-seo a{color:var(--rose); text-decoration:underline; text-underline-offset:3px}
+#pf-seo h1{font-family:var(--display); font-weight:500; font-size:clamp(1.8rem,5vw,3rem); line-height:1.1; margin:.5em 0}
+#pf-seo h2{font-family:var(--display); font-weight:500; font-size:1.4rem; margin:1.6em 0 .4em}
+#pf-seo h3{font-size:1rem; margin:1.2em 0 .2em}
+#pf-seo ul{padding-left:1.2em}
+#pf-seo nav{margin-top:40px; padding-top:20px; border-top:1px solid var(--border)}
+.js #pf-seo{display:none}
+
+/* ---- small line icons ---- */
+.ico{width:14px; height:14px; flex:none; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+
+/* ---- reassurance: what's true about buying here, said once, near the button ---- */
+.assure{list-style:none; margin:18px 0 0; padding:0; display:grid; gap:9px 18px; grid-template-columns:repeat(2,minmax(0,1fr));
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(243,239,232,.74)}
+.assure li{display:flex; align-items:flex-start; gap:8px; line-height:1.45}
+.assure .ico{color:var(--ember); margin-top:1px}
+.assure--band{margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px 26px; max-width:860px}
+@media(max-width:767px){.assure--band{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 14px; text-align:left; padding-inline:var(--gutter); width:100%}}
+.payline{display:flex; align-items:center; gap:8px; margin:14px 0 0; line-height:1.5}
+.payline .ico{color:var(--muted)}
+.receipt .ok{color:var(--success)}
+
+/* ---- phones: the home page's bestsellers, and a visible add button on every card ---- */
+.best{padding-block:46px 54px}
+@media(min-width:768px){.best{padding-block:96px 104px}}
+.best .cap{color:var(--ember)}
+.fhero__subm{display:block; margin-top:10px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; color:rgba(243,239,232,.74)}
+@media(hover:none){
+  .card__add{transform:none; left:auto; right:8px; bottom:8px; width:38px; height:38px; border-radius:50%;
+    font-size:0; letter-spacing:0; box-shadow:var(--sh-card)}
+  .card__add::before{content:"+"; font-size:1.2rem; line-height:1; font-family:var(--body)}
+  .card__add:active{transform:scale(.9)}
+}
+
+/* ---- catalogue: an artist with a single piece is the product itself ---- */
+.ag--solo .ag__head{text-decoration:none; color:inherit}
+.ag__alb{font-size:.86rem; line-height:1.3; color:rgba(243,239,232,.8)}
+.ag__quick{position:absolute; right:0; bottom:4px; width:32px; height:32px; border-radius:50%; border:1px solid var(--border-2);
+  background:none; color:var(--cream); cursor:pointer; font-size:1.05rem; line-height:1; display:grid; place-items:center;
+  transition:background .2s, border-color .2s, transform .28s var(--e-spring)}
+.ag__quick:hover{background:var(--oxblood); border-color:var(--oxblood)}
+.ag__quick:active{transform:scale(.9)}
+.ag__quick:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+@media(max-width:767px){.ag__quick{width:38px; height:38px}}
+
+/* ---- product page ---- */
+.pdp__top{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:24px}
+.pdp__share{all:unset; cursor:pointer; color:var(--muted); padding:6px 0; white-space:nowrap; transition:color .2s}
+.pdp__share:hover{color:var(--cream)}
+.pdp__share:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+.pdp__blurb{margin:14px 0 0; color:rgba(243,239,232,.8); font-size:.98rem; line-height:1.6; max-width:54ch}
+.pdp__buy{width:100%; margin-top:10px}
+.btn.is-done,.btn.is-done:hover{background:var(--success)}
+
+/* ---- the crate drawer: one add-on that belongs with what's in it ---- */
+.addon{display:flex; align-items:center; gap:12px; padding:10px 12px; margin-bottom:14px; border:1px dashed var(--border-2);
+  background:rgba(243,239,232,.025)}
+.addon img{width:40px; height:40px; object-fit:contain; flex:none; background:var(--elevated)}
+.addon__t{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; font-family:var(--display); font-size:.92rem; line-height:1.2}
+.addon__t span:last-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.addon__b{flex:none; height:34px; padding:0 14px; border-radius:999px; border:1px solid var(--border-2); background:none;
+  color:var(--cream); font-family:var(--mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
+  white-space:nowrap; transition:background .2s, border-color .2s}
+.addon__b:hover,.addon__b:active{background:var(--oxblood); border-color:var(--oxblood)}
+
+/* ---- forms that say what they do ---- */
+.formnote{margin:16px 0 0; padding:14px 16px; border:1px solid var(--border-2); background:var(--elevated); font-size:.95rem; line-height:1.5; max-width:560px}
+.formnote a,.acc .panel__in a,.policy a{color:var(--ember)}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px}
+.customform{margin-top:40px; display:grid; gap:18px; max-width:560px}
+.frow{display:grid; gap:18px; grid-template-columns:1fr 1fr}
+@media(max-width:560px){.frow{grid-template-columns:1fr}}
+.custom-summary{background:var(--elevated); border:1px solid var(--border); border-radius:3px; padding:16px 20px;
+  display:flex; justify-content:space-between; align-items:center; gap:14px; margin-top:4px}
+.reach{display:grid; gap:10px; grid-template-columns:repeat(3,minmax(0,1fr)); margin-bottom:22px}
+.reach__a{display:flex; flex-direction:column; gap:6px; padding:16px 18px; border:1px solid var(--border-2);
+  font-family:var(--display); font-size:1.05rem; line-height:1.2; overflow-wrap:anywhere;
+  transition:border-color .2s, transform .28s var(--e-spring)}
+.reach__a:hover{border-color:var(--ember); transform:translateY(-2px)}
+.reach__a:active{transform:scale(.985)}
+@media(max-width:640px){.reach{grid-template-columns:1fr}}
+
+/* ---- footer / the list ---- */
+.listform{display:flex; gap:8px; flex-wrap:wrap}
+.listform input{flex:1; min-width:150px; background:var(--elevated); border:1px solid var(--border); padding:12px;
+  border-radius:2px; color:var(--cream); font-size:16px}
+.listform--lg{justify-content:center; max-width:460px; width:100%}
+.dropcta{width:100%; display:flex; flex-direction:column; align-items:center}
+.ftr a.btn{display:inline-flex; padding:0 22px; color:var(--cream); font-size:.72rem}
+.ftr__facts{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:6px}
+.ftr__base{display:flex; flex-wrap:wrap; gap:14px 22px; justify-content:space-between; align-items:center;
+  margin-top:44px; padding-top:20px; border-top:1px solid var(--border)}
+.ftr__base a{display:inline; padding:0; font-size:inherit}
+.ftr__legal{display:flex; gap:18px}

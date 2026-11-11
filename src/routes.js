@@ -129,7 +129,7 @@ function viewHome() {
 
     </div>
 
-    <p class="fhero__tagm">${TAGLINE}</p>
+    <p class="fhero__tagm">${TAGLINE}<span class="fhero__subm">Upcycled 12-inch records · Made to hang</span></p>
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
@@ -151,10 +151,11 @@ function viewHome() {
       <p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>
       <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
       <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Shop the sale</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+      ${assureHTML('vinyl', 'assure--band')}
     </div>
   </section>
 
-  ${window.matchMedia('(max-width:767px)').matches ? '' : crateHTML()}
+  ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
 
   <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
   ${formatsHTML()}
@@ -185,13 +186,27 @@ function viewHome() {
     <div class="wrap" style="display:flex;flex-direction:column;align-items:center;gap:26px;position:relative;z-index:2">
       ${recordHTML(closeRec, { size: 300, big: true, id: 'droprec' })}
       <h2 class="d-l reveal" style="margin-top:10px">Be first to the next drop.</h2>
-      <p class="body-l dim reveal">New records, limited runs, no spam.</p>
-      <form data-form="newsletter" class="reveal" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:460px;width:100%">
-        <input name="email" type="email" required placeholder="your@email.com" aria-label="Email"
-          style="flex:1;min-width:200px;background:var(--elevated);border:1px solid var(--border);padding:14px;border-radius:2px">
-        <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button>
-      </form><div data-form-msg></div>
+      <p class="body-l dim reveal">New records and limited runs.</p>
+      <div class="reveal dropcta">${listHTML('listform--lg')}</div>
       <div style="margin-top:14px">${TAGLINE}</div>
+    </div>
+  </section>`;
+}
+
+/* The bestsellers as a grid you can buy from. Phones always get this (the crate below is a
+   desktop piece; on a phone the home page used to show no record you could actually tap), and
+   so does any larger screen where the 3D crate can't run (no GPU, or the module didn't arrive). */
+function bestHTML(n = 6) {
+  const list = crateList().slice(0, n);
+  return `
+  <section class="best sec ground" data-section="BESTSELLERS">
+    <div class="wrap">
+      <div class="cap">BESTSELLERS</div>
+      <h2 class="d-m reveal" style="margin:10px 0 22px">The ones everyone's taking home.</h2>
+      <div class="grid best__grid">${list.map(p => cardHTML(p, 'vinyl')).join('')}</div>
+      <div style="text-align:center;margin-top:28px">
+        <a class="btn btn--secondary" href="#/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
+      </div>
     </div>
   </section>`;
 }
@@ -429,7 +444,7 @@ function mountCrateSection(onUnmount) {
     });
   };
   let api = null;
-  if (window.mountCrate) {
+  if (window.mountCrate && fastGL()) {
     try {
       api = window.mountCrate(root, list.map(p => ({ slug: p.slug, image: imgSrc(variant(p, 'vinyl').image) })), {
         reducedMotion: RM(),
@@ -440,7 +455,7 @@ function mountCrateSection(onUnmount) {
   }
   // the live wallpaper; ?wall=dots|chrome|blobs previews the other looks
   const wallHost = document.getElementById('cratewall');
-  if (wallHost && window.mountWallpaper && !window.matchMedia('(max-width:767px)').matches) {
+  if (wallHost && window.mountWallpaper && !isPhone() && fastGL()) {
     try {
       const mode = new URLSearchParams(location.search).get('wall') || new URLSearchParams(routeHash().split('?')[1] || '').get('wall') || 'contours';
       const wall = window.mountWallpaper(wallHost, { mode, focus: innerWidth / innerHeight < 0.8 ? [0.5, 0.48] : [0.56, 0.5], reducedMotion: RM() });
@@ -518,6 +533,22 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
   const from = Math.min(...prices), id = 'ag' + idx;
   const n = items.length, word = n === 1 ? 'album' : 'albums';
+  // one artist, one piece: nothing to pick between, so the card IS the product (no dropdown step)
+  const only = n === 1 ? routeFormats.map(f => variant(first, f)).filter(Boolean) : [];
+  if (only.length === 1) {
+    const v = only[0];
+    return `<div class="ag ag--solo" data-artist="${esc(artist)}">
+      <a class="ag__head" href="#/product/${first.slug}?format=${v.format}"${artistPhoto && v.format === 'vinyl' ? '' : ` data-card="${first.slug}"`}>
+        <span class="card__media ag__media" style="aspect-ratio:${ar}" data-media>${cover}</span>
+        <span class="ag__meta">
+          <span class="ag__name">${esc(artist)}</span>
+          <span class="ag__alb">${albumOf(first)}</span>
+          <span class="ag__sub mono-xs"><span>${priceHTML(v.format, v.price)}</span></span>
+        </span>
+      </a>
+      <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart">+</button>
+    </div>`;
+  }
   // artist → album → size: an album with several sizes is its own step, so the list stays short
   const thumbOf = (p, v) => v.format === 'vinyl' ? `<span class="ag__thumb ag__thumb--rec">${recordHTML(p, { size: 52 })}</span>`
     : `<span class="ag__thumb"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
@@ -644,7 +675,7 @@ function viewCatalog(category, subType, params) {
   const cnt = f => P.filter(p => p.variants.some(v => v.format === f)).length;
   const posterTotal = P.filter(p => p.variants.some(v => ['poster-a3', 'poster-a5', 'print-10'].includes(v.format))).length;
   const on = (k, v) => params.getAll(k).includes(v) ? 'checked' : '';
-  const shown = +(params.get('n') || 24);
+  const shown = +(params.get('n') || 60);
   const byArtist = category === 'vinyl' || category === 'posters' || category === 'polaroids';
   const groups = byArtist ? artistGroups(list) : null;
   const total = byArtist ? groups.length : list.length;
@@ -778,16 +809,25 @@ function activePills(params) {
 }
 
 /* ============================== PDP ============================== */
+/* Which format a product page opens on: ?format=poster-a3 (links inside the site), or
+   ?variant=<Shopify variant id> (what catalogue ads and Shopify's own links carry), else the first. */
+function formatFromParams(p, params) {
+  const f = params.get('format'); if (f && variant(p, f)) return f;
+  const vid = params.get('variant');
+  if (vid) { const v = p.variants.find(x => String((window.__SHOPIFY_VARIANTS__ || {})[x.sku]) === vid); if (v) return v.format; }
+  return primary(p).format;
+}
 function viewProduct(p, params) {
-  const sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
+  const sel = formatFromParams(p, params);
   const v = variant(p, sel);
   const col = COLS.find(c => p.tags.includes(c.slug));
   const related = P.filter(x => x.slug !== p.slug && (col ? x.tags.includes(col.slug) : x.artist === p.artist)).slice(0, 4);
   const rel2 = related.length ? related : P.filter(x => x.slug !== p.slug).slice(0, 4);
   return `<div class="pliq" id="pliq" aria-hidden="true"></div>
   <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
-    <div class="mono-xs dim" style="margin-bottom:24px">
-      <a href="#/vinyl">CATALOGUE</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span>
+    <div class="pdp__top mono-xs dim">
+      <span><a href="#/vinyl">CATALOGUE</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span></span>
+      <button class="pdp__share" type="button" data-share>Share <span aria-hidden="true">↗</span></button>
     </div>
     <div class="pdp">
       <div>
@@ -806,6 +846,7 @@ function viewProduct(p, params) {
         <div class="card__artist">${esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
+        <p class="pdp__blurb" id="pdpblurb">${esc((p.blurbs || {})[sel] || '')}</p>
 
         <div class="fmt" style="margin-top:28px">
           ${Object.entries(FMT).map(([k, f]) => {
@@ -821,16 +862,18 @@ function viewProduct(p, params) {
           <span class="qty"><button data-pq="-1" aria-label="Decrease">−</button><span class="num" id="pdpqty">1</span><button data-pq="1" aria-label="Increase">+</button></span>
           <button class="btn btn--primary" style="flex:1;min-width:180px" id="pdpadd"><span class="btn__mag">Add to cart</span></button>
         </div>
+        <button class="btn btn--secondary pdp__buy" id="pdpbuy" data-buynow><span class="btn__mag">Buy now</span></button>
+        <div id="pdpassure">${assureHTML(sel)}</div>
+        <p class="payline mono-xs dim">${payLine()}</p>
 
-        <div class="spec" style="margin-top:32px">
+        <div class="spec" style="margin-top:28px">
           <div id="whatyouget">${sel === 'vinyl' ? 'Upcycled 12-inch record, printed centre label' : sel === 'polaroid' ? 'Polaroid-style card, cream border' : FMT[sel].label + ', printed to order'}</div>
           <div id="hangnote">${sel === 'vinyl' ? 'Wall hook included' : 'Ready for your wall'}</div>
-          <div>Delivered in ${DELIVERY} across India</div>
         </div>
 
         <div style="margin-top:28px">
           <div class="acc"><button aria-expanded="false">Shipping &amp; returns <span>+</span></button>
-            <div class="panel"><div class="panel__in">Delivered in ${DELIVERY} anywhere in India. If it arrives damaged, email us within 7 days of delivery and we'll put it right. Full details in <a href="#/policies/shipping" style="color:var(--ember)">shipping</a> and <a href="#/policies/returns" style="color:var(--ember)">returns</a>.</div></div></div>
+            <div class="panel"><div class="panel__in">Delivered in ${DELIVERY} anywhere in India${SHIP.free && !SHIP.freeFrom ? ', and delivery is free' : ''}.${SHIP.free && SHIP.freeFrom ? ' ' + esc(SHIP.line) : ''} If it arrives damaged, email us within 7 days of delivery and we'll put it right. Full details in <a href="#/policies/shipping">shipping</a> and <a href="#/policies/returns">returns</a>.</div></div></div>
           <div class="acc" id="hangacc" ${sel === 'vinyl' ? '' : 'hidden'}><button aria-expanded="false">How it hangs <span>+</span></button>
             <div class="panel"><div class="panel__in">Every record comes with a wall hook in the box. Put the hook up, hang the record on it, done.</div></div></div>
           <div class="acc"><button aria-expanded="false">Care <span>+</span></button>
@@ -899,51 +942,63 @@ function viewCollection(slug, params) {
 }
 
 /* ============================== CUSTOM ============================== */
+/* Two ways a custom order can be confirmed:
+   - canPay: the "Custom Album Artwork" product exists in Shopify (SKUs PF-CUSTOM-* in
+     shopify_variants.json) -> the button takes payment on the Shopify checkout.
+   - otherwise: the request goes out over WhatsApp (or email) already written, and payment
+     follows by link. The page says which of the two is happening. */
 function viewCustom() {
   const defaultFormat = FMT.vinyl;
+  const canPay = !!customVariantId('vinyl');
+  const stepsList = canPay
+    ? [['01', 'Choose format & album'], ['02', 'Pay to confirm your order'], ['03', 'We craft it and ship it']]
+    : [['01', 'Choose format & album'], ['02', 'We confirm the artwork and send a payment link'], ['03', 'We craft it and ship it']];
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
     <div style="display:grid;gap:56px" id="customgrid">
       <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
         <h1 class="d-l" style="max-width:14ch">Not in the catalogue? Say the word.</h1>
-        <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Choose your format, enter the details, and confirm your piece.</p>
-        <form data-form="custom" data-success="Got it. We'll be in touch." style="margin-top:40px;display:grid;gap:18px;max-width:560px">
-          <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>Name</span><input name="name" required placeholder="Your name"></label>
-            <label class="field"><span>Email</span><input name="email" type="email" required placeholder="your@email.com"></label>
+        <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Choose your format, tell us the artist and the album, and we'll make it.</p>
+        <form data-form="custom" data-success="Got it. We'll be in touch." class="customform">
+          <div class="frow">
+            <label class="field"><span>Artist</span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>
+            <label class="field"><span>Album or track</span><input name="album" required placeholder="e.g. Utopia" autocomplete="off"></label>
           </div>
-          <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>WhatsApp (for order confirmation)</span><input name="whatsapp" placeholder="+91 98765 43210" required></label>
+          <div class="frow">
             <label class="field"><span>Format</span><select name="format" id="customformat">${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)} · ${money(f.price)}</option>`).join('')}</select></label>
+            <label class="field"><span>Your name</span><input name="name" required placeholder="Your name" autocomplete="name"></label>
           </div>
-          <div style="display:grid;gap:18px;grid-template-columns:1fr 1fr">
-            <label class="field"><span>Artist</span><input name="artist" required placeholder="e.g. Travis Scott"></label>
-            <label class="field"><span>Album or track</span><input name="album" required placeholder="e.g. Utopia"></label>
+          <div class="frow">
+            <label class="field"><span>WhatsApp number</span><input name="whatsapp" type="tel" inputmode="tel" placeholder="+91 98765 43210" required autocomplete="tel"></label>
+            <label class="field"><span>Email${canPay ? '' : ' (optional)'}</span><input name="email" type="email" ${canPay ? 'required' : ''} placeholder="your@email.com" autocomplete="email"></label>
           </div>
-          <label class="field"><span>Reference link (optional image or Spotify)</span><input name="ref" placeholder="https://..."></label>
+          <label class="field"><span>Reference link (optional image or Spotify)</span><input name="ref" inputmode="url" placeholder="https://..."></label>
           <label class="field"><span>Notes or special requests</span><textarea name="notes" rows="3" placeholder="Tell us if you want specific album art, text, or styling"></textarea></label>
 
-          <!-- Price Summary Box -->
-          <div class="custom-summary" id="customsummary" style="background:var(--elevated);border:1px solid var(--border);border-radius:3px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <div class="custom-summary" id="customsummary">
             <div>
-              <div class="mono-xs dim" style="letter-spacing:.12em;text-transform:uppercase" id="customsummaryformat">Format: ${esc(defaultFormat.label)} (${esc(defaultFormat.size)})</div>
-              <div class="body-s" style="margin-top:4px;color:var(--muted)">Includes custom design, printing & safe packaging</div>
+              <div class="mono-xs dim" id="customsummaryformat">Format: ${esc(defaultFormat.label)} (${esc(defaultFormat.size)})</div>
+              <div class="body-s dim" style="margin-top:4px">Includes custom design, printing and safe packaging${SHIP.free && !SHIP.freeFrom ? ', with free delivery' : ''}</div>
             </div>
             <div style="text-align:right">
               <div class="num" id="customsummaryprice" style="font-size:1.35rem;font-weight:600;color:var(--cream)">${money(defaultFormat.price)}</div>
-              <div class="mono-xs dim" style="font-size:.65rem;letter-spacing:.1em">CONFIRMED ON CHECKOUT</div>
+              <div class="mono-xs dim" style="font-size:.6rem">${canPay ? 'PAID AT CHECKOUT' : 'PAID BY LINK'}</div>
             </div>
           </div>
 
-          <button class="btn btn--primary" id="customsubmitbtn" style="justify-self:start;margin-top:6px">
-            <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} & Confirm Order</span>
-          </button>
-          <div class="mono-xs dim" style="margin-top:10px;line-height:1.6">🔒 Payments processed securely via Shopify · UPI (GPay / PhonePe / Paytm), Cards &amp; Net Banking</div>
+          ${canPay ? `<button class="btn btn--primary" id="customsubmitbtn" style="justify-self:start">
+              <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} and confirm</span></button>
+            <p class="payline mono-xs dim">${payLine()}</p>`
+          : `<div class="btnrow">
+              <button class="btn btn--primary" id="customsubmitbtn" data-via="whatsapp"><span class="btn__mag">Send request on WhatsApp</span></button>
+              <button class="btn btn--secondary" data-via="email"><span class="btn__mag">Send by email</span></button>
+            </div>
+            <p class="body-s dim" style="margin:0">Opens with your request already written. We confirm the artwork there and send a payment link for <span id="custombtntext">${money(defaultFormat.price)}</span>.</p>`}
         </form>
         <div data-form-msg></div>
         <p class="body-s dim" style="margin-top:24px">Every piece is custom made and quality inspected before dispatch.</p>
         <div class="steps" style="margin-top:64px">
-          ${[['01', 'Choose format & album'], ['02', 'Pay to confirm your order'], ['03', 'We craft it and ship it']].map(([n, t]) =>
+          ${stepsList.map(([n, t]) =>
             `<div class="reveal"><div class="mono num" style="color:var(--oxblood)">${n}</div>
               <div class="d-s" style="margin-top:8px">${t}</div>${wave('wave--divider', 'margin-top:14px')}</div>`).join('')}
         </div>
@@ -958,7 +1013,6 @@ function viewCustom() {
           <figcaption class="mono-xs dim">EVERY ORDER IS PRINTED TO ORDER</figcaption></figure>
         <h4 class="mono dim" style="margin:26px 0 14px">Formats we can make</h4>
         <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''} <span class="num" style="float:right;color:var(--cream)">${money(f.price)}</span></div>`).join('')}</div>
-        <p class="body-s dim" style="margin-top:20px">Orders are confirmed upon checkout so our studio can immediately begin production.</p>
       </aside>
     </div></div>`;
 }
@@ -977,22 +1031,18 @@ function mountCustom() {
     titleInput?.addEventListener('input', sync);
   }
 
-  // Dynamic pricing & summary sync
+  // price follows the format
   const formatSelect = form.querySelector('[name="format"]');
   const btnText = document.getElementById('custombtntext');
   const sumFormat = document.getElementById('customsummaryformat');
   const sumPrice = document.getElementById('customsummaryprice');
-
+  const canPay = !!customVariantId('vinyl');
   const updatePrice = () => {
-    const fKey = formatSelect?.value || 'vinyl';
-    const f = FMT[fKey] || FMT.vinyl;
-    const priceFormatted = money(f.price);
-    if (btnText) btnText.textContent = `Pay ${priceFormatted} & Confirm Order`;
-    if (sumPrice) sumPrice.textContent = priceFormatted;
-    const sizeStr = f.size && f.size !== '[CONFIRM]' ? ` (${f.size})` : '';
-    if (sumFormat) sumFormat.textContent = `Format: ${f.label}${sizeStr}`;
+    const f = FMT[formatSelect?.value || 'vinyl'] || FMT.vinyl;
+    if (btnText) btnText.textContent = canPay ? `Pay ${money(f.price)} and confirm` : money(f.price);
+    if (sumPrice) sumPrice.textContent = money(f.price);
+    if (sumFormat) sumFormat.textContent = `Format: ${f.label}${sizeOf(f) ? ` (${sizeOf(f)})` : ''}`;
   };
-
   formatSelect?.addEventListener('change', updatePrice);
   updatePrice();
 }
@@ -1071,38 +1121,30 @@ function viewStory() {
 
 /* ============================== FAQ / CONTACT ============================== */
 function viewFaq() {
-  const qs = [
-    ['Is it a real vinyl record?', `Yes. A real 12-inch upcycled record. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor.`],
-    ['Can I play it?', `It's sold to hang, not to play. These are real records, so the grooves are real — but we make no promise about what's on them or how it sounds, and the label carries our artwork rather than the original. Treat it as a wall piece.`],
-    ['Why upcycled and not new?', `Because a record that already had a life is the whole point of the name. It also means no two are identical, and nothing new gets pressed just to hang on a wall.`],
-    ['What sizes do you make?', `<div class="spec" style="margin-top:6px">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''}</div>`).join('')}</div>`],
-    ['How does a record hang?', 'Every record comes with a wall hook in the box. Put the hook up and hang the record on it.'],
-    ['How long does delivery take?', `${DELIVERY} from when you order, anywhere in India.`],
-    ['Do you ship outside India?', 'Not yet. We deliver anywhere in India for now.'],
-    ['What if it arrives damaged?', `Email <a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a> within 7 days of delivery with a photo, and we'll put it right. See <a href="#/policies/returns" style="color:var(--ember)">returns</a>.`],
-    ['Can you make one that isn\'t on the site?', `Yes. That's what <a href="#/custom" style="color:var(--ember)">custom orders</a> are for — tell us the album and we'll quote you.`],
-    ['How do I look after it?', `Wipe with a dry cloth. Keep it out of direct sunlight — same as the original.`]
-  ];
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">Questions.</h1>
-    <p class="body-l dim" style="margin:16px 0 40px">Some of these we can't answer honestly yet. Those are marked, not guessed.</p>
-    ${qs.map(([q, a]) => `<div class="acc"><button aria-expanded="false">${esc(q)} <span>+</span></button>
+    <p class="body-l dim" style="margin:16px 0 40px">The short answers. Anything else, <a href="#/contact" style="color:var(--ember)">ask us</a>.</p>
+    ${(SITE.faq || []).map(([q, a]) => `<div class="acc"><button aria-expanded="false">${esc(q)} <span>+</span></button>
       <div class="panel"><div class="panel__in">${a}</div></div></div>`).join('')}</div>`;
 }
 function viewContact() {
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">Talk to us.</h1>
-    <p class="body-l dim" style="margin:16px 0 36px">Two reasons people usually write: an order that's already placed, or an album we haven't made yet.</p>
-    <div class="spec" style="margin-bottom:40px">
-      <div>Order questions — DM <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" style="color:var(--ember)">@pastforward.shop</a></div>
-      <div>Something not in the catalogue — <a href="#/custom" style="color:var(--ember)">custom orders</a></div>
-      <div>Email — <a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a></div>
+    <p class="body-l dim" style="margin:16px 0 28px">Two reasons people usually write: an order that's already placed, or an album we haven't made yet.</p>
+    <div class="reach">
+      <a class="reach__a" href="${waLink('Hi PastForward, ')}" target="_blank" rel="noopener"><span class="mono-xs dim">WhatsApp</span><span>Message us</span></a>
+      <a class="reach__a" href="${IG_URL}" target="_blank" rel="noopener"><span class="mono-xs dim">Instagram</span><span>@${esc(SITE.instagram)}</span></a>
+      <a class="reach__a" href="mailto:${CONTACT_EMAIL}"><span class="mono-xs dim">Email</span><span>${CONTACT_EMAIL}</span></a>
     </div>
+    <p class="body-s dim" style="margin:0 0 36px">Want an album that isn't in the catalogue? <a href="#/custom" style="color:var(--ember)">Start a custom order</a>.</p>
+    <h2 class="d-s" style="margin:0 0 18px">Or write it here</h2>
     <form data-form="contact" data-success="Message sent. We'll reply." style="display:grid;gap:18px;max-width:520px">
-      <label class="field"><span>Name</span><input name="name" required></label>
-      <label class="field"><span>Email</span><input name="email" type="email" required></label>
-      <label class="field"><span>Message</span><textarea name="message" rows="4" required></textarea></label>
-      <button class="btn btn--primary" style="justify-self:start"><span class="btn__mag">Send</span></button>
+      <label class="field"><span>Name</span><input name="name" required autocomplete="name"></label>
+      <label class="field"><span>Message</span><textarea name="message" rows="4" required placeholder="If it's about an order, include the order number"></textarea></label>
+      <div class="btnrow">
+        <button class="btn btn--primary" data-via="whatsapp"><span class="btn__mag">Send on WhatsApp</span></button>
+        <button class="btn btn--secondary" data-via="email"><span class="btn__mag">Send by email</span></button>
+      </div>
     </form><div data-form-msg></div>
     <p class="body-s dim" style="margin-top:20px">We usually reply right away.</p></div>`;
 }
@@ -1126,13 +1168,12 @@ function viewCart() {
       <div class="receipt" style="margin-top:32px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
         ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
-        <div class="row"><span>Shipping</span><span class="dim">Calculated at checkout</span></div>
+        <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
-      <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout · Pay Securely</span></button>
-      <div class="mono-xs dim" style="margin-top:14px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span>🔒 Secure checkout via Shopify</span> · <span>UPI (GPay / PhonePe / Paytm), Cards, Net Banking & COD</span>
-      </div>
+      <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout</span></button>
+      <p class="payline mono-xs dim">${payLine()}</p>
+      ${assureHTML(cart.some(l => l.format === 'vinyl') ? 'vinyl' : '')}
       <h2 class="d-s" style="margin:64px 0 20px">You might also want</h2>
       <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`}</div>`;
 }
@@ -1147,51 +1188,16 @@ function viewWall() {
     <div class="grid">${ratios.map((r, i) => `<div class="emptyframe" style="aspect-ratio:${r}">AWAITING WALL №${i + 1}</div>`).join('')}</div>
     <p class="mono-xs dim" style="margin-top:32px">This page is empty on purpose. Nothing here is a stock photo.</p></div>`;
 }
-/* Policy copy: drafted from PastForward's answers (Nov 2026). Edit here; each section is [heading, html]. */
-const POLICY_UPDATED = '1 November 2026';
-const mail = () => `<a href="mailto:${CONTACT_EMAIL}" style="color:var(--ember)">${CONTACT_EMAIL}</a>`;
-const POLICIES = {
-  shipping: ['Shipping', () => [
-    ['Where we deliver', 'We deliver anywhere in India.'],
-    ['How long it takes', `Every piece is made to order. Your order reaches you within ${DELIVERY} of being placed.`],
-    ['What it costs', 'Any delivery charge is shown at checkout, before you pay.'],
-    ['Your address', `Please check your delivery address and phone number before you order. If something's wrong, email ${mail()} as soon as you can and we'll fix it before it ships.`],
-    ['Questions', `Email ${mail()}. We usually reply right away.`],
-  ]],
-  returns: ['Returns', () => [
-    ['Made to order', "Each piece is printed and put together for your order, so we can't take returns if you change your mind."],
-    ['If it arrives damaged', `If your order arrives damaged, or isn't what you ordered, email ${mail()} within 7 days of delivery. Include your order details and photos of the piece and the packaging. We'll send a replacement, or refund you if we can't.`],
-    ['About the records', "Our records are upcycled: real vinyl that already had a life. Small surface marks on the record are part of that history and aren't counted as damage."],
-    ['Refunds', 'Approved refunds go back to the original payment method.'],
-  ]],
-  privacy: ['Privacy', () => [
-    ['What we collect', 'Only what you give us. When you order: your name, delivery address, phone number and email, so we can deliver. When you use a form: what you type in it, such as your name, email, WhatsApp number, message, or a link to the artwork you want. When you join the list: your email.'],
-    ['What we use it for', 'To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time.'],
-    ['Payments', 'Payments are handled by our payment provider. We never see or store your card or bank details.'],
-    ['Who we share it with', "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
-    ['Your cart and cookies', "Your cart is saved in your own browser so it's still there when you come back. This site doesn't use analytics or advertising trackers."],
-    ['Your rights', `You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email ${mail()}.`],
-  ]],
-  terms: ['Terms', () => [
-    ['Who we are', 'PastForward makes wall decor from music: upcycled vinyl records with album art at the centre, posters, prints and polaroid cards. By ordering from this site you agree to these terms.'],
-    ['The products', 'Our records are for hanging, not playing. Prints are made to order, and colours can look slightly different from how they appear on your screen.'],
-    ['Prices and orders', 'Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can\'t fulfil an order, we\'ll tell you and refund you in full.'],
-    ['Custom orders', 'When you send us an image or artwork to print, you confirm you have the right to use it.'],
-    ['Artwork and names', 'Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label.'],
-    ['Delivery and returns', 'See our <a href="#/policies/shipping" style="color:var(--ember)">shipping</a> and <a href="#/policies/returns" style="color:var(--ember)">returns</a> policies.'],
-    ['Changes', 'We may update these terms. The date at the top shows when they last changed.'],
-    ['The law', 'These terms are governed by the laws of India.'],
-  ]],
-};
+/* Policy copy lives in src/site.json > policies (drafted from PastForward's answers, Nov 2026). */
 function viewPolicy(slug) {
-  const pol = POLICIES[slug];
+  const pol = (SITE.policies || {})[slug];
   if (!pol) return view404();
   const [title, body] = pol;
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">${title}.</h1>
-    <div class="mono-xs dim" style="margin-top:14px">LAST UPDATED — ${POLICY_UPDATED.toUpperCase()}</div>
-    <div class="policy">${body().map(([h, t]) => `<section><h2 class="d-s">${h}</h2><p class="body-l dim">${t}</p></section>`).join('')}</div>
-    <nav class="policy__nav mono-xs" aria-label="Policies">${Object.entries(POLICIES).map(([k, [t]]) => `<a href="#/policies/${k}" class="${k === slug ? 'is-on' : ''}">${t}</a>`).join('')}</nav>
+    <div class="mono-xs dim" style="margin-top:14px">LAST UPDATED — ${esc(String(SITE.policiesUpdated || '').toUpperCase())}</div>
+    <div class="policy">${body.map(([h, t]) => `<section><h2 class="d-s">${h}</h2><p class="body-l dim">${t}</p></section>`).join('')}</div>
+    <nav class="policy__nav mono-xs" aria-label="Policies">${Object.entries(SITE.policies).map(([k, [t]]) => `<a href="#/policies/${k}" class="${k === slug ? 'is-on' : ''}">${t}</a>`).join('')}</nav>
   </div>`;
 }
 function view404() {
@@ -1328,7 +1334,7 @@ function mountHome() {
     if (!host) return;
     const glHost = document.getElementById('fdiscgl');
     let vinylApi = null;
-    if (glHost && window.mountVinyl && !window.matchMedia('(max-width:767px)').matches) {
+    if (glHost && window.mountVinyl && !isPhone() && fastGL()) {
       try { vinylApi = window.mountVinyl(glHost); } catch (e) { vinylApi = null; }
     }
     if (vinylApi) {
@@ -1616,10 +1622,13 @@ function mountHome() {
 
 }
 
-function setParams(mut) {
+/* a change of state on the page you're already on (filter, sort, load more, format, search text).
+   silent: only the address changes; otherwise the page re-renders in place. Neither adds a
+   history entry or moves the scroll position. */
+function setParams(mut, opt = {}) {
   const { path, params } = parseHash(); mut(params);
-  const q = params.toString();
-  navigate(path + (q ? '?' + q : ''));
+  const q = params.toString(), to = path + (q ? '?' + q : '');
+  if (opt.silent) replaceUrl(to); else navigate(to, { replace: true, keepScroll: true });
 }
 function mountCatalog(seg, params) {
   // artist cards: one open at a time, height animated
@@ -1683,7 +1692,7 @@ function mountCatalog(seg, params) {
     }
     pp.delete('n');
     const q = pp.toString();
-    navigate(targetPath + (q ? '?' + q : ''));
+    navigate(targetPath + (q ? '?' + q : ''), { replace: true, keepScroll: true });
   }));
   const sort = $('#sort'); if (sort) sort.addEventListener('change', () => setParams(pp => pp.set('sort', sort.value)));
   $$('[data-unset]').forEach(b => b.addEventListener('click', () => {
@@ -1694,12 +1703,12 @@ function mountCatalog(seg, params) {
     const cur = pp.getAll(k).filter(x => x !== v);
     pp.delete(k); cur.forEach(x => pp.append(k, x));
     const q = pp.toString();
-    navigate(targetPath + (q ? '?' + q : ''));
+    navigate(targetPath + (q ? '?' + q : ''), { replace: true, keepScroll: true });
   }));
   $$('[data-clear]').forEach(b => b.addEventListener('click', () => {
     const { path } = parseHash();
     const basePath = path.startsWith('/posters') ? '/posters' : path;
-    navigate(basePath);
+    navigate(basePath, { replace: true, keepScroll: true });
   }));
   const more = $('#loadmore'); if (more) more.addEventListener('click', () => setParams(pp => pp.set('n', String((+(pp.get('n') || 24)) + 24))));
   // FLIP re-flow
@@ -1729,7 +1738,7 @@ function mountProduct(p, params) {
   if (liq && window.matchMedia('(max-width:767px)').matches) {
     const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
     liq.classList.add('pliq--static'); liq.style.backgroundImage = `url("${imgSrc(artV.image, true)}")`;
-  } else if (liq && window.mountLiquid) {
+  } else if (liq && window.mountLiquid && fastGL()) {
     const artV = variant(p, 'print-10') || variant(p, 'vinyl') || primary(p);
     try {
       const api = window.mountLiquid(liq, imgSrc(artV.image, true), { round: artV.format === 'vinyl', reducedMotion: RM() });
@@ -1737,7 +1746,7 @@ function mountProduct(p, params) {
     } catch (e) {}
   }
   playFlip($('#stagemedia'));
-  let qty = 1, sel = params.get('format') && variant(p, params.get('format')) ? params.get('format') : primary(p).format;
+  let qty = 1, sel = formatFromParams(p, params);
   if (sel === 'vinyl') setTimeout(() => Sound.needleDrop(), 260);
   /* a subtle WebGL ripple on the framed/polaroid stage photo — vinyl stays a real
      composited record, not an <img>, so it's untouched */
@@ -1748,7 +1757,7 @@ function mountProduct(p, params) {
     // record — wrapping it for the ripple shader would fight that, so skip it there.
     if (sel === 'vinyl') return;
     const img = $('#stagemedia img');
-    if (!img || !window.mountImageRipple || window.matchMedia('(max-width:767px)').matches) return;
+    if (!img || !window.mountImageRipple || isPhone() || !fastGL()) return;
     try { rippleCleanup = window.mountImageRipple(img); } catch (e) { rippleCleanup = null; }
   };
   if (!RM()) mountRipple();
@@ -1764,13 +1773,16 @@ function mountProduct(p, params) {
       : f === 'polaroid' ? 'Polaroid-style card, cream border'
       : FMT[f].label + ', printed to order';
     const hn = $('#hangnote'); if (hn) hn.textContent = f === 'vinyl' ? 'Wall hook included' : 'Ready for your wall';
+    const bl = $('#pdpblurb'); if (bl) bl.textContent = (p.blurbs || {})[f] || '';
+    const as = $('#pdpassure'); if (as) as.innerHTML = assureHTML(f);
     const ha = $('#hangacc'); if (ha) ha.hidden = f !== 'vinyl';
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f]); }
     $('#scaleview').innerHTML = scaleSVG(f);
     drawScale();
-    setParams(pp => pp.set('format', f));
+    setParams(pp => pp.set('format', f), { silent: true });   // the address follows; the page stays put
+    Track.view(p, v);
   };
   $$('.fmt button').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
   $$('.pdp__thumb[data-fmt]').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
@@ -1787,11 +1799,23 @@ function mountProduct(p, params) {
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
     qty = Math.max(1, qty + (+b.dataset.pq)); $('#pdpqty').textContent = qty;
   }));
-  const add = e => addToCart(p.slug, sel, qty, e.currentTarget);
+  const add = e => {
+    const btn = e.currentTarget, t = btn.querySelector('.btn__mag');
+    addToCart(p.slug, sel, qty, btn);
+    // the button itself says it worked
+    if (t && !btn.__flash) { btn.__flash = 1; const was = t.textContent; t.textContent = 'Added'; btn.classList.add('is-done');
+      setTimeout(() => { t.textContent = was; btn.classList.remove('is-done'); btn.__flash = 0; }, 1400); }
+  };
   $('#pdpadd').addEventListener('click', add);
   $('#baradd').addEventListener('click', add);
-  const bar = $('#buybar');
-  window.__onScroll = y => { if (bar) bar.classList.toggle('is-on', y > innerHeight * .6); };
+  const buy = $('#pdpbuy');
+  if (buy) buy.addEventListener('click', () => { const v = variant(p, sel); checkout([{ sku: v.sku, qty, price: v.price }], buy); });
+  // the buy bar shows whenever the real button isn't on screen, including on arrival when it sits below the fold
+  const bar = $('#buybar'), mainBtn = $('#pdpadd');
+  if (bar && mainBtn && 'IntersectionObserver' in window) {
+    const bio = new IntersectionObserver(es => es.forEach(e => bar.classList.toggle('is-on', !e.isIntersecting)), { threshold: 0 });
+    bio.observe(mainBtn); onUnmount(() => bio.disconnect());
+  }
   function drawScale() {
     if (RM()) return;
     const svg = $('#scaleview svg'); if (!svg) return;
@@ -1818,6 +1842,6 @@ function mountSearchPage() {
   i.addEventListener('input', () => {
     r.innerHTML = searchResults(i.value);
     bindEffects(r);
-    setParams(pp => i.value ? pp.set('q', i.value) : pp.delete('q'));
+    setParams(pp => i.value ? pp.set('q', i.value) : pp.delete('q'), { silent: true });
   });
 }

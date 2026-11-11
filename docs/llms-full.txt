@@ -1,94 +1,123 @@
-# PastForward — Complete Knowledge Base & Catalogue
+# PastForward — full catalogue and answers
 
-> Complete reference document for AI assistants, LLMs, and autonomous agents.
-> Website: https://pastforward.shop | Checkout: https://shop.pastforward.shop | Support: team@pastforward.shop
+> Real 12-inch upcycled records with the album printed on the centre label, made to hang. Posters, prints and polaroids too. Delivered across India.
 
-## 1. Brand Mission & Sustainability
-PastForward preserves music tangibly by rescuing vintage 12-inch phonograph records and handcrafting them into wall decor with iconic album covers pressed into the centre label. Zero virgin plastics are manufactured. All paper prints are produced on 300 GSM gallery-grade matte art cardstock.
+- **Website**: https://pastforward.shop
+- **Delivers to**: India only
+- **Delivery time**: 7–10 days from order
+- **Delivery cost**: Delivery is free, anywhere in India.
+- **Payment**: UPI, cards and net banking. Cash on delivery isn't available yet.
+- **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
+- **Contact**: contact@pastforward.shop · Instagram @pastforward.shop
 
-## 2. Product Formats & Pricing
-- **Upcycled 12-Inch Vinyl Record**: ₹999 (Authentic 12" vintage vinyl with printed centre label; ready-to-hang wall mount included).
-- **A3 Music Art Poster (297 × 420mm)**: ₹299 (300 GSM matte art paper).
-- **10×10 Square Vinyl Art Print (254 × 254mm)**: ₹249 (1:1 vinyl sleeve proportion).
-- **A5 Music Poster (148 × 210mm)**: ₹199 (Compact desk print).
-- **Polaroid Keepsake Music Card (88 × 107mm)**: ₹99 (Retro cream border cardstock).
-- **Custom Made-to-Order Pieces**: Available for any album or playlist across all formats at standard pricing.
+## Formats and prices
+- **Vinyl** (12-inch record, ⌀305mm): ₹999
+- **A3 poster** (297 × 420mm): ₹299
+- **A5 poster** (148 × 210mm): ₹199
+- **10×10 print** (254 × 254mm): ₹249
+- **Polaroid card**: ₹99
 
-## 3. Complete Catalogue (67 Titles)
-- **Little Things** by ABBA | Starting at ₹999 | https://pastforward.shop/product/abba-little-things
-- **Alag Aasman** by Anuv Jain | Starting at ₹999 | https://pastforward.shop/product/anuv-jain-alag-aasman
-- **Dil Nu** by AP Dhillon | Starting at ₹999 | https://pastforward.shop/product/ap-dhillon-dil-nu
-- **[CONFIRM]** by Arctic Monkeys | Starting at ₹999 | https://pastforward.shop/product/arctic-monkeys
-- **thank u, next** by Ariana Grande | Starting at ₹99 | https://pastforward.shop/product/ariana-grande-thank-u-next
-- **Avīci (01)** by Avicii | Starting at ₹999 | https://pastforward.shop/product/avicii-avici-01
-- **Bad Guy** by Billie Eilish | Starting at ₹99 | https://pastforward.shop/product/billie-eilish-bad-guy
-- **Happier Than Ever** by Billie Eilish | Starting at ₹999 | https://pastforward.shop/product/billie-eilish-happier-than-ever
-- **The Stranger** by Billy Joel | Starting at ₹99 | https://pastforward.shop/product/billy-joel-the-stranger
-- **The Album** by BLACKPINK | Starting at ₹999 | https://pastforward.shop/product/blackpink-the-album
-- **Soothsayer** by Buckethead | Starting at ₹999 | https://pastforward.shop/product/buckethead-soothsayer
-- **Crash** by Charli XCX | Starting at ₹999 | https://pastforward.shop/product/charli-xcx-crash
-- **Nine Track Mind** by Charlie Puth | Starting at ₹999 | https://pastforward.shop/product/charlie-puth-nine-track-mind
-- **Tell Em'** by Cochise | Starting at ₹299 | https://pastforward.shop/product/cochise-tell-em
-- **Parachutes / Yellow** by Coldplay | Starting at ₹99 | https://pastforward.shop/product/coldplay-parachutes-yellow
-- **Don** by Diljit Dosanjh | Starting at ₹99 | https://pastforward.shop/product/diljit-dosanjh-don
-- **One Dance** by Drake | Starting at ₹99 | https://pastforward.shop/product/drake-one-dance
-- **Future Nostalgia** by Dua Lipa | Starting at ₹199 | https://pastforward.shop/product/dua-lipa-future-nostalgia
-- **Houdini** by Dua Lipa | Starting at ₹999 | https://pastforward.shop/product/dua-lipa-houdini
-- **Sapphire** by Ed Sheeran | Starting at ₹299 | https://pastforward.shop/product/ed-sheeran-sapphire
-- **The Death of Slim Shady** by Eminem | Starting at ₹99 | https://pastforward.shop/product/eminem-the-death-of-slim-shady
-- **Blonde** by Frank Ocean | Starting at ₹199 | https://pastforward.shop/product/frank-ocean-blonde
-- **Appetite for Destruction** by Guns N' Roses | Starting at ₹999 | https://pastforward.shop/product/guns-n-roses-appetite-for-destruction
-- **Fine Line** by Harry Styles | Starting at ₹999 | https://pastforward.shop/product/harry-styles-fine-line
-- **Fine Line / Watermelon Sugar** by Harry Styles | Starting at ₹199 | https://pastforward.shop/product/harry-styles-fine-line-watermelon-sugar
-- **Mantra** by Jennie | Starting at ₹999 | https://pastforward.shop/product/jennie-mantra
-- **Goodbye & Good Riddance** by Juice WRLD | Starting at ₹999 | https://pastforward.shop/product/juice-wrld-goodbye-good-riddance
-- **Changes** by Justin Bieber | Starting at ₹999 | https://pastforward.shop/product/justin-bieber-changes
-- **Graduation** by Kanye West | Starting at ₹999 | https://pastforward.shop/product/kanye-west-graduation
-- **At Peace** by Karan Aujla | Starting at ₹999 | https://pastforward.shop/product/karan-aujla-at-peace
-- **Bluebird** by Lana Del Rey | Starting at ₹99 | https://pastforward.shop/product/lana-del-rey-bluebird
-- **Ultraviolence** by Lana Del Rey | Starting at ₹999 | https://pastforward.shop/product/lana-del-rey-ultraviolence
-- **Rockstar** by Lisa | Starting at ₹999 | https://pastforward.shop/product/lisa-rockstar
-- **Neni Stress** by Luca Brassi | Starting at ₹299 | https://pastforward.shop/product/luca-brassi-neni-stress
-- **Love Is Like** by Maroon 5 | Starting at ₹999 | https://pastforward.shop/product/maroon-5-love-is-like
-- **Happier** by Marshmello | Starting at ₹99 | https://pastforward.shop/product/marshmello-happier
-- **Sentio** by Martin Garrix | Starting at ₹999 | https://pastforward.shop/product/martin-garrix-sentio
-- **Lost Americana** by MGK | Starting at ₹999 | https://pastforward.shop/product/mgk-lost-americana
-- **Tickets to My Downfall** by MGK | Starting at ₹99 | https://pastforward.shop/product/mgk-tickets-to-my-downfall
-- **Super Shy** by NewJeans | Starting at ₹999 | https://pastforward.shop/product/newjeans-super-shy
-- **Nevermind** by Nirvana | Starting at ₹99 | https://pastforward.shop/product/nirvana-nevermind
-- **GUTS / Bad Idea Right** by Olivia Rodrigo | Starting at ₹299 | https://pastforward.shop/product/olivia-rodrigo-guts-bad-idea-right
-- **The Dark Side of the Moon (1973)** by Pink Floyd | Starting at ₹99 | https://pastforward.shop/product/pink-floyd-the-dark-side-of-the-moon-1973
-- **Chemical** by Post Malone | Starting at ₹99 | https://pastforward.shop/product/post-malone-chemical
-- **Sunflower** by Post Malone | Starting at ₹199 | https://pastforward.shop/product/post-malone-sunflower
-- **Bohemian Rhapsody** by Queen | Starting at ₹999 | https://pastforward.shop/product/queen-bohemian-rhapsody
-- **Indigo** by RM | Starting at ₹999 | https://pastforward.shop/product/rm-indigo
-- **APT.** by Rosé | Starting at ₹99 | https://pastforward.shop/product/rose-apt
-- **[CONFIRM]** by Sabrina Carpenter | Starting at ₹999 | https://pastforward.shop/product/sabrina-carpenter
-- **Espresso** by Sabrina Carpenter | Starting at ₹99 | https://pastforward.shop/product/sabrina-carpenter-espresso
-- **Lunch Break / 11K** by Seedhe Maut | Starting at ₹99 | https://pastforward.shop/product/seedhe-maut-lunch-break-11k
-- **Am I Dreaming** by Spider-Verse | Starting at ₹299 | https://pastforward.shop/product/spider-verse-am-i-dreaming
-- **Season 4** by Stranger Things | Starting at ₹999 | https://pastforward.shop/product/stranger-things-season-4
-- **Don't You Worry Child** by Swedish House Mafia | Starting at ₹999 | https://pastforward.shop/product/swedish-house-mafia-dont-you-worry-child
-- **1989** by Taylor Swift | Starting at ₹99 | https://pastforward.shop/product/taylor-swift-1989
-- **august** by Taylor Swift | Starting at ₹199 | https://pastforward.shop/product/taylor-swift-august
-- **Lover** by Taylor Swift | Starting at ₹99 | https://pastforward.shop/product/taylor-swift-lover
-- **Reputation** by Taylor Swift | Starting at ₹99 | https://pastforward.shop/product/taylor-swift-reputation
-- **Members** by The Beatles | Starting at ₹99 | https://pastforward.shop/product/the-beatles-members
-- **Comedown Machine** by The Strokes | Starting at ₹999 | https://pastforward.shop/product/the-strokes-comedown-machine
-- **Is This It** by The Strokes | Starting at ₹999 | https://pastforward.shop/product/the-strokes-is-this-it
-- **After Hours** by The Weeknd | Starting at ₹99 | https://pastforward.shop/product/the-weeknd-after-hours
-- **Utopia** by Travis | Starting at ₹199 | https://pastforward.shop/product/travis-utopia
-- **Rodeo** by Travis Scott | Starting at ₹999 | https://pastforward.shop/product/travis-scott-rodeo
-- **Utopia** by Travis Scott | Starting at ₹99 | https://pastforward.shop/product/travis-scott-utopia
-- **The Rock** by WWE | Starting at ₹999 | https://pastforward.shop/product/wwe-the-rock
-- **Triple H** by WWE | Starting at ₹299 | https://pastforward.shop/product/wwe-triple-h
+## Catalogue (66 designs)
+- Little Things by ABBA — Vinyl ₹999 — https://pastforward.shop/product/abba-little-things
+- Alag Aasman by Anuv Jain — Vinyl ₹999 — https://pastforward.shop/product/anuv-jain-alag-aasman
+- Dil Nu by AP Dhillon — Vinyl ₹999 — https://pastforward.shop/product/ap-dhillon-dil-nu
+- AM by Arctic Monkeys — Vinyl ₹999 — https://pastforward.shop/product/arctic-monkeys-am
+- thank u, next by Ariana Grande — A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/ariana-grande-thank-u-next
+- Avīci (01) by Avicii — Vinyl ₹999 — https://pastforward.shop/product/avicii-avici-01
+- Bad Guy by Billie Eilish — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/billie-eilish-bad-guy
+- Happier Than Ever by Billie Eilish — Vinyl ₹999 — https://pastforward.shop/product/billie-eilish-happier-than-ever
+- The Stranger by Billy Joel — A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/billy-joel-the-stranger
+- The Album by BLACKPINK — Vinyl ₹999 — https://pastforward.shop/product/blackpink-the-album
+- Soothsayer by Buckethead — Vinyl ₹999 — https://pastforward.shop/product/buckethead-soothsayer
+- Crash by Charli XCX — Vinyl ₹999 — https://pastforward.shop/product/charli-xcx-crash
+- Nine Track Mind by Charlie Puth — Vinyl ₹999 — https://pastforward.shop/product/charlie-puth-nine-track-mind
+- Tell Em' by Cochise — A3 poster ₹299 — https://pastforward.shop/product/cochise-tell-em
+- Parachutes / Yellow by Coldplay — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/coldplay-parachutes-yellow
+- Don by Diljit Dosanjh — A3 poster ₹299, Polaroid card ₹99 — https://pastforward.shop/product/diljit-dosanjh-don
+- One Dance by Drake — Vinyl ₹999, Polaroid card ₹99 — https://pastforward.shop/product/drake-one-dance
+- Future Nostalgia by Dua Lipa — A5 poster ₹199 — https://pastforward.shop/product/dua-lipa-future-nostalgia
+- Houdini by Dua Lipa — Vinyl ₹999 — https://pastforward.shop/product/dua-lipa-houdini
+- Sapphire by Ed Sheeran — A3 poster ₹299 — https://pastforward.shop/product/ed-sheeran-sapphire
+- The Death of Slim Shady by Eminem — A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/eminem-the-death-of-slim-shady
+- Blonde by Frank Ocean — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199 — https://pastforward.shop/product/frank-ocean-blonde
+- Appetite for Destruction by Guns N' Roses — Vinyl ₹999 — https://pastforward.shop/product/guns-n-roses-appetite-for-destruction
+- Fine Line by Harry Styles — Vinyl ₹999 — https://pastforward.shop/product/harry-styles-fine-line
+- Fine Line / Watermelon Sugar by Harry Styles — A5 poster ₹199 — https://pastforward.shop/product/harry-styles-fine-line-watermelon-sugar
+- Mantra by Jennie — Vinyl ₹999 — https://pastforward.shop/product/jennie-mantra
+- Goodbye & Good Riddance by Juice WRLD — Vinyl ₹999 — https://pastforward.shop/product/juice-wrld-goodbye-good-riddance
+- Changes by Justin Bieber — Vinyl ₹999 — https://pastforward.shop/product/justin-bieber-changes
+- Graduation by Kanye West — Vinyl ₹999 — https://pastforward.shop/product/kanye-west-graduation
+- At Peace by Karan Aujla — Vinyl ₹999 — https://pastforward.shop/product/karan-aujla-at-peace
+- Bluebird by Lana Del Rey — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/lana-del-rey-bluebird
+- Ultraviolence by Lana Del Rey — Vinyl ₹999 — https://pastforward.shop/product/lana-del-rey-ultraviolence
+- Rockstar by Lisa — Vinyl ₹999 — https://pastforward.shop/product/lisa-rockstar
+- Neni Stress by Luca Brassi — A3 poster ₹299 — https://pastforward.shop/product/luca-brassi-neni-stress
+- Love Is Like by Maroon 5 — Vinyl ₹999 — https://pastforward.shop/product/maroon-5-love-is-like
+- Happier by Marshmello — Vinyl ₹999, Polaroid card ₹99 — https://pastforward.shop/product/marshmello-happier
+- Sentio by Martin Garrix — Vinyl ₹999 — https://pastforward.shop/product/martin-garrix-sentio
+- Lost Americana by MGK — Vinyl ₹999 — https://pastforward.shop/product/mgk-lost-americana
+- Tickets to My Downfall by MGK — 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/mgk-tickets-to-my-downfall
+- Super Shy by NewJeans — Vinyl ₹999 — https://pastforward.shop/product/newjeans-super-shy
+- Nevermind by Nirvana — A3 poster ₹299, A5 poster ₹199, Polaroid card ₹99 — https://pastforward.shop/product/nirvana-nevermind
+- GUTS / Bad Idea Right by Olivia Rodrigo — A3 poster ₹299 — https://pastforward.shop/product/olivia-rodrigo-guts-bad-idea-right
+- The Dark Side of the Moon (1973) by Pink Floyd — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/pink-floyd-the-dark-side-of-the-moon-1973
+- Chemical by Post Malone — A3 poster ₹299, Polaroid card ₹99 — https://pastforward.shop/product/post-malone-chemical
+- Sunflower by Post Malone — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199 — https://pastforward.shop/product/post-malone-sunflower
+- Bohemian Rhapsody by Queen — Vinyl ₹999 — https://pastforward.shop/product/queen-bohemian-rhapsody
+- Indigo by RM — Vinyl ₹999 — https://pastforward.shop/product/rm-indigo
+- APT. by Rosé — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/rose-apt
+- Espresso by Sabrina Carpenter — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/sabrina-carpenter-espresso
+- Lunch Break / 11K by Seedhe Maut — A3 poster ₹299, Polaroid card ₹99 — https://pastforward.shop/product/seedhe-maut-lunch-break-11k
+- Am I Dreaming by Spider-Verse — A3 poster ₹299 — https://pastforward.shop/product/spider-verse-am-i-dreaming
+- Season 4 by Stranger Things — Vinyl ₹999 — https://pastforward.shop/product/stranger-things-season-4
+- Don't You Worry Child by Swedish House Mafia — Vinyl ₹999 — https://pastforward.shop/product/swedish-house-mafia-dont-you-worry-child
+- 1989 by Taylor Swift — Vinyl ₹999, A3 poster ₹299, Polaroid card ₹99 — https://pastforward.shop/product/taylor-swift-1989
+- august by Taylor Swift — A5 poster ₹199 — https://pastforward.shop/product/taylor-swift-august
+- Lover by Taylor Swift — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/taylor-swift-lover
+- Reputation by Taylor Swift — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/taylor-swift-reputation
+- Members by The Beatles — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/the-beatles-members
+- Comedown Machine by The Strokes — Vinyl ₹999 — https://pastforward.shop/product/the-strokes-comedown-machine
+- Is This It by The Strokes — Vinyl ₹999 — https://pastforward.shop/product/the-strokes-is-this-it
+- After Hours by The Weeknd — Vinyl ₹999, A3 poster ₹299, A5 poster ₹199, Polaroid card ₹99 — https://pastforward.shop/product/the-weeknd-after-hours
+- Utopia by Travis — A5 poster ₹199 — https://pastforward.shop/product/travis-utopia
+- Rodeo by Travis Scott — Vinyl ₹999 — https://pastforward.shop/product/travis-scott-rodeo
+- Utopia by Travis Scott — Vinyl ₹999, A3 poster ₹299, 10×10 print ₹249, Polaroid card ₹99 — https://pastforward.shop/product/travis-scott-utopia
+- The Rock by WWE — Vinyl ₹999 — https://pastforward.shop/product/wwe-the-rock
+- Triple H by WWE — A3 poster ₹299 — https://pastforward.shop/product/wwe-triple-h
 
-## 4. Frequently Asked Questions
-- **Are the records real?** Yes, authentic vintage 12-inch records with microgrooves; made to hang.
-- **Can they play audio?** They are sold as decorative wall art with visual centre labels.
-- **How do they hang?** Pre-installed wall mount on the back makes hanging effortless.
-- **Custom orders?** Yes, submit any artist, album, or personal playlist at https://pastforward.shop/custom.
-- **Paper quality?** Heavyweight 300 GSM matte cardstock with zero glare.
-- **Shipping?** 5 to 7 business days pan-India via Delhivery, Blue Dart, Xpressbees.
-- **Payments?** UPI (GPay, PhonePe, Paytm), Cards, Net Banking via Shopify.
-- **Damaged delivery?** Free replacement within 7 days via team@pastforward.shop.
+## Questions
+### Is it a real vinyl record?
+Yes. A real 12-inch upcycled record. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor.
+
+### Can I play it?
+It's sold to hang, not to play. These are real records, so the grooves are real — but we make no promise about what's on them or how it sounds, and the label carries our artwork rather than the original. Treat it as a wall piece.
+
+### Why upcycled and not new?
+Because a record that already had a life is the whole point of the name. It also means no two are identical, and nothing new gets pressed just to hang on a wall.
+
+### What sizes do you make?
+Vinyl · 12-inch record, ⌀305mm. A3 poster · 297 × 420mm. A5 poster · 148 × 210mm. 10×10 print · 254 × 254mm. Polaroid card.
+
+### How does a record hang?
+Every record comes with a wall hook in the box. Put the hook up and hang the record on it.
+
+### How long does delivery take?
+7–10 days from when you order, anywhere in India.
+
+### What does delivery cost?
+Delivery is free, anywhere in India.
+
+### How can I pay?
+By UPI, cards and net banking, on a secure checkout. Cash on delivery isn't available yet.
+
+### Do you ship outside India?
+Not yet. We deliver anywhere in India for now.
+
+### What if it arrives damaged?
+Email contact@pastforward.shop within 7 days of delivery with a photo, and we'll put it right. See returns.
+
+### Can you make one that isn't on the site?
+Yes. That's what custom orders are for — tell us the artist and album and we'll make it.
+
+### How do I look after it?
+Wipe with a dry cloth. Keep it out of direct sunlight — same as the original.

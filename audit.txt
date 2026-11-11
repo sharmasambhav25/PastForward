@@ -123,7 +123,7 @@ VINYL-QUEEN-BOHEMIAN RHAPSODY.webp	vinyl · Queen · Bohemian Rhapsody
 VINYL-ROSE-APT.webp	vinyl · Rosé · APT.
 VINYL-STRANGER THINGS-SEASON 4.webp	vinyl · Stranger Things · Season 4
 VINYL-SWEDISH HOUSE MAFIA-DON'T YOU WORRY CHILD.webp	vinyl · Swedish House Mafia · Don't You Worry Child
-VINYL-Sabrina Carpenter.webp	vinyl · Sabrina Carpenter · [CONFIRM]
+VINYL-Sabrina Carpenter.webp	vinyl · Sabrina Carpenter · Espresso
 VINYL-TAYLOR SWIFT-LOVER.webp	vinyl · Taylor Swift · Lover
 VINYL-TAYLOR SWIFT-REPUTATION.webp	vinyl · Taylor Swift · Reputation
 VINYL-THE STROKES-COMEDOWN MACHINE.webp	vinyl · The Strokes · Comedown Machine
@@ -133,4 +133,4 @@ VINYL-TRAVIS SCOTT-RODEO.webp	vinyl · Travis Scott · Rodeo
 VINYL-TRAVIS SCOTT-UTOPIA.webp	vinyl · Travis Scott · Utopia
 VINYL-The Beatles MEMBERS.webp	vinyl · The Beatles · Members
 VINYL-WWE-ELECTRIFYING THE ROCK.webp	vinyl · WWE · The Rock
-VINYLS-ARCTIC MONKEYS.webp	vinyl · Arctic Monkeys · [CONFIRM]
+VINYLS-ARCTIC MONKEYS.webp	vinyl · Arctic Monkeys · AM
