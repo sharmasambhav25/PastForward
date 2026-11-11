@@ -2370,3 +2370,9 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 html,body,*{touch-action:manipulation}
 .fhero .fdisc{touch-action:pan-y}
 .fmts,.crate__stage,.cratem__row{touch-action:pan-x pan-y}
+/* product backdrop: stay exactly screen-sized (iOS Safari let the oversized blurred layer widen the page, so swipes panned/zoomed it) */
+.pliq--static{transform:none; filter:none; overflow:hidden; background-size:0 0; background-repeat:no-repeat}
+.pliq--static::before{content:""; position:absolute; inset:0; background-image:inherit; background-size:cover; background-position:center;
+  filter:blur(30px) brightness(.32) saturate(.9); transform:scale(1.2)}
+.pliq{max-width:100vw; overflow:hidden}
+html{overflow-x:hidden}
