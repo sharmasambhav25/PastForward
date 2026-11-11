@@ -138,6 +138,8 @@ function viewHome() {
   </section>
 
 
+  ${bundleStripHTML()}
+
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
        photograph of the real wall. Straight out of the brand's own ads. -->
@@ -146,7 +148,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Build your wall', '#/vinyl', 'Start with a record')}
+        ${ctaShop('Build your wall', '#/build-your-wall', 'Try it on a wall first')}
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -851,6 +853,7 @@ function viewProduct(p, params) {
         <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="#/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
+        <div id="pdpbundle">${pdpBundleHTML(p, sel)}</div>
         <p class="pdp__blurb" id="pdpblurb">${esc((p.blurbs || {})[sel] || '')}</p>
 
         <div class="fmt" style="margin-top:28px">
@@ -1173,7 +1176,7 @@ function viewCart() {
       ${cartLinesHTML()}
       <div class="receipt" style="margin-top:32px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
-        ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
+        ${bundleRowsHTML(m)}
         <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
@@ -1249,6 +1252,7 @@ window.__mount = function (seg, params) {
   if (page === 'search') mountSearchPage();
   if (page === 'custom') mountCustom();
   if (page === 'story') mountStory();
+  if (page === 'build-your-wall') mountBuildWall(params);
   mountAccordions();
   mountMarquees();
 };
@@ -1766,6 +1770,7 @@ function mountProduct(p, params) {
     const hn = $('#hangnote'); if (hn) hn.textContent = f === 'vinyl' ? 'Wall hook included' : 'Ready for your wall';
     const bl = $('#pdpblurb'); if (bl) bl.textContent = (p.blurbs || {})[f] || '';
     const as = $('#pdpassure'); if (as) as.innerHTML = assureHTML(f);
+    const pb = $('#pdpbundle'); if (pb) pb.innerHTML = pdpBundleHTML(p, f);
     const ha = $('#hangacc'); if (ha) ha.hidden = f !== 'vinyl';
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
@@ -1849,4 +1854,218 @@ function mountSearchPage() {
     bindEffects(r);
     setParams(pp => i.value ? pp.set('q', i.value) : pp.delete('q'), { silent: true });
   });
+}
+
+/* ============================== BUNDLES + BUILD YOUR WALL ============================== */
+/* lines -> what the checkout will charge, with the best bundle applied */
+function linesPrice(lines) {
+  const sub = lines.reduce((n, l) => n + l.price * l.qty, 0), b = bestBundle(lines);
+  return { sub, b, total: sub - (b ? b.off : 0) };
+}
+function wallLine(slug, format) { const p = bySlug[slug], v = p && variant(p, format); return v ? { slug, format, qty: 1, price: v.price } : null; }
+/* puts several pieces in the crate at once, with one confirmation */
+function addMany(items, originEl) {
+  items.forEach(it => {
+    const line = cart.find(l => l.slug === it.slug && l.format === it.format);
+    if (line) line.qty += it.qty; else cart.push({ ...it });
+    Track.add(bySlug[it.slug], variant(bySlug[it.slug], it.format), it.qty);
+  });
+  saveCart(); syncCart(); Sound.tick();
+  const drawerOpens = window.matchMedia('(max-width:1023px)').matches;
+  if (!drawerOpens) toast(`Added — ${items.length} pieces to the crate`);
+  flyToCart(originEl, () => {});
+  if (drawerOpens) openDrawer();
+}
+/* a small picture of the pieces: records, posters and polaroids as they'd hang */
+function miniWallHTML(lines, cls = '') {
+  return `<div class="mwall ${cls}">${lines.map((l, i) => {
+    const p = bySlug[l.slug], v = variant(p, l.format);
+    const inner = l.format === 'vinyl' ? recordHTML(p, { size: 120 })
+      : l.format === 'polaroid' ? polaroidHTML(v) : frameHTML(v, { style: 'aspect-ratio:' + v.ratio });
+    return `<span class="mwall__i mwall__i--${l.format}" style="--i:${i}">${inner}</span>`;
+  }).join('')}</div>`;
+}
+const BUNDLE_PICS = {
+  records3: () => ['taylor-swift-1989', 'the-weeknd-after-hours', 'frank-ocean-blonde'].map(s => wallLine(s, 'vinyl')),
+  pair: () => [wallLine('the-weeknd-after-hours', 'vinyl'), wallLine('the-weeknd-after-hours', 'poster-a3')],
+  a3x3: () => ['travis-scott-utopia', 'sabrina-carpenter-espresso', 'pink-floyd-the-dark-side-of-the-moon-1973'].map(s => wallLine(s, 'poster-a3')),
+  a5x5: () => P.filter(p => variant(p, 'poster-a5')).slice(0, 5).map(p => wallLine(p.slug, 'poster-a5')),
+  pol10: () => P.filter(p => variant(p, 'polaroid')).slice(0, 6).map(p => wallLine(p.slug, 'polaroid'))
+};
+function bundleCardHTML(b) {
+  const pic = (BUNDLE_PICS[b.id] || (() => []))().filter(Boolean);
+  const was = b.price + b.off;
+  return `<article class="bcard reveal">
+    <a class="bcard__pic" href="${b.href}" aria-hidden="true" tabindex="-1">${miniWallHTML(pic, 'mwall--' + b.id)}</a>
+    <div class="bcard__save mono-xs">Save ${money(b.off)}</div>
+    <h3 class="bcard__h">${esc(b.name)}</h3>
+    <p class="bcard__p num"><span class="bcard__now">${money(b.price)}</span> <s class="dim">${money(was)}</s></p>
+    <p class="bcard__blurb dim">${esc(b.blurb)}</p>
+    ${ctaShop('Shop the bundle', b.href, `Save ${money(b.off)}`, { sm: true })}
+  </article>`;
+}
+/* a strip of the bundles for other pages */
+function bundleStripHTML() {
+  if (!LIVE_BUNDLES.length) return '';
+  return `<section class="bstrip" data-section="BUNDLES"><div class="wrap">
+    <div class="bstrip__hd"><h2 class="bstrip__h">Bundles</h2><a class="mono-xs" href="#/bundles">All bundles →</a></div>
+    <div class="bstrip__row">${LIVE_BUNDLES.map(b => `<a class="bchip" href="${b.href}">
+      <span class="bchip__n">${esc(b.name)}</span><span class="bchip__p num">${money(b.price)} <s>${money(b.price + b.off)}</s></span></a>`).join('')}
+      <a class="bchip bchip--wall" href="#/build-your-wall"><span class="bchip__n">Build your own wall</span><span class="bchip__p">Pick the pieces →</span></a></div>
+  </div></section>`;
+}
+function viewBundles() {
+  return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
+    <p class="cap">Bundles · the price drops at checkout</p>
+    <h1 class="shout-h">Bundles.</h1>
+    <p class="body-l dim measure" style="margin:14px 0 8px">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
+    <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
+    <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
+      ${ctaShop('Build your wall', '#/build-your-wall', 'Try it on a wall first')}</div>
+  </div>`;
+}
+
+const WALL_SETS = [
+  { name: 'The Swift three', note: 'Three eras on one wall', lines: ['taylor-swift-1989', 'taylor-swift-lover', 'taylor-swift-reputation'].map(s => ['vinyl', s]) },
+  { name: 'After Hours, twice', note: 'The record and its A3 poster', lines: [['vinyl', 'the-weeknd-after-hours'], ['poster-a3', 'the-weeknd-after-hours']] },
+  { name: 'The poster wall', note: 'Three A3 posters in a row', lines: ['frank-ocean-blonde', 'travis-scott-utopia', 'sabrina-carpenter-espresso'].map(s => ['poster-a3', s]) }
+];
+const WALL_LAYOUTS = {
+  trio: { name: 'Three records', slots: ['vinyl', 'vinyl', 'vinyl'] },
+  pair: { name: 'Record + poster', slots: ['vinyl', 'poster-a3'] },
+  posters: { name: 'Three posters', slots: ['poster-a3', 'poster-a3', 'poster-a3'] }
+};
+const WALL_COLOURS = [['plaster', '#E7DFD2', 'Plaster'], ['sage', '#A7B19A', 'Sage'], ['clay', '#B5704F', 'Clay'], ['night', '#1E1A1B', 'Night']];
+function setPriceHTML(lines) {
+  const pr = linesPrice(lines);
+  return `<span class="num">${money(pr.total)}</span>${pr.b ? ` <s class="dim num">${money(pr.sub)}</s>` : ''}`;
+}
+function viewBuildWall(params) {
+  const sets = WALL_SETS.map(s => ({ ...s, items: s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean) })).filter(s => s.items.length === s.lines.length);
+  const lay = WALL_LAYOUTS[params.get('layout')] ? params.get('layout') : 'trio';
+  return `<div class="bw">
+  <div class="wrap" style="padding-top:calc(var(--nav-h) + 48px)">
+    <p class="cap">Build your own wall</p>
+    <h1 class="shout-h">Build your wall.</h1>
+    <p class="body-l dim measure" style="margin:12px 0 0">Start with a ready-made set, or pick every piece yourself and see it on a wall before it reaches yours. Bundle prices apply on their own.</p>
+  </div>
+  <section class="wrap bw__sets" aria-label="Ready-made walls">
+    ${sets.map((s, i) => `<article class="wset reveal">
+      <div class="wset__wall" style="--wall:${WALL_COLOURS[i % 3][1]}">${miniWallHTML(s.items)}</div>
+      <div class="wset__meta"><h2 class="wset__h">${esc(s.name)}</h2><p class="mono-xs dim">${esc(s.note)}</p>
+        <p class="wset__p">${setPriceHTML(s.items)}</p>
+        <button class="btn btn--primary wset__add" data-addset="${i}"><span class="btn__mag">Add the set</span></button></div>
+    </article>`).join('')}
+  </section>
+  <section class="bw__build" id="builder" aria-label="Wall builder">
+    <div class="wrap">
+      <h2 class="shout-h shout-h--sm">Or pick every piece.</h2>
+      <div class="bw__ctrls">
+        <div class="bw__tabs" role="tablist" aria-label="Layout">${Object.entries(WALL_LAYOUTS).map(([k, L]) => `<button role="tab" data-lay="${k}" aria-selected="${k === lay}" class="${k === lay ? 'is-on' : ''}">${esc(L.name)}</button>`).join('')}</div>
+        <div class="bw__cols" aria-label="Wall colour">${WALL_COLOURS.map(([k, c, n], i) => `<button data-wallc="${c}" class="${i ? '' : 'is-on'}" style="--c:${c}" aria-label="${n} wall" aria-pressed="${!i}"></button>`).join('')}</div>
+      </div>
+      <div class="bw__wall" id="bwwall" style="--wall:${WALL_COLOURS[0][1]}" data-lay="${lay}"></div>
+      <div class="bw__hint mono-xs dim">Tap a space on the wall to choose what hangs there.</div>
+    </div>
+    <div class="bw__bar" id="bwbar"></div>
+  </section>
+  <div class="bwpick" id="bwpick" role="dialog" aria-modal="true" aria-label="Choose a piece" hidden>
+    <div class="bwpick__in">
+      <div class="bwpick__hd"><span class="bwpick__t" id="bwpickt">Choose a record</span><button class="iconbtn" data-bwclose aria-label="Close">×</button></div>
+      <input class="bwpick__q" id="bwpickq" placeholder="Search artist or album" aria-label="Search" autocomplete="off">
+      <div class="bwpick__grid" id="bwpickgrid"></div>
+    </div>
+  </div>
+  </div>`;
+}
+function mountBuildWall(params) {
+  const sets = WALL_SETS.map(s => s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean));
+  $$('[data-addset]').forEach(b => b.addEventListener('click', () => {
+    addMany(sets[+b.dataset.addset], b);
+    const t = b.querySelector('.btn__mag'); t.textContent = 'Added'; setTimeout(() => { t.textContent = 'Add the set'; }, 1400);
+  }));
+  const wall = $('#bwwall'), bar = $('#bwbar'), pick = $('#bwpick'); if (!wall) return;
+  let lay = wall.dataset.lay, picks = [], slot = 0;
+  const fmtWord = f => f === 'vinyl' ? 'record' : 'A3 poster';
+  const slotsOf = () => WALL_LAYOUTS[lay].slots;
+  const lines = () => picks.map((s, i) => s && wallLine(s, slotsOf()[i])).filter(Boolean);
+  function draw() {
+    wall.dataset.lay = lay;
+    wall.innerHTML = slotsOf().map((f, i) => {
+      const p = picks[i] && bySlug[picks[i]], v = p && variant(p, f);
+      const art = !v ? `<span class="bw__empty"><b>+</b><span>Add a ${fmtWord(f)}</span></span>`
+        : f === 'vinyl' ? recordHTML(p, { size: 260 }) : frameHTML(v, { style: 'aspect-ratio:' + v.ratio });
+      return `<button class="bw__slot bw__slot--${f}${v ? ' is-full' : ''}" data-slot="${i}" aria-label="${v ? 'Change ' + esc(albumText(p)) : 'Choose a ' + fmtWord(f)}">${art}${v ? `<span class="bw__cap mono-xs">${esc(p.artist)} · ${esc(albumText(p))}</span>` : ''}</button>`;
+    }).join('');
+    const L = lines(), need = slotsOf().length, pr = linesPrice(L);
+    bar.innerHTML = `<div class="wrap bw__barin">
+      <div class="bw__count mono-xs"><b class="num">${L.length}</b> of ${need} picked${pr.b ? ` · <span class="ok">${esc(pr.b.name)} bundle</span>` : ''}</div>
+      <div class="bw__price">${L.length ? setPriceHTML(L) : '<span class="dim">—</span>'}</div>
+      <button class="btn btn--secondary bw__fill" data-bwfill>Fill it for me</button>
+      <button class="btn btn--primary bw__go" data-bwgo ${L.length === need ? '' : 'disabled'}><span class="btn__mag">${L.length === need ? (isPhone() ? 'Add the wall' : 'Add the wall to the crate') : `Pick ${need - L.length} more`}</span></button></div>`;
+  }
+  function options(f) {
+    const pairOnly = lay === 'pair';
+    return P.filter(p => variant(p, f) && (!pairOnly || (variant(p, 'vinyl') && variant(p, 'poster-a3'))));
+  }
+  function fillGrid() {
+    const f = slotsOf()[slot], q = $('#bwpickq').value.trim().toLowerCase();
+    const list = options(f).filter(p => !q || (p.artist + ' ' + albumText(p)).toLowerCase().includes(q));
+    $('#bwpickgrid').innerHTML = list.length ? list.map(p => `<button class="bwopt${picks[slot] === p.slug ? ' is-on' : ''}" data-pickslug="${p.slug}">
+        <span class="bwopt__img"><img src="${imgSrc(variant(p, f).image)}" alt="" loading="lazy" decoding="async"></span>
+        <span class="bwopt__a">${esc(p.artist)}</span><span class="bwopt__b">${esc(albumText(p))}</span></button>`).join('')
+      : '<p class="dim">Nothing by that name. Try another spelling.</p>';
+  }
+  function openPick(i) {
+    slot = i; $('#bwpickt').textContent = lay === 'pair' ? 'Choose the album' : `Choose a ${fmtWord(slotsOf()[i])}`;
+    $('#bwpickq').value = ''; fillGrid(); pick.hidden = false; document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => pick.classList.add('is-open'));
+    if (!isPhone()) $('#bwpickq').focus();
+  }
+  function closePick() { pick.classList.remove('is-open'); document.body.style.overflow = ''; setTimeout(() => { pick.hidden = true; }, 260); }
+  wall.addEventListener('click', e => { const s = e.target.closest('[data-slot]'); if (s) { Sound.tick(); openPick(+s.dataset.slot); } });
+  $('#bwpickq').addEventListener('input', fillGrid);
+  pick.addEventListener('click', e => {
+    if (e.target === pick || e.target.closest('[data-bwclose]')) return closePick();
+    const o = e.target.closest('[data-pickslug]'); if (!o) return;
+    const s = o.dataset.pickslug;
+    if (lay === 'pair') picks = [s, s]; else picks[slot] = s;
+    closePick(); draw(); Sound.tick();
+    const nx = slotsOf().findIndex((_, i) => !picks[i]);
+    const el = wall.querySelector(`[data-slot="${slot}"]`);
+    if (el && !RM()) el.animate([{ transform: 'scale(.86)', opacity: .4 }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+    if (nx >= 0 && lay !== 'pair') wall.querySelector(`[data-slot="${nx}"]`).classList.add('is-next');
+  });
+  addEventListener('keydown', function esc(e) { if (!document.body.contains(pick)) return removeEventListener('keydown', esc); if (e.key === 'Escape' && !pick.hidden) closePick(); });
+  $$('[data-lay]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.lay === lay) return;
+    lay = b.dataset.lay; picks = [];
+    $$('[data-lay]').forEach(x => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-selected', x === b); });
+    replaceUrl('/build-your-wall?layout=' + lay); draw();
+  }));
+  $$('[data-wallc]').forEach(b => b.addEventListener('click', () => {
+    wall.style.setProperty('--wall', b.dataset.wallc);
+    $$('[data-wallc]').forEach(x => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', x === b); });
+  }));
+  bar.addEventListener('click', e => {
+    if (e.target.closest('[data-bwfill]')) {
+      const f = slotsOf()[0], pool = options(f).filter(p => p.featured).concat(options(f)).filter((p, i, a) => a.indexOf(p) === i);
+      const used = new Set(picks.filter(Boolean));
+      if (lay === 'pair') { const p = pool[Math.floor(Math.random() * pool.length)]; picks = [p.slug, p.slug]; }
+      else slotsOf().forEach((_, i) => { if (!picks[i]) { const free = pool.filter(p => !used.has(p.slug)); const p = free[Math.floor(Math.random() * Math.min(free.length, 12))]; if (p) { picks[i] = p.slug; used.add(p.slug); } } });
+      draw(); Sound.tick(); return;
+    }
+    const go = e.target.closest('[data-bwgo]');
+    if (go && !go.disabled) { addMany(lines(), go); }
+  });
+  draw();
+}
+
+/* product page: the bundle this piece counts towards */
+function pdpBundleHTML(p, f) {
+  const both = variant(p, 'vinyl') && variant(p, 'poster-a3');
+  const b = LIVE_BUNDLES.find(x => x.pair && both && (f === 'vinyl' || f === 'poster-a3')) || LIVE_BUNDLES.find(x => (x.need || {})[f]);
+  if (!b) return '';
+  const href = b.pair ? `#/build-your-wall?layout=pair` : b.href;
+  return `<a class="pdpb" href="${href}"><span class="pdpb__k mono-xs">Bundle</span><span>${esc(b.name)} for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">save ${money(b.off)} →</span></a>`;
 }

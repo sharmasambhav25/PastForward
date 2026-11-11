@@ -399,7 +399,7 @@ def graph(*nodes):
 
 # ---------- the plain-HTML version of each page (what a reader without scripts gets)
 NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/posters/a5'), ('10×10 prints', '/posters/10x10'),
-       ('Polaroids', '/polaroids'), ('Custom orders', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
+       ('Polaroids', '/polaroids'), ('Build your wall', '/build-your-wall'), ('Bundles', '/bundles'), ('Custom orders', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
 
 def popular_links():
     out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
@@ -646,6 +646,14 @@ def build_site():
         add(path, f'policies/{k}.html', title=M[path]['title'], desc=M[path]['desc'],
             body=fb_wrap(f"<h1>{esc(name)}</h1><p>Last updated {esc(SITE['policiesUpdated'])}.</p>" +
                          ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in sections)), ld=graph())
+    BL = [b for b in SITE.get('bundles', {}).get('list', []) if b.get('live')]
+    add('/bundles', 'bundles.html', title=M['/bundles']['title'], desc=M['/bundles']['desc'],
+        body=fb_simple('Bundles.', [esc(M['/bundles']['desc'])],
+                       ''.join(f"<h2>{esc(b['name'])}: ₹{b['price']:,}</h2><p>{esc(b['blurb'])} Save ₹{b['off']:,}.</p>" for b in BL)),
+        ld=graph(crumbs(('Home', '/'), ('Bundles', '/bundles'))))
+    add('/build-your-wall', 'build-your-wall.html', title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
+        body=fb_simple('Build your wall.', [esc(M['/build-your-wall']['desc'])]),
+        ld=graph(crumbs(('Home', '/'), ('Build your wall', '/build-your-wall'))))
     for path, h1 in (('/cart', 'The crate.'), ('/search', 'Search.'), ('/wall', 'Send us a wall.')):
         add(path, path[1:] + '.html', title=M[path]['title'], desc=M[path]['desc'], noindex=True,
             body=fb_simple(h1, [esc(M[path]['desc'])]), ld=graph())
