@@ -19,7 +19,6 @@
   "cod": false,
 
   "mrp": { "vinyl": 1299 },
-  "googleVerification": ["googled4482a2e7c37b988.html"],
 
   "forms": {
     "_note": "Paste a form endpoint that accepts a JSON POST (Formspree, Web3Forms, a Google Apps Script web app). While this is empty the newsletter box is replaced by an Instagram follow button and the contact form opens WhatsApp or email, so nothing a visitor types is ever silently dropped.",
