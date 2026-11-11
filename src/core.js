@@ -893,13 +893,13 @@ const SHOPIFY_CONFIG = {
   variantIds: window.__SHOPIFY_VARIANTS__ || {},
 
   // Shopify Variant IDs for each custom-order format:
-  // Dynamically resolves from shopify_variants.json (by SKU or format key)
+  // Dynamically resolves from shopify_variants.json (by SKU or format key) with live store fallbacks
   variants: {
-    'vinyl': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-VINYL'] || window.__SHOPIFY_VARIANTS__['vinyl'])) || '',
-    'poster-a3': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A3'] || window.__SHOPIFY_VARIANTS__['poster-a3'])) || '',
-    'print-10': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-PRINT-10'] || window.__SHOPIFY_VARIANTS__['print-10'])) || '',
-    'poster-a5': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A5'] || window.__SHOPIFY_VARIANTS__['poster-a5'])) || '',
-    'polaroid': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POLAROID'] || window.__SHOPIFY_VARIANTS__['polaroid'])) || ''
+    'vinyl': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-VINYL'] || window.__SHOPIFY_VARIANTS__['vinyl'])) || '46630610108460',
+    'poster-a3': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A3'] || window.__SHOPIFY_VARIANTS__['poster-a3'])) || '46630610141228',
+    'print-10': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-PRINT-10'] || window.__SHOPIFY_VARIANTS__['print-10'])) || '46630610173996',
+    'poster-a5': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POSTER-A5'] || window.__SHOPIFY_VARIANTS__['poster-a5'])) || '46630610206764',
+    'polaroid': (window.__SHOPIFY_VARIANTS__ && (window.__SHOPIFY_VARIANTS__['PF-CUSTOM-POLAROID'] || window.__SHOPIFY_VARIANTS__['polaroid'])) || '46630610239532'
   }
 };
 window.SHOPIFY_CONFIG = SHOPIFY_CONFIG;
