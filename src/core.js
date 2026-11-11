@@ -344,6 +344,16 @@ function saleTapeRun(n = 4) {
 function saleRibbon() {
   return `<a class="salebar tape" href="#/vinyl" aria-label="${MRP.vinyl > FMT.vinyl.price ? `Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}` : `Every record ${money(FMT.vinyl.price)}`}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
 }
+/* The call-to-action pill. `alt` is a second line the label rolls to (decoration: the link is named by `label`). */
+function ctaShop(label, href, alt = '', o = {}) {
+  const roll = alt ? `<b>${label}</b><b aria-hidden="true">${alt}</b><b aria-hidden="true">${label}</b>` : `<b>${label}</b>`;
+  return `<a class="cta-shop${o.sm ? ' cta-shop--sm' : ''}${o.cls ? ' ' + o.cls : ''}" href="${href}"${o.attrs || ''}>
+    <span class="cta-shop__fill" aria-hidden="true"></span>
+    ${o.sm ? '' : '<span class="cta-shop__disc" aria-hidden="true"><i></i></span>'}
+    <span class="cta-shop__txt"><span class="cta-shop__roll${alt ? ' cta-shop__roll--2' : ''}">${roll}</span></span>
+    <span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+  </a>`;
+}
 /* ---------- chrome ---------- */
 function chromeHTML() {
   return `
@@ -869,6 +879,22 @@ function bindEffects(root = document) {
       if (d < 90) inner.style.transform = `translate(${dx * .06}px,${dy * .06}px)`;
     });
     btn.addEventListener('pointerleave', () => { inner.style.transform = ''; });
+  });
+  // the call-to-action pill: floods from where it's touched, and leans toward a mouse
+  $$('.cta-shop', root).forEach(b => {
+    if (b.__cta) return; b.__cta = 1;
+    const at = e => { const r = b.getBoundingClientRect(); b.style.setProperty('--mx', (e.clientX - r.left) + 'px'); b.style.setProperty('--my', (e.clientY - r.top) + 'px'); };
+    b.addEventListener('pointerenter', at);
+    b.addEventListener('pointerdown', e => { at(e); if (e.pointerType !== 'mouse') { b.classList.add('is-press'); clearTimeout(b.__pt); b.__pt = setTimeout(() => b.classList.remove('is-press'), 700); } });
+    b.addEventListener('pointercancel', () => b.classList.remove('is-press'));
+    if (RM()) return;
+    b.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      const r = b.getBoundingClientRect();
+      b.style.setProperty('--tx', ((e.clientX - (r.left + r.width / 2)) * .14).toFixed(1) + 'px');
+      b.style.setProperty('--ty', ((e.clientY - (r.top + r.height / 2)) * .22).toFixed(1) + 'px');
+    });
+    b.addEventListener('pointerleave', () => { b.style.removeProperty('--tx'); b.style.removeProperty('--ty'); });
   });
 }
 

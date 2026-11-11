@@ -1725,7 +1725,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
   stroke-dasharray:1 1; stroke-dashoffset:1; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 6px rgba(192,53,63,.45))}
 .crate__meta{position:absolute; z-index:4; left:var(--gutter); top:calc(var(--nav-h) + 22px); width:min(350px, 27vw); pointer-events:none}
 .crate__eyebrow{margin-bottom:12px}
-.crate__head{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:clamp(1.9rem,3.1vw,3rem); line-height:1; margin:0 0 20px; text-wrap:balance}
+.crate__head{font-family:var(--shout); font-weight:400; text-transform:uppercase; letter-spacing:-.005em; font-size:clamp(2.6rem,4.6vw,4.8rem); line-height:.92; margin:0 0 22px}
 .crate__rows dd span,.crate__fv span,.crate__fl span{display:inline-block}
 .crate__rows{margin:0; border-top:1px solid rgba(243,239,232,.24)}
 .crate__rows>div{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:8px 0 7px; border-bottom:1px solid rgba(243,239,232,.24)}
@@ -1874,36 +1874,64 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 [data-section="THE DROP"]::before{content:""; position:absolute; left:0; right:0; top:0; height:180px; z-index:1; pointer-events:none;
   background:linear-gradient(to bottom, #120708, rgba(18,7,8,0))}
 
-/* ---------- hero call to action ---------- */
-.cta-shop{position:relative; display:inline-flex; align-items:center; gap:14px; height:66px; padding:0 9px 0 10px; border-radius:999px;
-  background:var(--cream); color:var(--ink); font-family:var(--mono); font-size:.8rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase;
-  box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.6); isolation:isolate; overflow:hidden;
-  transition:background .35s var(--e-out-expo), color .35s var(--e-out-expo), transform .45s var(--e-spring), box-shadow .35s}
-/* a sweep of light crosses it every few seconds */
-.cta-shop::before{content:""; position:absolute; top:0; bottom:0; left:0; width:30%; z-index:-1; pointer-events:none;
-  background:linear-gradient(100deg, transparent, rgba(255,255,255,.9), transparent); transform:translateX(-140%) skewX(-18deg);
-  animation:ctaSweep 4.2s cubic-bezier(.6,0,.2,1) 1.6s infinite}
-@keyframes ctaSweep{0%{transform:translateX(-140%) skewX(-18deg)} 32%,100%{transform:translateX(440%) skewX(-18deg)}}
-/* and a soft ring breathes out from it, so the eye finds it */
+/* ---------- the call-to-action button ----------
+   A cream pill with a record turning in it. Three things keep it alive without a mouse: the label
+   rolls between two lines, a ring breathes out of it, and the arrow nudges. Under a pointer or a
+   finger it floods with oxblood from wherever it was touched, and on a laptop it leans toward the cursor. */
+.cta-shop{position:relative; display:inline-flex; align-items:center; gap:14px; height:68px; padding:0 10px 0 11px; border-radius:999px;
+  background:var(--cream); color:var(--ink); font-family:var(--shout); font-size:1.2rem; font-weight:400; letter-spacing:.07em; text-transform:uppercase; line-height:1;
+  text-decoration:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
+  box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(243,239,232,.6); isolation:isolate;
+  transform:translate(var(--tx,0px),var(--ty,0px));
+  transition:color .3s var(--e-out-expo), transform .5s var(--e-spring), box-shadow .35s}
+/* the flood: a dot under the pointer that grows until it fills the pill */
+.cta-shop__fill{position:absolute; inset:0; border-radius:inherit; overflow:hidden; z-index:-1; pointer-events:none}
+.cta-shop__fill::before{content:""; position:absolute; left:var(--mx, calc(100% - 34px)); top:var(--my, 50%); width:12px; height:12px; margin:-6px;
+  border-radius:50%; background:var(--oxblood); transform:scale(0); transition:transform .65s var(--e-out-expo)}
+/* a soft ring breathes out from it, so the eye finds it */
 .cta-shop::after{content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; z-index:-2;
-  border:2px solid rgba(192,53,63,.6); opacity:0; animation:ctaPulse 2.8s ease-out 1.2s infinite}
-@keyframes ctaPulse{0%{opacity:1; transform:scale(1)} 70%,100%{opacity:0; transform:scale(1.18,1.5)}}
+  border:2px solid rgba(192,53,63,.7); opacity:0; animation:ctaPulse 2.8s ease-out 1.2s infinite}
+@keyframes ctaPulse{0%{opacity:1; transform:scale(1)} 70%,100%{opacity:0; transform:scale(1.14,1.42)}}
 .cta-shop__disc{width:46px; height:46px; border-radius:50%; flex:none; position:relative;
   background:var(--disc-img, #0b0a0b) center/100% 100%; box-shadow:0 2px 8px rgba(0,0,0,.45); animation:ctaSpin 3.2s linear infinite}
 .cta-shop__disc i{position:absolute; inset:33%; border-radius:50%; background:radial-gradient(circle,#0b0a0b 0 10%, var(--ember) 12% 100%)}
 @keyframes ctaSpin{to{transform:rotate(360deg)}}
-.cta-shop__txt{padding:0 4px}
-.cta-shop__arrow{width:48px; height:48px; border-radius:50%; flex:none; display:grid; place-items:center; background:var(--oxblood); color:var(--cream);
-  transition:transform .45s var(--e-spring), background .3s}
-.cta-shop__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .45s var(--e-spring)}
-.cta-shop:hover{background:var(--ember); color:var(--cream); transform:translateY(-3px) scale(1.04); box-shadow:0 20px 50px rgba(192,53,63,.45), 0 0 0 1px var(--ember)}
-.cta-shop:hover .cta-shop__disc{animation-duration:.9s}
-.cta-shop:hover .cta-shop__arrow{background:var(--cream); color:var(--oxblood); transform:translateX(3px)}
-.cta-shop:hover .cta-shop__arrow svg{transform:translateX(2px)}
-.cta-shop:active{transform:translateY(-1px) scale(.97)}
-.cta-shop:focus-visible{outline:2px solid var(--cream); outline-offset:4px}
-@media(max-width:767px){ .cta-shop{height:58px; font-size:.72rem} .cta-shop__disc{width:40px; height:40px} .cta-shop__arrow{width:42px; height:42px} }
-@media(prefers-reduced-motion:reduce){ .cta-shop::before,.cta-shop::after,.cta-shop__disc{animation:none} }
+/* the label: two lines on a loop (the first is repeated at the end so the loop has no seam) */
+.cta-shop__txt{display:block; height:1.3em; overflow:hidden; padding:0 4px}
+.cta-shop__roll{display:flex; flex-direction:column; align-items:center}
+.cta-shop__roll b{flex:none; height:1.3em; line-height:1.3; font-weight:400; white-space:nowrap}
+.cta-shop__roll--2{animation:ctaRoll 7s cubic-bezier(.7,0,.2,1) 2.6s infinite}
+@keyframes ctaRoll{0%,36%{transform:translateY(0)} 44%,86%{transform:translateY(-1.3em)} 94%,100%{transform:translateY(-2.6em)}}
+.cta-shop__arrow{width:48px; height:48px; border-radius:50%; flex:none; display:grid; place-items:center; overflow:hidden; background:var(--oxblood); color:var(--cream);
+  transition:background .3s, color .3s, transform .45s var(--e-spring)}
+.cta-shop__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; animation:ctaNudge 2.8s ease-in-out 1s infinite}
+@keyframes ctaNudge{0%,62%,100%{transform:none} 74%{transform:translateX(5px)} 86%{transform:translateX(-1px)}}
+@keyframes ctaArrow{0%{transform:none} 45%{transform:translateX(34px)} 46%{transform:translateX(-34px)} 100%{transform:none}}
+@media(hover:hover){
+  .cta-shop:hover{color:var(--cream); transform:translate(var(--tx,0px),calc(var(--ty,0px) - 3px)) scale(1.03); box-shadow:0 22px 54px rgba(142,31,43,.5), 0 0 0 1px var(--oxblood)}
+  .cta-shop:hover .cta-shop__fill::before{transform:scale(90)}
+  .cta-shop:hover .cta-shop__disc{animation-duration:.8s}
+  .cta-shop:hover .cta-shop__arrow{background:var(--cream); color:var(--oxblood)}
+  .cta-shop:hover .cta-shop__arrow svg{animation:ctaArrow .55s var(--e-out-expo)}
+}
+/* a finger: the same flood, from where it landed */
+.cta-shop.is-press{color:var(--cream); transform:scale(.96)}
+.cta-shop.is-press .cta-shop__fill::before{transform:scale(90); transition-duration:.4s}
+.cta-shop.is-press .cta-shop__disc{animation-duration:.6s}
+.cta-shop.is-press .cta-shop__arrow{background:var(--cream); color:var(--oxblood)}
+.cta-shop:active{transform:translate(var(--tx,0px),var(--ty,0px)) scale(.96)}
+.cta-shop:focus-visible{outline:2px solid var(--cream); outline-offset:5px}
+/* the smaller cut, without the record (on the poster slides) */
+.cta-shop--sm{height:54px; gap:12px; padding:0 7px 0 24px; font-size:1.02rem}
+.cta-shop--sm::after{display:none}
+.cta-shop--sm .cta-shop__arrow{width:40px; height:40px}
+.cta-shop--sm .cta-shop__arrow svg{width:17px; height:17px}
+@media(max-width:767px){
+  .cta-shop{height:62px; font-size:1.1rem} .cta-shop__disc{width:42px; height:42px} .cta-shop__arrow{width:44px; height:44px}
+  .cta-shop--sm{height:52px; font-size:1rem} .cta-shop--sm .cta-shop__arrow{width:38px; height:38px}
+}
+@media(max-width:380px){ .cta-shop:not(.cta-shop--sm){height:58px; font-size:.98rem; gap:10px; padding:0 8px 0 9px} .cta-shop__disc{width:38px; height:38px} .cta-shop:not(.cta-shop--sm) .cta-shop__arrow{width:40px; height:40px} }
+@media(prefers-reduced-motion:reduce){ .cta-shop::after,.cta-shop__disc,.cta-shop__roll--2,.cta-shop__arrow svg{animation:none} .cta-shop,.cta-shop__fill::before{transition:none} }
 /* the red band's collage fades in under the wall photo instead of starting on a line */
 
 /* phones: an opened artist becomes a full-width panel, cover beside the name, albums below */
@@ -2082,8 +2110,6 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
   .salesec__tape .tape__t{box-shadow:none}
   /* the fixed groove-ring layer and its light/dark flip */
   #field{display:none}
-  /* the shine on the shop buttons is decoration: keep the spinning disc, drop the sweep */
-  .cta-shop::before{display:none}
 }
 
 /* ================= phones, pass 3 ================= */
@@ -2189,9 +2215,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .fmts__caps{margin-top:clamp(30px,3.6vw,48px)}
 .fmts__c p{margin:0 auto; max-width:34ch; font-family:var(--shout); text-transform:uppercase; letter-spacing:.02em; line-height:1.25;
   font-size:clamp(1rem,1.5vw,1.3rem); color:rgba(243,239,232,.92)}
-.fmts__go{display:inline-flex; gap:8px; margin-top:18px; font-family:var(--mono); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase;
-  color:var(--cream); text-decoration:none; padding:10px 18px; border:1px solid rgba(243,239,232,.4); border-radius:999px; transition:background .2s, border-color .2s}
-.fmts__go:hover{background:var(--oxblood); border-color:var(--oxblood)}
+.fmts__go{margin-top:20px}
 @media(max-width:767px){
   .fmts{min-height:0; padding:64px 0 70px}
   .fmts__bg{filter:blur(6px) brightness(.45)}
@@ -2279,6 +2303,9 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 
 /* ---- phones: the home page's bestsellers, and a visible add button on every card ---- */
 .best{padding-block:46px 54px}
+.best__h{margin:0 0 clamp(22px,3vw,40px); font-family:var(--shout); font-weight:400; text-transform:uppercase; line-height:.9; letter-spacing:-.01em;
+  font-size:clamp(3rem,13vw,7.2rem); color:var(--cream); text-align:center}
+.best__h i{font-style:normal; color:var(--ember)}
 @media(min-width:768px){.best{padding-block:96px 104px}}
 .best .cap{color:var(--ember)}
 .fhero__subm{display:block; margin-top:10px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
@@ -2376,3 +2403,40 @@ html,body,*{touch-action:manipulation}
   filter:blur(30px) brightness(.32) saturate(.9); transform:scale(1.2)}
 .pliq{max-width:100vw; overflow:hidden}
 html{overflow-x:hidden}
+
+/* ---------- artist cards that open the album's page ---------- */
+.ag--go .ag__head{text-decoration:none; color:inherit}
+.ag__chev--go::before{width:7px; height:7px; transform:translateX(-2px) rotate(-45deg)}
+.ag--go .ag__head:hover .ag__chev{background:var(--oxblood); border-color:var(--oxblood); transform:translateX(3px)}
+
+/* ---------- product page: choose the album ---------- */
+.apick{min-width:0}
+.apick__k{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0 0 10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+.apick__k b{font-weight:500; color:var(--ember)}
+.apick__row{display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  margin-inline:calc(var(--gutter, 16px) * -1); padding:2px var(--gutter, 16px) 4px}
+.apick__row::-webkit-scrollbar{display:none}
+.apick__a{flex:none; display:flex; align-items:center; gap:10px; min-height:60px; max-width:230px; padding:6px 16px 6px 6px; scroll-snap-align:center;
+  border:1px solid var(--border-2); border-radius:999px; background:rgba(11,10,11,.55); color:var(--cream); text-decoration:none;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  transition:border-color .25s, background .25s, transform .35s var(--e-spring)}
+.apick__a:hover{border-color:var(--ember); transform:translateY(-2px)}
+.apick__a:active{transform:scale(.97)}
+.apick__a:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+.apick__a.is-on{border-color:var(--ember); background:rgba(142,31,43,.34); box-shadow:0 0 0 1px var(--ember) inset}
+.apick__th{flex:none; width:46px; height:46px; border-radius:50%; overflow:hidden; display:grid; place-items:center; background:var(--elevated)}
+.apick__th img{width:100%; height:100%; object-fit:cover}
+.apick__th--rec{background:var(--disc-img, #0b0a0b) center/100% 100%; box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.apick__th--rec img{width:50%; height:50%; border-radius:50%}
+.apick__a.is-on .apick__th--rec{animation:ctaSpin 7s linear infinite}
+.apick__n{display:flex; flex-direction:column; gap:2px; min-width:0; font-family:var(--display); font-size:.98rem; line-height:1.15; overflow-wrap:anywhere}
+.apick__f{font-family:var(--mono); font-size:.52rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+@media(min-width:1024px){
+  .pdp--pick{grid-template-areas:"media pick" "media info"; grid-template-rows:auto 1fr; row-gap:26px}
+  .pdp--pick .apick{grid-area:pick}
+  .pdp--pick .pdp__media{grid-area:media}
+  .pdp--pick .pdp__info{grid-area:info}
+  .apick__row{flex-wrap:wrap; overflow:visible; margin-inline:0; padding:0}
+}
+@media(max-width:1023px){ .pdp--pick{gap:20px} .pdp--pick .pdp__info{margin-top:8px} }
+@media(prefers-reduced-motion:reduce){ .apick__a{transition:none} .apick__a.is-on .apick__th--rec{animation:none} }
