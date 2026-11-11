@@ -6,8 +6,14 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const RM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = n => '₹' + Number(n).toLocaleString('en-IN');
+/* The facts the site repeats (email, delivery time, shipping, payments, FAQ, policies, page titles)
+   live in src/site.json and arrive here as window.__SITE__. Change them there, not here. */
+const SITE = window.__SITE__ || {};
+// phones get the same wordmark at 900px wide (35 KB) instead of 1400px (85 KB)
+if (window.__WORDMARK_SM__ && window.matchMedia('(max-width:767px)').matches) window.__WORDMARK__ = window.__WORDMARK_SM__;
+const SHIP = SITE.shipping || {};
 // vinyl sale: the MRP is shown struck through beside the sale price, everywhere a vinyl price appears
-const MRP = { vinyl: 1299 };
+const MRP = SITE.mrp || {};
 const priceHTML = (format, price) => MRP[format] && MRP[format] > price
   ? `<s class="mrp num">${money(MRP[format])}</s> <span class="sale num">${money(price)}</span>` : money(price);
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
@@ -19,8 +25,41 @@ const SIZE_TABS = [
   { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '#/polaroids', dim: 'Pocket-size prints' },
 ];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
-const CONTACT_EMAIL = 'contact@pastforward.shop';
-const DELIVERY = '7–10 days';
+const CONTACT_EMAIL = SITE.email;
+const DELIVERY = SITE.delivery;
+const IG_URL = 'https://instagram.com/' + SITE.instagram;
+const waLink = text => 'https://wa.me/' + SITE.whatsapp + (text ? '?text=' + encodeURIComponent(text) : '');
+const mailLink = (subject, body) => 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + (body ? '&body=' + encodeURIComponent(body) : '');
+const isPhone = () => window.matchMedia('(max-width:767px)').matches;
+/* WebGL without a real GPU behind it (graphics acceleration switched off, a virtual machine, a
+   blocklisted driver) draws the 3D record at about a frame a second and freezes the page for
+   seconds while it sets up. Those machines get the CSS record and still backdrops instead.
+   ?gl=1 forces the WebGL path (used by verify_site.js, which only has a software renderer). */
+const fastGL = (() => {
+  let v;
+  return () => {
+    if (v !== undefined) return v;
+    if (/[?&]gl=1\b/.test(location.search)) return (v = true);
+    try {
+      const c = document.createElement('canvas'), o = { failIfMajorPerformanceCaveat: true };
+      const gl = c.getContext('webgl2', o) || c.getContext('webgl', o);
+      // some browsers hand back a software renderer without calling it a caveat; its name gives it away
+      const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
+      const name = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
+      v = !!gl && !/swiftshader|llvmpipe|software|basic render/i.test(name);
+      const lose = gl && gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    } catch (e) { v = false; }
+    return v;
+  };
+})();
+const ICON_LOCK = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+const ICON_CHECK = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+/* the reassurance line: only things that are true today, read from site.json */
+function assureHTML(format, cls = '') {
+  const items = [SHIP.label, 'Delivered in ' + DELIVERY, format === 'vinyl' ? 'Wall hook included' : '', 'Arrives damaged? We replace it'].filter(Boolean);
+  return `<ul class="assure ${cls}">${items.map(t => `<li>${ICON_CHECK}<span>${esc(t)}</span></li>`).join('')}</ul>`;
+}
+const payLine = () => `${ICON_LOCK}<span>Secure checkout · ${esc(SITE.payments)}</span>`;
 const CONFIRM = (what) => `<span data-confirm title="${esc(what)}">[CONFIRM]</span>`;
 
 const CAT = window.__CATALOGUE__;
@@ -144,11 +183,14 @@ function addToCart(slug, format, qty = 1, originEl) {
   const line = cart.find(l => l.slug === slug && l.format === format);
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
   saveCart(); syncCart();
-  toast(`Added — ${albumText(p)}, ${v.label}`);
+  // phones open the drawer on add, which is its own confirmation; a toast there only sat on top of Checkout
+  const drawerOpens = window.matchMedia('(max-width:1023px)').matches;
+  if (!drawerOpens) toast(`Added — ${albumText(p)}, ${v.label}`);
+  Track.add(p, v, qty);
   Sound.tick();
   const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM()) badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); };
   flyToCart(originEl, bounceBadge);
-  if (window.matchMedia('(max-width:1023px)').matches) openDrawer();
+  if (drawerOpens) openDrawer();
 }
 /* Flies a small ghost from the clicked element to the cart icon — the
    visual "causality" link between pressing Add and the cart updating.
@@ -188,7 +230,7 @@ function syncCart() {
   if (badge) { badge.textContent = n; badge.style.display = n ? 'grid' : 'none'; }
   const body = $('#drawerbody'); if (body) body.innerHTML = cartLinesHTML();
   const ft = $('#drawerft'); if (ft) ft.innerHTML = cartFootHTML();
-  if (routeHash().startsWith('#/cart')) render();
+  if (routeHash().startsWith('#/cart') && $('#main')) { const y = scrollY; render({ quiet: true }); scrollTo({ top: y, left: 0, behavior: 'instant' }); }
 }
 function cartLinesHTML() {
   if (!cart.length) return `<div style="padding:56px 0;text-align:center">
@@ -209,15 +251,40 @@ function cartLinesHTML() {
         </div></div></div>`;
   }).join('');
 }
+/* what delivery will cost for this cart, as the checkout will charge it (site.json > shipping) */
+function shippingRow(total) {
+  if (!SHIP.free) return '<span class="dim">Shown at checkout</span>';
+  if (!SHIP.freeFrom || total >= SHIP.freeFrom) return '<span class="ok">Free</span>';
+  return `<span class="dim">Free over ${money(SHIP.freeFrom)}</span>`;
+}
+/* one add-on worth offering: the same album in a cheaper format that isn't in the cart yet */
+function cartAddon() {
+  for (const l of cart) {
+    const p = bySlug[l.slug];
+    const v = ['polaroid', 'poster-a5', 'poster-a3', 'print-10'].map(f => variant(p, f))
+      .find(x => x && x.price < l.price && !cart.some(c => c.slug === p.slug && c.format === x.format));
+    if (v) return { p, v };
+  }
+  return null;
+}
+function addonHTML() {
+  const a = cartAddon(); if (!a) return '';
+  return `<div class="addon">
+      <img src="${imgSrc(a.v.image)}" alt="" loading="lazy" decoding="async">
+      <div class="addon__t"><span class="mono-xs dim">Goes with it</span><span>${albumOf(a.p)} · ${esc(a.v.label)}</span></div>
+      <button class="addon__b" data-add="${a.p.slug}|${a.v.format}" aria-label="Add ${esc(albumText(a.p))}, ${esc(a.v.label)}">Add · ${money(a.v.price)}</button>
+    </div>`;
+}
 function cartFootHTML() {
   if (!cart.length) return '';
   const m = cartMaths();
-  return `<div class="receipt" style="margin-bottom:16px">
+  return `${addonHTML()}<div class="receipt" style="margin-bottom:16px">
       <div class="row"><span>${cartCount()} in the crate</span><span>${money(m.sub)}</span></div>
       ${m.sets ? `<div class="row" style="color:var(--success)"><span>Set of three applied ×${m.sets}</span><span>−${money(m.saved)}</span></div>` : ''}
+      <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span></button>
-    <p class="mono-xs dim" style="margin:12px 0 0;line-height:1.7">🔒 Secure payment via Shopify · UPI, Cards, Net Banking</p>`;
+    <p class="payline mono-xs dim">${payLine()}</p>`;
 }
 
 /* ---------- toast ---------- */
@@ -264,11 +331,12 @@ function closeAll() {
 
 /* ---------- vinyl sale: running tape ribbon ---------- */
 function saleTapeRun(n = 4) {
-  const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span></span>`;
+  const ship = SHIP.label ? `<b>${esc(SHIP.label.split(' ').slice(0, 2).join(' '))}</b><span>${esc(SHIP.label.split(' ').slice(2).join(' '))}</span>` : '';
+  const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span>${ship}</span>`;
   return one.repeat(n);
 }
 function saleRibbon() {
-  return `<a class="salebar tape" href="#/vinyl" aria-label="Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
+  return `<a class="salebar tape" href="#/vinyl" aria-label="Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
 }
 /* ---------- chrome ---------- */
 function chromeHTML() {
@@ -390,25 +458,42 @@ function grooveField() {
   if (el) el.style.backgroundImage = enc(svg(46, 60, 9.4, .8, .085)) + ',' + enc(svg(34, 90, 12, .7, .06));
 }
 
-/* ---------- preloader: black, the mark, and a very large counter ---------- */
-function initPre() {
-  if (RM() || location.search.includes('nopre')) return;
+/* ---------- preloader: black, the mark, and a very large counter ----------
+   Home only, once per visit. It used to run a fixed 1.5s whatever the connection; now the
+   counter tracks real readiness (fonts, the hero) and leaves as soon as the page can be seen,
+   with a short floor so it still reads as an entrance rather than a flash. Every other page
+   (a product someone tapped through to from an ad) opens straight onto its content. */
+function initPre(ready) {
+  const boot = document.getElementById('boot');
+  const done = () => { if (boot) { boot.classList.add('is-out'); setTimeout(() => boot.remove(), 420); } };
+  let seen = false;
+  try { seen = sessionStorage.getItem('pf_pre') === '1'; sessionStorage.setItem('pf_pre', '1'); } catch (e) {}
+  const home = isHome();
+  if (RM() || seen || !home || location.search.includes('nopre')) { Promise.resolve(ready).then(done, done); return; }
   const el = document.createElement('div');
-  el.id = 'pre';
+  el.id = 'pre'; if (boot) el.className = 'pre--warm';
   el.innerHTML = `<div class="pre__bar"></div>
     <img class="pre__mark" src="${window.__WORDMARK__}" alt="">
     <div class="pre__n num">00</div>
     <div class="pre__cap mono-xs dim">DESIGNED FROM MEMORY, MADE FOR NOW</div>`;
   document.body.appendChild(el);
+  if (boot) boot.remove();
   const n = el.querySelector('.pre__n'), bar = el.querySelector('.pre__bar');
-  const t0 = performance.now(), DUR = 1500;
+  const t0 = performance.now(), MIN = 650, CAP = 4000, OUT = 260;
+  let readyAt = 0, from = 0, v = 0;
+  const onReady = () => { readyAt = performance.now(); from = v; };
+  Promise.resolve(ready).then(onReady, onReady);
   (function tick(t) {
-    const k = Math.min(1, (t - t0) / DUR);
-    const e = 1 - Math.pow(1 - k, 2.2);
-    n.textContent = String(Math.round(e * 100)).padStart(2, '0');
-    bar.style.width = (e * 100) + '%';
-    if (k < 1) requestAnimationFrame(tick);
-    else { el.classList.add('is-out'); setTimeout(() => el.remove(), 700); }
+    const age = t - t0;
+    if (!readyAt && age > CAP) onReady();                      // never a hang
+    // creeps toward 90 while the page gets ready, then runs out to 100 in a fixed quarter second.
+    // Both are clocked in time, not frames, so a slow device finishes as promptly as a fast one.
+    const k = readyAt ? Math.min(1, (t - readyAt) / OUT) : 0;
+    v = readyAt ? from + (100 - from) * k : 90 * (1 - Math.exp(-age / 700));
+    n.textContent = String(Math.round(v)).padStart(2, '0');
+    bar.style.width = v.toFixed(1) + '%';
+    if (k >= 1 && age >= MIN) { el.classList.add('is-out'); setTimeout(() => el.remove(), 560); }
+    else requestAnimationFrame(tick);
   })(t0);
 }
 
@@ -511,7 +596,7 @@ function initGrounds() {
   const test = () => {
     const hint = document.getElementById('cnrscroll');
     if (hint) {
-      const home = routeHash() === '#/';
+      const home = isHome();
       hint.hidden = !home || scrollY > innerHeight * 0.7;
     }
     const mid = innerHeight * 0.5;
@@ -522,6 +607,16 @@ function initGrounds() {
   test();
 }
 
+/* The list. With a form endpoint set (site.json > forms.endpoint) this is an email box that
+   really posts; without one it is an Instagram follow button, because a box that says
+   "you're on the list" and stores nothing is worse than no box. */
+function listHTML(cls = '') {
+  if (SITE.forms && SITE.forms.endpoint) return `<form data-form="newsletter" class="listform ${cls}">
+      <input name="email" type="email" required placeholder="your@email.com" aria-label="Email" autocomplete="email">
+      <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button>
+    </form><div data-form-msg></div>`;
+  return `<a class="btn btn--secondary listbtn ${cls}" href="${IG_URL}" target="_blank" rel="noopener"><span class="btn__mag">Follow @${esc(SITE.instagram)}</span></a>`;
+}
 function footerHTML() {
   return `<footer class="ftr"><div class="wrap">
     <div class="ftr__grid">
@@ -530,25 +625,21 @@ function footerHTML() {
         <p class="body-s dim" style="margin:6px 0 16px">designed from memory, made for now</p>
         ${wave('', 'width:120px;height:36px;opacity:.6')}
       </div>
-      <div><h4>Formats</h4>
-        <a href="#/vinyl">Vinyls</a><a href="#/posters">Posters</a>
-        <a href="#/posters/10x10">10×10 Format</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
-      <div><h4>Brand</h4>
-        <a href="#/story">Our story</a><a href="#/faq">FAQ</a><a href="#/contact">Contact</a>
-        <a href="/pricing.md">Pricing Guide</a><a href="/llms.txt">AI Context</a></div>
-      <div><h4>Newsletter</h4>
-        <p class="body-s dim" style="margin:0 0 12px">New records, limited runs, no spam.</p>
-        <form data-form="newsletter" style="display:flex;gap:8px;flex-wrap:wrap">
-          <input name="email" type="email" required placeholder="your@email.com" aria-label="Email"
-            style="flex:1;min-width:150px;background:var(--elevated);border:1px solid var(--border);padding:12px;border-radius:2px">
-          <button class="btn btn--primary"><span class="btn__mag">Notify me</span></button>
-        </form><div data-form-msg></div></div>
+      <div><h4>Shop</h4>
+        <a href="#/vinyl">Vinyls</a><a href="#/posters/a3">A3 posters</a><a href="#/posters/a5">A5 posters</a>
+        <a href="#/posters/10x10">10×10 prints</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
+      <div><h4>Help</h4>
+        <a href="#/faq">Questions</a><a href="#/policies/shipping">Shipping</a><a href="#/policies/returns">Returns</a>
+        <a href="#/contact">Contact</a><a href="#/story">Our story</a></div>
+      <div><h4>New drops</h4>
+        <p class="body-s dim" style="margin:0 0 12px">New records and limited runs.</p>
+        ${listHTML()}
+        <ul class="ftr__facts mono-xs dim">${[SHIP.label, 'Delivered in ' + DELIVERY, 'Secure checkout'].filter(Boolean).map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;margin-top:44px;padding-top:20px;border-top:1px solid var(--border)" class="mono-xs dim">
-      <span>© 2026 PastForward</span><span>estd 2025</span>
-      <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener">@pastforward.shop</a>
-      <span style="display:flex;gap:14px">
-        <a href="#/policies/shipping">Shipping</a><a href="#/policies/returns">Returns</a>
+    <div class="ftr__base mono-xs dim">
+      <span>© 2026 PastForward · estd 2025</span>
+      <a href="${IG_URL}" target="_blank" rel="noopener">@${esc(SITE.instagram)}</a>
+      <span class="ftr__legal">
         <a href="#/policies/privacy">Privacy</a><a href="#/policies/terms">Terms</a></span>
     </div></div></footer>`;
 }
@@ -698,7 +789,7 @@ function initScroll() {
     const p = h > 0 ? Math.min(1, y / h) : 0;
     if (prog) prog.style.transform = `scaleX(${p})`;
     if (fill) fill.style.height = (p * 100) + '%';
-    const home = routeHash() === '#/';
+    const home = isHome();
     const threshold = innerHeight * .78;
     const hp = home ? Math.min(1, Math.max(0, y / threshold)) : 1;
     hdr.style.setProperty('--hdrp', hp.toFixed(3));
@@ -813,113 +904,128 @@ const SHOPIFY_CONFIG = {
 };
 window.SHOPIFY_CONFIG = SHOPIFY_CONFIG;
 
-/* ---------- forms ---------- */
-function submitForm(type, payload) {
+/* ---------- measurement ----------
+   The Meta Pixel is off until site.json > tracking.metaPixelId is filled in. The Shopify checkout
+   already runs it; without it here too, Meta never sees the product view or the add-to-cart.
+   While the id is empty no script is loaded. Campaign tags (utm_*, fbclid) are carried to the
+   checkout either way, so Shopify and the checkout's own pixel can still credit the right ad. */
+const Track = (() => {
+  const id = SITE.tracking && SITE.tracking.metaPixelId;
+  const KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+  // Where this visit came from (the tags an ad or a shared link put in the address). Kept for this
+  // tab only and handed to the Shopify checkout, so an order shows which ad or post produced it.
+  // This part runs with or without the pixel: it loads nothing and tells no third party anything.
+  let src = {};
+  try { src = JSON.parse(sessionStorage.getItem('pf_src') || '{}'); } catch (e) {}
+  const q0 = new URLSearchParams(location.search);
+  KEYS.forEach(k => { if (q0.get(k)) src[k] = q0.get(k).slice(0, 200); });
+  try { if (Object.keys(src).length) sessionStorage.setItem('pf_src', JSON.stringify(src)); } catch (e) {}
+  if (id) {
+    (function (f, b, e, v, n, t, x) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+      t = b.createElement(e); t.async = true; t.src = v; x = b.getElementsByTagName(e)[0]; x.parentNode.insertBefore(t, x);
+    })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', id);
+  }
+  const fire = (name, data) => { if (id && window.fbq) { try { window.fbq('track', name, data); } catch (e) {} } };
+  const vid = v => String((window.__SHOPIFY_VARIANTS__ || {})[v.sku] || v.sku);
+  return {
+    on: !!id,
+    page: () => fire('PageView'),
+    view: (p, v) => fire('ViewContent', { content_ids: [vid(v)], content_type: 'product', content_name: albumText(p) + ' — ' + p.artist, value: v.price, currency: 'INR' }),
+    add: (p, v, qty) => fire('AddToCart', { content_ids: [vid(v)], content_type: 'product', content_name: albumText(p) + ' — ' + p.artist, value: v.price * qty, currency: 'INR' }),
+    checkout: (lines, total) => fire('InitiateCheckout', { content_ids: lines.map(l => String((window.__SHOPIFY_VARIANTS__ || {})[l.sku] || l.sku)), content_type: 'product', num_items: lines.reduce((n, l) => n + l.qty, 0), value: total, currency: 'INR' }),
+    // campaign tags, carried to the Shopify checkout so an order shows which ad it came from
+    params: () => { const o = new URLSearchParams(); KEYS.forEach(k => { if (src[k]) o.set(k, src[k]); }); return o.toString(); }
+  };
+})();
+
+/* ---------- forms ----------
+   One rule: a form never claims something happened that didn't.
+   - custom:      a paid Shopify checkout when the custom-order product exists in Shopify
+                  (SKUs PF-CUSTOM-* in shopify_variants.json); otherwise the request goes out
+                  over WhatsApp or email, already written, from the visitor's own app.
+   - contact:     WhatsApp or email, already written.
+   - newsletter:  only rendered when site.json > forms.endpoint is set (see listHTML). */
+function customVariantId(fKey) {
+  const ids = SHOPIFY_CONFIG.variantIds || {};
+  return SHOPIFY_CONFIG.variants[fKey] || ids[`PF-CUSTOM-${fKey.toUpperCase()}`] || ids[fKey] || '';
+}
+function customBrief(d) {
+  const f = FMT[d.format] || FMT.vinyl;
+  const L = ["Hi PastForward, I'd like a custom piece.", '', `Artist: ${d.artist || ''}`, `Album or track: ${d.album || ''}`, `Format: ${f.label} (${money(f.price)})`];
+  if (d.ref) L.push(`Reference: ${d.ref}`);
+  if (d.notes) L.push(`Notes: ${d.notes}`);
+  L.push('', `Name: ${d.name || ''}`);
+  if (d.email) L.push(`Email: ${d.email}`);
+  if (d.whatsapp) L.push(`WhatsApp: ${d.whatsapp}`);
+  return L.join('\n');
+}
+function postForm(type, payload) {
+  return fetch(SITE.forms.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(Object.assign({ form: type, page: location.pathname }, payload)) })
+    .then(r => ({ ok: r.ok })).catch(() => ({ ok: false }));
+}
+function submitForm(type, payload, via) {
+  const endpoint = SITE.forms && SITE.forms.endpoint;
   if (type === 'custom') {
-    const fKey = payload.format || 'vinyl';
-    const f = FMT[fKey] || FMT.vinyl;
-    const variantId = SHOPIFY_CONFIG.variants[fKey] ||
-      (SHOPIFY_CONFIG.variantIds && (
-        SHOPIFY_CONFIG.variantIds[`PF-CUSTOM-${fKey.toUpperCase()}`] ||
-        SHOPIFY_CONFIG.variantIds[`PF-CUSTOM-${fKey.replace(/-/g, '_').toUpperCase()}`] ||
-        SHOPIFY_CONFIG.variantIds[fKey]
-      ));
-
-    // If Shopify is connected with storeDomain and variantId, forward directly to Shopify Cart Permalink Checkout:
+    const fKey = payload.format || 'vinyl', f = FMT[fKey] || FMT.vinyl, variantId = customVariantId(fKey);
     if (SHOPIFY_CONFIG.storeDomain && variantId) {
-      const btn = document.getElementById('customsubmitbtn');
-      const btnText = document.getElementById('custombtntext');
-      if (btn) btn.disabled = true;
-      if (btnText) btnText.textContent = 'Redirecting to secure checkout...';
-
       const params = new URLSearchParams();
       if (payload.email) params.set('checkout[email]', payload.email);
       if (payload.name) params.set('checkout[shipping_address][first_name]', payload.name);
       if (payload.whatsapp) params.set('checkout[shipping_address][phone]', payload.whatsapp);
-
-      // Cart attributes: displayed in Shopify Admin Order Details
-      params.set('attributes[Customer Name]', payload.name || '');
-      params.set('attributes[Email]', payload.email || '');
-      params.set('attributes[WhatsApp]', payload.whatsapp || '');
+      // cart attributes: shown on the order in Shopify admin
       params.set('attributes[Format]', f.label);
       params.set('attributes[Artist]', payload.artist || '');
       params.set('attributes[Album / Track]', payload.album || '');
+      params.set('attributes[WhatsApp]', payload.whatsapp || '');
       if (payload.ref) params.set('attributes[Reference Link]', payload.ref);
       if (payload.notes) params.set('attributes[Notes]', payload.notes);
-
-      // Order summary note
-      const noteParts = [
-        `CUSTOM ORDER: ${payload.artist || 'N/A'} — ${payload.album || 'N/A'} (${f.label})`,
-        `Customer: ${payload.name || 'N/A'} | Email: ${payload.email || 'N/A'} | WhatsApp: ${payload.whatsapp || 'N/A'}`
-      ];
-      if (payload.ref) noteParts.push(`Reference Link: ${payload.ref}`);
-      if (payload.notes) noteParts.push(`Notes: ${payload.notes}`);
-      params.set('note', noteParts.join('\n'));
-
-      const checkoutUrl = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}`;
-      window.location.href = checkoutUrl;
+      params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
+      const tags = Track.params();
+      location.href = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}${tags ? '&' + tags : ''}`;
       return Promise.resolve({ ok: true, redirected: true });
     }
-
-    // Direct fallback if custom variant ID is not yet linked:
-    console.log('[PastForward] Custom order logged:', payload);
-    const waText = encodeURIComponent(
-      `Hi PastForward! I'd like to place a custom order:\n\n` +
-      `• Artist: ${payload.artist || ''}\n` +
-      `• Album / Track: ${payload.album || ''}\n` +
-      `• Format: ${f.label} (${money(f.price)})\n` +
-      `• Name: ${payload.name || ''}\n` +
-      `• Email: ${payload.email || ''}\n` +
-      `• WhatsApp: ${payload.whatsapp || ''}\n` +
-      (payload.ref ? `• Reference: ${payload.ref}\n` : '') +
-      (payload.notes ? `• Notes: ${payload.notes}\n` : '') +
-      `\nPlease confirm payment link.`
-    );
-    return Promise.resolve({
-      ok: true,
-      customSuccess: `
-        <div style="background:var(--elevated);border:1px solid var(--border);border-radius:4px;padding:24px;margin-top:20px">
-          <div class="mono num" style="color:var(--oxblood);font-size:0.8rem;letter-spacing:.14em">ORDER LOGGED · PAYMENT LINK</div>
-          <h3 class="d-s" style="margin:12px 0 6px">Custom ${esc(f.label)} · ${money(f.price)}</h3>
-          <p class="body-s dim" style="margin-top:6px;line-height:1.6">
-            We've recorded your custom request for <b>${esc(payload.artist)} — ${esc(payload.album)}</b>.
-          </p>
-          <div style="margin-top:18px">
-            <a href="https://wa.me/917073273751?text=${waText}" target="_blank" rel="noopener" class="btn btn--primary" style="display:inline-flex;align-items:center;gap:8px">
-              <span class="btn__mag">Pay via WhatsApp & Confirm</span>
-            </a>
-          </div>
-          <div class="mono-xs dim" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);line-height:1.7">
-            A payment link is also being sent to your WhatsApp (${esc(payload.whatsapp || payload.email)}).
-          </div>
-        </div>`
-    });
+    const brief = customBrief(payload);
+    if (endpoint) postForm('custom', payload);   // a copy for the sheet, if one is wired up
+    window.open(via === 'email' ? mailLink(`Custom order: ${payload.artist || ''} — ${payload.album || ''}`, brief) : waLink(brief), via === 'email' ? '_self' : '_blank', 'noopener');
+    return Promise.resolve({ ok: true, opened: via === 'email' ? 'email' : 'WhatsApp' });
   }
-
-  /* SINGLE INTEGRATION POINT — wire to Shopify / Formspree / webhook here.
-     Receives: (type: 'newsletter'|'contact', payload: object) */
-  console.log('[PastForward] submitForm stub', type, payload);
-  return Promise.resolve({ ok: true });
+  if (type === 'contact') {
+    const text = `${payload.message || ''}\n\n${payload.name || ''}${payload.email ? ' · ' + payload.email : ''}`;
+    if (endpoint && !via) return postForm('contact', payload);
+    window.open(via === 'email' ? mailLink('A question for PastForward', text) : waLink(text), via === 'email' ? '_self' : '_blank', 'noopener');
+    return Promise.resolve({ ok: true, opened: via === 'email' ? 'email' : 'WhatsApp' });
+  }
+  if (endpoint) return postForm(type, payload);
+  return Promise.resolve({ ok: false });
 }
-function checkout(lines) {
-  /* Sends the cart to Shopify checkout through a cart permalink: /cart/{variantId}:{qty},... */
+/* Sends lines to Shopify checkout through a cart permalink: /cart/{variantId}:{qty},... */
+function checkoutUrl(lines) {
   const ids = SHOPIFY_CONFIG.variantIds, parts = [];
   for (const l of lines) {
     const id = ids[l.sku];
-    if (!id) { toast('Sorry, one item in your crate can’t be checked out right now.'); return; }
+    if (!id) return null;
     parts.push(id + ':' + l.qty);
   }
-  if (!parts.length) return;
-
-  // Visual feedback on checkout buttons
-  const checkBtns = document.querySelectorAll('[data-checkout]');
-  checkBtns.forEach(b => {
+  if (!parts.length) return null;
+  const tags = Track.params();
+  return 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',') + (tags ? '?' + tags : '');
+}
+function checkout(lines, btn) {
+  const url = checkoutUrl(lines);
+  if (!url) { toast('Sorry, one item in your crate can’t be checked out right now.'); return; }
+  Track.checkout(lines, lines.reduce((n, l) => n + l.price * l.qty, 0));
+  (btn ? [btn] : $$('[data-checkout]')).forEach(b => {
     b.disabled = true;
     const span = b.querySelector('.btn__mag');
-    if (span) span.textContent = 'Redirecting to checkout...';
+    if (span) span.textContent = 'Opening secure checkout…';
   });
-
-  window.location.href = 'https://' + SHOPIFY_CONFIG.storeDomain + '/cart/' + parts.join(',');
+  // coming back with the browser's Back button must not leave the button stuck
+  addEventListener('pageshow', e => { if (e.persisted) { syncCart(); $$('[data-buynow]').forEach(b => { b.disabled = false; const t = b.querySelector('.btn__mag'); if (t) t.textContent = 'Buy now'; }); } }, { once: true });
+  location.href = url;
 }
 
 /* ---------- router ---------- */
@@ -928,177 +1034,86 @@ function parseHash() {
   const [path, q] = raw.split('?');
   return { path: path.replace(/\/+$/, '') || '/', params: new URLSearchParams(q || '') };
 }
+/* true on the home page whatever is in the query string. Ad clicks always arrive with one
+   (?fbclid=..., ?utm_source=...), and comparing the raw address to "#/" used to miss them:
+   the hero header state and scroll hint never switched on for exactly the visitors paid for. */
+function isHome() { return parseHash().path === '/'; }
 window.__unmounts = [];
 function onUnmount(fn) { window.__unmounts.push(fn); }
-function updatePageSEO({ title, description, canonical, ogImage, product }) {
+const ORIGIN = (SITE.url || 'https://pastforward.shop').replace(/\/$/, '');
+const absUrl = u => /^(https?:|data:)/.test(u) ? u : ORIGIN + (u.startsWith('/') ? u : '/' + u);
+function updatePageSEO({ title, description, canonical, ogImage, noindex }) {
   document.title = title;
-
-  // 1. Meta Description
-  let metaDesc = $('meta[name="description"]');
-  if (!metaDesc) {
-    metaDesc = document.createElement('meta');
-    metaDesc.name = 'description';
-    document.head.appendChild(metaDesc);
-  }
-  metaDesc.content = description;
-
-  // 2. Canonical Tag
-  let linkCanonical = $('link[rel="canonical"]');
-  if (!linkCanonical) {
-    linkCanonical = document.createElement('link');
-    linkCanonical.rel = 'canonical';
-    document.head.appendChild(linkCanonical);
-  }
-  linkCanonical.href = canonical;
-
-  // 3. OpenGraph Tags
-  const setMeta = (prop, content) => {
-    let el = $(`meta[property="${prop}"]`);
-    if (!el) { el = document.createElement('meta'); el.setAttribute('property', prop); document.head.appendChild(el); }
-    el.content = content;
+  const set = (sel, make, attr, val) => {
+    let el = $(sel);
+    if (!el) { el = make(); document.head.appendChild(el); }
+    el.setAttribute(attr, val);
   };
-  setMeta('og:title', title);
-  setMeta('og:description', description);
-  setMeta('og:url', canonical);
-  if (ogImage) setMeta('og:image', ogImage);
-
-  // 4. Twitter Card Tags
-  const setTwitter = (name, content) => {
-    let el = $(`meta[name="${name}"]`);
-    if (!el) { el = document.createElement('meta'); el.setAttribute('name', name); document.head.appendChild(el); }
-    el.content = content;
-  };
-  setTwitter('twitter:title', title);
-  setTwitter('twitter:description', description);
-  if (ogImage) setTwitter('twitter:image', ogImage);
-
-  // 5. Dynamic Product Schema.org JSON-LD
-  let schemaScript = document.getElementById('dynamic-product-schema');
-  if (product) {
-    if (!schemaScript) {
-      schemaScript = document.createElement('script');
-      schemaScript.id = 'dynamic-product-schema';
-      schemaScript.type = 'application/ld+json';
-      document.head.appendChild(schemaScript);
-    }
-    const v = primary(product);
-    schemaScript.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": `${albumText(product)} by ${product.artist} — Upcycled Vinyl Record & Poster Art`,
-      "image": ogImage || "https://pastforward.shop/photos/wordmark.webp",
-      "description": description,
-      "brand": {
-        "@type": "Brand",
-        "name": "PastForward"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": v ? String(v.price) : "999",
-        "priceCurrency": "INR",
-        "availability": "https://schema.org/InStock",
-        "url": canonical
-      }
-    });
-  } else if (schemaScript) {
-    schemaScript.remove();
-  }
+  const meta = (k, name, val) => set(`meta[${k}="${name}"]`, () => { const m = document.createElement('meta'); m.setAttribute(k, name); return m; }, 'content', val);
+  meta('name', 'description', description);
+  set('link[rel="canonical"]', () => { const l = document.createElement('link'); l.rel = 'canonical'; return l; }, 'href', canonical);
+  meta('property', 'og:title', title); meta('property', 'og:description', description); meta('property', 'og:url', canonical);
+  meta('name', 'twitter:title', title); meta('name', 'twitter:description', description);
+  if (ogImage) { meta('property', 'og:image', absUrl(ogImage)); meta('name', 'twitter:image', absUrl(ogImage)); }
+  const robots = $('meta[name="robots"]');
+  if (noindex) meta('name', 'robots', 'noindex,follow'); else if (robots) robots.remove();
 }
 
-function render() {
+/* the static page that was served carries structured data for ITS route; once the visitor
+   moves on inside the app it no longer describes what is on screen, so it goes */
+let firstRender = true;
+function render(opt = {}) {
   const { path, params } = parseHash();
-  const seg = path.split('/').filter(Boolean);
+  let seg = path.split('/').filter(Boolean);
   const main = $('#main');
-  let out, title = 'PastForward — Upcycled Vinyl Records & Custom Music Album Art';
-  let desc = 'Real 12-inch upcycled records with the album pressed into the centre label, made to hang. Custom music posters, fine art prints, and polaroids made to order. Handcrafted & shipped across India.';
-  let canonical = 'https://pastforward.shop' + (path === '/' ? '/' : path);
-  let ogImage = 'https://pastforward.shop/photos/wordmark.webp';
+  const M = SITE.meta || {};
+  let out, m = M[path] || M['/'] || {}, noindex = !!(M[path] && M[path].noindex);
+  let canonical = ORIGIN + (path === '/' ? '/' : path);
+  let ogImage = ORIGIN + '/og.jpg';
   let currentProduct = null;
 
-  if (!seg.length) {
-    out = viewHome();
+  // Shopify-style addresses (/products/<handle>, as catalogue ads and the Shopify side link them) are ours at /product/<slug>
+  if (seg[0] === 'products' && seg[1]) {
+    replaceUrl('/product/' + seg[1] + (params.toString() ? '?' + params.toString() : ''));
+    return render(opt);
   }
-  else if (seg[0] === 'vinyl') {
-    out = viewCatalog('vinyl', null, params);
-    title = 'Upcycled Vinyl Records | PastForward — 12-Inch Real Records Made to Hang';
-    desc = 'Shop authentic vintage 12-inch vinyl records upcycled with album covers pressed into the centre label. Wall hook included, ready to hang. Pan-India shipping.';
-  }
-  else if (seg[0] === 'posters') {
-    out = viewCatalog('posters', seg[1], params);
-    title = 'Music Posters & Fine Art Prints | PastForward — 300 GSM Gallery Wall Art';
-    desc = 'Explore gallery-grade A3, A5, and 10x10 music art prints of the albums that mattered. Premium 300 GSM matte cardstock with rich color reproduction.';
-  }
-  else if (seg[0] === 'polaroids') {
-    out = viewCatalog('polaroids', null, params);
-    title = 'Music Polaroid Art Cards | PastForward — Keepsake Mini Prints';
-    desc = 'Collectible mini album art cards printed on heavyweight cardstock with a classic retro cream border. Perfect for desks, phone cases, and pinboards.';
-  }
-  else if (seg[0] === 'shop') {
-    location.replace('#/vinyl');
-    return;
-  }
-  else if (seg[0] === 'product' && bySlug[seg[1]]) {
-    const p = bySlug[seg[1]];
-    currentProduct = p;
-    out = viewProduct(p, params);
-    const alb = albumText(p);
-    title = `${alb} by ${p.artist} — Upcycled Vinyl Record & Posters | PastForward`;
-    desc = `Buy ${alb} by ${p.artist} on authentic 12-inch upcycled vinyl, A3/A5 music poster, or polaroid. Handcrafted display art with pan-India delivery.`;
-    const vPrimary = primary(p);
-    if (vPrimary && vPrimary.image) {
-      ogImage = imgSrc(vPrimary.image, true);
-    }
-  }
-  else if (seg[0] === 'collections') {
-    const colSlug = seg[1] || 'the-classics';
-    out = viewCatalog('collections', colSlug, params);
-    const c = COLS.find(x => x.slug === colSlug);
-    title = `${c ? c.name : 'Collection'} | PastForward`;
-    desc = `Explore the ${c ? c.name : 'curated'} collection of vinyl records, prints, and music artwork at PastForward.`;
-  }
-  else if (seg[0] === 'custom') {
-    out = viewCustom();
-    title = 'Custom Album Artwork & Made-To-Order Vinyl | PastForward';
-    desc = 'Turn any album, playlist, or personal mixtape into custom upcycled vinyl or gallery poster wall art. Handcrafted to order and shipped across India.';
-  }
-  else if (seg[0] === 'story') {
-    out = viewStory();
-    title = 'Our Story & Craft | PastForward — Preserving Music Tangibly';
-    desc = 'Why we rescue vintage 12-inch vinyl records and press iconic album art into centre labels. Made to hang, designed from memory.';
-  }
-  else if (seg[0] === 'faq') {
-    out = viewFaq();
-    title = 'Frequently Asked Questions | PastForward';
-    desc = 'Answers to common questions about materials, authentic 12-inch vinyl, frame sizing, pan-India delivery, and custom made-to-order album art.';
-  }
-  else if (seg[0] === 'contact') {
-    out = viewContact();
-    title = 'Contact & Support | PastForward';
-    desc = 'Get in touch with PastForward for custom artwork inquiries, bulk orders, or shipping support.';
-  }
-  else if (seg[0] === 'search') {
-    out = viewSearch(params);
-    title = 'Search Music & Album Art | PastForward';
-  }
-  else if (seg[0] === 'cart') {
-    out = viewCart();
-    title = 'Your Crate | PastForward';
-  }
-  else if (seg[0] === 'wall') {
-    out = viewWall();
-    title = 'Customer Wall Gallery | PastForward';
-    desc = 'See real customer bedroom and living room wall setups featuring PastForward upcycled vinyl records and framed posters.';
-  }
-  else if (seg[0] === 'policies') {
-    out = viewPolicy(seg[1]);
-    title = 'Store Policies & Shipping | PastForward';
-  }
-  else {
-    out = view404();
-    title = 'Page Not Found | PastForward';
+  // products that were renamed keep their old address
+  if (seg[0] === 'product' && !bySlug[seg[1]] && CAT.aliases && bySlug[CAT.aliases[seg[1]]]) {
+    replaceUrl('/product/' + CAT.aliases[seg[1]] + (params.toString() ? '?' + params.toString() : ''));
+    return render(opt);
   }
 
-  updatePageSEO({ title, description: desc, canonical, ogImage, product: currentProduct });
+  if (!seg.length) out = viewHome();
+  else if (seg[0] === 'vinyl') out = viewCatalog('vinyl', null, params);
+  else if (seg[0] === 'posters') {
+    out = viewCatalog('posters', seg[1], params);
+    if (!seg[1]) { m = M['/posters/a3'] || m; canonical = ORIGIN + '/posters/a3'; }
+  }
+  else if (seg[0] === 'polaroids') out = viewCatalog('polaroids', null, params);
+  else if (seg[0] === 'shop') { replaceUrl('/vinyl'); return render(opt); }
+  else if (seg[0] === 'product' && bySlug[seg[1]]) {
+    const p = currentProduct = bySlug[seg[1]];
+    out = viewProduct(p, params);
+    m = p.seo || m;
+    ogImage = imgSrc(primary(p).image, true);
+  }
+  else if (seg[0] === 'collections') {
+    const c = COLS.find(x => x.slug === (seg[1] || 'the-classics')) || COLS[0];
+    out = viewCatalog('collections', c.slug, params);
+    m = c.seo || m; canonical = ORIGIN + '/collections/' + c.slug;
+  }
+  else if (seg[0] === 'custom') out = viewCustom();
+  else if (seg[0] === 'story') out = viewStory();
+  else if (seg[0] === 'faq') out = viewFaq();
+  else if (seg[0] === 'contact') out = viewContact();
+  else if (seg[0] === 'search') out = viewSearch(params);
+  else if (seg[0] === 'cart') out = viewCart();
+  else if (seg[0] === 'wall') out = viewWall();
+  else if (seg[0] === 'policies' && SITE.policies[seg[1]]) out = viewPolicy(seg[1]);
+  else { out = view404(); m = { title: 'Page not found | PastForward', desc: (M['/'] || {}).desc || '' }; noindex = true; canonical = ORIGIN + '/'; seg = ['404']; }
+
+  updatePageSEO({ title: m.title, description: m.desc, canonical, ogImage, noindex });
+  if (!firstRender && !opt.quiet) { const ld = document.getElementById('route-schema'); if (ld) ld.remove(); }
   // tear down the page we're leaving: WebGL contexts, frame loops, observers
   (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
   main.innerHTML = out;
@@ -1114,8 +1129,12 @@ function render() {
     const target = document.getElementById(params.get('scroll'));
     if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
   }
-  if (!RM()) main.animate([{ opacity: 0, transform: 'translateY(28px) scale(.98)' }, { opacity: 1, transform: 'none' }],
-    { duration: 480, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+  if (!opt.quiet) Track.page();
+  if (currentProduct && !opt.quiet) Track.view(currentProduct, variant(currentProduct, formatFromParams(currentProduct, params)));
+  // the page arrives with a short rise; a filter or "load more" on the same page doesn't replay it
+  if (!RM() && !opt.quiet && !firstRender) main.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
+    { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
+  firstRender = false;
 }
 function go(hash) { navigate(hash); }
 
@@ -1130,19 +1149,35 @@ function routeHash() {
   if (!cleanUrls()) return location.hash;
   return '#' + (location.pathname.replace(/\/+$/, '') || '/') + location.search;
 }
-function onRoute() { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render(); }
-function navigate(to) {
+function onRoute(opt = {}) {
+  if (opt.keepScroll) { const y = scrollY; render({ quiet: true }); scrollTo({ top: y, left: 0, behavior: 'instant' }); return; }
+  scrollTo({ top: 0, left: 0, behavior: 'instant' }); render();
+}
+/* navigate(to)                      a new page: history entry, scroll to top, entrance
+   navigate(to, {replace, keepScroll}) the same page in a new state (a filter, a sort, load more):
+                                     no history entry, no jump, no entrance */
+let hashSilent = false;
+function navigate(to, opt = {}) {
   let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
-  if (!cleanUrls()) { location.hash = p; return; }
+  if (!cleanUrls()) {
+    if (opt.replace) { hashSilent = true; history.replaceState(null, '', '#' + p); hashSilent = false; onRoute(opt); }
+    else location.hash = p;
+    return;
+  }
   if (p === location.pathname + location.search) return;
-  history.pushState(null, '', p); onRoute();
+  history[opt.replace ? 'replaceState' : 'pushState'](null, '', p); onRoute(opt);
+}
+/* change the address without touching the page (the product page's format switch does its own DOM work) */
+function replaceUrl(to) {
+  let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
+  history.replaceState(null, '', cleanUrls() ? p : '#' + p);
 }
 function cleanHomeUrl() {
   const h = location.hash;
   if (cleanUrls() && h.startsWith('#/')) history.replaceState(null, '', h.slice(1));
   else if (h === '#/' || h === '#') history.replaceState(null, '', location.pathname + location.search);
 }
-addEventListener('hashchange', () => { cleanHomeUrl(); onRoute(); });
+addEventListener('hashchange', () => { if (hashSilent) return; cleanHomeUrl(); onRoute(); });
 addEventListener('popstate', () => { if (cleanUrls()) onRoute(); });
 /* In-site #/ links navigate by path without a page reload. Registered on window so it
    runs after the document click handlers below (which may preventDefault, e.g. Add to cart). */
@@ -1163,21 +1198,32 @@ document.addEventListener('click', e => {
   const rm = e.target.closest('[data-rm]');
   if (rm) { cart.splice(+rm.dataset.rm, 1); saveCart(); syncCart(); return; }
   if (e.target.closest('[data-checkout]')) { checkout(cart.map(l => ({ ...l, sku: variant(bySlug[l.slug], l.format).sku }))); return; }
+  const share = e.target.closest('[data-share]');
+  if (share) {
+    const data = { title: document.title, url: location.href.split('#')[0] };
+    if (navigator.share) navigator.share(data).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(data.url).then(() => toast('Link copied'), () => {});
+  }
 });
 document.addEventListener('submit', e => {
   const f = e.target.closest('[data-form]'); if (!f) return;
   e.preventDefault();
   const data = Object.fromEntries(new FormData(f));
-  const btn = $('button', f); if (btn) btn.disabled = true;
-  submitForm(f.dataset.form, data).then((res) => {
+  const via = e.submitter && e.submitter.dataset.via;
+  const btns = $$('button', f); btns.forEach(b => { b.disabled = true; });
+  const msg = f.parentElement.querySelector('[data-form-msg]');
+  const say = (html, hide) => {
+    if (!msg) return;
+    msg.innerHTML = `<p class="formnote" role="status">${html}</p>`;
+    if (hide) f.style.display = 'none';
+    if (!RM()) msg.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
+  };
+  submitForm(f.dataset.form, data, via).then(res => {
+    btns.forEach(b => { b.disabled = false; });
     if (res && res.redirected) return;
-    const msg = f.parentElement.querySelector('[data-form-msg]');
-    const success = (res && res.customSuccess) || f.dataset.success || "You're on the list.";
-    if (msg) {
-      msg.innerHTML = res && res.customSuccess ? res.customSuccess : `<p class="d-s" style="margin-top:14px" role="status">${esc(success)}</p>`;
-      f.style.display = 'none';
-    }
-    if (!RM() && msg) msg.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
+    if (res && res.opened) say(`Your message is written out in ${res.opened}. Press send there and it reaches us.`);
+    else if (res && res.ok) say(esc(f.dataset.success || "You're on the list."), true);
+    else say(`That didn't go through. Email <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> and we'll pick it up.`);
   });
 });
 addEventListener('keydown', e => {

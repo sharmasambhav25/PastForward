@@ -1,0 +1,148 @@
+{
+  "_readme": "One place for the facts the whole site repeats. build.py reads this file, expands the {{TOKENS}}, and hands it to the page as window.__SITE__. It also feeds the search-engine fallback, the structured data, llms.txt and pricing.md, so nothing here can drift apart. Edit here, run `python3 build.py`, commit docs/.",
+
+  "url": "https://pastforward.shop",
+  "shopDomain": "shop.pastforward.shop",
+  "email": "contact@pastforward.shop",
+  "instagram": "pastforward.shop",
+  "whatsapp": "917073273751",
+  "delivery": "7–10 days",
+  "country": "India",
+
+  "shipping": {
+    "_note": "Must match Shopify > Markets > India > Shipping. When `free` is true the site says so on the ribbon, product pages and cart. If you add a paid rate below a threshold, set freeFrom to that amount (0 = free on everything).",
+    "free": true,
+    "freeFrom": 0
+  },
+
+  "payments": "UPI, cards and net banking",
+  "cod": false,
+
+  "mrp": { "vinyl": 1299 },
+
+  "forms": {
+    "_note": "Paste a form endpoint that accepts a JSON POST (Formspree, Web3Forms, a Google Apps Script web app). While this is empty the newsletter box is replaced by an Instagram follow button and the contact form opens WhatsApp or email, so nothing a visitor types is ever silently dropped.",
+    "endpoint": ""
+  },
+
+  "tracking": {
+    "_note": "The pixel is off while metaPixelId is empty. Filling it in loads the Meta Pixel on pastforward.shop (PageView, ViewContent, AddToCart, InitiateCheckout); use the same pixel id Shopify's Facebook & Instagram channel uses, so the whole journey is one funnel. Before switching it on, change the 'Your cart and cookies' line in the privacy policy below, which currently says the site uses no trackers. Campaign tags (utm_*, fbclid) are passed to the Shopify checkout whether or not the pixel is on.",
+    "metaPixelId": ""
+  },
+
+  "meta": {
+    "/": {
+      "title": "PastForward — Upcycled Vinyl Records & Music Wall Art",
+      "desc": "Real 12-inch upcycled records with the album printed on the centre label, made to hang. Posters, prints and polaroids too. Delivered across India."
+    },
+    "/vinyl": {
+      "title": "Upcycled Vinyl Records for Your Wall | PastForward",
+      "desc": "Real 12-inch records that already had a life, with the album printed on the centre label. Wall hook included. {{PRICE_VINYL}} each, delivered across India."
+    },
+    "/posters": {
+      "title": "A3 Music Posters | PastForward",
+      "desc": "A3 album posters, 297 × 420mm, printed to order. {{PRICE_A3}} each, delivered across India."
+    },
+    "/posters/a3": {
+      "title": "A3 Music Posters | PastForward",
+      "desc": "A3 album posters, 297 × 420mm, printed to order. {{PRICE_A3}} each, delivered across India."
+    },
+    "/posters/a5": {
+      "title": "A5 Music Posters | PastForward",
+      "desc": "A5 album posters, 148 × 210mm, printed to order. {{PRICE_A5}} each, delivered across India."
+    },
+    "/posters/10x10": {
+      "title": "10×10 Album Art Prints | PastForward",
+      "desc": "Square 10×10 inch album prints, 254 × 254mm, printed to order. {{PRICE_10}} each, delivered across India."
+    },
+    "/polaroids": {
+      "title": "Music Polaroid Cards | PastForward",
+      "desc": "Polaroid-style album cards with a cream border. {{PRICE_POLAROID}} each, delivered across India."
+    },
+    "/custom": {
+      "title": "Custom Vinyl Wall Art & Album Posters, Made to Order | PastForward",
+      "desc": "Not in the catalogue? Tell us the artist and album and we make it as an upcycled 12-inch record, poster, print or polaroid."
+    },
+    "/story": {
+      "title": "Our Story | PastForward",
+      "desc": "Why we take 12-inch records that already had a life and turn them into wall art. Designed from memory, made for now."
+    },
+    "/faq": {
+      "title": "Questions | PastForward",
+      "desc": "Is it a real record, can it be played, how it hangs, delivery times, payments and what happens if it arrives damaged."
+    },
+    "/contact": {
+      "title": "Contact | PastForward",
+      "desc": "Reach PastForward about an order or a custom piece by WhatsApp, Instagram or email."
+    },
+    "/search": {
+      "title": "Search | PastForward",
+      "desc": "Search the PastForward catalogue by artist or album.",
+      "noindex": true
+    },
+    "/cart": {
+      "title": "Your Crate | PastForward",
+      "desc": "The records, posters and polaroids in your crate.",
+      "noindex": true
+    },
+    "/wall": {
+      "title": "Send Us a Wall | PastForward",
+      "desc": "Tag @pastforward.shop or send a photo of your wall. The good ones go up here.",
+      "noindex": true
+    },
+    "/policies/shipping": { "title": "Shipping Policy | PastForward", "desc": "Where PastForward delivers, how long it takes and what it costs." },
+    "/policies/returns":  { "title": "Returns Policy | PastForward",  "desc": "Made-to-order pieces, and what we do if an order arrives damaged." },
+    "/policies/privacy":  { "title": "Privacy Policy | PastForward",  "desc": "What PastForward collects, what it is used for and your rights." },
+    "/policies/terms":    { "title": "Terms | PastForward",           "desc": "The terms that apply when you order from PastForward." }
+  },
+
+  "faq": [
+    ["Is it a real vinyl record?", "Yes. A real 12-inch upcycled record. Every record we sell already had a life before it got to you; we clean it up and set the artwork into the centre label. Nothing is pressed new for decor."],
+    ["Can I play it?", "It's sold to hang, not to play. These are real records, so the grooves are real — but we make no promise about what's on them or how it sounds, and the label carries our artwork rather than the original. Treat it as a wall piece."],
+    ["Why upcycled and not new?", "Because a record that already had a life is the whole point of the name. It also means no two are identical, and nothing new gets pressed just to hang on a wall."],
+    ["What sizes do you make?", "{{SIZES}}"],
+    ["How does a record hang?", "Every record comes with a wall hook in the box. Put the hook up and hang the record on it."],
+    ["How long does delivery take?", "{{DELIVERY}} from when you order, anywhere in India."],
+    ["What does delivery cost?", "{{SHIPPING_LINE}}"],
+    ["How can I pay?", "By {{PAYMENTS}}, on a secure checkout. {{COD_LINE}}"],
+    ["Do you ship outside India?", "Not yet. We deliver anywhere in India for now."],
+    ["What if it arrives damaged?", "Email {{EMAIL_LINK}} within 7 days of delivery with a photo, and we'll put it right. See <a href=\"#/policies/returns\">returns</a>."],
+    ["Can you make one that isn't on the site?", "Yes. That's what <a href=\"#/custom\">custom orders</a> are for — tell us the artist and album and we'll make it."],
+    ["How do I look after it?", "Wipe with a dry cloth. Keep it out of direct sunlight — same as the original."]
+  ],
+
+  "policiesUpdated": "1 November 2026",
+  "policies": {
+    "shipping": ["Shipping", [
+      ["Where we deliver", "We deliver anywhere in India."],
+      ["How long it takes", "Every piece is made to order. Your order reaches you within {{DELIVERY}} of being placed."],
+      ["What it costs", "Any delivery charge is shown at checkout, before you pay."],
+      ["Your address", "Please check your delivery address and phone number before you order. If something's wrong, email {{EMAIL_LINK}} as soon as you can and we'll fix it before it ships."],
+      ["Questions", "Email {{EMAIL_LINK}}. We usually reply right away."]
+    ]],
+    "returns": ["Returns", [
+      ["Made to order", "Each piece is printed and put together for your order, so we can't take returns if you change your mind."],
+      ["If it arrives damaged", "If your order arrives damaged, or isn't what you ordered, email {{EMAIL_LINK}} within 7 days of delivery. Include your order details and photos of the piece and the packaging. We'll send a replacement, or refund you if we can't."],
+      ["About the records", "Our records are upcycled: real vinyl that already had a life. Small surface marks on the record are part of that history and aren't counted as damage."],
+      ["Refunds", "Approved refunds go back to the original payment method."]
+    ]],
+    "privacy": ["Privacy", [
+      ["What we collect", "Only what you give us. When you order: your name, delivery address, phone number and email, so we can deliver. When you use a form: what you type in it, such as your name, email, WhatsApp number, message, or a link to the artwork you want. When you join the list: your email."],
+      ["What we use it for", "To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time."],
+      ["Payments", "Payments are handled by our payment provider. We never see or store your card or bank details."],
+      ["Who we share it with", "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
+      ["Your cart and cookies", "Your cart is saved in your own browser so it's still there when you come back. This site doesn't use analytics or advertising trackers."],
+      ["Your rights", "You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email {{EMAIL_LINK}}."]
+    ]],
+    "terms": ["Terms", [
+      ["Who we are", "PastForward makes wall decor from music: upcycled vinyl records with album art at the centre, posters, prints and polaroid cards. By ordering from this site you agree to these terms."],
+      ["The products", "Our records are for hanging, not playing. Prints are made to order, and colours can look slightly different from how they appear on your screen."],
+      ["Prices and orders", "Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can't fulfil an order, we'll tell you and refund you in full."],
+      ["Custom orders", "When you send us an image or artwork to print, you confirm you have the right to use it."],
+      ["Artwork and names", "Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label."],
+      ["Delivery and returns", "See our <a href=\"#/policies/shipping\">shipping</a> and <a href=\"#/policies/returns\">returns</a> policies."],
+      ["Changes", "We may update these terms. The date at the top shows when they last changed."],
+      ["The law", "These terms are governed by the laws of India."]
+    ]]
+  }
+}

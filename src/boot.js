@@ -65,6 +65,17 @@ function initChrome() {
   $('#search').addEventListener('click', e => { if (e.target.closest('a')) closeAll(); });
 }
 
+/* The WebGL record (three.js, ~170 KB over the wire) is only ever drawn on screens 768px and up.
+   It used to be part of every page load and the whole site waited for it; phones never used it.
+   Now it is fetched on larger screens with a real GPU only, and only the home page waits for it. */
+function load3d() {
+  if (window.mountVinyl) return Promise.resolve(true);            // single-file builds ship it inline
+  if (!window.__VINYL3D_URL__ || isPhone() || !fastGL()) return Promise.resolve(false);
+  if (!window.__gl3d) window.__gl3d = import(window.__VINYL3D_URL__).then(() => true, () => false);
+  return window.__gl3d;
+}
+const within = (p, ms) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
+
 function pfStart() {
   const seoEl = document.getElementById('pf-seo');
   if (seoEl) seoEl.remove();
@@ -75,22 +86,38 @@ function pfStart() {
   main.id = 'main'; main.setAttribute('tabindex', '-1');
   document.body.appendChild(main);
   document.body.insertAdjacentHTML('beforeend', footerHTML());
-  initChrome(); initGrain(); initCursor(); initScroll(); grooveField(); initSound(); initGrounds(); initPre();
+  initChrome(); initGrain(); initCursor(); initScroll(); grooveField(); initSound(); initGrounds();
   syncCart();
   cleanHomeUrl();
-  render();
-  bindEffects(document);
-  if (new URLSearchParams(location.search).get('openmenu') === '1') {
-    const m = $('#menu');
-    if (m) {
-      m.style.transition = 'none';
-      m.classList.add('is-open');
-      m.querySelectorAll('a').forEach(a => { a.style.opacity = '1'; a.style.transform = 'none'; });
-    }
+
+  // back from a finished order (the Shopify thank-you page can link to /?order=done): empty the crate
+  const q = new URLSearchParams(location.search);
+  if (q.get('order') === 'done') {
+    cart = []; saveCart(); syncCart();
+    q.delete('order'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+    setTimeout(() => toast('Order placed. Thank you.'), 600);
   }
-  if (new URLSearchParams(location.search).get('brief') === '1') document.documentElement.setAttribute('data-confirm-mode', '');
-  const n = document.querySelectorAll('[data-confirm]').length;
-  console.log('[PastForward] catalogue:', COUNTS, '| unresolved sources:', CAT.unresolved.length);
+
+  const home = isHome();
+  const gl = load3d();
+  const first = () => {
+    render();
+    bindEffects(document);
+    if (q.get('openmenu') === '1') {
+      const m = $('#menu');
+      if (m) {
+        m.style.transition = 'none';
+        m.classList.add('is-open');
+        m.querySelectorAll('a').forEach(a => { a.style.opacity = '1'; a.style.transform = 'none'; });
+      }
+    }
+    if (q.get('brief') === '1') document.documentElement.setAttribute('data-confirm-mode', '');
+    console.log('[PastForward] catalogue:', COUNTS, '| unresolved sources:', CAT.unresolved.length);
+  };
+  // the page is ready to be seen once it has rendered and its type has arrived (capped, never a hang)
+  const fonts = document.fonts && document.fonts.ready ? within(document.fonts.ready, 1500) : Promise.resolve();
+  const rendered = (home && !isPhone() ? within(gl, 3500) : Promise.resolve()).then(first);
+  initPre(Promise.all([rendered, fonts]));
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pfStart);
 else pfStart();

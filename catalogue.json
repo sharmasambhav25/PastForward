@@ -76,9 +76,9 @@
    "rank": 999
   },
   {
-   "slug": "arctic-monkeys",
+   "slug": "arctic-monkeys-am",
    "artist": "Arctic Monkeys",
-   "album": "[CONFIRM]",
+   "album": "AM",
    "variants": [
     {
      "format": "vinyl",
@@ -90,14 +90,13 @@
      "badge": "12″",
      "image": "VINYLS-ARCTIC MONKEYS.webp",
      "sku": "PF-ARCTIC-MONKEYS-NA-VINYL",
-     "alt": "Arctic Monkeys — Vinyl by PastForward"
+     "alt": "AM by Arctic Monkeys — Vinyl by PastForward"
     }
    ],
    "tags": [
     "the-classics"
    ],
    "featured": false,
-   "confirmAlbum": true,
    "from": 999,
    "rank": 999
   },
@@ -1671,9 +1670,9 @@
    "rank": 999
   },
   {
-   "slug": "sabrina-carpenter",
+   "slug": "sabrina-carpenter-espresso",
    "artist": "Sabrina Carpenter",
-   "album": "[CONFIRM]",
+   "album": "Espresso",
    "variants": [
     {
      "format": "vinyl",
@@ -1685,22 +1684,8 @@
      "badge": "12″",
      "image": "VINYL-Sabrina Carpenter.webp",
      "sku": "PF-SABRINA-CARPENTER-NA-VINYL",
-     "alt": "Sabrina Carpenter — Vinyl by PastForward"
-    }
-   ],
-   "tags": [
-    "pop-canon"
-   ],
-   "featured": false,
-   "confirmAlbum": true,
-   "from": 999,
-   "rank": 999
-  },
-  {
-   "slug": "sabrina-carpenter-espresso",
-   "artist": "Sabrina Carpenter",
-   "album": "Espresso",
-   "variants": [
+     "alt": "Espresso by Sabrina Carpenter — Vinyl by PastForward"
+    },
     {
      "format": "poster-a3",
      "label": "A3 poster",
@@ -2596,7 +2581,7 @@
   }
  },
  "counts": {
-  "products": 67,
+  "products": 66,
   "vinyl": 48,
   "posters": 46,
   "prints": 14,
@@ -2604,9 +2589,11 @@
   "variants": 130,
   "artists": 54
  },
+ "aliases": {
+  "arctic-monkeys": "arctic-monkeys-am",
+  "sabrina-carpenter": "sabrina-carpenter-espresso"
+ },
  "unresolved": [
-  "album unknown for Arctic Monkeys",
-  "album unknown for Sabrina Carpenter",
   "byte-identical duplicate"
  ]
 }

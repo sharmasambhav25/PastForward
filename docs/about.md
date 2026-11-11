@@ -1,25 +1,15 @@
-# About PastForward — Preserving Music Tangibly
+# About PastForward
 
-> Authentic 12-inch upcycled vinyl records and gallery-grade music posters, handcrafted to order and shipped across India.
+> Designed from memory, made for now.
+
+PastForward takes 12-inch vinyl records that already had a life, cleans them up, and prints album artwork onto the centre label so the record can hang on a wall. It is decor, not a playable release: the grooves are real, the label is PastForward's artwork. Because each record is upcycled, no two are identical and nothing new is pressed just to be hung up.
+
+The same designs are available as A3 and A5 posters, 10×10 inch square prints and polaroid-style cards, all printed to order. Established 2025, India.
 
 - **Website**: https://pastforward.shop
-- **Established**: 2025
-- **Headquarters**: India
-- **Contact**: team@pastforward.shop
-- **Instagram**: https://instagram.com/pastforward.shop
-
----
-
-## Why Upcycled Vinyl?
-
-PastForward rescues genuine vintage 12-inch vinyl records that have reached the end of their playable listening lives and transforms them into permanent music wall art.
-
-Instead of pressing virgin PVC plastics, we give historical records a second life. Each piece features real microgrooves, authentic record weight, and an archival UV-cured matte album cover pressed into the centre label. Complete with a pre-mounted wall hook, it is ready to hang straight out of the box.
-
-## Museum-Grade Prints
-
-Beyond vinyl, we craft fine art prints on 300 GSM heavyweight matte cardstock. The glare-free matte finish eliminates reflections under room lighting while preserving vibrant album colors, deep blacks, and crisp typography.
-
-## Pan-India Reach
-
-Every order is carefully inspected, packed in unbendable multi-ply packaging, and delivered to all 19,000+ Indian postal codes within 5 to 7 business days.
+- **Delivers to**: India only
+- **Delivery time**: 7–10 days from order
+- **Delivery cost**: Delivery is free, anywhere in India.
+- **Payment**: UPI, cards and net banking. Cash on delivery isn't available yet.
+- **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
+- **Contact**: contact@pastforward.shop · Instagram @pastforward.shop

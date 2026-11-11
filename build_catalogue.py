@@ -39,8 +39,9 @@ OVERRIDE = {
     'VINYL-MAROON-LOVE IS LIKE':                ('Maroon 5', 'Love Is Like'),
     '10X10INCH-THANK U NEXT-ARIANA GRANDE':     ('Ariana Grande', 'thank u, next'),
     'A3-POSTER-Am I Dreaming-Spiderman':        ('Spider-Verse', 'Am I Dreaming'),
-    'VINYLS-ARCTIC MONKEYS':                    ('Arctic Monkeys', '[CONFIRM]'),
-    'VINYL-Sabrina Carpenter':                  ('Sabrina Carpenter', '[CONFIRM]'),
+    # the artwork is the AM cover (the white waveform); the Sabrina Carpenter label has "Espresso" printed on it
+    'VINYLS-ARCTIC MONKEYS':                    ('Arctic Monkeys', 'AM'),
+    'VINYL-Sabrina Carpenter':                  ('Sabrina Carpenter', 'Espresso'),
     'VINYL-ABBA Little Things':                 ('ABBA', 'Little Things'),
     'VINYL-Pink Floyd (The Darkside of the Moon 1973)': ('Pink Floyd', 'The Dark Side of the Moon (1973)'),
     'VINYL-The Beatles MEMBERS':                ('The Beatles', 'Members'),
@@ -48,6 +49,18 @@ OVERRIDE = {
     'A5-POSTER-The Beatles-Members':            ('The Beatles', 'Members'),
     '10X10INCH-THE BEATLES-MEMBERS':            ('The Beatles', 'Members'),
     'POLAROID-THE BEATLES-MEMBER':              ('The Beatles', 'Members'),
+}
+
+# SKUs that already exist in Shopify under an older name. Keeping them means the
+# site still maps to the same Shopify variant, so checkout keeps working after a rename.
+SKU_KEEP = {
+    'VINYLS-ARCTIC MONKEYS':   'PF-ARCTIC-MONKEYS-NA-VINYL',
+    'VINYL-Sabrina Carpenter': 'PF-SABRINA-CARPENTER-NA-VINYL',
+}
+# old product slugs that should keep working (the site forwards them to the new page)
+SLUG_ALIASES = {
+    'arctic-monkeys':    'arctic-monkeys-am',
+    'sabrina-carpenter': 'sabrina-carpenter-espresso',
 }
 
 ARTIST_FIX = {
@@ -219,7 +232,7 @@ def main():
             format=fmt, label=meta['label'], size=meta['size'], price=meta['price'],
             confirmPrice=fmt in CONFIRM_PRICE, ratio=round(meta['ratio'], 4),
             badge=meta['badge'], image=f,
-            sku=f"PF-{slugify(artist).upper()}-{slugify(album).upper() if album!='[CONFIRM]' else 'NA'}-{fmt.upper()}",
+            sku=SKU_KEEP.get(stem) or f"PF-{slugify(artist).upper()}-{slugify(album).upper() if album!='[CONFIRM]' else 'NA'}-{fmt.upper()}",
             alt=(f"{album} by {artist} — {meta['label']} by PastForward" if album != '[CONFIRM]'
                  else f"{artist} — {meta['label']} by PastForward"),
         ))
@@ -255,6 +268,7 @@ def main():
                          ratio=round(v['ratio'], 4), confirmPrice=k in CONFIRM_PRICE)
                  for k, v in FORMATS.items()},
         counts=counts,
+        aliases=SLUG_ALIASES,
         unresolved=sorted(set(unresolved)),
     )
     with open(os.path.join(ROOT, 'catalogue.json'), 'w') as fh:
