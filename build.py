@@ -621,10 +621,17 @@ def build_site():
         body=fb_wrap('<h1>Questions</h1>' + ''.join(f'<h2>{esc(q)}</h2><div>{site_links(a)}</div>' for q, a in SITE['faq'])),
         ld=graph({'@type': 'FAQPage', '@id': URL + '/faq#faq', 'mainEntity': [
             {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in SITE['faq']]}))
+    CC = SITE.get('customCopy', {})
+    cc_html = ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in CC.get('sections', [])) + \
+        (('<h2>Questions</h2>' + ''.join(f'<h3>{esc(q)}</h3><p>{site_links(a)}</p>' for q, a in CC['faq'])) if CC.get('faq') else '')
+    custom_ld = [crumbs(('Home', '/'), ('Custom orders', '/custom'))]
+    if CC.get('faq'):
+        custom_ld.append({'@type': 'FAQPage', '@id': URL + '/custom#faq', 'mainEntity': [
+            {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in CC['faq']]})
     add('/custom', 'custom.html', title=M['/custom']['title'], desc=M['/custom']['desc'],
         body=fb_simple('Not in the catalogue? Say the word.', [esc(M['/custom']['desc']),
                        'Choose a format, tell us the artist and the album or track, and add a reference link if you have one.'],
-                       '<h2>Formats we can make</h2>' + fb_formats()), ld=graph(crumbs(('Home', '/'), ('Custom orders', '/custom'))))
+                       '<h2>Formats we can make</h2>' + fb_formats() + cc_html), ld=graph(*custom_ld))
     add('/story', 'story.html', title=M['/story']['title'], desc=M['/story']['desc'],
         body=fb_simple('A record you don\'t play.', [
             "A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun.",

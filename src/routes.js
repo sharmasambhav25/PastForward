@@ -1026,6 +1026,7 @@ function viewCustom() {
         </form>
         <div data-form-msg></div>
         <p class="body-s dim" style="margin-top:24px">Every piece is custom made and quality inspected before dispatch.</p>
+        ${SITE.customCopy ? landingCopyHTML(SITE.customCopy) : ''}
         <div class="steps" style="margin-top:64px">
           ${stepsList.map(([n, t]) =>
             `<div class="reveal"><div class="mono num" style="color:var(--oxblood)">${n}</div>
