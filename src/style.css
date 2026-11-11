@@ -428,7 +428,11 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
   border-radius:2px}
 .pill:hover{border-color:var(--cream)}
 .shop__bar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; flex-wrap:wrap}
-select.sort{background:var(--elevated); border:1px solid var(--border); padding:10px 14px; border-radius:2px;
+/* Safari draws an unstyled select as a white system control, which left this one blank on iPhones */
+select.sort{appearance:none; -webkit-appearance:none; color:var(--cream); background-color:var(--elevated);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E8781' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center;
+  border:1px solid var(--border); padding:10px 34px 10px 14px; border-radius:2px;
   font-family:var(--mono); font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; min-height:40px}
 .filterbtn{display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border:1px solid var(--border-2);
   background:var(--elevated); color:var(--cream); cursor:pointer; font-family:var(--mono); font-size:.65rem; letter-spacing:.12em;
