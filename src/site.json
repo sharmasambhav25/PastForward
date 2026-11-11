@@ -366,5 +366,10 @@
       ],
       "faq": []
     }
+  },
+
+  "siteVerification": {
+    "_note": "Search-engine ownership tags written into every page head. Removing one unverifies that property.",
+    "msvalidate.01": "9EEC977CBB1F91E65E67039AD0FF8959"
   }
 }
