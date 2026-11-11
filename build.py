@@ -292,6 +292,8 @@ APP_JS = '\n'.join(f'/* ===== {n} ===== */\n{js_src[n]}' for n in JS_ORDER)
 # ================================================================== single-file builds (dist/)
 def head_common(title, desc, canonical, og_image, noindex=False):
     robots = '\n<meta name="robots" content="noindex,follow">' if noindex else ''
+    # search-engine ownership tags (site.json "siteVerification"): keep them, or the property unverifies
+    robots += ''.join(f'\n<meta name="{esc(k)}" content="{esc(v)}">' for k, v in SITE.get('siteVerification', {}).items())
     return f'''<title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <link rel="canonical" href="{esc(canonical)}">{robots}
