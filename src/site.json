@@ -41,23 +41,23 @@
     },
     "/posters": {
       "title": "A3 Music Posters | PastForward",
-      "desc": "A3 album posters, 297 × 420mm, printed to order. {{PRICE_A3}} each, delivered across India."
+      "desc": "A3 album posters, 297 × 420mm, printed to order on 300 GSM paper. {{PRICE_A3}} each, delivered across India."
     },
     "/posters/a3": {
       "title": "A3 Music Posters | PastForward",
-      "desc": "A3 album posters, 297 × 420mm, printed to order. {{PRICE_A3}} each, delivered across India."
+      "desc": "A3 album posters, 297 × 420mm, printed to order on 300 GSM paper. {{PRICE_A3}} each, delivered across India."
     },
     "/posters/a5": {
       "title": "A5 Music Posters | PastForward",
-      "desc": "A5 album posters, 148 × 210mm, printed to order. {{PRICE_A5}} each, delivered across India."
+      "desc": "A5 album posters, 148 × 210mm, printed to order on 300 GSM paper. {{PRICE_A5}} each, delivered across India."
     },
     "/posters/10x10": {
       "title": "10×10 Album Art Prints | PastForward",
-      "desc": "Square 10×10 inch album prints, 254 × 254mm, printed to order. {{PRICE_10}} each, delivered across India."
+      "desc": "Square 10×10 inch album prints, 254 × 254mm, printed to order on 300 GSM paper. {{PRICE_10}} each, delivered across India."
     },
     "/polaroids": {
       "title": "Music Polaroid Cards | PastForward",
-      "desc": "Polaroid-style album cards with a cream border. {{PRICE_POLAROID}} each, delivered across India."
+      "desc": "Polaroid-style album cards with a cream border, on 300 GSM card. {{PRICE_POLAROID}} each, delivered across India."
     },
     "/custom": {
       "title": "Custom Vinyl Wall Art & Album Posters, Made to Order | PastForward",

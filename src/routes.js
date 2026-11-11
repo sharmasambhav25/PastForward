@@ -142,6 +142,20 @@ function viewHome() {
   </section>
 
 
+  <!-- 6 ============ THE AD CARD, AS A SECTION ============
+       Script over didone caps over grotesque, white, on a darkened
+       photograph of the real wall. Straight out of the brand's own ads. -->
+  <section class="stage" data-section="WALL DECOR">
+    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
+    <div class="stage__in">
+      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
+      <div style="text-align:center;margin-top:34px">
+        <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Build your wall</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+      </div>
+      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
+    </div>
+  </section>
+
   <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
   <section class="salesec" data-section="SALE">
     <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
@@ -159,20 +173,6 @@ function viewHome() {
 
   <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
   ${formatsHTML()}
-
-  <!-- 6 ============ THE AD CARD, AS A SECTION ============
-       Script over didone caps over grotesque, white, on a darkened
-       photograph of the real wall. Straight out of the brand's own ads. -->
-  <section class="stage" data-section="WALL DECOR">
-    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
-    <div class="stage__in">
-      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
-      <div style="text-align:center;margin-top:34px">
-        <a class="cta-shop" href="#/vinyl"><span class="cta-shop__disc" aria-hidden="true"><i></i></span><span class="cta-shop__txt">Build your wall</span><span class="cta-shop__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
-      </div>
-      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
-    </div>
-  </section>
 
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
@@ -525,7 +525,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const v0 = routeFormats.map(f => variant(first, f)).find(Boolean) || primary(first);
   const ar = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? '4/5' : '3/4';
   // artist cover photos for the vinyl section (photos/artist-<slug>.webp)
-  const artistPhoto = window.__PHOTOS__ && window.__PHOTOS__['artist-' + artist.toLowerCase().replace(/[^a-z0-9]+/g, '-')];
+  const artistPhoto = null;   // artist cover photos retired: the record reads better
   const cover = v0.format === 'vinyl' && artistPhoto ? `<img class="ag__photo" src="${artistPhoto}" alt="${esc(artist)} wall" loading="lazy" decoding="async">`
     : v0.format === 'vinyl' ? recordHTML(first, { size: 210 })
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
@@ -867,7 +867,7 @@ function viewProduct(p, params) {
         <p class="payline mono-xs dim">${payLine()}</p>
 
         <div class="spec" style="margin-top:28px">
-          <div id="whatyouget">${sel === 'vinyl' ? 'Upcycled 12-inch record, printed centre label' : sel === 'polaroid' ? 'Polaroid-style card, cream border' : FMT[sel].label + ', printed to order'}</div>
+          <div id="whatyouget">${sel === 'vinyl' ? 'Upcycled 12-inch record, printed centre label' : sel === 'polaroid' ? 'Polaroid-style card, cream border, 300 GSM' : FMT[sel].label + ', printed to order on 300 GSM paper'}</div>
           <div id="hangnote">${sel === 'vinyl' ? 'Wall hook included' : 'Ready for your wall'}</div>
         </div>
 
@@ -1770,8 +1770,8 @@ function mountProduct(p, params) {
     $('#pdpprice').innerHTML = priceHTML(v.format, v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     $('#barprice').innerHTML = priceHTML(v.format, v.price);
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
-      : f === 'polaroid' ? 'Polaroid-style card, cream border'
-      : FMT[f].label + ', printed to order';
+      : f === 'polaroid' ? 'Polaroid-style card, cream border, 300 GSM'
+      : FMT[f].label + ', printed to order on 300 GSM paper';
     const hn = $('#hangnote'); if (hn) hn.textContent = f === 'vinyl' ? 'Wall hook included' : 'Ready for your wall';
     const bl = $('#pdpblurb'); if (bl) bl.textContent = (p.blurbs || {})[f] || '';
     const as = $('#pdpassure'); if (as) as.innerHTML = assureHTML(f);
