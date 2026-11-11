@@ -27,7 +27,7 @@
 
   "tracking": {
     "_note": "The pixel is off while metaPixelId is empty. Filling it in loads the Meta Pixel on pastforward.shop (PageView, ViewContent, AddToCart, InitiateCheckout); use the same pixel id Shopify's Facebook & Instagram channel uses, so the whole journey is one funnel. Before switching it on, change the 'Your cart and cookies' line in the privacy policy below, which currently says the site uses no trackers. Campaign tags (utm_*, fbclid) are passed to the Shopify checkout whether or not the pixel is on.",
-    "metaPixelId": ""
+    "metaPixelId": "2273618829738715"
   },
 
   "meta": {
@@ -131,7 +131,7 @@
       ["What we use it for", "To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time."],
       ["Payments", "Payments are handled by our payment provider. We never see or store your card or bank details."],
       ["Who we share it with", "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
-      ["Your cart and cookies", "Your cart is saved in your own browser so it's still there when you come back. This site doesn't use analytics or advertising trackers."],
+      ["Your cart and cookies", "Your cart is saved in your own browser so it's still there when you come back. This site uses the Meta Pixel to measure which ads and posts bring visitors and sales, and to show our ads to people who have visited. You can control this in your Facebook or Instagram ad settings."],
       ["Your rights", "You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email {{EMAIL_LINK}}."]
     ]],
     "terms": ["Terms", [
