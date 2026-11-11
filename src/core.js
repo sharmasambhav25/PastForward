@@ -332,11 +332,15 @@ function closeAll() {
 /* ---------- vinyl sale: running tape ribbon ---------- */
 function saleTapeRun(n = 4) {
   const ship = SHIP.label ? `<b>${esc(SHIP.label.split(' ').slice(0, 2).join(' '))}</b><span>${esc(SHIP.label.split(' ').slice(2).join(' '))}</span>` : '';
-  const one = `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span>${ship}</span>`;
+  // "SALE" and a struck price only while site.json has a real MRP above the selling price
+  const onSale = MRP.vinyl > FMT.vinyl.price;
+  const one = onSale
+    ? `<span class="tape__i"><b>SALE</b><span>Vinyls <s>${money(MRP.vinyl)}</s> <em>${money(FMT.vinyl.price)}</em></span><b>SALE</b><span>Every record</span>${ship}</span>`
+    : `<span class="tape__i"><b>Every record</b><span><em>${money(FMT.vinyl.price)}</em></span><b>Wall hook</b><span>included</span>${ship}</span>`;
   return one.repeat(n);
 }
 function saleRibbon() {
-  return `<a class="salebar tape" href="#/vinyl" aria-label="Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
+  return `<a class="salebar tape" href="#/vinyl" aria-label="${MRP.vinyl > FMT.vinyl.price ? `Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}` : `Every record ${money(FMT.vinyl.price)}`}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
 }
 /* ---------- chrome ---------- */
 function chromeHTML() {
