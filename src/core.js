@@ -140,6 +140,8 @@ function cardHTML(p, targetFormat) {
   let v;
   if (targetFormat === 'posters') {
     v = p.variants.find(x => ['poster-a3', 'poster-a5', 'print-10'].includes(x.format)) || primary(p);
+  } else if (Array.isArray(targetFormat)) {
+    v = targetFormat.map(f => p.variants.find(x => x.format === f)).find(Boolean) || primary(p);
   } else if (targetFormat) {
     v = p.variants.find(x => x.format === targetFormat) || primary(p);
   } else {
@@ -621,6 +623,14 @@ function listHTML(cls = '') {
     </form><div data-form-msg></div>`;
   return `<a class="btn btn--secondary listbtn ${cls}" href="${IG_URL}" target="_blank" rel="noopener"><span class="btn__mag">Follow @${esc(SITE.instagram)}</span></a>`;
 }
+function popularLinks() {
+  return Object.entries(SITE.landing || {}).map(([u, L]) => [L.h1.replace(/\.$/, ''), u])
+    .concat(Object.entries(SITE.artistPages || {}).map(([s, A]) => [A.name, '/artist/' + s]));
+}
+function popularLinksHTML() {
+  const l = popularLinks();
+  return l.length ? `<nav class="ftr__more mono-xs dim" aria-label="Popular">${l.map(([n, u]) => `<a href="#${u}">${esc(n)}</a>`).join('')}</nav>` : '';
+}
 function footerHTML() {
   return `<footer class="ftr"><div class="wrap">
     <div class="ftr__grid">
@@ -640,6 +650,7 @@ function footerHTML() {
         ${listHTML()}
         <ul class="ftr__facts mono-xs dim">${[SHIP.label, 'Delivered in ' + DELIVERY, 'Secure checkout'].filter(Boolean).map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
     </div>
+    ${popularLinksHTML()}
     <div class="ftr__base mono-xs dim">
       <span>© 2026 PastForward · estd 2025</span>
       <a href="${IG_URL}" target="_blank" rel="noopener">@${esc(SITE.instagram)}</a>
@@ -1107,6 +1118,18 @@ function render(opt = {}) {
     const c = COLS.find(x => x.slug === (seg[1] || 'the-classics')) || COLS[0];
     out = viewCatalog('collections', c.slug, params);
     m = c.seo || m; canonical = ORIGIN + '/collections/' + c.slug;
+  }
+  else if (seg[0] === 'artist' && (SITE.artistPages || {})[seg[1]]) {
+    const A = SITE.artistPages[seg[1]];
+    out = viewCatalog('landing', A, params);
+    m = A; canonical = ORIGIN + '/artist/' + seg[1];
+    const p0 = bySlug[A.items[0]]; if (p0) ogImage = imgSrc(primary(p0).image, true);
+  }
+  else if (seg.length === 1 && (SITE.landing || {})[path]) {
+    const L = SITE.landing[path];
+    out = viewCatalog('landing', L, params);
+    m = L;
+    const p0 = bySlug[L.items[0]]; if (p0) ogImage = imgSrc(primary(p0).image, true);
   }
   else if (seg[0] === 'custom') out = viewCustom();
   else if (seg[0] === 'story') out = viewStory();

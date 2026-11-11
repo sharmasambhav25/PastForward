@@ -2350,3 +2350,19 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
   margin-top:44px; padding-top:20px; border-top:1px solid var(--border)}
 .ftr__base a{display:inline; padding:0; font-size:inherit}
 .ftr__legal{display:flex; gap:18px}
+
+/* ---------- pages written for search (/vinyl-record-wall-decor, /artist/…): the words under the grid */
+.lcopy{margin-top:88px; padding-top:40px; border-top:1px solid var(--border)}
+.lcopy__grid{display:grid; gap:36px; grid-template-columns:1fr}
+@media(min-width:768px){.lcopy__grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:48px}}
+.lcopy__grid h2{margin:0 0 12px}
+.lcopy p{margin:0; line-height:1.65; max-width:60ch}
+.lcopy p a, .lcopy__faq a{color:var(--cream); text-decoration:underline; text-underline-offset:3px}
+.lcopy__faq{margin-top:56px; display:grid; gap:24px; max-width:72ch}
+.lcopy__faq h2{letter-spacing:.18em; text-transform:uppercase; margin:0}
+.lcopy__faq h3{margin:0 0 6px; font-weight:500}
+.lcopy__more{display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:56px; color:var(--muted)}
+.lcopy__more a, .ftr__more a{color:var(--muted)}
+.lcopy__more a:hover, .ftr__more a:hover{color:var(--cream)}
+.ftr__more{display:flex; flex-wrap:wrap; gap:6px 20px; margin-top:40px}
+.ftr .ftr__more a{display:inline; padding:0; font-size:inherit}

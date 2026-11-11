@@ -144,5 +144,227 @@
       ["Changes", "We may update these terms. The date at the top shows when they last changed."],
       ["The law", "These terms are governed by the laws of India."]
     ]]
+  },
+
+  "artistAlias": {
+    "_note": "Catalogue artist names that are the same artist as another. Used to group artist pages.",
+    "Travis": "Travis Scott"
+  },
+
+  "collectionSeo": {
+    "_note": "Search titles for collection pages. The collection's own name and line stay as they are on the page.",
+    "desi-lineage": {
+      "title": "Punjabi & Desi Hip-Hop Posters and Vinyl Wall Art | PastForward",
+      "desc": "AP Dhillon, Diljit Dosanjh, Karan Aujla, Seedhe Maut and Anuv Jain as upcycled vinyl records, posters and polaroids. Delivered across India in {{DELIVERY}}."
+    },
+    "the-classics": {
+      "title": "Classic Rock Posters & Vinyl Wall Art: Queen, Pink Floyd, Beatles | PastForward",
+      "desc": "Queen, Pink Floyd, The Beatles, Nirvana, Arctic Monkeys, Guns N' Roses and more as upcycled vinyl records, posters and polaroids. Delivered across India."
+    },
+    "pop-canon": {
+      "title": "Pop Music Posters & Vinyl Wall Art: Taylor Swift, Billie Eilish, Harry Styles | PastForward",
+      "desc": "Taylor Swift, Billie Eilish, Harry Styles, Dua Lipa, Olivia Rodrigo, Sabrina Carpenter and more as upcycled vinyl records, posters and polaroids. Delivered across India."
+    },
+    "k-wave": {
+      "title": "K-Pop Posters & Vinyl Wall Art: BLACKPINK, NewJeans, Jennie, Lisa, Rosé | PastForward",
+      "desc": "BLACKPINK, NewJeans, Jennie, Lisa, Rosé and RM album art as upcycled vinyl records, posters and polaroids. Delivered across India in {{DELIVERY}}."
+    },
+    "drop-zone": {
+      "title": "Hip-Hop & Rap Posters: Travis Scott, Kanye, Drake, Eminem | PastForward",
+      "desc": "Travis Scott, Kanye West, Drake, Eminem, Juice WRLD and MGK album covers as posters, prints and upcycled vinyl records. Delivered across India."
+    },
+    "three-am": {
+      "title": "The Weeknd, Frank Ocean & Lana Del Rey Posters and Vinyl Wall Art | PastForward",
+      "desc": "Late-night records from The Weeknd, Frank Ocean, Lana Del Rey, Billie Eilish and Juice WRLD as upcycled vinyl records, posters and polaroids. Delivered across India."
+    },
+    "main-stage": {
+      "title": "EDM Posters & Vinyl Wall Art: Avicii, Martin Garrix, Marshmello | PastForward",
+      "desc": "Avicii, Martin Garrix, Marshmello and Swedish House Mafia as upcycled vinyl records, posters and polaroids. Delivered across India."
+    },
+    "off-genre": {
+      "title": "Stranger Things, Spider-Verse & WWE Posters and Wall Art | PastForward",
+      "desc": "Stranger Things, Spider-Verse and WWE as posters and upcycled vinyl wall art. Delivered across India in {{DELIVERY}}."
+    }
+  },
+
+  "landing": {
+    "_note": "Pages written for what people type into Google. Each one is a filtered view of the catalogue plus a few honest paragraphs. Only state what the rest of this file backs up. `formats` limits the products; `maxPrice` keeps only formats at or under that price.",
+    "/vinyl-record-wall-decor": {
+      "title": "Vinyl Record Wall Decor & Wall Art in India | PastForward",
+      "desc": "Real 12-inch upcycled vinyl records with album art on the centre label, made to hang. Wall hook included, {{PRICE_VINYL}} each, free delivery across India.",
+      "h1": "Vinyl record wall decor.",
+      "sub": "Real 12-inch records, made to hang. The album you love sits in the centre label. Wall hook in the box.",
+      "formats": [
+        "vinyl"
+      ],
+      "sections": [
+        [
+          "Real records, not prints of records",
+          "Every piece is a real 12-inch vinyl record that already had a life. We clean it up and set your album's artwork into the centre label, so what goes on the wall has the weight, shine and grooves of an actual record. Nothing is pressed new just to hang."
+        ],
+        [
+          "How it hangs",
+          "A wall hook comes in the box. Put the hook up, hang the record. One record works above a desk or bed; three or more in a row turn a plain wall into a feature wall."
+        ],
+        [
+          "Price and delivery",
+          "{{PRICE_VINYL}} a record. {{SHIPPING_LINE}} It reaches you in {{DELIVERY}}, and if it arrives damaged we replace it."
+        ]
+      ],
+      "faq": [
+        [
+          "Can I play the record?",
+          "It's sold to hang, not to play. The grooves are real, but the label carries our artwork and we make no promise about how it sounds."
+        ],
+        [
+          "How big is it?",
+          "A standard 12-inch record, about 305mm across."
+        ],
+        [
+          "Can you make a record for an album that isn't listed?",
+          "Yes. Tell us the artist and album on the <a href=\"#/custom\">custom orders</a> page."
+        ]
+      ]
+    },
+    "/music-wall-decor": {
+      "title": "Music Wall Decor & Wall Art for Bedroom and Living Room | PastForward",
+      "desc": "Music wall decor made from the albums you love: upcycled vinyl records, A3 and A5 posters, 10×10 prints and polaroids. From {{PRICE_POLAROID}}, delivered across India.",
+      "h1": "Music wall decor.",
+      "sub": "Records, posters, prints and polaroids of the albums that mattered. Mix them on one wall.",
+      "formats": [],
+      "sections": [
+        [
+          "Five ways to put an album on a wall",
+          "An upcycled 12-inch vinyl record ({{PRICE_VINYL}}), an A3 poster ({{PRICE_A3}}), an A5 poster ({{PRICE_A5}}), a 10×10 square print ({{PRICE_10}}) or a polaroid-style card ({{PRICE_POLAROID}}). Most albums come in several of these, so one artist can fill a whole wall."
+        ],
+        [
+          "Building a wall that doesn't look planned",
+          "Start with one record as the anchor, put two posters either side, then scatter polaroids around the edges. Keep it to one genre or one era and it looks curated. Mix eras and it looks like a life."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach you in {{DELIVERY}}. Pay by {{PAYMENTS}}."
+        ]
+      ],
+      "faq": [
+        [
+          "Are the posters framed?",
+          "No. Posters, prints and polaroids come unframed, so they fit whatever frame or tape you already like."
+        ],
+        [
+          "Do you deliver everywhere in India?",
+          "Yes, anywhere in India, in {{DELIVERY}}."
+        ]
+      ]
+    },
+    "/album-cover-posters": {
+      "title": "Album Cover Posters & Music Posters in India: A3, A5, 10×10 | PastForward",
+      "desc": "Album cover posters for Taylor Swift, The Weeknd, Travis Scott, AP Dhillon, BLACKPINK and more. A3 {{PRICE_A3}}, A5 {{PRICE_A5}}, 10×10 prints {{PRICE_10}}. Delivered across India.",
+      "h1": "Album cover posters.",
+      "sub": "The covers you already know by heart, printed to order in A3, A5 and a 10×10 square.",
+      "formats": [
+        "poster-a3",
+        "poster-a5",
+        "print-10"
+      ],
+      "sections": [
+        [
+          "Three sizes",
+          "A3 (297 × 420mm) for the main wall, A5 (148 × 210mm) for desks and shelves, and a 10×10 inch square that keeps the album's original shape. {{PRICE_A3}}, {{PRICE_A5}} and {{PRICE_10}}."
+        ],
+        [
+          "Printed to order",
+          "Each poster is printed when you order it, then packed flat and sent. {{SHIPPING_LINE}} Delivery takes {{DELIVERY}}."
+        ]
+      ],
+      "faq": [
+        [
+          "Can I get a poster of an album you don't list?",
+          "Yes, through <a href=\"#/custom\">custom orders</a>."
+        ],
+        [
+          "What if it arrives bent or damaged?",
+          "Email {{EMAIL_LINK}} within 7 days of delivery with a photo and we'll put it right."
+        ]
+      ]
+    },
+    "/gifts-for-music-lovers": {
+      "title": "Gifts for Music Lovers in India: Vinyl Wall Art & Posters | PastForward",
+      "desc": "A gift for the friend who always has headphones on: their favourite album as an upcycled vinyl record, poster or polaroid. From {{PRICE_POLAROID}}, delivered across India.",
+      "h1": "Gifts for music lovers.",
+      "sub": "Their favourite album, on their wall. From {{PRICE_POLAROID}}.",
+      "formats": [],
+      "sections": [
+        [
+          "Pick by budget",
+          "A polaroid card ({{PRICE_POLAROID}}) or an A5 poster ({{PRICE_A5}}) for a small surprise. An A3 poster ({{PRICE_A3}}) for a birthday. An upcycled vinyl record ({{PRICE_VINYL}}) when you want them to keep it for years."
+        ],
+        [
+          "Not sure which album?",
+          "Pick the artist they play most, then the album with the cover they'd recognise from across a room. If it isn't here, we can make it: use <a href=\"#/custom\">custom orders</a>."
+        ],
+        [
+          "Will it arrive in time?",
+          "Orders reach anywhere in India in {{DELIVERY}}, so order at least ten days before the day. {{SHIPPING_LINE}}"
+        ]
+      ],
+      "faq": [
+        [
+          "Can I send it straight to them?",
+          "Yes. Put their address at checkout."
+        ]
+      ]
+    },
+    "/aesthetic-room-decor": {
+      "title": "Aesthetic Room Decor: Music Posters, Polaroids & Vinyl | PastForward",
+      "desc": "Aesthetic room decor for music people: album posters, polaroid cards and upcycled vinyl records. Polaroids {{PRICE_POLAROID}}, posters from {{PRICE_A5}}. Delivered across India.",
+      "h1": "Room decor.",
+      "sub": "Posters and polaroids of the albums on repeat. Small enough to start with one, cheap enough to cover a wall.",
+      "formats": [
+        "poster-a3",
+        "poster-a5",
+        "polaroid",
+        "vinyl"
+      ],
+      "sections": [
+        [
+          "The polaroid wall",
+          "Polaroid-style album cards at {{PRICE_POLAROID}} each are the quickest way to make a room feel like yours. Ten of them in a grid above the bed, or scattered round a mirror."
+        ],
+        [
+          "One statement piece",
+          "An A3 poster or a real 12-inch upcycled record gives the wall a centre. Build the smaller pieces around it."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} {{DELIVERY}} to anywhere in India."
+        ]
+      ],
+      "faq": []
+    },
+    "/wall-decor-under-500": {
+      "title": "Wall Decor Under ₹500: Music Posters & Polaroids | PastForward",
+      "desc": "Music wall decor under ₹500: A3 posters {{PRICE_A3}}, 10×10 prints {{PRICE_10}}, A5 posters {{PRICE_A5}}, polaroids {{PRICE_POLAROID}}. Free delivery across India.",
+      "h1": "Wall decor under ₹500.",
+      "sub": "Every poster, print and polaroid here costs less than ₹500, with free delivery.",
+      "formats": [
+        "poster-a3",
+        "poster-a5",
+        "print-10",
+        "polaroid"
+      ],
+      "maxPrice": 500,
+      "sections": [
+        [
+          "What ₹500 gets you",
+          "One A3 poster ({{PRICE_A3}}) with change left for a polaroid. Or two A5 posters. Or five polaroid cards for a small wall of your own."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach you in {{DELIVERY}}."
+        ]
+      ],
+      "faq": []
+    }
   }
 }
