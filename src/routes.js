@@ -39,7 +39,7 @@ const hangShelf = (items, cls = '') => `<div class="shelf ${cls}">
     const inner = kind === 'rec'
       ? recordHTML(p, { size: 300, style: 'width:100%' })
       : kind === 'pola' ? polaroidHTML(v) : frameHTML(v);
-    return `<a class="hw hw--${kind} ${i > 2 ? 'hw--hide' : ''}" href="#/product/${p.slug}"
+    return `<a class="hw hw--${kind} ${i > 2 ? 'hw--hide' : ''}" href="/product/${p.slug}"
        data-cursor="VIEW" style="width:${w}%;--rot:${rot || 0}deg;--dy:${dy || 0}px;--d:${i * 60}ms">
       ${inner}<span class="hw__t">${esc(p.artist)}</span></a>`;
   }).join('')}
@@ -133,7 +133,7 @@ function viewHome() {
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     <div class="fhero__cta">
-      ${ctaShop('Shop now', '#/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
+      ${ctaShop('Shop now', '/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
     </div>
   </section>
 
@@ -146,7 +146,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Build your wall', '#/build-your-wall', 'Try it on a wall first')}
+        ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -161,7 +161,7 @@ function viewHome() {
         ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
         : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
       <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
-      ${MRP.vinyl > FMT.vinyl.price ? ctaShop('Shop the sale', '#/vinyl', `Save ${money(MRP.vinyl - FMT.vinyl.price)} a record`) : ctaShop('Shop vinyls', '#/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
+      ${MRP.vinyl > FMT.vinyl.price ? ctaShop('Shop the sale', '/vinyl', `Save ${money(MRP.vinyl - FMT.vinyl.price)} a record`) : ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
       ${assureHTML('vinyl', 'assure--band')}
     </div>
   </section>
@@ -201,7 +201,7 @@ function bestHTML(n = 6) {
       <h2 class="best__h reveal">Bestsellers</h2>
       <div class="grid best__grid">${list.map(p => cardHTML(p, 'vinyl')).join('')}</div>
       <div style="text-align:center;margin-top:28px">
-        <a class="btn btn--secondary" href="#/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
+        <a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
       </div>
     </div>
   </section>`;
@@ -242,7 +242,7 @@ const FORMAT_SLIDES = () => {
   plan.forEach(([f, n]) => {
     P.filter(p => !used.has(p.slug) && variant(p, f)).slice(0, n).forEach(p => {
       used.add(p.slug); const v = variant(p, f);
-      out.push({ t: albumText(p), by: p.artist, img: imgSrc(v.image), fmt: label[f], price: v.price, href: `#/product/${p.slug}?format=${f}` });
+      out.push({ t: albumText(p), by: p.artist, img: imgSrc(v.image), fmt: label[f], price: v.price, href: `/product/${p.slug}?format=${f}` });
     });
   });
   // interleave the formats so neighbours differ
@@ -319,7 +319,7 @@ function crateMobileHTML() {
         <i style="background-image:url(${photo('col-g')})"></i>
         <i style="background-image:url(${photo('col-r')})"></i>
       </div>
-      <div class="ccss" aria-hidden="true">${list.map((p, i) => `<a class="ccss__rec" data-i="${i}" href="#/product/${p.slug}?format=vinyl" tabindex="-1">${recordHTML(p, { size: 300, eager: i < 2 })}</a>`).join('')}</div>
+      <div class="ccss" aria-hidden="true">${list.map((p, i) => `<a class="ccss__rec" data-i="${i}" href="/product/${p.slug}?format=vinyl" tabindex="-1">${recordHTML(p, { size: 300, eager: i < 2 })}</a>`).join('')}</div>
       <div class="crate__meta">
         <h2 class="crate__head">Bestsellers</h2>
         <dl class="crate__rows" aria-live="polite">
@@ -412,7 +412,7 @@ function crateHTML() {
         <button class="crate__arrow" type="button" data-crate-next aria-label="Next record">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
-      <a class="crate__open sr-focus" href="#/product/${list[0].slug}" data-crate-open>Open ${esc(f0.album)} by ${esc(f0.artist)}</a>
+      <a class="crate__open sr-focus" href="/product/${list[0].slug}" data-crate-open>Open ${esc(f0.album)} by ${esc(f0.artist)}</a>
     </div>
   </section>`;
 }
@@ -426,7 +426,7 @@ function mountCrateSection(onUnmount) {
   const swap = (i) => {
     prevB.disabled = i <= 0; nextB.disabled = i >= list.length - 1;
     cm('n').textContent = String(i + 1).padStart(2, '0');
-    openA.href = '#/product/' + list[i].slug;
+    openA.href = '/product/' + list[i].slug;
     openA.textContent = `Open ${facts[i].album} by ${facts[i].artist}`;
     if (i === shown) return; const dir = i > shown ? 1 : -1; shown = i;
     const f = facts[i];
@@ -443,7 +443,7 @@ function mountCrateSection(onUnmount) {
       api = window.mountCrate(root, list.map(p => ({ slug: p.slug, image: imgSrc(variant(p, 'vinyl').image) })), {
         reducedMotion: RM(),
         onActive: (_, i) => swap(i),
-        onOpen: (item) => { try { Sound.needleDrop(); } catch (e) {} go('#/product/' + item.slug); }
+        onOpen: (item) => { try { Sound.needleDrop(); } catch (e) {} go('/product/' + item.slug); }
       });
     } catch (e) { api = null; }
   }
@@ -533,7 +533,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   if (only.length === 1) {
     const v = only[0];
     return `<div class="ag ag--solo" data-artist="${esc(artist)}">
-      <a class="ag__head" href="#/product/${first.slug}?format=${v.format}"${artistPhoto && v.format === 'vinyl' ? '' : ` data-card="${first.slug}"`}>
+      <a class="ag__head" href="/product/${first.slug}?format=${v.format}"${artistPhoto && v.format === 'vinyl' ? '' : ` data-card="${first.slug}"`}>
         <span class="card__media ag__media" style="aspect-ratio:${ar}" data-media>${cover}</span>
         <span class="ag__meta">
           <span class="ag__name">${esc(artist)}</span>
@@ -549,7 +549,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
   const lead = items.find(p => routeFormats.some(f => variant(p, f))) || first;
   const lv = routeFormats.map(f => variant(lead, f)).find(Boolean) || primary(lead);
   return `<div class="ag ag--go" data-artist="${esc(artist)}">
-    <a class="ag__head" href="#/product/${lead.slug}?format=${lv.format}" aria-label="${esc(artist)}: ${n} ${word}, from ${money(from)}">
+    <a class="ag__head" href="/product/${lead.slug}?format=${lv.format}" aria-label="${esc(artist)}: ${n} ${word}, from ${money(from)}">
       <span class="card__media ag__media${n > 1 ? ' ag__media--stack' : ''}" style="aspect-ratio:${ar}">${cover}</span>
       <span class="ag__meta">
         <span class="ag__name">${esc(artist)}</span>
@@ -809,7 +809,7 @@ function albumPickInner(p, sel) {
     const v = variant(x, sel) || primary(x), on = x.slug === p.slug;
     // a small record of its own (the full record component is built for 200px and up)
     const th = `<span class="apick__th${v.format === 'vinyl' ? ' apick__th--rec' : ''}"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>`;
-    return `<a class="apick__a${on ? ' is-on' : ''}" href="#/product/${x.slug}?format=${v.format}"${on ? ' aria-current="true"' : ''}>
+    return `<a class="apick__a${on ? ' is-on' : ''}" href="/product/${x.slug}?format=${v.format}"${on ? ' aria-current="true"' : ''}>
       ${th}<span class="apick__n">${albumOf(x)}${!on && v.format !== sel ? `<span class="apick__f">${x.variants.length === 1 ? esc(FMT[v.format].label) + ' only' : 'Not in ' + esc(FMT[sel].label)}</span>` : ''}</span></a>`;
   }).join('');
 }
@@ -830,7 +830,7 @@ function viewProduct(p, params) {
   return `<div class="pliq" id="pliq" aria-hidden="true"></div>
   <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
     <div class="pdp__top mono-xs dim">
-      <span><a href="#/vinyl">CATALOGUE</a> / ${col ? `<a href="#/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span></span>
+      <span><a href="/vinyl">CATALOGUE</a> / ${col ? `<a href="/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span></span>
       <button class="pdp__share" type="button" data-share>Share <span aria-hidden="true">↗</span></button>
     </div>
     <div class="pdp${P.filter(x => x.artist === p.artist).length > 1 ? ' pdp--pick' : ''}">
@@ -848,7 +848,7 @@ function viewProduct(p, params) {
         </div>
       </div>
       <div class="pdp__info">
-        <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="#/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
+        <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
         <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
         <div id="pdpbundle">${pdpBundleHTML(p, sel)}</div>
@@ -879,7 +879,7 @@ function viewProduct(p, params) {
 
         <div style="margin-top:28px">
           <div class="acc"><button aria-expanded="false">Shipping &amp; returns <span>+</span></button>
-            <div class="panel"><div class="panel__in">Delivered in ${DELIVERY} anywhere in India${SHIP.free && !SHIP.freeFrom ? ', and delivery is free' : ''}.${SHIP.free && SHIP.freeFrom ? ' ' + esc(SHIP.line) : ''} If it arrives damaged, email us within 7 days of delivery and we'll put it right. Full details in <a href="#/policies/shipping">shipping</a> and <a href="#/policies/returns">returns</a>.</div></div></div>
+            <div class="panel"><div class="panel__in">Delivered in ${DELIVERY} anywhere in India${SHIP.free && !SHIP.freeFrom ? ', and delivery is free' : ''}.${SHIP.free && SHIP.freeFrom ? ' ' + esc(SHIP.line) : ''} If it arrives damaged, email us within 7 days of delivery and we'll put it right. Full details in <a href="/policies/shipping">shipping</a> and <a href="/policies/returns">returns</a>.</div></div></div>
           <div class="acc" id="hangacc" ${sel === 'vinyl' ? '' : 'hidden'}><button aria-expanded="false">How it hangs <span>+</span></button>
             <div class="panel"><div class="panel__in">Every record comes with a wall hook in the box. Put the hook up, hang the record on it, done.</div></div></div>
           <div class="acc"><button aria-expanded="false">Care <span>+</span></button>
@@ -898,7 +898,7 @@ function viewProduct(p, params) {
     <section class="sec" style="padding-top:0">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:24px">
         <h2 class="d-s">Goes well with</h2>
-        ${col ? `<a class="mono-xs" href="#/collections/${col.slug}" style="color:var(--muted)">PART OF ${esc(col.name.toUpperCase())} →</a>` : ''}
+        ${col ? `<a class="mono-xs" href="/collections/${col.slug}" style="color:var(--muted)">PART OF ${esc(col.name.toUpperCase())} →</a>` : ''}
       </div>
       <div class="grid">${rel2.map(cardHTML).join('')}</div>
     </section>
@@ -1130,7 +1130,7 @@ function viewStory() {
 function viewFaq() {
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">Questions.</h1>
-    <p class="body-l dim" style="margin:16px 0 40px">The short answers. Anything else, <a href="#/contact" style="color:var(--ember)">ask us</a>.</p>
+    <p class="body-l dim" style="margin:16px 0 40px">The short answers. Anything else, <a href="/contact" style="color:var(--ember)">ask us</a>.</p>
     ${(SITE.faq || []).map(([q, a]) => `<div class="acc"><button aria-expanded="false">${esc(q)} <span>+</span></button>
       <div class="panel"><div class="panel__in">${a}</div></div></div>`).join('')}</div>`;
 }
@@ -1143,7 +1143,7 @@ function viewContact() {
       <a class="reach__a" href="${IG_URL}" target="_blank" rel="noopener"><span class="mono-xs dim">Instagram</span><span>@${esc(SITE.instagram)}</span></a>
       <a class="reach__a" href="mailto:${CONTACT_EMAIL}"><span class="mono-xs dim">Email</span><span>${CONTACT_EMAIL}</span></a>
     </div>
-    <p class="body-s dim" style="margin:0 0 36px">Want an album that isn't in the catalogue? <a href="#/custom" style="color:var(--ember)">Start a custom order</a>.</p>
+    <p class="body-s dim" style="margin:0 0 36px">Want an album that isn't in the catalogue? <a href="/custom" style="color:var(--ember)">Start a custom order</a>.</p>
     <h2 class="d-s" style="margin:0 0 18px">Or write it here</h2>
     <form data-form="contact" data-success="Message sent. We'll reply." style="display:grid;gap:18px;max-width:520px">
       <label class="field"><span>Name</span><input name="name" required autocomplete="name"></label>
@@ -1169,7 +1169,7 @@ function viewCart() {
   return `<div class="wrap sec col-720" style="padding-top:calc(var(--nav-h) + 64px)">
     <h1 class="d-l">The crate.</h1>
     ${!cart.length ? `<p class="body-l dim" style="margin:20px 0 26px">Nothing in it yet.</p>
-      <a class="btn btn--secondary" href="#/vinyl"><span class="btn__mag">Browse the catalogue</span></a>`
+      <a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">Browse the catalogue</span></a>`
     : `<div class="mono-xs dim num" style="margin:16px 0 26px">${cartCount()} IN THE CRATE</div>
       ${cartLinesHTML()}
       <div class="receipt" style="margin-top:32px">
@@ -1204,7 +1204,7 @@ function viewPolicy(slug) {
     <h1 class="d-l">${title}.</h1>
     <div class="mono-xs dim" style="margin-top:14px">LAST UPDATED — ${esc(String(SITE.policiesUpdated || '').toUpperCase())}</div>
     <div class="policy">${body.map(([h, t]) => `<section><h2 class="d-s">${h}</h2><p class="body-l dim">${t}</p></section>`).join('')}</div>
-    <nav class="policy__nav mono-xs" aria-label="Policies">${Object.entries(SITE.policies).map(([k, [t]]) => `<a href="#/policies/${k}" class="${k === slug ? 'is-on' : ''}">${t}</a>`).join('')}</nav>
+    <nav class="policy__nav mono-xs" aria-label="Policies">${Object.entries(SITE.policies).map(([k, [t]]) => `<a href="/policies/${k}" class="${k === slug ? 'is-on' : ''}">${t}</a>`).join('')}</nav>
   </div>`;
 }
 function view404() {
@@ -1215,8 +1215,8 @@ function view404() {
     <h1 class="d-l" style="max-width:12ch;position:relative">This one's not in the crate.</h1>
     <p class="body-l dim" style="margin:18px 0 30px;position:relative">The page you're after doesn't exist, or moved.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;position:relative">
-      <a class="btn btn--primary" href="#/vinyl"><span class="btn__mag">Back to the catalogue</span></a>
-      <a class="btn btn--secondary" href="#/"><span class="btn__mag">Home</span></a></div></div>`;
+      <a class="btn btn--primary" href="/vinyl"><span class="btn__mag">Back to the catalogue</span></a>
+      <a class="btn btn--secondary" href="/"><span class="btn__mag">Home</span></a></div></div>`;
 }
 
 /* ============================== MOUNT ============================== */
@@ -1659,7 +1659,7 @@ function mountCatalog(seg, params) {
     if (path.startsWith('/posters')) targetPath = '/posters';
 
     if (inp.dataset.f === 'col_nav') {
-      navigate('#/collections/' + inp.value);
+      navigate('/collections/' + inp.value);
       return;
     }
 
@@ -1909,10 +1909,10 @@ function bundleCardHTML(b) {
 function bundleStripHTML() {
   if (!LIVE_BUNDLES.length) return '';
   return `<section class="bstrip" data-section="BUNDLES"><div class="wrap">
-    <div class="bstrip__hd"><h2 class="bstrip__h">Bundles</h2><a class="mono-xs" href="#/bundles">All bundles →</a></div>
+    <div class="bstrip__hd"><h2 class="bstrip__h">Bundles</h2><a class="mono-xs" href="/bundles">All bundles →</a></div>
     <div class="bstrip__row">${LIVE_BUNDLES.map(b => `<a class="bchip" href="${b.href}">
       <span class="bchip__n">${esc(b.name)}</span><span class="bchip__p num">${money(b.price)} <s>${money(b.price + b.off)}</s></span></a>`).join('')}
-      <a class="bchip bchip--wall" href="#/build-your-wall"><span class="bchip__n">Build your own wall</span><span class="bchip__p">Pick the pieces →</span></a></div>
+      <a class="bchip bchip--wall" href="/build-your-wall"><span class="bchip__n">Build your own wall</span><span class="bchip__p">Pick the pieces →</span></a></div>
   </div></section>`;
 }
 function viewBundles() {
@@ -1923,7 +1923,7 @@ function viewBundles() {
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
     ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
-      ${ctaShop('Build your wall', '#/build-your-wall', 'Try it on a wall first')}</div>
+      ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}</div>
   </div>`;
 }
 
