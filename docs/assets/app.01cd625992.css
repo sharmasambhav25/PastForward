@@ -2672,3 +2672,39 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 /* Safari sizes grid columns from their content; never let a card push its column wider than its share */
 .grid>*,.shots>*,.shelf>*,.scatter>*,.card,.card__body,.card__media{min-width:0}
 .card__media img,.card__media .frame,.card__media .polaroid,.card__media .record{max-width:100%}
+
+/* ---------- phone hero: two tiles above Shop now (option O3) ---------- */
+.htiles{display:none}
+@media(max-width:767px){
+  .fhero{align-items:flex-start}
+  .fhero{--dw:min(88vw, calc(100svh - 390px), 360px); --below:268px}
+  /* the record sits in the middle of the space between the header and the tagline */
+  .fhero .fdisc{width:var(--dw); margin-top:calc(var(--nav-h) + max(8px, (100svh - var(--nav-h) - var(--below) - var(--dw)) / 2))}
+  .htiles{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; position:absolute; z-index:7; left:16px; right:16px;
+    bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px) + 72px)}
+  .fhero__cta{bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px))}
+  .fhero__tagm{bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px) + 72px + 96px)}
+  .htile{position:relative; height:84px; border-radius:14px; overflow:hidden; padding:10px 11px; display:flex; flex-direction:column; justify-content:flex-end;
+    color:var(--cream); text-decoration:none; border:1px solid rgba(255,255,255,.14); background:rgba(18,16,17,.8);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:transform .3s var(--e-spring)}
+  .htile:active{transform:scale(.95)}
+  .htile b{position:relative; z-index:2; font:400 16px/1 var(--shout); text-transform:uppercase; letter-spacing:.03em}
+  .htile small{position:relative; z-index:2; margin-top:4px; font:500 8.5px/1.2 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--rose)}
+  .htile--b{background:#D8312A; border-color:transparent; color:#0b0809} .htile--b small{color:#0b0809}
+  .htile__ar{position:absolute; z-index:2; right:9px; bottom:9px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
+    background:#0b0809; color:var(--cream); font-size:11px; transition:transform .3s var(--e-spring)}
+  .htile--w .htile__ar{background:var(--oxblood)}
+  .htile:active .htile__ar{transform:translateX(3px)}
+  .htile__recs{position:absolute; right:-12px; top:-12px; width:104px; height:64px}
+  .htile__recs img{position:absolute; width:50px; height:50px; border-radius:50%; box-shadow:3px 5px 9px rgba(0,0,0,.4); animation:htileSpin 14s linear infinite}
+  .htile__recs img:nth-child(1){left:0; top:14px} .htile__recs img:nth-child(2){left:22px; top:4px; animation-duration:11s} .htile__recs img:nth-child(3){left:44px; top:16px; animation-duration:17s}
+  .htile__wall{position:absolute; right:9px; top:9px; display:flex; gap:4px; align-items:center}
+  .htile__wall img{box-shadow:2px 3px 6px rgba(0,0,0,.45)}
+  .htile__wall img.r{width:30px; height:30px; border-radius:50%} .htile__wall img.p{width:21px; height:30px; object-fit:cover}
+  @keyframes htileSpin{to{transform:rotate(360deg)}}
+}
+@media(max-width:767px) and (max-height:700px){
+  .fhero__tagm{display:none}
+  .fhero{--dw:min(84vw, calc(100svh - 310px), 340px); --below:205px}
+}
+@media(prefers-reduced-motion:reduce){.htile__recs img{animation:none}}
