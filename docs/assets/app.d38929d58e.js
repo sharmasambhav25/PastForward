@@ -36,6 +36,8 @@ const SIZE_TABS = [
   { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '/polaroids', dim: 'Pocket-size prints' },
 ];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
+/* custom page: the record is just "12-inch", no millimetres */
+const customSize = f => f === FMT.vinyl ? '12-inch record' : sizeOf(f);
 const CONTACT_EMAIL = SITE.email;
 const DELIVERY = SITE.delivery;
 const IG_URL = 'https://instagram.com/' + SITE.instagram;
@@ -1034,8 +1036,9 @@ function customVariantId(fKey) {
 }
 function customBrief(d) {
   const f = FMT[d.format] || FMT.vinyl;
-  const L = ["Hi PastForward, I'd like a custom piece.", '', `Artist: ${d.artist || ''}`, `Album or track: ${d.album || ''}`, `Format: ${f.label} (${money(f.price)})`];
+  const L = ["Hi PastForward, I'd like a custom piece.", '', `Artist: ${d.artist || ''}`, `Album: ${d.album || ''}`, `Track: ${d.track || ''}`, `Format: ${f.label} (${money(f.price)})`];
   if (d.ref) L.push(`Reference: ${d.ref}`);
+  if (d.refimg && d.refimg.size) L.push('Reference image: sending it in this chat');
   if (d.notes) L.push(`Notes: ${d.notes}`);
   L.push('', `Name: ${d.name || ''}`);
   if (d.email) L.push(`Email: ${d.email}`);
@@ -1051,6 +1054,25 @@ function submitForm(type, payload, via) {
   const endpoint = SITE.forms && SITE.forms.endpoint;
   if (type === 'custom') {
     const fKey = payload.format || 'vinyl', f = FMT[fKey] || FMT.vinyl, variantId = customVariantId(fKey);
+    if (payload.whatsapp && !/^\+/.test(payload.whatsapp)) payload.whatsapp = '+91 ' + payload.whatsapp;
+    const file = payload.refimg && payload.refimg.size ? payload.refimg : null;
+    delete payload.refimg;
+    if (SHOPIFY_CONFIG.storeDomain && variantId && file) {
+      /* with an image: post a real form to the store's cart so Shopify uploads the image and
+         attaches it to the order line, then go straight on to checkout */
+      const fm = document.createElement('form');
+      fm.method = 'post'; fm.enctype = 'multipart/form-data'; fm.action = `https://${SHOPIFY_CONFIG.storeDomain}/cart/add`; fm.style.display = 'none';
+      const add = (n, v) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; fm.appendChild(i); };
+      add('id', variantId); add('quantity', '1');
+      [['Artist', payload.artist], ['Album', payload.album], ['Track', payload.track], ['Name', payload.name], ['WhatsApp', payload.whatsapp], ['Email', payload.email], ['Reference link', payload.ref], ['Notes', payload.notes]]
+        .forEach(([k, v]) => { if (v) add(`properties[${k}]`, v); });
+      const fi = document.createElement('input'); fi.type = 'file'; fi.name = 'properties[Reference image]';
+      const dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files; fm.appendChild(fi);
+      const tags = Track.params();
+      add('return_to', '/checkout' + (tags ? '?' + tags : ''));
+      document.body.appendChild(fm); fm.submit();
+      return Promise.resolve({ ok: true, redirected: true });
+    }
     if (SHOPIFY_CONFIG.storeDomain && variantId) {
       const params = new URLSearchParams();
       if (payload.email) params.set('checkout[email]', payload.email);
@@ -1059,11 +1081,12 @@ function submitForm(type, payload, via) {
       // cart attributes: shown on the order in Shopify admin
       params.set('attributes[Format]', f.label);
       params.set('attributes[Artist]', payload.artist || '');
-      params.set('attributes[Album / Track]', payload.album || '');
+      params.set('attributes[Album]', payload.album || '');
+      params.set('attributes[Track]', payload.track || '');
       params.set('attributes[WhatsApp]', payload.whatsapp || '');
       if (payload.ref) params.set('attributes[Reference Link]', payload.ref);
       if (payload.notes) params.set('attributes[Notes]', payload.notes);
-      params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
+      params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} — ${payload.track || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
       const tags = Track.params();
       location.href = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}${tags ? '&' + tags : ''}`;
       return Promise.resolve({ ok: true, redirected: true });
@@ -3262,23 +3285,27 @@ function viewCustom() {
         <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Choose your format, tell us the artist and the album, and we'll make it.</p>
         <form data-form="custom" data-success="Got it. We'll be in touch." class="customform">
           <div class="frow">
-            <label class="field"><span>Artist</span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>
-            <label class="field"><span>Album or track</span><input name="album" required placeholder="e.g. Utopia" autocomplete="off"></label>
+            <label class="field"><span>Artist <i class="req">*</i></span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>
+            <label class="field"><span>Album <i class="req">*</i></span><input name="album" required placeholder="e.g. Utopia" autocomplete="off"></label>
           </div>
           <div class="frow">
-            <label class="field"><span>Format</span><select name="format" id="customformat">${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)} · ${money(f.price)}</option>`).join('')}</select></label>
-            <label class="field"><span>Your name</span><input name="name" required placeholder="Your name" autocomplete="name"></label>
+            <label class="field"><span>Track <i class="req">*</i></span><input name="track" required placeholder="e.g. My Eyes" autocomplete="off"></label>
+            <label class="field"><span>Format <i class="req">*</i></span><select name="format" id="customformat" required><option value="" selected disabled>Choose a format</option>${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)} · ${money(f.price)}</option>`).join('')}</select></label>
           </div>
           <div class="frow">
-            <label class="field"><span>WhatsApp number</span><input name="whatsapp" type="tel" inputmode="tel" placeholder="+91 98765 43210" required autocomplete="tel"></label>
-            <label class="field"><span>Email${canPay ? '' : ' (optional)'}</span><input name="email" type="email" ${canPay ? 'required' : ''} placeholder="your@email.com" autocomplete="email"></label>
+            <label class="field"><span>Your name <i class="req">*</i></span><input name="name" required placeholder="Your name" autocomplete="name"></label>
+            <label class="field"><span>WhatsApp number <i class="req">*</i></span><span class="telin"><b>+91</b><input name="whatsapp" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" placeholder="98765 43210" required autocomplete="tel-national" title="A 10-digit mobile number"></span></label>
           </div>
-          <label class="field"><span>Reference link (optional image or Spotify)</span><input name="ref" inputmode="url" placeholder="https://..."></label>
+          <label class="field"><span>Email <i class="req">*</i></span><input name="email" type="email" required placeholder="your@email.com" autocomplete="email"></label>
+          <div class="frow">
+            <label class="field"><span>Reference link (optional)</span><input name="ref" type="url" inputmode="url" placeholder="https://… Spotify, Pinterest, Instagram"></label>
+            <label class="field"><span>Or upload an image (optional)</span><span class="filein"><input name="refimg" type="file" accept="image/*" id="customimg"><span class="filein__ui" id="customimgui"><b>Choose image</b><em>JPG or PNG, up to 10 MB</em></span></span></label>
+          </div>
           <label class="field"><span>Notes or special requests</span><textarea name="notes" rows="3" placeholder="Tell us if you want specific album art, text, or styling"></textarea></label>
 
           <div class="custom-summary" id="customsummary">
             <div>
-              <div class="mono-xs dim" id="customsummaryformat">Format: ${esc(defaultFormat.label)} (${esc(defaultFormat.size)})</div>
+              <div class="mono-xs dim" id="customsummaryformat">Format: choose one above</div>
               <div class="body-s dim" style="margin-top:4px">Includes custom design, printing and safe packaging${SHIP.free && !SHIP.freeFrom ? ', with free delivery' : ''}</div>
             </div>
             <div style="text-align:right">
@@ -3314,7 +3341,7 @@ function viewCustom() {
           <img src="${photo('printer')}" alt="Artwork printing to order" loading="lazy">
           <figcaption class="mono-xs dim">EVERY ORDER IS PRINTED TO ORDER</figcaption></figure>
         <h4 class="mono dim" style="margin:26px 0 14px">Formats we can make</h4>
-        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${sizeOf(f) ? ' · ' + esc(sizeOf(f)) : ''} <span class="num" style="float:right;color:var(--cream)">${money(f.price)}</span></div>`).join('')}</div>
+        <div class="spec">${Object.values(FMT).map(f => `<div>${esc(f.label)}${customSize(f) ? ' · ' + esc(customSize(f)) : ''} <span class="num" style="float:right;color:var(--cream)">${money(f.price)}</span></div>`).join('')}</div>
       </aside>
     </div></div>`;
 }
@@ -3340,11 +3367,23 @@ function mountCustom() {
   const sumPrice = document.getElementById('customsummaryprice');
   const canPay = !!customVariantId('vinyl');
   const updatePrice = () => {
-    const f = FMT[formatSelect?.value || 'vinyl'] || FMT.vinyl;
+    const chosen = FMT[formatSelect?.value], f = chosen || FMT.vinyl;
     if (btnText) btnText.textContent = canPay ? `Pay ${money(f.price)} and confirm` : money(f.price);
     if (sumPrice) sumPrice.textContent = money(f.price);
-    if (sumFormat) sumFormat.textContent = `Format: ${f.label}${sizeOf(f) ? ` (${sizeOf(f)})` : ''}`;
+    if (sumFormat) sumFormat.textContent = chosen ? `Format: ${f.label}${customSize(f) ? ` (${customSize(f)})` : ''}` : 'Format: choose one above';
   };
+  // WhatsApp: digits only, at most 10
+  const tel = form.querySelector('[name="whatsapp"]');
+  tel?.addEventListener('input', () => { let d = tel.value.replace(/\D/g, ''); if (d.length > 10) d = d.replace(/^(91|0)/, ''); d = d.slice(0, 10); if (d !== tel.value) tel.value = d; });
+  // reference image: show the chosen file, refuse anything too big
+  const img = $('#customimg'), ui = $('#customimgui');
+  img?.addEventListener('change', () => {
+    const f = img.files && img.files[0];
+    if (f && f.size > 10 * 1024 * 1024) { img.value = ''; toast('That image is over 10 MB. Please pick a smaller one.'); }
+    const ok = img.files && img.files[0];
+    ui.classList.toggle('is-set', !!ok);
+    ui.innerHTML = ok ? `<b>${esc(ok.name.length > 28 ? ok.name.slice(0, 25) + '…' : ok.name)}</b><em>Tap to change</em>` : '<b>Choose image</b><em>JPG or PNG, up to 10 MB</em>';
+  });
   formatSelect?.addEventListener('change', updatePrice);
   updatePrice();
 }
