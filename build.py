@@ -445,11 +445,35 @@ def fb_product(p):
     col = next((c for c in COLS if c['slug'] in p['tags']), None)
     more = [x for x in P if x['slug'] != p['slug'] and x['artist'] == p['artist']]
     also = [x for x in P if x['slug'] != p['slug'] and col and col['slug'] in x['tags'] and x not in more][:6]
-    out = [f"<h1>{esc(name_of(p))}</h1>", f"<p>{esc(p['blurbs'][p['variants'][0]['format']])}</p>", '<h2>Formats</h2><ul>']
+    lead_v = p['variants'][0]
+    lead_blurb = (p.get('blurbs') or {}).get(lead_v['format']) or f"{name_of(p)} wall art by PastForward."
+    alb = album_of(p)
+    out = [f"<h1>{esc(name_of(p))}</h1>", f"<p>{esc(lead_blurb)}</p>"]
+    if alb:
+        out.append(f"<p>Original music wall art for <strong>{esc(alb)}</strong> by <strong>{esc(p['artist'])}</strong>, produced to order by PastForward.</p>")
+    else:
+        out.append(f"<p>Original music wall art for <strong>{esc(p['artist'])}</strong>, produced to order by PastForward.</p>")
+    out.append('<h2>Available Formats &amp; Dimensions</h2><ul>')
     for v in p['variants']:
+        fmt_desc = ""
+        if v['format'] == 'vinyl':
+            fmt_desc = " — Upcycled authentic 12-inch record (⌀305mm), custom-printed centre label, damage-free wall hook included in the box."
+        elif v['format'] == 'poster-a3':
+            fmt_desc = " — Statement A3 art print (297 × 420mm) on premium 300 GSM matte archival stock."
+        elif v['format'] == 'poster-a5':
+            fmt_desc = " — Compact A5 art print (148 × 210mm) on premium 300 GSM matte stock, ideal for desks and gallery shelves."
+        elif v['format'] == 'print-10':
+            fmt_desc = " — 10×10 inch square print (254 × 254mm) preserving 1:1 original vinyl album sleeve proportions."
+        elif v['format'] == 'polaroid':
+            fmt_desc = " — Pocket-size polaroid card on heavy 300 GSM stock with classic cream border for string lights or corkboards."
         out.append(f"<li><a href=\"{product_url(p, v['format'])}\">{esc(v['label'])}</a>"
-                   f"{' · ' + esc(size_of(v)) if size_of(v) else ''} — {money(v['price'])}</li>")
+                   f"{' (' + esc(size_of(v)) + ')' if size_of(v) else ''} — {money(v['price'])}{fmt_desc}</li>")
     out.append('</ul>' + fb_facts())
+    out.append('<h2>Specifications &amp; Care</h2><p>'
+               + ('Every vinyl piece is made using a real upcycled 12-inch vinyl record that had a previous life, restored and fitted with custom-designed album artwork. Made to hang, not to play. A wall mounting hook is provided in every box. ' if any(v['format'] == 'vinyl' for v in p['variants']) else '')
+               + 'Printed works use archival-grade pigment ink on heavyweight 300 GSM paper. To maintain vibrant colors, display out of direct sunlight and wipe gently with a dry microfibre cloth.</p>')
+    out.append('<h2>Shipping &amp; Damaged Delivery Guarantee</h2><p>'
+               + f"Every piece is printed and assembled when you order. Delivered across India within {SITE['delivery']}. {SITE['shipping']['label']}. If your order arrives damaged or bent in transit, email us within 7 days of delivery with photos of the package and item for an immediate free replacement. See our <a href=\"/policies/shipping\">shipping policy</a> and <a href=\"/policies/returns\">returns policy</a>.</p>")
     if more:
         out.append(f"<h2>More from {esc(p['artist'])}</h2>{fb_products(more)}")
     if slugify(p['artist']) in SITE['artistPages']:
@@ -634,13 +658,20 @@ def build_site():
                        '<h2>Formats we can make</h2>' + fb_formats() + cc_html), ld=graph(*custom_ld))
     add('/story', 'story.html', title=M['/story']['title'], desc=M['/story']['desc'],
         body=fb_simple('A record you don\'t play.', [
-            "A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun.",
-            'Designed from memory, made for now.']), ld=graph(crumbs(('Home', '/'), ('Our story', '/story'))))
+            "A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.",
+            "PastForward was founded in 2025 to give vintage music artifacts a second life as timeless wall decor. Instead of letting discarded vinyl records gather dust in attics or end up in landfills, we rescue authentic 12-inch discs, hand-clean and restore their surface, and press custom-designed centre labels celebrating the iconic albums that defined our generation.",
+            "From hip-hop touchstones like Travis Scott and Kanye West, to modern pop classics from Taylor Swift and Sabrina Carpenter, to indie milestones from Arctic Monkeys and Frank Ocean — we build pieces that connect you to the music that shaped you.",
+            "Every record is an authentic 12-inch disc (305mm in diameter) engineered specifically for display. Every piece includes a damage-free wall hook right in the box, carefully packaged to arrive safely at your door anywhere in India within 7–10 days.",
+            "Designed from memory, made for now."
+        ], '<h2>Our Formats &amp; Dimensions</h2>' + fb_formats() + fb_facts()), ld=graph(crumbs(('Home', '/'), ('Our story', '/story'))))
     add('/contact', 'contact.html', title=M['/contact']['title'], desc=M['/contact']['desc'],
         body=fb_simple('Talk to us.', [
-            f'Email <a href="mailto:{SITE["email"]}">{SITE["email"]}</a>.',
-            f'Instagram <a href="https://www.instagram.com/{SITE["instagram"]}/">@{SITE["instagram"]}</a>.',
-            f'WhatsApp <a href="https://wa.me/{SITE["whatsapp"]}">+{SITE["whatsapp"]}</a>.']), ld=graph())
+            "Two reasons people usually write to us: an order that's already placed, or an album we haven't made yet. We're here to help with both.",
+            f'<strong>WhatsApp:</strong> <a href="https://wa.me/{SITE["whatsapp"]}">+{SITE["whatsapp"]}</a> — Fastest for instant questions, order updates, and custom artwork references.',
+            f'<strong>Email:</strong> <a href="mailto:{SITE["email"]}">{SITE["email"]}</a> — Best for detailed order questions, damaged deliveries, and custom order briefings. We usually reply within a few hours.',
+            f'<strong>Instagram:</strong> <a href="https://www.instagram.com/{SITE["instagram"]}/">@{SITE["instagram"]}</a> — Follow along, DM us your finished walls, or suggest new albums for upcoming drops.'
+        ], '<h2>Custom Orders</h2><p>Want an album, mixtape, or custom art that isn\'t in our catalogue? That is what our <a href="/custom">custom orders</a> are for. Pick any format — 12-inch vinyl, A3 poster, A5 poster, 10×10 print, or polaroid — tell us the artist and album, and we will create it at standard catalogue prices.</p>'
+           '<h2>Shipping &amp; Replacements</h2><p>All items are printed to order and delivered across India in 7–10 days. If anything arrives bent or damaged during shipping, contact us via email or WhatsApp within 7 days with photos and we will send a free replacement immediately. See our <a href="/policies/shipping">shipping policy</a> and <a href="/policies/returns">returns policy</a>.</p>'), ld=graph(crumbs(('Home', '/'), ('Contact', '/contact'))))
     for k, (name, sections) in SITE['policies'].items():
         path = f'/policies/{k}'
         add(path, f'policies/{k}.html', title=M[path]['title'], desc=M[path]['desc'],
@@ -652,7 +683,26 @@ def build_site():
                        ''.join(f"<h2>{esc(b['name'])}: ₹{b['price']:,}</h2><p>{esc(b['blurb'])} Save ₹{b['off']:,}.</p>" for b in BL)),
         ld=graph(crumbs(('Home', '/'), ('Bundles', '/bundles'))))
     add('/build-your-wall', 'build-your-wall.html', title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
-        body=fb_simple('Build your wall.', [esc(M['/build-your-wall']['desc'])]),
+        body=fb_simple('Build your own wall.', [
+            esc(M['/build-your-wall']['desc']),
+            "Our interactive wall builder lets you arrange and preview your dream music wall before placing an order. Mix and match authentic upcycled vinyl records, A3 posters, A5 prints, 10×10 square album sleeves, and polaroid cards on different wall paint colors to create a custom gallery setup tailored to your space.",
+            "Drag pieces across the virtual canvas to test layouts, spacing, and pairings. When you're happy with your design, send the entire collection straight to your crate with a single click."
+        ], '<h2>Available Wall Formats</h2><ul>'
+           '<li><strong>12-inch Upcycled Vinyl Record (⌀305mm):</strong> Real vintage vinyl with custom album art on the centre label. Comes with a dedicated wall hook included.</li>'
+           '<li><strong>A3 Poster (297 × 420mm):</strong> Full-size music poster on 300 GSM matte archival stock.</li>'
+           '<li><strong>A5 Poster (148 × 210mm):</strong> Compact art print for desks, shelves, or filling gallery gaps.</li>'
+           '<li><strong>10×10 Print (254 × 254mm):</strong> Square art print keeping the original 1:1 vinyl cover proportions.</li>'
+           '<li><strong>Polaroid Cards:</strong> Pocket-sized cards with classic cream borders, perfect for string lights, pinboards, or mirrors.</li>'
+           '</ul>'
+           '<h2>Automatic Bundle Discounts</h2><p>When you build a wall with multiple pieces, our crate automatically applies bundle savings at checkout:</p><ul>'
+           '<li><strong>Any 3 Vinyl Records:</strong> ₹2,499 (Save ₹498)</li>'
+           '<li><strong>Record + Matching A3 Poster:</strong> ₹1,149 (Save ₹149)</li>'
+           '<li><strong>Any 3 A3 Posters:</strong> ₹749 (Save ₹148)</li>'
+           '<li><strong>Any 5 A5 Posters:</strong> ₹799 (Save ₹196)</li>'
+           '<li><strong>10 Polaroids:</strong> ₹699 (Save ₹291)</li>'
+           '</ul>'
+           '<h2>Hanging &amp; Wall Care</h2><p>Every vinyl record includes an adhesive-backed wall mounting hook in the package. Posters, prints, and polaroids are lightweight and mount cleanly using Blu-Tack, command poster strips, or washi tape without peeling or damaging wall paint.</p>'
+           '<h2>Delivery &amp; Guarantee</h2><p>All pieces are crafted to order and shipped across India in 7–10 days with protective packaging. In the rare event of transit damage, we provide hassle-free replacements within 7 days of delivery.</p>'),
         ld=graph(crumbs(('Home', '/'), ('Build your wall', '/build-your-wall'))))
     for path, h1 in (('/cart', 'The crate.'), ('/search', 'Search.'), ('/wall', 'Send us a wall.')):
         add(path, path[1:] + '.html', title=M[path]['title'], desc=M[path]['desc'], noindex=True,

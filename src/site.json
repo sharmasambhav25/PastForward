@@ -32,7 +32,7 @@
         "price": 2499,
         "off": 498,
         "live": true,
-        "href": "#/vinyl",
+        "href": "/vinyl",
         "blurb": "Three 12-inch records, any albums. The classic trio for one wall."
       },
       {
@@ -44,7 +44,7 @@
         "price": 1149,
         "off": 149,
         "live": true,
-        "href": "#/bundles?scroll=sets",
+        "href": "/bundles?scroll=sets",
         "blurb": "The album on vinyl and the same album as an A3 poster, hung side by side."
       },
       {
@@ -58,7 +58,7 @@
         "price": 749,
         "off": 148,
         "live": true,
-        "href": "#/posters/a3",
+        "href": "/posters/a3",
         "blurb": "Three A3 posters, 297 × 420mm. A full row for less than the price of a record."
       },
       {
@@ -72,7 +72,7 @@
         "price": 799,
         "off": 196,
         "live": true,
-        "href": "#/posters/a5",
+        "href": "/posters/a5",
         "blurb": "Five A5 posters for a desk, a shelf or a small gallery wall."
       },
       {
@@ -86,7 +86,7 @@
         "price": 699,
         "off": 291,
         "live": true,
-        "href": "#/polaroids",
+        "href": "/polaroids",
         "blurb": "Ten polaroid-style cards for a string of lights, a mirror or a corkboard."
       }
     ]
@@ -187,8 +187,8 @@
     ["What does delivery cost?", "{{SHIPPING_LINE}}"],
     ["How can I pay?", "By {{PAYMENTS}}, on a secure checkout. {{COD_LINE}}"],
     ["Do you ship outside India?", "Not yet. We deliver anywhere in India for now."],
-    ["What if it arrives damaged?", "Email {{EMAIL_LINK}} within 7 days of delivery with a photo, and we'll put it right. See <a href=\"#/policies/returns\">returns</a>."],
-    ["Can you make one that isn't on the site?", "Yes. That's what <a href=\"#/custom\">custom orders</a> are for — tell us the artist and album and we'll make it."],
+    ["What if it arrives damaged?", "Email {{EMAIL_LINK}} within 7 days of delivery with a photo, and we'll put it right. See <a href=\"/policies/returns\">returns</a>."],
+    ["Can you make one that isn't on the site?", "Yes. That's what <a href=\"/custom\">custom orders</a> are for — tell us the artist and album and we'll make it."],
     ["How do I look after it?", "Wipe with a dry cloth. Keep it out of direct sunlight — same as the original."]
   ],
 
@@ -221,7 +221,7 @@
       ["Prices and orders", "Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can't fulfil an order, we'll tell you and refund you in full."],
       ["Custom orders", "When you send us an image or artwork to print, you confirm you have the right to use it."],
       ["Artwork and names", "Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label."],
-      ["Delivery and returns", "See our <a href=\"#/policies/shipping\">shipping</a> and <a href=\"#/policies/returns\">returns</a> policies."],
+      ["Delivery and returns", "See our <a href=\"/policies/shipping\">shipping</a> and <a href=\"/policies/returns\">returns</a> policies."],
       ["Changes", "We may update these terms. The date at the top shows when they last changed."],
       ["The law", "These terms are governed by the laws of India."]
     ]]
@@ -303,7 +303,7 @@
         ],
         [
           "Can you make a record for an album that isn't listed?",
-          "Yes. Tell us the artist and album on the <a href=\"#/custom\">custom orders</a> page."
+          "Yes. Tell us the artist and album on the <a href=\"/custom\">custom orders</a> page."
         ]
       ]
     },
@@ -361,7 +361,7 @@
       "faq": [
         [
           "Can I get a poster of an album you don't list?",
-          "Yes, through <a href=\"#/custom\">custom orders</a>."
+          "Yes, through <a href=\"/custom\">custom orders</a>."
         ],
         [
           "What if it arrives bent or damaged?",
@@ -382,7 +382,7 @@
         ],
         [
           "Not sure which album?",
-          "Pick the artist they play most, then the album with the cover they'd recognise from across a room. If it isn't here, we can make it: use <a href=\"#/custom\">custom orders</a>."
+          "Pick the artist they play most, then the album with the cover they'd recognise from across a room. If it isn't here, we can make it: use <a href=\"/custom\">custom orders</a>."
         ],
         [
           "Will it arrive in time?",
