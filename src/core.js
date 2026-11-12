@@ -452,12 +452,6 @@ function chromeHTML() {
     <button class="iconbtn" data-close aria-label="Close menu" data-x style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
     <a href="/vinyl">Vinyls</a>
     <a href="/posters">Posters</a>
-    <div class="menu__sublinks">
-      <a href="/posters/a3" class="menu__pill">A3 Poster</a>
-      <a href="/posters/a5" class="menu__pill">A5 Poster</a>
-      <a href="/posters/10x10" class="menu__pill">10×10 Format</a>
-      <a href="/polaroids" class="menu__pill">Polaroid</a>
-    </div>
     <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
     <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
     <a href="/collections/the-classics">Collections</a>
