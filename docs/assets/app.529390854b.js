@@ -465,7 +465,6 @@ function chromeHTML() {
     <a href="/posters">Posters</a>
     <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
     <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
-    <a href="/collections/the-classics">Collections</a>
     <a href="/custom">Custom Design</a>
     <a href="/story">Our Story</a>
     <a href="/faq">FAQ</a>
@@ -2462,10 +2461,10 @@ function viewHome() {
     </div>
   </section>
 
-  ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
-
   <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
   ${formatsHTML()}
+
+  ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
 
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
