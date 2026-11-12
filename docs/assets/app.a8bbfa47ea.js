@@ -2434,6 +2434,7 @@ function viewHome() {
     <p class="fhero__tagm">${TAGLINE}<span class="fhero__subm">Upcycled 12-inch records · Made to hang</span></p>
     <div class="fhero__hint cap">A record that already had a life</div>
     <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
+    ${heroTilesHTML()}
     <div class="fhero__cta">
       ${ctaShop('Shop now', '/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
     </div>
@@ -4444,6 +4445,20 @@ function pdpBundleHTML(p, f) {
   if (!b) return '';
   if (b.pair) return `<button class="pdpb" data-addpair="${p.slug}"><span class="pdpb__k mono-xs">Bundle</span><span>The record + its A3 poster for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">add both · save ${money(b.off)} →</span></button>`;
   return `<a class="pdpb" href="${b.href}"><span class="pdpb__k mono-xs">Bundle</span><span>${esc(b.name)} for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">save ${money(b.off)} →</span></a>`;
+}
+
+/* phone hero: Bundles and Build your wall on the first screen (option O3) */
+function heroTilesHTML() {
+  const im = (slug, f) => { const p = bySlug[slug], v = p && variant(p, f); return v ? imgSrc(v.image) : ''; };
+  const b = LIVE_BUNDLES.find(x => x.id === 'records3') || LIVE_BUNDLES[0];
+  const recs = ['the-weeknd-after-hours', 'taylor-swift-1989', 'frank-ocean-blonde'].map(s => im(s, 'vinyl')).filter(Boolean);
+  const wall = [im('travis-scott-utopia', 'poster-a3'), im('taylor-swift-lover', 'vinyl'), im('sabrina-carpenter-espresso', 'poster-a3')];
+  return `<nav class="htiles" aria-label="Bundles and Build your wall">
+    ${b ? `<a class="htile htile--b" href="/bundles"><span class="htile__recs" aria-hidden="true">${recs.map(u => `<img src="${u}" alt="" decoding="async">`).join('')}</span>
+      <b>Bundles</b><small>${esc(b.short || b.name)} ${money(b.price)}</small><span class="htile__ar" aria-hidden="true">→</span></a>` : ''}
+    <a class="htile htile--w" href="/build-your-wall"><span class="htile__wall" aria-hidden="true">${wall.map((u, i) => u ? `<img class="${i === 1 ? 'r' : 'p'}" src="${u}" alt="" decoding="async">` : '').join('')}</span>
+      <b>Build your wall</b><small>Try it first</small><span class="htile__ar" aria-hidden="true">→</span></a>
+  </nav>`;
 }
 
 /* ===== boot.js ===== */
