@@ -147,8 +147,7 @@ function viewHome() {
       ${MRP.vinyl > FMT.vinyl.price
         ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
         : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
-      <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
-      ${MRP.vinyl > FMT.vinyl.price ? ctaShop('Shop the sale', '/vinyl', `Save ${money(MRP.vinyl - FMT.vinyl.price)} a record`) : ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
+      <a class="salesec__now num" href="/vinyl" aria-label="Shop vinyls, now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</a>
       ${assureHTML('vinyl', 'assure--band')}
     </div>
   </section>
