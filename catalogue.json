@@ -2266,29 +2266,6 @@
    "rank": 0
   },
   {
-   "slug": "travis-utopia",
-   "artist": "Travis",
-   "album": "Utopia",
-   "variants": [
-    {
-     "format": "poster-a5",
-     "label": "A5 poster",
-     "size": "148 × 210mm",
-     "price": 199,
-     "confirmPrice": false,
-     "ratio": 0.7072,
-     "badge": "A5",
-     "image": "A5-POSTER-TRAVIS-UTOPIA.webp",
-     "sku": "PF-TRAVIS-UTOPIA-POSTER-A5",
-     "alt": "Utopia by Travis — A5 poster by PastForward"
-    }
-   ],
-   "tags": [],
-   "featured": false,
-   "from": 199,
-   "rank": 999
-  },
-  {
    "slug": "travis-scott-rodeo",
    "artist": "Travis Scott",
    "album": "Rodeo",
@@ -2341,6 +2318,18 @@
      "image": "A3-POSTER-TRAVIS SCOTT-UTOPIA.webp",
      "sku": "PF-TRAVIS-SCOTT-UTOPIA-POSTER-A3",
      "alt": "Utopia by Travis Scott — A3 poster by PastForward"
+    },
+    {
+     "format": "poster-a5",
+     "label": "A5 poster",
+     "size": "148 × 210mm",
+     "price": 199,
+     "confirmPrice": false,
+     "ratio": 0.7072,
+     "badge": "A5",
+     "image": "A5-POSTER-TRAVIS-UTOPIA.webp",
+     "sku": "PF-TRAVIS-UTOPIA-POSTER-A5",
+     "alt": "Utopia by Travis Scott — A5 poster by PastForward"
     },
     {
      "format": "print-10",
@@ -2581,17 +2570,18 @@
   }
  },
  "counts": {
-  "products": 66,
+  "products": 65,
   "vinyl": 48,
   "posters": 46,
   "prints": 14,
   "polaroids": 22,
   "variants": 130,
-  "artists": 54
+  "artists": 53
  },
  "aliases": {
   "arctic-monkeys": "arctic-monkeys-am",
-  "sabrina-carpenter": "sabrina-carpenter-espresso"
+  "sabrina-carpenter": "sabrina-carpenter-espresso",
+  "travis-utopia": "travis-scott-utopia"
  },
  "unresolved": [
   "byte-identical duplicate"

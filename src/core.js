@@ -19,10 +19,10 @@ const priceHTML = (format, price) => MRP[format] && MRP[format] > price
 // sizes not measured yet (the polaroid card) show nothing rather than a placeholder
 // the poster family, one heading per size (header menu + tabs on the posters pages)
 const SIZE_TABS = [
-  { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '#/posters/a3', dim: '297 × 420mm' },
-  { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '#/posters/a5', dim: '148 × 210mm' },
-  { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '#/posters/10x10', dim: '254 × 254mm' },
-  { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '#/polaroids', dim: 'Pocket-size prints' },
+  { key: 'a3', name: 'A3 Posters', short: 'A3', f: 'poster-a3', href: '/posters/a3', dim: '297 × 420mm' },
+  { key: 'a5', name: 'A5 Posters', short: 'A5', f: 'poster-a5', href: '/posters/a5', dim: '148 × 210mm' },
+  { key: '10x10', name: '10×10 Prints', short: '10×10', f: 'print-10', href: '/posters/10x10', dim: '254 × 254mm' },
+  { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '/polaroids', dim: 'Pocket-size prints' },
 ];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
 const CONTACT_EMAIL = SITE.email;
@@ -158,7 +158,7 @@ function cardHTML(p, targetFormat) {
     sizeText = `${esc(v.label)} · ${esc(v.size)}`;
   }
 
-  return `<a class="card" href="#/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
+  return `<a class="card" href="/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
     <div class="card__media" style="aspect-ratio:${ar}" data-media>
       <span class="card__badge badge">${esc(v.badge)}</span>
       ${v.format === 'vinyl' ? recordHTML(p, { size: 210 })
@@ -268,7 +268,7 @@ function syncCart() {
 function cartLinesHTML() {
   if (!cart.length) return `<div style="padding:56px 0;text-align:center">
       <p class="d-s" style="margin-bottom:8px">Nothing in the crate yet.</p>
-      <a class="btn btn--secondary" href="#/vinyl" data-close>Browse the catalogue</a></div>`;
+      <a class="btn btn--secondary" href="/vinyl" data-close>Browse the catalogue</a></div>`;
   return cart.map((l, i) => {
     const p = bySlug[l.slug], v = variant(p, l.format);
     return `<div class="line">
@@ -375,7 +375,7 @@ function saleTapeRun(n = 4) {
   return (one + bun).repeat(n);
 }
 function saleRibbon() {
-  return `<a class="salebar tape" href="#/vinyl" aria-label="${MRP.vinyl > FMT.vinyl.price ? `Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}` : `Every record ${money(FMT.vinyl.price)}`}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
+  return `<a class="salebar tape" href="/vinyl" aria-label="${MRP.vinyl > FMT.vinyl.price ? `Vinyl sale: every record ${money(FMT.vinyl.price)}, was ${money(MRP.vinyl)}` : `Every record ${money(FMT.vinyl.price)}`}${SHIP.label ? '. ' + esc(SHIP.label) : ''}"><span class="tape__t" aria-hidden="true">${saleTapeRun()}${saleTapeRun()}</span></a>`;
 }
 /* The call-to-action pill. `alt` is a second line the label rolls to (decoration: the link is named by `label`). */
 function ctaShop(label, href, alt = '', o = {}) {
@@ -400,14 +400,14 @@ function chromeHTML() {
       <feComposite in="rough" in2="holes" operator="in"/>
     </filter></defs></svg>
   <header class="hdr" id="hdr">${saleRibbon()}<div class="wrap hdr__in">
-    <a class="hdr__mark" href="#/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
+    <a class="hdr__mark" href="/" aria-label="PastForward home"><img src="${window.__WORDMARK__}" alt="PastForward"></a>
     <nav class="hdr__nav" aria-label="Main">
-      <a class="navlink" href="#/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
-      <a class="navlink" href="#/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
-      <a class="navlink navlink--hot" href="#/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
-      <a class="navlink navlink--wall" href="#/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
-      <a class="navlink" href="#/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
-      <a class="navlink" href="#/story" data-nav="story">Our Story${wave('wave--under')}</a>
+      <a class="navlink" href="/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
+      <a class="navlink" href="/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
+      <a class="navlink navlink--hot" href="/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
+      <a class="navlink navlink--wall" href="/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
+      <a class="navlink" href="/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
+      <a class="navlink" href="/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
       <button class="iconbtn" id="searchbtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -419,15 +419,15 @@ function chromeHTML() {
 
   <div class="mega mega--posters" id="megaposters">
     <h4>Poster Formats</h4>
-    <a href="#/posters/a3" class="mega__format-link">
+    <a href="/posters/a3" class="mega__format-link">
       <span class="mega__format-title">A3 Posters</span>
       <span class="mega__format-size">297 × 420mm</span>
     </a>
-    <a href="#/posters/a5" class="mega__format-link">
+    <a href="/posters/a5" class="mega__format-link">
       <span class="mega__format-title">A5 Posters</span>
       <span class="mega__format-size">148 × 210mm</span>
     </a>
-    <a href="#/posters/10x10" class="mega__format-link">
+    <a href="/posters/10x10" class="mega__format-link">
       <span class="mega__format-title">10×10 Format</span>
       <span class="mega__format-size">254 × 254mm</span>
     </a>
@@ -436,8 +436,8 @@ function chromeHTML() {
   <div class="mega mega--collections" id="mega">
     <h4>Our Collections</h4>
     <div class="mega__cols-list">
-      <div>${COLS.slice(0, 4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
-      <div>${COLS.slice(4).map(c => `<a href="#/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
+      <div>${COLS.slice(0, 4).map(c => `<a href="/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
+      <div>${COLS.slice(4).map(c => `<a href="/collections/${c.slug}">${esc(c.name)}</a>`).join('')}</div>
     </div>
   </div>
 
@@ -450,21 +450,21 @@ function chromeHTML() {
   </aside>
   <nav class="menu" id="menu" aria-label="Mobile">
     <button class="iconbtn" data-close aria-label="Close menu" data-x style="position:absolute;top:calc(12px + env(safe-area-inset-top, 0px));right:calc(16px + env(safe-area-inset-right, 0px))">×</button>
-    <a href="#/vinyl">Vinyls</a>
-    <a href="#/posters">Posters</a>
+    <a href="/vinyl">Vinyls</a>
+    <a href="/posters">Posters</a>
     <div class="menu__sublinks">
-      <a href="#/posters/a3" class="menu__pill">A3 Poster</a>
-      <a href="#/posters/a5" class="menu__pill">A5 Poster</a>
-      <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
-      <a href="#/polaroids" class="menu__pill">Polaroid</a>
+      <a href="/posters/a3" class="menu__pill">A3 Poster</a>
+      <a href="/posters/a5" class="menu__pill">A5 Poster</a>
+      <a href="/posters/10x10" class="menu__pill">10×10 Format</a>
+      <a href="/polaroids" class="menu__pill">Polaroid</a>
     </div>
-    <a href="#/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
-    <a href="#/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
-    <a href="#/collections/the-classics">Collections</a>
-    <a href="#/custom">Custom Design</a>
-    <a href="#/story">Our Story</a>
-    <a href="#/faq">FAQ</a>
-    <a href="#/contact">Contact</a>
+    <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
+    <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
+    <a href="/collections/the-classics">Collections</a>
+    <a href="/custom">Custom Design</a>
+    <a href="/story">Our Story</a>
+    <a href="/faq">FAQ</a>
+    <a href="/contact">Contact</a>
     <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px;padding-bottom:4px">
       <a href="https://instagram.com/pastforward.shop" target="_blank" rel="noopener" class="mono" style="font-family:var(--mono);font-size:.66rem;color:var(--muted);padding:0">@pastforward.shop ↗</a>
     </div>
@@ -675,7 +675,7 @@ function popularLinks() {
 }
 function popularLinksHTML() {
   const l = popularLinks();
-  return l.length ? `<nav class="ftr__more mono-xs dim" aria-label="Popular">${l.map(([n, u]) => `<a href="#${u}">${esc(n)}</a>`).join('')}</nav>` : '';
+  return l.length ? `<nav class="ftr__more mono-xs dim" aria-label="Popular">${l.map(([n, u]) => `<a href="${u}">${esc(n)}</a>`).join('')}</nav>` : '';
 }
 function footerHTML() {
   return `<footer class="ftr"><div class="wrap">
@@ -686,11 +686,11 @@ function footerHTML() {
         ${wave('', 'width:120px;height:36px;opacity:.6')}
       </div>
       <div><h4>Shop</h4>
-        <a href="#/vinyl">Vinyls</a><a href="#/posters/a3">A3 posters</a><a href="#/posters/a5">A5 posters</a>
-        <a href="#/posters/10x10">10×10 prints</a><a href="#/polaroids">Polaroids</a><a href="#/custom">Custom orders</a></div>
+        <a href="/vinyl">Vinyls</a><a href="/posters/a3">A3 posters</a><a href="/posters/a5">A5 posters</a>
+        <a href="/posters/10x10">10×10 prints</a><a href="/polaroids">Polaroids</a><a href="/custom">Custom orders</a></div>
       <div><h4>Help</h4>
-        <a href="#/faq">Questions</a><a href="#/policies/shipping">Shipping</a><a href="#/policies/returns">Returns</a>
-        <a href="#/contact">Contact</a><a href="#/story">Our story</a></div>
+        <a href="/faq">Questions</a><a href="/policies/shipping">Shipping</a><a href="/policies/returns">Returns</a>
+        <a href="/contact">Contact</a><a href="/story">Our story</a></div>
       <div><h4>New drops</h4>
         <p class="body-s dim" style="margin:0 0 12px">New records and limited runs.</p>
         ${listHTML()}
@@ -701,7 +701,7 @@ function footerHTML() {
       <span>© 2026 PastForward · estd 2025</span>
       <a href="${IG_URL}" target="_blank" rel="noopener">@${esc(SITE.instagram)}</a>
       <span class="ftr__legal">
-        <a href="#/policies/privacy">Privacy</a><a href="#/policies/terms">Terms</a></span>
+        <a href="/policies/privacy">Privacy</a><a href="/policies/terms">Terms</a></span>
     </div></div></footer>`;
 }
 
@@ -1274,13 +1274,15 @@ function cleanHomeUrl() {
 }
 addEventListener('hashchange', () => { if (hashSilent) return; cleanHomeUrl(); onRoute(); });
 addEventListener('popstate', () => { if (cleanUrls()) onRoute(); });
-/* In-site #/ links navigate by path without a page reload. Registered on window so it
+/* In-site links navigate by path without a page reload. Registered on window so it
    runs after the document click handlers below (which may preventDefault, e.g. Add to cart). */
 addEventListener('click', e => {
-  if (!cleanUrls() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-  const a = e.target.closest && e.target.closest('a[href^="#/"]');
-  if (!a || a.target === '_blank') return;
-  e.preventDefault(); navigate(a.getAttribute('href'));
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest && e.target.closest('a[href^="/"], a[href^="#/"]');
+  if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+  const href = a.getAttribute('href');
+  if (href.startsWith('//') || /\.(?:html?|xml|txt|webp|png|jpe?g|gif|svg|pdf|json|css|js|ico|woff2?|ttf|mp4)$/i.test(href.split(/[?#]/)[0])) return;
+  e.preventDefault(); navigate(href);
 });
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
@@ -1335,12 +1337,12 @@ function openSearch() {
 function searchResults(q) {
   const list = searchProducts(q);
   if (!q) return `<div class="mono-xs dim" style="margin-bottom:12px">Suggested Collections</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 5).map(c => `<a class="pill" href="#/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 5).map(c => `<a class="pill" href="/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
     <div class="mono-xs dim" style="margin-top:28px;margin-bottom:14px">Featured in the crate</div>
     <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
   if (!list.length) return `<div style="padding:48px 0;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
     <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet? We can still print it.</p>
-    <a class="btn btn--secondary" href="#/custom" data-close><span class="btn__mag">Request custom piece</span></a></div>`;
+    <a class="btn btn--secondary" href="/custom" data-close><span class="btn__mag">Request custom piece</span></a></div>`;
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
     <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>`;
 }
