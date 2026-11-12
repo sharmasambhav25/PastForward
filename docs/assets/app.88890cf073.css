@@ -2677,13 +2677,13 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 .htiles{display:none}
 @media(max-width:767px){
   .fhero{align-items:flex-start}
-  .fhero{--dw:min(88vw, calc(100svh - 390px), 360px); --below:268px}
+  .fhero{--dw:min(88vw, calc(100svh - 390px), 360px); --below:240px}
   /* the record sits in the middle of the space between the header and the tagline */
   .fhero .fdisc{width:var(--dw); margin-top:calc(var(--nav-h) + max(8px, (100svh - var(--nav-h) - var(--below) - var(--dw)) / 2))}
   .htiles{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; position:absolute; z-index:7; left:16px; right:16px;
-    bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px) + 72px)}
-  .fhero__cta{bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px))}
-  .fhero__tagm{bottom:calc(clamp(40px, 5svh, 64px) + env(safe-area-inset-bottom, 0px) + 72px + 96px)}
+    bottom:calc(18px + env(safe-area-inset-bottom, 0px) + 72px)}
+  .fhero__cta{bottom:calc(18px + env(safe-area-inset-bottom, 0px))}
+  .fhero__tagm{bottom:calc(18px + env(safe-area-inset-bottom, 0px) + 72px + 96px)}
   .htile{position:relative; height:84px; border-radius:14px; overflow:hidden; padding:10px 11px; display:flex; flex-direction:column; justify-content:flex-end;
     color:var(--cream); text-decoration:none; border:1px solid rgba(255,255,255,.14); background:rgba(18,16,17,.8);
     backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:transform .3s var(--e-spring)}
@@ -2705,6 +2705,6 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 }
 @media(max-width:767px) and (max-height:700px){
   .fhero__tagm{display:none}
-  .fhero{--dw:min(84vw, calc(100svh - 310px), 340px); --below:205px}
+  .fhero{--dw:min(84vw, calc(100svh - 310px), 340px); --below:178px}
 }
 @media(prefers-reduced-motion:reduce){.htile__recs img{animation:none}}

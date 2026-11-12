@@ -500,7 +500,6 @@ function chromeHTML() {
   <canvas id="grain" aria-hidden="true"></canvas><div id="vignette" aria-hidden="true"></div>
   <div id="field" aria-hidden="true"></div>
   <div id="corners" aria-hidden="false">
-    <div class="cnr-br" id="cnrscroll" hidden>SCROLL TO EXPLORE</div>
   </div>`;
 }
 
