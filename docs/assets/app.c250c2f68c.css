@@ -2712,3 +2712,18 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
   .fhero{--dw:min(84vw, calc(100svh - 310px), 340px); --below:178px}
 }
 @media(prefers-reduced-motion:reduce){.htile__recs img{animation:none}}
+
+/* custom order form */
+.customform .req{font-style:normal; color:var(--ember)}
+.telin{display:flex; align-items:stretch}
+.telin b{display:grid; place-items:center; padding:0 12px; background:var(--elevated-2); border:1px solid var(--border); border-right:0; font:500 .95rem var(--mono); color:var(--cream)}
+.telin input{flex:1; min-width:0; letter-spacing:.06em}
+.filein{position:relative; display:block}
+.filein input{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2}
+.filein__ui{display:flex; flex-direction:column; justify-content:center; gap:2px; min-height:52px; padding:8px 14px; border:1px dashed var(--border-2); background:var(--elevated); transition:border-color .2s}
+.filein__ui b{font-weight:500; color:var(--cream); font-size:.92rem} .filein__ui em{font-style:normal; font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase}
+.filein:hover .filein__ui,.filein input:focus-visible + .filein__ui{border-color:var(--ember)}
+.filein__ui.is-set{border-style:solid; border-color:var(--success)}
+@media(max-width:767px){.customform .frow{grid-template-columns:minmax(0,1fr)}}
+.customform .field{margin-top:0}
+.customform .field > span:first-child{display:block; margin-bottom:8px}

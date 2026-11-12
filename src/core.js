@@ -25,6 +25,8 @@ const SIZE_TABS = [
   { key: 'polaroid', name: 'Polaroids', short: 'Polaroid', f: 'polaroid', href: '/polaroids', dim: 'Pocket-size prints' },
 ];
 const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
+/* custom page: the record is just "12-inch", no millimetres */
+const customSize = f => f === FMT.vinyl ? '12-inch record' : sizeOf(f);
 const CONTACT_EMAIL = SITE.email;
 const DELIVERY = SITE.delivery;
 const IG_URL = 'https://instagram.com/' + SITE.instagram;
@@ -1023,8 +1025,9 @@ function customVariantId(fKey) {
 }
 function customBrief(d) {
   const f = FMT[d.format] || FMT.vinyl;
-  const L = ["Hi PastForward, I'd like a custom piece.", '', `Artist: ${d.artist || ''}`, `Album or track: ${d.album || ''}`, `Format: ${f.label} (${money(f.price)})`];
+  const L = ["Hi PastForward, I'd like a custom piece.", '', `Artist: ${d.artist || ''}`, `Album: ${d.album || ''}`, `Track: ${d.track || ''}`, `Format: ${f.label} (${money(f.price)})`];
   if (d.ref) L.push(`Reference: ${d.ref}`);
+  if (d.refimg && d.refimg.size) L.push('Reference image: sending it in this chat');
   if (d.notes) L.push(`Notes: ${d.notes}`);
   L.push('', `Name: ${d.name || ''}`);
   if (d.email) L.push(`Email: ${d.email}`);
@@ -1040,6 +1043,25 @@ function submitForm(type, payload, via) {
   const endpoint = SITE.forms && SITE.forms.endpoint;
   if (type === 'custom') {
     const fKey = payload.format || 'vinyl', f = FMT[fKey] || FMT.vinyl, variantId = customVariantId(fKey);
+    if (payload.whatsapp && !/^\+/.test(payload.whatsapp)) payload.whatsapp = '+91 ' + payload.whatsapp;
+    const file = payload.refimg && payload.refimg.size ? payload.refimg : null;
+    delete payload.refimg;
+    if (SHOPIFY_CONFIG.storeDomain && variantId && file) {
+      /* with an image: post a real form to the store's cart so Shopify uploads the image and
+         attaches it to the order line, then go straight on to checkout */
+      const fm = document.createElement('form');
+      fm.method = 'post'; fm.enctype = 'multipart/form-data'; fm.action = `https://${SHOPIFY_CONFIG.storeDomain}/cart/add`; fm.style.display = 'none';
+      const add = (n, v) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; fm.appendChild(i); };
+      add('id', variantId); add('quantity', '1');
+      [['Artist', payload.artist], ['Album', payload.album], ['Track', payload.track], ['Name', payload.name], ['WhatsApp', payload.whatsapp], ['Email', payload.email], ['Reference link', payload.ref], ['Notes', payload.notes]]
+        .forEach(([k, v]) => { if (v) add(`properties[${k}]`, v); });
+      const fi = document.createElement('input'); fi.type = 'file'; fi.name = 'properties[Reference image]';
+      const dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files; fm.appendChild(fi);
+      const tags = Track.params();
+      add('return_to', '/checkout' + (tags ? '?' + tags : ''));
+      document.body.appendChild(fm); fm.submit();
+      return Promise.resolve({ ok: true, redirected: true });
+    }
     if (SHOPIFY_CONFIG.storeDomain && variantId) {
       const params = new URLSearchParams();
       if (payload.email) params.set('checkout[email]', payload.email);
@@ -1048,11 +1070,12 @@ function submitForm(type, payload, via) {
       // cart attributes: shown on the order in Shopify admin
       params.set('attributes[Format]', f.label);
       params.set('attributes[Artist]', payload.artist || '');
-      params.set('attributes[Album / Track]', payload.album || '');
+      params.set('attributes[Album]', payload.album || '');
+      params.set('attributes[Track]', payload.track || '');
       params.set('attributes[WhatsApp]', payload.whatsapp || '');
       if (payload.ref) params.set('attributes[Reference Link]', payload.ref);
       if (payload.notes) params.set('attributes[Notes]', payload.notes);
-      params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
+      params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} — ${payload.track || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
       const tags = Track.params();
       location.href = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}${tags ? '&' + tags : ''}`;
       return Promise.resolve({ ok: true, redirected: true });
