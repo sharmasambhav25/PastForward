@@ -2440,20 +2440,6 @@ function viewHome() {
   </section>
 
 
-  <!-- 6 ============ THE AD CARD, AS A SECTION ============
-       Script over didone caps over grotesque, white, on a darkened
-       photograph of the real wall. Straight out of the brand's own ads. -->
-  <section class="stage" data-section="WALL DECOR">
-    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
-    <div class="stage__in">
-      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
-      <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}
-      </div>
-      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
-    </div>
-  </section>
-
   <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
   <section class="salesec" data-section="SALE">
     <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
@@ -2465,6 +2451,21 @@ function viewHome() {
       <p class="salesec__now num" aria-label="now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</p>
       ${MRP.vinyl > FMT.vinyl.price ? ctaShop('Shop the sale', '/vinyl', `Save ${money(MRP.vinyl - FMT.vinyl.price)} a record`) : ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
       ${assureHTML('vinyl', 'assure--band')}
+    </div>
+  </section>
+
+
+  <!-- 6 ============ THE AD CARD, AS A SECTION ============
+       Script over didone caps over grotesque, white, on a darkened
+       photograph of the real wall. Straight out of the brand's own ads. -->
+  <section class="stage" data-section="WALL DECOR">
+    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
+    <div class="stage__in">
+      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
+      <div style="text-align:center;margin-top:34px">
+        ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}
+      </div>
+      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
   </section>
 
