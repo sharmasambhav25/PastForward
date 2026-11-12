@@ -2073,7 +2073,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 
 /* ---- the sale section: two strips of tape crossing over a spray-painted price ---- */
 .salesec{--tape:#D8312A; position:relative; overflow:hidden; background:#0b0809; text-align:center;
-  padding:clamp(150px,16vw,220px) var(--gutter); isolation:isolate}
+  padding:clamp(130px,13vw,180px) var(--gutter) clamp(48px,5vw,80px); isolation:isolate}
 .salesec::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
   background:radial-gradient(60% 50% at 50% 55%, rgba(216,49,42,.22), transparent 70%)}
 .salesec__tape{position:absolute; left:-10%; right:-10%; z-index:3; pointer-events:none}
@@ -2092,7 +2092,9 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
   font-size:clamp(7rem,21vw,17rem); filter:url(#spray);
   text-shadow:0 0 18px rgba(216,49,42,.55), 0 0 60px rgba(216,49,42,.25)}
 .salesec .cta-shop{margin-top:0}
-@media(max-width:767px){ .salesec{padding-block:120px 110px} .salesec__now{margin-bottom:26px} }
+@media(max-width:767px){ .salesec{padding-block:108px 48px} .salesec__now{margin-bottom:6px} }
+.salesec__now{display:block; text-decoration:none; margin-bottom:12px}
+.salesec .assure--band{margin-top:16px}
 
 /* ================= phones: speed and layout pass ================= */
 /* the footer always paints above the product page's fixed album-art backdrop */
