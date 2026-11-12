@@ -469,8 +469,8 @@ function chromeHTML() {
       <a href="#/posters/10x10" class="menu__pill">10×10 Format</a>
       <a href="#/polaroids" class="menu__pill">Polaroid</a>
     </div>
-    <a href="#/bundles">Bundles <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
-    <a href="#/build-your-wall">Build Your Wall</a>
+    <a href="#/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
+    <a href="#/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
     <a href="#/collections/the-classics">Collections</a>
     <a href="#/custom">Custom Design</a>
     <a href="#/story">Our Story</a>
