@@ -134,8 +134,8 @@
       "desc": "Polaroid-style album cards with a cream border, on 300 GSM card. {{PRICE_POLAROID}} each, delivered across India."
     },
     "/custom": {
-      "title": "Custom Vinyls & Vinyl Record Wall Decor in India | PastForward",
-      "desc": "Custom vinyls and made-to-order vinyl record wall decor: any artist, album, song or playlist set into a real 12-inch record, {{PRICE_VINYL}}. Delivered free across India."
+      "title": "Custom Vinyl Records & Wall Decor in India | PastForward",
+      "desc": "Custom vinyl wall decor, made to order: any artist, album, song or playlist on the label of a real 12-inch record, {{PRICE_VINYL}}. Delivered free across India."
     },
     "/story": {
       "title": "Our Story | PastForward",
@@ -459,34 +459,34 @@
     "_note": "Words under the custom order form, written for searches like 'custom vinyl'. Same shape as a landing page.",
     "sections": [
       [
-        "Custom vinyls & record wall decor, from any album",
-        "Looking for custom vinyls in India? Name the artist and the album, a mixtape, Spotify playlist, or upload your own artwork, and we set it into the centre label of a real 12-inch upcycled record. Crafted for music lovers who want unique vinyl record wall decor. It costs {{PRICE_VINYL}}, with a wall hook in the box."
+        "Any album, on a real record",
+        "Name the artist and album, a mixtape or a Spotify playlist, or send your own artwork. We set it into the centre label of a real 12-inch upcycled record, made to hang on your wall. It costs {{PRICE_VINYL}}, with a wall hook in the box."
       ],
       [
         "Or as custom posters, prints or polaroids",
         "The same custom request works across every format: an A3 poster ({{PRICE_A3}}), an A5 poster ({{PRICE_A5}}), a 10×10 print ({{PRICE_10}}) or a polaroid card ({{PRICE_POLAROID}}). Mix and match to build your wall."
       ],
       [
-        "How custom vinyl orders work",
+        "How a custom order works",
         "Send the request above. We confirm the artwork with you on WhatsApp or email before anything is made, then it's hand-crafted and sent anywhere in India. {{SHIPPING_LINE}}"
       ]
     ],
     "faq": [
       [
         "How do custom vinyls work?",
-        "We take authentic vintage 12-inch vinyl records, restore their surface, and press high-definition custom album art directly onto the centre label. Each piece is crafted as ready-to-hang vinyl record wall decor with a damage-free mounting hook included in the box."
+        "We take real 12-inch records that already had a life, clean them up, and put your album art on the centre label. Each one comes ready to hang, with a wall hook in the box."
       ],
       [
         "Are custom vinyls playable?",
-        "No. Like every record we make, our custom vinyls are designed to hang as wall decor, not to play on a turntable. The authentic vinyl grooves are real, but they are sold as visual wall art."
+        "No. Like every record we make, custom vinyls are made to hang, not to play. The grooves are real, but the record is sold as wall art."
       ],
       [
-        "Can I order custom vinyls for custom Spotify playlists or unreleased music?",
-        "Yes. You can request any album, mixtape, personal playlist, or personal photo collage. Put the details in the form above and we will confirm the artwork."
+        "Can I order a playlist or unreleased music?",
+        "Yes. Any album, mixtape, playlist or your own photo collage works. Put the details in the form above and we'll confirm the artwork with you."
       ],
       [
-        "Where can I buy vinyl record wall decor in India?",
-        "PastForward hand-crafts and delivers vinyl record wall decor across all 19,000+ pin codes in India with free shipping and 7–10 day delivery."
+        "Do you deliver everywhere in India?",
+        "Yes, to all 19,000+ pin codes, free, in 7–10 days."
       ],
       [
         "Can I get a song instead of a whole album?",
