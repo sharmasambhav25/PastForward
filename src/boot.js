@@ -113,9 +113,13 @@ function pfStart() {
     }
     if (q.get('brief') === '1') document.documentElement.setAttribute('data-confirm-mode', '');
     console.log('[PastForward] catalogue:', COUNTS, '| unresolved sources:', CAT.unresolved.length);
+    // trackers start once the first screen is drawn
+    const later = window.requestIdleCallback || (fn => setTimeout(fn, 400));
+    later(() => { if (window.__pfPixel) window.__pfPixel(); if (window.__pfClarity) window.__pfClarity(); }, { timeout: 1500 });
   };
   // the page is ready to be seen once it has rendered and its type has arrived (capped, never a hang)
-  const fonts = document.fonts && document.fonts.ready ? within(document.fonts.ready, 1500) : Promise.resolve();
+  // type is preloaded and swaps in; a phone on a slow line should not sit behind the curtain waiting for it
+  const fonts = document.fonts && document.fonts.ready ? within(document.fonts.ready, isPhone() ? 350 : 1200) : Promise.resolve();
   const rendered = (home && !isPhone() ? within(gl, 3500) : Promise.resolve()).then(first);
   initPre(Promise.all([rendered, fonts]));
 }

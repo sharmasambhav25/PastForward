@@ -182,14 +182,18 @@ let cart = [];
 try { const raw = localStorage.getItem(CART_KEY); if (raw) cart = JSON.parse(raw).filter(l => bySlug[l.slug] && FMT[l.format]); } catch (e) { cart = []; }
 function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} }
 function cartCount() { return cart.reduce((n, l) => n + l.qty, 0); }
-function addToCart(slug, format, qty = 1, originEl) {
+function addToCart(slug, format, qty = 1, originEl, opt = {}) {
   const p = bySlug[slug], v = variant(p, format); if (!v) return;
   const line = cart.find(l => l.slug === slug && l.format === format);
   if (line) line.qty += qty; else cart.push({ slug, format, qty, price: v.price });
-  saveCart(); syncCart();
-  // phones open the drawer on add, which is its own confirmation; a toast there only sat on top of Checkout
-  const drawerOpens = window.matchMedia('(max-width:1023px)').matches;
-  if (!drawerOpens) toast(`Added — ${albumText(p)}, ${v.label}`);
+  saveCart(); syncCart(true);
+  /* Phones: adding from a product page opens the crate (its own confirmation). A quick add from a
+     grid stays on the page, so three records for a bundle is three taps, and the crate bar at the
+     bottom keeps count. Laptops get a toast either way. */
+  const phone = window.matchMedia('(max-width:1023px)').matches;
+  const drawerOpens = phone && !(opt.stay && $('#cratebar') && $('#cratebar').classList.contains('is-on'));
+  if (!phone) toast(`Added — ${albumText(p)}, ${v.label}`);
+  if (originEl && opt.stay) { originEl.classList.add('is-added'); setTimeout(() => originEl.classList.remove('is-added'), 1300); }
   Track.add(p, v, qty);
   Sound.tick();
   const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM()) badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); };
@@ -260,7 +264,37 @@ function bundleRowsHTML(m) {
   const nudge = m.nudge ? `<a class="bnudge" href="${m.nudge.b.href}" data-close>Add ${m.nudge.left} more ${bundleWord(m.nudge.f, m.nudge.left)} · <b>${esc(m.nudge.b.name)} for ${money(m.nudge.b.price)}</b><span aria-hidden="true">→</span></a>` : '';
   return (m.bundle ? `<div class="row bundle-row"><span>Bundle · ${esc(m.bundle.name)}</span><span>−${money(m.saved)}</span></div>` : '') + nudge;
 }
-function syncCart() {
+/* ---------- the crate bar (phones and tablets): what's in the crate, one tap from checkout ---------- */
+function crateBarHTML() {
+  const m = cartMaths(), n = cartCount();
+  const thumbs = cart.slice(-3).map(l => { const p = bySlug[l.slug], v = variant(p, l.format);
+    return `<i class="cratebar__th${v.format === 'vinyl' ? ' is-rec' : ''}"><img src="${imgSrc(v.image)}" alt="" decoding="async"></i>`; }).join('');
+  // short enough to read at a glance on a 360px phone
+  const sub = m.nudge ? `${m.nudge.left} more = ${m.nudge.b.short || m.nudge.b.name} ${money(m.nudge.b.price)}`
+    : m.bundle ? `Bundle on · you save ${money(m.saved)}` : 'Free delivery';
+  return `<button class="cratebar__open" data-opencrate aria-label="Open your crate: ${n} ${n === 1 ? 'piece' : 'pieces'}, ${money(m.total)}">
+      <span class="cratebar__stack" aria-hidden="true">${thumbs}</span>
+      <span class="cratebar__txt"><b>${n} in your crate</b><i>${esc(sub)}</i></span></button>
+    <button class="cratebar__go" data-checkout><span>Checkout</span><span class="num">${money(m.total)}</span></button>`;
+}
+function syncCrateBar(bump) {
+  const el = $('#cratebar'); if (!el) return;
+  const seg = (parseHash().path.split('/')[1] || '');
+  const small = window.matchMedia('(max-width:1023px)').matches;
+  // pages with their own bottom bar or a form keep the space; the home hero stays clean until you scroll
+  const blocked = ['product', 'cart', 'build-your-wall', 'custom'].includes(seg) || (!seg && scrollY < innerHeight * .55);
+  const on = small && cartCount() > 0 && !blocked;
+  if (on) el.innerHTML = crateBarHTML();
+  el.classList.toggle('is-on', on); el.setAttribute('aria-hidden', String(!on));
+  document.body.classList.toggle('has-cratebar', on);
+  if (on && bump && !RM()) el.animate([{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-6px) scale(1.025)' }, { transform: 'translateY(0) scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+}
+let crateTick = 0;
+addEventListener('scroll', () => { if (crateTick) return; crateTick = requestAnimationFrame(() => { crateTick = 0; if (!parseHash().path.split('/')[1]) syncCrateBar(); }); }, { passive: true });
+addEventListener('resize', () => syncCrateBar(), { passive: true });
+
+function syncCart(bump) {
+  syncCrateBar(bump);
   const n = cartCount(), badge = $('#cartcount');
   if (badge) { badge.textContent = n; badge.style.display = n ? 'grid' : 'none'; }
   const body = $('#drawerbody'); if (body) body.innerHTML = cartLinesHTML();
@@ -476,6 +510,7 @@ function chromeHTML() {
     </div>
   </div>
   </div>
+  <div class="cratebar" id="cratebar" aria-hidden="true"></div>
   <div class="toasts" id="toasts" aria-live="polite"></div>
   <div class="needle" id="needle" aria-hidden="true">
     <div class="needle__label" id="needlelabel">HOME</div>
@@ -525,7 +560,7 @@ function initPre(ready) {
   document.body.appendChild(el);
   if (boot) boot.remove();
   const n = el.querySelector('.pre__n'), bar = el.querySelector('.pre__bar');
-  const t0 = performance.now(), MIN = 650, CAP = 4000, OUT = 260;
+  const t0 = performance.now(), MIN = 420, CAP = 3000, OUT = 180;
   let readyAt = 0, from = 0, v = 0;
   const onReady = () => { readyAt = performance.now(); from = v; };
   Promise.resolve(ready).then(onReady, onReady);
@@ -538,7 +573,7 @@ function initPre(ready) {
     v = readyAt ? from + (100 - from) * k : 90 * (1 - Math.exp(-age / 700));
     n.textContent = String(Math.round(v)).padStart(2, '0');
     bar.style.width = v.toFixed(1) + '%';
-    if (k >= 1 && age >= MIN) { el.classList.add('is-out'); setTimeout(() => el.remove(), 560); }
+    if (k >= 1 && age >= MIN) { el.classList.add('is-out'); setTimeout(() => el.remove(), 420); }
     else requestAnimationFrame(tick);
   })(t0);
 }
@@ -995,7 +1030,13 @@ const Track = (() => {
     (function (f, b, e, v, n, t, x) {
       if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
       if (!f._fbq) f._fbq = n; n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
-      t = b.createElement(e); t.async = true; t.src = v; x = b.getElementsByTagName(e)[0]; x.parentNode.insertBefore(t, x);
+      /* The queue above holds init and every event. The script is fetched after the first screen has
+         rendered (or on the first touch, whichever comes first), so it never competes with the page. */
+      let sent = false;
+      const load = () => { if (sent) return; sent = true; t = b.createElement(e); t.async = true; t.src = v; x = b.getElementsByTagName(e)[0]; x.parentNode.insertBefore(t, x); };
+      f.__pfPixel = load;
+      ['pointerdown', 'keydown', 'scroll'].forEach(ev => addEventListener(ev, load, { once: true, passive: true, capture: true }));
+      setTimeout(load, 6000);                                   // never later than this
     })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
     window.fbq('init', id);
   }
@@ -1113,12 +1154,12 @@ function checkout(lines, btn) {
   const bb = lines.every(l => l.format) ? bestBundle(lines) : null;
   Track.checkout(lines, lines.reduce((n, l) => n + l.price * l.qty, 0) - (bb ? bb.off : 0));
   (btn ? [btn] : $$('[data-checkout]')).forEach(b => {
-    b.disabled = true;
+    b.disabled = true; b.classList.add('is-loading'); b.setAttribute('aria-busy', 'true');
     const span = b.querySelector('.btn__mag');
-    if (span) span.textContent = 'Opening secure checkout…';
+    if (span) span.textContent = 'Opening checkout…';
   });
   // coming back with the browser's Back button must not leave the button stuck
-  addEventListener('pageshow', e => { if (e.persisted) { syncCart(); $$('[data-buynow]').forEach(b => { b.disabled = false; const t = b.querySelector('.btn__mag'); if (t) t.textContent = 'Buy now'; }); } }, { once: true });
+  addEventListener('pageshow', e => { if (e.persisted) { syncCart(); $$('[data-buynow]').forEach(b => { b.disabled = false; b.classList.remove('is-loading'); b.removeAttribute('aria-busy'); const t = b.querySelector('.btn__mag'); if (t) t.textContent = 'Buy now'; }); } }, { once: true });
   location.href = url;
 }
 
@@ -1239,6 +1280,7 @@ function render(opt = {}) {
     const target = document.getElementById(params.get('scroll'));
     if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
   }
+  syncCrateBar();
   if (!opt.quiet) Track.page();
   if (currentProduct && !opt.quiet) Track.view(currentProduct, variant(currentProduct, formatFromParams(currentProduct, params)));
   // the page arrives with a short rise; a filter or "load more" on the same page doesn't replay it
@@ -1303,7 +1345,8 @@ document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
   const add = e.target.closest('[data-add]');
-  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add); return; }
+  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add, { stay: add.classList.contains('card__add') || add.classList.contains('ag__quick') }); return; }
+  if (e.target.closest('[data-opencrate]')) { openDrawer(); return; }
   if (e.target.closest('[data-close]') || e.target.id === 'scrim') { closeAll(); return; }
   const q = e.target.closest('[data-q]');
   if (q) { const [i, d] = q.dataset.q.split('|').map(Number); cart[i].qty += d; if (cart[i].qty < 1) cart.splice(i, 1); saveCart(); syncCart(); return; }

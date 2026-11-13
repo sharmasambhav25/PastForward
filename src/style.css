@@ -1182,7 +1182,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 
 /* ---------- preloader ---------- */
 #pre{position:fixed; inset:0; z-index:990; background:#050405; display:grid;
-  place-items:center; transition:opacity 640ms var(--e-out-expo),visibility 640ms}
+  place-items:center; transition:opacity 360ms var(--e-out-expo),visibility 360ms}
 #pre.is-out{opacity:0; visibility:hidden}
 #pre .pre__mark{width:min(340px,54vw); opacity:0; animation:preIn 900ms var(--e-out-expo) 120ms forwards}
 #pre .pre__n{position:absolute; left:var(--gutter); bottom:4vh; font-family:var(--shout);
@@ -1505,7 +1505,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     border:none;
     box-shadow:none;
   }
-  .beat3__copy h2{
+  .beat3__copy h1,.beat3__copy h2{
     text-align:left;
     margin:14px 0 20px;
     text-shadow:none;
@@ -1673,7 +1673,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     box-shadow:0 2px 10px rgba(0,0,0,0.85);
     text-shadow:0 1px 4px #000;
   }
-  .beat3__copy h2{
+  .beat3__copy h1,.beat3__copy h2{
     text-align:center;
     font-size:clamp(1.7rem, 6.5vw, 2.15rem);
     margin:10px auto 12px;
@@ -2727,3 +2727,148 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 @media(max-width:767px){.customform .frow{grid-template-columns:minmax(0,1fr)}}
 .customform .field{margin-top:0}
 .customform .field > span:first-child{display:block; margin-bottom:8px}
+
+/* =====================================================================================
+   EXPERIENCE PASS (Nov 2026)
+   One system for actions, sizes a thumb can hit, small type a phone can read,
+   and a crate that stays one tap from checkout.
+   ===================================================================================== */
+
+/* ---------- 1. actions are pills, set in the poster face ---------- */
+.btn{height:52px; padding:0 26px; border-radius:999px; font-family:var(--shout); font-weight:400; font-size:1.04rem;
+  letter-spacing:.07em; line-height:1; white-space:nowrap; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none}
+.btn--ghost{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; border-radius:0; height:auto; padding:8px 0; white-space:normal}
+.btn--secondary{box-shadow:inset 0 0 0 1.5px var(--border-2)}
+.btn--secondary:hover{box-shadow:inset 0 0 0 1.5px var(--cream)}
+.btn:focus-visible{outline:2px solid var(--cream); outline-offset:3px}
+.btn[disabled]{box-shadow:none}
+.btn--primary[disabled]:not(.is-loading){background:var(--elevated-2); color:var(--muted); opacity:1}
+.btn.is-loading[disabled]{opacity:1}
+.ftr a.btn{font-size:1rem; padding:0 24px}
+/* the amount rides inside the button: "Add to cart | ₹999" */
+.btn__amt{display:inline-block; margin-left:14px; padding-left:14px; border-left:1px solid rgba(255,255,255,.3); font-variant-numeric:tabular-nums; letter-spacing:.04em}
+/* loading: a tiny record spins where the label starts */
+.btn.is-loading{pointer-events:none}
+.btn.is-loading::before{content:""; flex:none; width:18px; height:18px; border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(255,255,255,.9) 0 9%, transparent 9% 50%, rgba(255,255,255,.55) 50% 57%, transparent 57%),
+    radial-gradient(circle, var(--cream) 0 20%, #0b0a0b 21%);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.55); animation:btnSpin .7s linear infinite}
+@keyframes btnSpin{to{transform:rotate(360deg)}}
+.qty{height:52px; border-radius:999px; border-color:var(--border-2); overflow:hidden}
+.qty button{width:48px; height:52px}
+.qty span{font-size:.95rem}
+.line .qty{height:44px} .line .qty button{width:44px; height:44px}
+.pdp__buy{width:100%; margin-top:10px}
+.filterbtn{height:44px; border-radius:999px; font-size:.7rem}
+.addon__b{height:40px; font-size:.66rem}
+.iconbtn{border-radius:50%}
+
+/* ---------- 2. touch: nothing you tap is smaller than a fingertip ---------- */
+@media(hover:none){
+  .card__add{width:44px; height:44px; right:6px; bottom:6px}
+  .card__add::before{font-size:1.35rem}
+  .card__add.is-added{background:var(--success)}
+  .card__add.is-added::before{content:"✓"; font-size:1.05rem}
+}
+.card__add.is-added{background:var(--success)}
+@media(max-width:767px){
+  .ftr a{padding:11px 0}
+  .ftr .ftr__more a{padding:0}
+  .crumbs a,.crumbs span{padding-block:12px}
+  .bw__addb{min-height:44px}
+  .bw__cols button{width:40px; height:40px}
+  .pill{min-height:36px}
+  .acc button{min-height:54px}
+  .apick__a{min-height:44px}
+  [data-share]{min-height:44px; padding-inline:6px}
+}
+
+/* ---------- 3. small type, legible ---------- */
+.card__artist{font-size:.66rem; letter-spacing:.14em}
+.card__size{font-size:.64rem; letter-spacing:.11em}
+.card__price{font-size:.8rem}
+.badge{font-size:.62rem}
+.mono-xs{font-size:.69rem}
+.cap{font-size:.66rem}
+.fmt button{padding:12px 14px; border-radius:12px}
+.fmt .f-name{font-size:.74rem}
+.fmt .f-size{font-size:.66rem}
+.fmt .f-price{font-size:.8rem}
+.as{font-size:.7rem}
+.spec div{font-size:.7rem}
+.toast{font-size:.76rem}
+.field label,.field > span:first-child{font-size:.7rem}
+.receipt{font-size:.78rem}
+.ftr h4{font-size:.66rem}
+/* accordions hold sentences ("Is it a real record?"), so they read as sentences */
+.acc button{font-family:var(--body); font-size:1rem; font-weight:500; letter-spacing:0; text-transform:none; text-align:left; gap:16px; line-height:1.3; color:var(--cream)}
+.acc button span{font-family:var(--mono); font-size:1.1rem; color:var(--ember); flex:none}
+.acc .panel__in{font-size:.95rem; line-height:1.6}
+@media(max-width:767px){
+  .fhero__subm{font-size:.63rem}
+  .htile small{font-size:9.5px}
+  .pdp__thumb span{font-size:.56rem}
+  .apick__f{font-size:.6rem}
+  .ag__dim,.ag__tags{font-size:.64rem}
+  /* iOS zooms the page when a field's text is under 16px; with real sizes the page can stay zoomable */
+  input,select,textarea{font-size:16px!important}
+}
+
+/* ---------- 4. the crate bar (phones, tablets) ---------- */
+.cratebar{position:fixed; z-index:170; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom, 0px)); display:flex; align-items:stretch; gap:6px;
+  padding:6px; border-radius:22px; background:rgba(20,17,18,.86); border:1px solid rgba(255,255,255,.14); box-shadow:0 18px 44px rgba(0,0,0,.6);
+  backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  transform:translateY(calc(100% + 24px)); opacity:0; pointer-events:none; transition:transform 420ms var(--e-spring), opacity 200ms var(--e-ui)}
+.cratebar.is-on{transform:none; opacity:1; pointer-events:auto}
+.cratebar__open{flex:1; min-width:0; display:flex; align-items:center; gap:10px; padding:4px 6px 4px 8px; background:none; border:0; color:var(--cream); text-align:left; cursor:pointer; border-radius:16px}
+.cratebar__open:active{background:rgba(255,255,255,.06)}
+.cratebar__stack{display:flex; flex:none; padding-left:10px}
+.cratebar__th{display:block; width:34px; height:34px; margin-left:-10px; border-radius:6px; overflow:hidden; background:#0b0a0b; box-shadow:0 0 0 2px #171415}
+.cratebar__th.is-rec{border-radius:50%; padding:7px; background:repeating-radial-gradient(circle,#0e0d0e 0 1.2px,#262223 1.2px 2.2px)}
+.cratebar__th img{display:block; width:100%; height:100%; object-fit:cover; border-radius:inherit}
+.cratebar__txt{min-width:0; display:grid; gap:2px}
+.cratebar__txt b{font:400 1rem/1 var(--shout); letter-spacing:.05em; text-transform:uppercase}
+.cratebar__txt i{font-style:normal; font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; color:var(--rose); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cratebar__go{flex:none; display:grid; align-content:center; justify-items:center; gap:3px; min-width:104px; padding:0 16px; border:0; border-radius:16px; cursor:pointer;
+  background:var(--cream); color:#0b0809; font:400 1rem/1 var(--shout); letter-spacing:.06em; text-transform:uppercase; transition:transform 200ms var(--e-spring)}
+.cratebar__go .num{font-family:var(--mono); font-size:.64rem; letter-spacing:.04em}
+.cratebar__go:active{transform:scale(.95)}
+.cratebar__go.is-loading span:first-child{opacity:.5}
+body.has-cratebar .ftr{padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px))}
+body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
+@media(min-width:1024px){.cratebar{display:none}}
+
+/* ---------- 5. product page ---------- */
+.buybar{gap:12px; padding-left:16px; padding-right:12px; align-items:center}
+.buybar__t{flex:1; min-width:0; display:grid; gap:2px}
+.buybar__t b{font-family:var(--display); font-weight:500; font-size:.98rem; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.buybar__t i{font-style:normal; font-family:var(--mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.buybar .btn{flex:none; height:48px; padding:0 18px}
+
+/* ---------- 6. the menu is a solid sheet, not a veil over the page ---------- */
+.menu{background:rgba(8,6,7,.985)}
+.ag__quick{width:40px; height:40px}
+@media(max-width:767px){.ag__quick{width:44px; height:44px; bottom:0}}
+.ag__quick.is-added{background:var(--success); border-color:var(--success); font-size:0}
+.ag__quick.is-added::before{content:"✓"; font-size:1rem}
+
+/* ---------- 7. size diagram: readable at phone width ---------- */
+.scaleview{border-radius:16px; padding:clamp(18px,4vw,44px)}
+.scaleview svg{height:auto; width:100%; max-width:560px; max-height:min(58vh,460px)}
+.scaleview .obj{fill:rgba(243,233,222,.07); stroke:rgba(243,233,222,.55); stroke-width:2}
+.scaleview .obj.is-on{fill:rgba(192,53,63,.2); stroke:var(--ember); stroke-width:2.5}
+.scaleview .dim-line{stroke:rgba(243,233,222,.5); stroke-width:1.5}
+.scaleview text{font-size:22px; letter-spacing:.06em; fill:rgba(243,233,222,.7)}
+.scaleview text.sub{font-size:18px; opacity:.8}
+.scaleview text.on{fill:var(--cream)}
+
+/* ---------- 8. story: the record sits above the words on a phone, not behind them ---------- */
+@media(max-width:767px){
+  section[data-section="THE OBJECT"]{padding-top:calc(var(--nav-h) + 22px)!important}
+  #beat3 .beat3__visual,#beat3 .beat3__visual.reveal,#beat3 .beat3__visual.reveal.is-in{position:relative!important; top:auto!important; left:auto!important; transform:none!important;
+    width:min(60vw,240px)!important; height:min(60vw,240px)!important; margin:0 auto 22px!important; opacity:1!important}
+  #beat3rec{filter:none!important}
+  .beat3__copy h1,.beat3__copy h2,.beat3__copy p.measure{text-shadow:none}
+  .beat3__copy h1{font-size:clamp(2rem,8vw,2.5rem); margin:12px auto 14px}
+  .beat3__copy p.measure{font-size:1rem; line-height:1.55; color:rgba(243,239,232,.82)}
+}
