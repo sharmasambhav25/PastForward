@@ -2872,3 +2872,15 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   .beat3__copy h1{font-size:clamp(2rem,8vw,2.5rem); margin:12px auto 14px}
   .beat3__copy p.measure{font-size:1rem; line-height:1.55; color:rgba(243,239,232,.82)}
 }
+
+/* ---------- 9. loose ends from the touch + type audit ---------- */
+.assure{font-size:.68rem; letter-spacing:.08em; gap:10px 16px}
+.mrp{font-size:.9em}
+.room__surprise{min-height:44px; padding-inline:8px}
+@media(max-width:767px){
+  .ftr .ftr__more{gap:2px 18px}
+  .ftr .ftr__more a{display:inline-block; padding:9px 0}
+  .pdp__top a,.pdp__top .pdp__share{display:inline-block; padding-block:14px; margin-block:-14px}
+}
+/* long lists of sentences read better in a column, not across a whole laptop screen */
+.wrap.col-720 > .acc, .wrap.col-720 > form, .wrap.col-720 > p{max-width:760px}
