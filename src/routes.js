@@ -867,7 +867,7 @@ function viewProduct(p, params) {
 
         <div style="display:flex;gap:12px;margin-top:26px;flex-wrap:wrap">
           <span class="qty"><button data-pq="-1" aria-label="Decrease">−</button><span class="num" id="pdpqty">1</span><button data-pq="1" aria-label="Increase">+</button></span>
-          <button class="btn btn--primary" style="flex:1;min-width:180px" id="pdpadd"><span class="btn__mag">Add to cart</span></button>
+          <button class="btn btn--primary" style="flex:1;min-width:180px" id="pdpadd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
         </div>
         <button class="btn btn--secondary pdp__buy" id="pdpbuy" data-buynow><span class="btn__mag">Buy now</span></button>
         <div id="pdpassure">${assureHTML(sel)}</div>
@@ -905,8 +905,8 @@ function viewProduct(p, params) {
     </section>
 
     <div class="buybar" id="buybar">
-      <span class="num" id="barprice">${priceHTML(v.format, v.price)}</span>
-      <button class="btn btn--primary" style="flex:1" id="baradd"><span class="btn__mag">Add to cart</span></button>
+      <span class="buybar__t"><b>${albumOf(p)}</b><i id="barfmt">${esc(FMT[sel].label)}</i></span>
+      <button class="btn btn--primary" id="baradd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
     </div></div>`;
 }
 function stageMedia(p, fmt) {
@@ -919,7 +919,7 @@ function scaleSVG(sel) {
   const O = { 'poster-a3': [297, 420, 'A3 POSTER', '297 × 420 MM'], 'poster-a5': [148, 210, 'A5 POSTER', '148 × 210 MM'],
     'print-10': [254, 254, '10×10 PRINT', '254 × 254 MM'], vinyl: [305, 305, '12-INCH RECORD', '12-INCH'],
   };   // polaroid card left out until its size is measured
-  const baseline = 470, order = [];
+  const baseline = 440, order = [];
   if (O[sel] && sel !== 'vinyl' && sel !== 'poster-a3') order.push(sel);
   order.push('poster-a3', 'vinyl');
   let x = 30; const nodes = [];
@@ -930,17 +930,17 @@ function scaleSVG(sel) {
     else nodes.push(`<rect class="obj ${on ? 'is-on' : ''}" x="${x}" y="${y}" width="${w}" height="${h}" ${k === 'polaroid' ? 'stroke-dasharray="6 5"' : ''}/>`);
     nodes.push(`<path class="dim-line" d="M${x} ${baseline + 14} L${x} ${baseline + 30} M${x + w} ${baseline + 14} L${x + w} ${baseline + 30}"/>
       <path class="dim-line" d="M${x} ${baseline + 22} L${x + w} ${baseline + 22}" marker-start="url(#a)" marker-end="url(#a)"/>
-      <text class="${on ? 'on' : ''}" x="${x}" y="${baseline + 48}">${name}</text>
-      <text class="sub" x="${x}" y="${baseline + 64}">${dim}</text>`);
+      <text class="${on ? 'on' : ''}" x="${x}" y="${baseline + 58}">${name}</text>
+      <text class="sub" x="${x}" y="${baseline + 84}">${dim}</text>`);
     x += w + 56;
   });
-  const total = x + 20;
-  return `<svg viewBox="0 0 ${total} 600" role="img" aria-label="Relative size diagram">
+  const total = x - 26;
+  return `<svg viewBox="0 0 ${total} ${baseline + 150}" role="img" aria-label="Relative size diagram">
     <defs><marker id="a" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
       <path d="M0 3.5 L7 1 L7 6 Z" fill="var(--muted)"/></marker></defs>
     ${nodes.join('')}
-    <path class="dim-line" d="M30 ${baseline + 92} L130 ${baseline + 92} M30 ${baseline + 86} L30 ${baseline + 98} M130 ${baseline + 86} L130 ${baseline + 98}"/>
-    <text class="sub" x="138" y="${baseline + 96}">100 MM REFERENCE</text></svg>`;
+    <path class="dim-line" d="M30 ${baseline + 122} L130 ${baseline + 122} M30 ${baseline + 114} L30 ${baseline + 130} M130 ${baseline + 114} L130 ${baseline + 130}"/>
+    <text class="sub" x="142" y="${baseline + 129}">= 10 CM</text></svg>`;
 }
 
 /* ============================== COLLECTION ============================== */
@@ -1088,7 +1088,7 @@ function viewStory() {
         </div>
         <div class="beat3__copy">
           <div class="cap">THE OBJECT</div>
-          <h2 class="d-l reveal" style="margin:14px 0 20px">A record you don't play.</h2>
+          <h1 class="d-l reveal" style="margin:14px 0 20px">A record you don't play.</h1>
           <p class="body-l dim reveal measure">A real 12-inch record that already had a life, pulled from a crate, cleaned up, and given the album that actually means something to you at its centre. Hung, not spun. It's the loudest thing in the room and it never makes a sound.</p>
           <div class="spec-retro reveal" role="list">
             <div class="spec-retro__item" role="listitem">
@@ -1772,6 +1772,8 @@ function mountProduct(p, params) {
     try { rippleCleanup = window.mountImageRipple(img); } catch (e) { rippleCleanup = null; }
   };
   if (!RM()) mountRipple();
+  // the buttons carry the amount for the chosen format and quantity
+  const setAmt = () => { const v = variant(p, sel); $$('[data-amt]').forEach(el => { el.textContent = money(v.price * qty); }); };
   const setFmt = f => {
     if (!variant(p, f)) return; sel = f;
     const v = variant(p, f);
@@ -1779,7 +1781,8 @@ function mountProduct(p, params) {
     $('#stagemedia').innerHTML = stageMedia(p, f);
     if (!RM()) mountRipple();
     $('#pdpprice').innerHTML = priceHTML(v.format, v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
-    $('#barprice').innerHTML = priceHTML(v.format, v.price);
+    const bf = $('#barfmt'); if (bf) bf.textContent = FMT[f].label;
+    setAmt();
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border, 300 GSM'
       : FMT[f].label + ', printed to order on 300 GSM paper';
@@ -1823,7 +1826,7 @@ function mountProduct(p, params) {
     $('#stagemedia').innerHTML = `<img class="stagephoto" src="${photo(FORMAT_PHOTO[sel])}" alt="A PastForward ${esc(FMT[sel].label)} photographed at the stand">`;
   });
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
-    qty = Math.max(1, qty + (+b.dataset.pq)); $('#pdpqty').textContent = qty;
+    qty = Math.max(1, Math.min(20, qty + (+b.dataset.pq))); $('#pdpqty').textContent = qty; setAmt();
   }));
   const add = e => {
     const btn = e.currentTarget, t = btn.querySelector('.btn__mag');

@@ -321,7 +321,7 @@ def single_file(payload, standalone):
 <script type="module">{vinyl3d_source(THREE_DATA)}</script>'''
     if standalone:
         return ('<!doctype html><html lang="en" class="js"><head><meta charset="utf-8">'
-                '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">'
+                '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
                 f'{head}</head><body>{body}</body></html>')
     return head + '\n' + body
 
@@ -501,19 +501,20 @@ def fb_simple(h1, paras, extra=''):
     return fb_wrap(f'<h1>{esc(h1)}</h1>' + ''.join(f'<p>{x}</p>' for x in paras) + extra)
 
 # ---------- page shell
-def page(*, title, desc, canonical, og_image, body, ld, noindex=False):
+def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
     preload = ''.join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>' for f in FONT_PRELOAD)
     clarity_id = SITE.get('tracking', {}).get('clarityProjectId')
     clarity = f'''<script type="text/javascript">
 (function(c,l,a,r,i,t,y){{
     c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    var done=0;c.__pfClarity=function(){{if(done)return;done=1;t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}};
+    setTimeout(c.__pfClarity,6000);
 }})(window, document, "clarity", "script", "{clarity_id}");
 </script>
 ''' if clarity_id else ''
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
 {head_common(title, desc, canonical, og_image, noindex)}
 {clarity}<link rel="icon" href="/favicon.ico" sizes="any">
@@ -523,7 +524,7 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False):
 {preload}
 <link rel="preload" href="/photos/wordmark-900.webp" as="image" media="(max-width:767px)" fetchpriority="high">
 <link rel="preload" href="/photos/wordmark.webp" as="image" media="(min-width:768px)" fetchpriority="high">
-<link rel="stylesheet" href="{ASSET_CSS}">
+{head}<link rel="stylesheet" href="{ASSET_CSS}">
 <script type="application/ld+json" id="route-schema">{ld}</script>
 <script src="{ASSET_JS}" defer></script>
 </head><body>
@@ -587,16 +588,24 @@ def build_site():
 
     pages = []   # (path, file, html, indexable)
 
-    def add(path, file, *, title, desc, body, ld, og_image=None, canonical=None, noindex=False):
+    def add(path, file, *, title, desc, body, ld, og_image=None, canonical=None, noindex=False, head=''):
         canon = URL + (canonical or path)
         pages.append((path, file, page(title=title, desc=desc, canonical=canon, og_image=og_image or og_default,
-                                       body=body, ld=ld, noindex=noindex), not noindex and (canonical or path) == path))
+                                       body=body, ld=ld, noindex=noindex, head=head), not noindex and (canonical or path) == path))
+
+    # the picture a page opens on is fetched alongside the script, not after it. The address must be
+    # spelled exactly as the app spells it (encodeURIComponent), or the browser fetches it twice.
+    def pre_img(href, media=''):
+        return f'<link rel="preload" as="image" href="{href}"' + (f' media="{media}"' if media else '') + '>\n'
+    def js_uri(file):
+        from urllib.parse import quote
+        return quote(file, safe="!~*'()")
 
     M = SITE['meta']
 
     # home
     add('/', 'index.html', title=M['/']['title'], desc=M['/']['desc'], body=fb_home(),
-        ld=graph(list_ld('The PastForward catalogue', P)))
+        ld=graph(list_ld('The PastForward catalogue', P)))   # no image preload here: it would only delay the script on a slow line
 
     # format listings
     LIST = [('/vinyl', 'vinyl.html', 'Vinyls', ['vinyl']),
@@ -639,7 +648,8 @@ def build_site():
         col = next((c for c in COLS if c['slug'] in p['tags']), None)
         trail = [('Home', '/')] + ([(col['name'], f"/collections/{col['slug']}")] if col else []) + [(name_of(p), product_url(p))]
         add(product_url(p), f"product/{p['slug']}.html", title=p['seo']['title'], desc=p['seo']['desc'],
-            og_image=abs_img(p['variants'][0]['image']), body=fb_product(p), ld=graph(product_ld(p), crumbs(*trail)))
+            og_image=abs_img(p['variants'][0]['image']), body=fb_product(p), ld=graph(product_ld(p), crumbs(*trail)),
+            head=pre_img('/img/' + js_uri(p['variants'][0]['image'])) + (pre_img('/photos/disc.webp') if p['variants'][0]['format'] == 'vinyl' else ''))
     # renamed products: the old address forwards to the new one
     for old, new in (CAT.get('aliases') or {}).items():
         if new in BY_SLUG and old not in BY_SLUG:
