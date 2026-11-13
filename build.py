@@ -702,7 +702,7 @@ def build_site():
         }
     })
     add('/custom', 'custom.html', title=M['/custom']['title'], desc=M['/custom']['desc'],
-        body=fb_simple('Custom Vinyls & Vinyl Record Wall Decor', [esc(M['/custom']['desc']),
+        body=fb_simple('Custom vinyls, from any album.', [esc(M['/custom']['desc']),
                        'Choose a format, tell us the artist and the album or track, and add a reference link if you have one.'],
                        '<h2>Formats we can make</h2>' + fb_formats() + cc_html), ld=graph(*custom_ld))
     add('/story', 'story.html', title=M['/story']['title'], desc=M['/story']['desc'],
