@@ -964,8 +964,8 @@ function viewCustom() {
     <div style="display:grid;gap:56px" id="customgrid">
       <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
-        <h1 class="d-l" style="max-width:14ch">Not in the catalogue? Say the word.</h1>
-        <p class="body-l dim measure" style="margin-top:18px">The album that actually means something to you might not be one we've made yet. Choose your format, tell us the artist and the album, and we'll make it.</p>
+        <h1 class="d-l" style="max-width:18ch">Custom Vinyls &amp; Vinyl Record Wall Decor</h1>
+        <p class="body-l dim measure" style="margin-top:18px">Not in the catalogue? Say the word. Turn any artist, album, playlist or custom artwork into custom vinyls and music wall decor on a real 12-inch upcycled record. Hand-crafted and delivered free across India.</p>
         <form data-form="custom" data-success="Got it. We'll be in touch." class="customform">
           <div class="frow">
             <label class="field"><span>Artist <i class="req">*</i></span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>

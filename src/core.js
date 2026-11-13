@@ -408,7 +408,7 @@ function chromeHTML() {
       <a class="navlink" href="/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <a class="navlink navlink--hot" href="/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
       <a class="navlink navlink--wall" href="/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
-      <a class="navlink" href="/custom" data-nav="custom">Custom Design${wave('wave--under')}</a>
+      <a class="navlink" href="/custom" data-nav="custom">Custom Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
     <div class="hdr__acts">
@@ -456,7 +456,7 @@ function chromeHTML() {
     <a href="/posters">Posters</a>
     <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
     <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
-    <a href="/custom">Custom Design</a>
+    <a href="/custom">Custom Vinyls</a>
     <a href="/story">Our Story</a>
     <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
@@ -681,7 +681,7 @@ function footerHTML() {
       </div>
       <div><h4>Shop</h4>
         <a href="/vinyl">Vinyls</a><a href="/posters/a3">A3 posters</a><a href="/posters/a5">A5 posters</a>
-        <a href="/posters/10x10">10×10 prints</a><a href="/polaroids">Polaroids</a><a href="/custom">Custom orders</a></div>
+        <a href="/posters/10x10">10×10 prints</a><a href="/polaroids">Polaroids</a><a href="/custom">Custom vinyls</a></div>
       <div><h4>Help</h4>
         <a href="/faq">Questions</a><a href="/policies/shipping">Shipping</a><a href="/policies/returns">Returns</a>
         <a href="/contact">Contact</a><a href="/story">Our story</a></div>
