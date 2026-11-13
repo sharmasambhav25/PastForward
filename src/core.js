@@ -352,7 +352,7 @@ function cartFootHTML() {
       ${bundleRowsHTML(m)}
       <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
-    <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span></button>
+    <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span><span class="btn__amt num">${money(m.total)}</span></button>
     <p class="payline mono-xs dim">${payLine()}</p>`;
 }
 
