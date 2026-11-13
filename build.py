@@ -347,11 +347,13 @@ def from_price(p, fmts=None):
     return min(v['price'] for v in vs)
 
 # ---------- structured data
-ORG = {'@type': 'Organization', '@id': URL + '/#organization', 'name': 'PastForward', 'url': URL + '/',
+ORG = {'@type': 'Organization', '@id': URL + '/#organization', 'name': 'PastForward',
+       'alternateName': ['PastForward Shop', 'Past Forward'], 'url': URL + '/',
        'logo': URL + '/apple-touch-icon.png', 'email': SITE['email'],
        'sameAs': [f"https://www.instagram.com/{SITE['instagram']}/"],
        'areaServed': {'@type': 'Country', 'name': 'India'}}
 WEBSITE = {'@type': 'WebSite', '@id': URL + '/#website', 'url': URL + '/', 'name': 'PastForward',
+           'alternateName': ['PastForward Shop', 'Past Forward'],
            'publisher': {'@id': URL + '/#organization'},
            'potentialAction': {'@type': 'SearchAction', 'target': URL + '/search?q={search_term_string}',
                                'query-input': 'required name=search_term_string'}}
@@ -399,7 +401,7 @@ def graph(*nodes):
 
 # ---------- the plain-HTML version of each page (what a reader without scripts gets)
 NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/posters/a5'), ('10×10 prints', '/posters/10x10'),
-       ('Polaroids', '/polaroids'), ('Build your wall', '/build-your-wall'), ('Bundles', '/bundles'), ('Custom orders', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
+       ('Polaroids', '/polaroids'), ('Build your wall', '/build-your-wall'), ('Bundles', '/bundles'), ('Custom vinyls', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
 
 def popular_links():
     out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
@@ -667,12 +669,40 @@ def build_site():
     CC = SITE.get('customCopy', {})
     cc_html = ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in CC.get('sections', [])) + \
         (('<h2>Questions</h2>' + ''.join(f'<h3>{esc(q)}</h3><p>{site_links(a)}</p>' for q, a in CC['faq'])) if CC.get('faq') else '')
-    custom_ld = [crumbs(('Home', '/'), ('Custom orders', '/custom'))]
+    custom_ld = [crumbs(('Home', '/'), ('Custom vinyls', '/custom'))]
     if CC.get('faq'):
         custom_ld.append({'@type': 'FAQPage', '@id': URL + '/custom#faq', 'mainEntity': [
             {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in CC['faq']]})
+    custom_prod_offers = [
+        {'@type': 'Offer', 'name': 'Custom Vinyl (12-inch upcycled record)', 'price': '999', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'},
+        {'@type': 'Offer', 'name': 'Custom A3 Music Poster', 'price': '299', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'},
+        {'@type': 'Offer', 'name': 'Custom 10x10 Album Art Print', 'price': '249', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'},
+        {'@type': 'Offer', 'name': 'Custom A5 Music Poster', 'price': '199', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'},
+        {'@type': 'Offer', 'name': 'Custom Music Polaroid Card', 'price': '99', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'}
+    ]
+    if shipping_ld():
+        for off in custom_prod_offers:
+            off['shippingDetails'] = shipping_ld()
+    custom_ld.append({
+        '@type': 'Product',
+        '@id': URL + '/custom#product',
+        'name': 'Custom Vinyl Record Wall Decor — Made to Order',
+        'description': 'Custom 12-inch upcycled vinyl record wall decor with your choice of album art, song, or playlist pressed onto the centre label. Wall hook included.',
+        'image': [URL + '/brand/disc.webp'],
+        'brand': {'@type': 'Brand', 'name': 'PastForward'},
+        'category': 'Wall art',
+        'offers': {
+            '@type': 'AggregateOffer',
+            'priceCurrency': 'INR',
+            'lowPrice': 99,
+            'highPrice': 999,
+            'offerCount': len(custom_prod_offers),
+            'availability': 'https://schema.org/InStock',
+            'offers': custom_prod_offers
+        }
+    })
     add('/custom', 'custom.html', title=M['/custom']['title'], desc=M['/custom']['desc'],
-        body=fb_simple('Not in the catalogue? Say the word.', [esc(M['/custom']['desc']),
+        body=fb_simple('Custom Vinyls & Vinyl Record Wall Decor', [esc(M['/custom']['desc']),
                        'Choose a format, tell us the artist and the album or track, and add a reference link if you have one.'],
                        '<h2>Formats we can make</h2>' + fb_formats() + cc_html), ld=graph(*custom_ld))
     add('/story', 'story.html', title=M['/story']['title'], desc=M['/story']['desc'],
