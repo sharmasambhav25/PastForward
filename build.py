@@ -48,7 +48,7 @@ def money(n):
 
 # ------------------------------------------------------------------ sources
 css = read(f'{SRC}/style.css')
-JS_ORDER = ['core.js', 'ripple.js', 'vinyllabel.js', 'albumscrub.js', 'liquid.js', 'wallpaper.js', 'routes.js', 'boot.js']
+JS_ORDER = ['shopifyanalytics.js', 'core.js', 'ripple.js', 'vinyllabel.js', 'albumscrub.js', 'liquid.js', 'wallpaper.js', 'routes.js', 'boot.js']
 js_src = {n: read(f'{SRC}/{n}') for n in JS_ORDER}
 
 CAT = json.loads(read(f'{ROOT}/catalogue.json'))

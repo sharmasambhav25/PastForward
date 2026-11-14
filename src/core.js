@@ -1040,11 +1040,43 @@ const Track = (() => {
   }
   const fire = (name, data) => { if (id && window.fbq) { try { window.fbq('track', name, data); } catch (e) {} } };
   const vid = v => String((window.__SHOPIFY_VARIANTS__ || {})[v.sku] || v.sku);
+  /* Shopify analytics: the same events a Shopify theme sends, so Shopify Admin's sessions, reports and
+     Live View count visitors here, not only those who reach checkout. Visitor and visit ids live in
+     Shopify's own cookies on .pastforward.shop, which the checkout on shop.pastforward.shop shares. */
+  const T = SITE.tracking || {}, SA = window.__PFShopify, shopOn = !!(SA && T.shopifyShopId);
+  const shopCookies = () => {
+    const get = n => (document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]+)')) || [])[1];
+    const dom = /(^|\.)pastforward\.shop$/.test(location.hostname) ? '; domain=.pastforward.shop' : '';
+    const y = get('_shopify_y') || SA.buildUUID(), s = get('_shopify_s') || SA.buildUUID();
+    document.cookie = `_shopify_y=${y}; max-age=31536000; path=/; SameSite=Lax${dom}`;
+    document.cookie = `_shopify_s=${s}; max-age=1800; path=/; SameSite=Lax${dom}`;   // a visit ends after 30 quiet minutes
+  };
+  const shopLine = (p, v, qty) => ({ variantGid: 'gid://shopify/ProductVariant/' + vid(v), sku: v.sku, name: albumText(p) + ' — ' + p.artist,
+    variantName: (FMT[v.format] || {}).label || '', brand: 'PastForward', price: String(v.price), quantity: qty || 1 });
+  const shop = (eventName, extra) => {
+    if (!shopOn) return;
+    try {
+      shopCookies();
+      SA.sendShopifyAnalytics({ eventName, payload: { ...SA.getClientBrowserParameters(), hasUserConsent: true, analyticsAllowed: true,
+        marketingAllowed: true, saleOfDataAllowed: true, shopifySalesChannel: 'headless', shopId: 'gid://shopify/Shop/' + T.shopifyShopId,
+        storefrontId: String(T.shopifyStorefrontId || '0'), currency: 'INR', acceptedLanguage: 'en', ...extra } }, T.shopifyDomain).catch(() => {});
+    } catch (e) {}
+  };
+  const pageType = seg => !seg || !seg[0] ? 'index' : seg[0] === 'product' ? 'product' : seg[0] === 'search' ? 'search' : seg[0] === 'cart' ? 'cart'
+    : seg[0] === 'policies' ? 'policy' : seg[0] === '404' ? '404' : ['vinyl', 'posters', 'polaroids', 'collections', 'artist', 'bundles'].includes(seg[0]) ? 'collection' : 'page';
   return {
     on: !!id,
-    page: () => fire('PageView'),
+    page: (seg, p, v) => {
+      fire('PageView');
+      const t = pageType(seg);
+      shop('PAGE_VIEW', t === 'product' && p && v ? { pageType: t, resourceId: 'gid://shopify/ProductVariant/' + vid(v), products: [shopLine(p, v)], totalValue: v.price }
+        : { pageType: t, ...(t === 'collection' ? { collectionHandle: seg.join('/') } : {}) });
+    },
     view: (p, v) => fire('ViewContent', { content_ids: [vid(v)], content_type: 'product', content_name: albumText(p) + ' — ' + p.artist, value: v.price, currency: 'INR' }),
-    add: (p, v, qty) => fire('AddToCart', { content_ids: [vid(v)], content_type: 'product', content_name: albumText(p) + ' — ' + p.artist, value: v.price * qty, currency: 'INR' }),
+    add: (p, v, qty) => {
+      fire('AddToCart', { content_ids: [vid(v)], content_type: 'product', content_name: albumText(p) + ' — ' + p.artist, value: v.price * qty, currency: 'INR' });
+      shop('ADD_TO_CART', { products: [shopLine(p, v, qty)], totalValue: v.price * qty });
+    },
     checkout: (lines, total) => fire('InitiateCheckout', { content_ids: lines.map(l => String((window.__SHOPIFY_VARIANTS__ || {})[l.sku] || l.sku)), content_type: 'product', num_items: lines.reduce((n, l) => n + l.qty, 0), value: total, currency: 'INR' }),
     // campaign tags, carried to the Shopify checkout so an order shows which ad it came from
     params: () => { const o = new URLSearchParams(); KEYS.forEach(k => { if (src[k]) o.set(k, src[k]); }); return o.toString(); }
@@ -1279,8 +1311,9 @@ function render(opt = {}) {
     if (target) target.scrollIntoView({ behavior: 'instant', block: 'center' });
   }
   syncCrateBar();
-  if (!opt.quiet) Track.page();
-  if (currentProduct && !opt.quiet) Track.view(currentProduct, variant(currentProduct, formatFromParams(currentProduct, params)));
+  const curV = currentProduct && variant(currentProduct, formatFromParams(currentProduct, params));
+  if (!opt.quiet) Track.page(seg, currentProduct, curV);
+  if (currentProduct && !opt.quiet) Track.view(currentProduct, curV);
   // the page arrives with a short rise; a filter or "load more" on the same page doesn't replay it
   if (!RM() && !opt.quiet && !firstRender) main.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
     { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
