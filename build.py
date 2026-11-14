@@ -506,8 +506,12 @@ def fb_simple(h1, paras, extra=''):
 def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
     preload = ''.join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>' for f in FONT_PRELOAD)
     clarity_id = SITE.get('tracking', {}).get('clarityProjectId')
+    # Recording only runs on the real site. Without the host test a local preview and every
+    # verify_site.js pass would file session replays and heatmap data against the live project,
+    # which is the same mistake the Meta pixel made (see the gate in src/core.js).
     clarity = f'''<script type="text/javascript">
 (function(c,l,a,r,i,t,y){{
+    if(!/(^|\\.)pastforward\\.shop$/.test(l.location.hostname))return;
     c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
     var done=0;c.__pfClarity=function(){{if(done)return;done=1;t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}};

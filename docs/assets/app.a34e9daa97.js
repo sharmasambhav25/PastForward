@@ -1032,7 +1032,13 @@ window.SHOPIFY_CONFIG = SHOPIFY_CONFIG;
    While the id is empty no script is loaded. Campaign tags (utm_*, fbclid) are carried to the
    checkout either way, so Shopify and the checkout's own pixel can still credit the right ad. */
 const Track = (() => {
-  const id = SITE.tracking && SITE.tracking.metaPixelId;
+  /* Measurement only runs on the real site. A local preview (localhost, 127.0.0.1, a file:// open)
+     and anything Playwright drives in verify_site.js would otherwise fire PageView, ViewContent,
+     AddToCart and InitiateCheckout into the live pixel. Meta optimises a sales campaign on exactly
+     those events, so a build loop teaches it to find people who add to cart and never buy. Keep
+     this gate in front of every sender; a new one that skips it poisons the account quietly. */
+  const PROD = /(^|\.)pastforward\.shop$/.test(location.hostname);
+  const id = PROD && SITE.tracking && SITE.tracking.metaPixelId;
   const KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
   // Where this visit came from (the tags an ad or a shared link put in the address). Kept for this
   // tab only and handed to the Shopify checkout, so an order shows which ad or post produced it.
@@ -1061,7 +1067,7 @@ const Track = (() => {
   /* Shopify analytics: the same events a Shopify theme sends, so Shopify Admin's sessions, reports and
      Live View count visitors here, not only those who reach checkout. Visitor and visit ids live in
      Shopify's own cookies on .pastforward.shop, which the checkout on shop.pastforward.shop shares. */
-  const T = SITE.tracking || {}, SA = window.__PFShopify, shopOn = !!(SA && T.shopifyShopId);
+  const T = SITE.tracking || {}, SA = window.__PFShopify, shopOn = !!(PROD && SA && T.shopifyShopId);
   const shopCookies = () => {
     const get = n => (document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]+)')) || [])[1];
     const dom = /(^|\.)pastforward\.shop$/.test(location.hostname) ? '; domain=.pastforward.shop' : '';
