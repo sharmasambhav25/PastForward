@@ -101,7 +101,11 @@
   "tracking": {
     "_note": "The pixel is off while metaPixelId is empty. Filling it in loads the Meta Pixel on pastforward.shop (PageView, ViewContent, AddToCart, InitiateCheckout); use the same pixel id Shopify's Facebook & Instagram channel uses, so the whole journey is one funnel. Before switching it on, change the 'Your cart and cookies' line in the privacy policy below, which currently says the site uses no trackers. Campaign tags (utm_*, fbclid) are passed to the Shopify checkout whether or not the pixel is on.",
     "metaPixelId": "2273618829738715",
-    "clarityProjectId": "zcm7s5unh9"
+    "clarityProjectId": "zcm7s5unh9",
+    "_shopifyNote": "Sends page views, product views and add-to-carts to Shopify analytics (Headless channel storefront 'Past Forward Headless'), so Shopify Admin sessions, reports and Live View count visits to this site. Empty shopifyShopId turns it off.",
+    "shopifyShopId": "75152949292",
+    "shopifyStorefrontId": "422853",
+    "shopifyDomain": "shop.pastforward.shop"
   },
 
   "meta": {
