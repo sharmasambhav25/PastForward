@@ -735,7 +735,11 @@ def build_site():
         body=fb_simple('Bundles.', [esc(M['/bundles']['desc'])],
                        ''.join(f"<h2>{esc(b['name'])}: ₹{b['price']:,}</h2><p>{esc(b['blurb'])} Save ₹{b['off']:,}.</p>" for b in BL)),
         ld=graph(crumbs(('Home', '/'), ('Bundles', '/bundles'))))
-    add('/build-your-wall', 'build-your-wall.html', title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
+    # Build Your Wall is switched off (src/core.js sends /build-your-wall home), so this page must
+    # stay out of the sitemap and out of the index: its copy still describes an interactive wall
+    # builder, and a searcher who clicked it would be redirected to the home page instead. Drop the
+    # noindex when the route is switched back on.
+    add('/build-your-wall', 'build-your-wall.html', noindex=True, title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
         body=fb_simple('Build your own wall.', [
             esc(M['/build-your-wall']['desc']),
             "Our interactive wall builder lets you arrange and preview your dream music wall before placing an order. Mix and match authentic upcycled vinyl records, A3 posters, A5 prints, 10×10 square album sleeves, and polaroid cards on different wall paint colors to create a custom gallery setup tailored to your space.",
