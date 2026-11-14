@@ -401,7 +401,7 @@ def graph(*nodes):
 
 # ---------- the plain-HTML version of each page (what a reader without scripts gets)
 NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/posters/a5'), ('10×10 prints', '/posters/10x10'),
-       ('Polaroids', '/polaroids'), ('Build your wall', '/build-your-wall'), ('Bundles', '/bundles'), ('Custom vinyls', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
+       ('Polaroids', '/polaroids'), ('Bundles', '/bundles'), ('Custom vinyls', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
 
 def popular_links():
     out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
