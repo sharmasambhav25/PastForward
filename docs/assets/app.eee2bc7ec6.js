@@ -452,7 +452,6 @@ function chromeHTML() {
       <a class="navlink" href="/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <a class="navlink navlink--hot" href="/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
-      <a class="navlink navlink--wall" href="/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
       <a class="navlink" href="/custom" data-nav="custom">Custom Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
@@ -500,7 +499,6 @@ function chromeHTML() {
     <a href="/vinyl">Vinyls</a>
     <a href="/posters">Posters</a>
     <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
-    <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
     <a href="/custom">Custom Vinyls</a>
     <a href="/story">Our Story</a>
     <a href="/faq">FAQ</a>
@@ -1269,7 +1267,7 @@ function render(opt = {}) {
   else if (seg[0] === 'search') out = viewSearch(params);
   else if (seg[0] === 'cart') out = viewCart();
   else if (seg[0] === 'wall') out = viewWall();
-  else if (seg[0] === 'build-your-wall') out = viewBuildWall();
+  else if (seg[0] === 'build-your-wall') { replaceUrl('/'); return render(opt); }   // Build Your Wall is switched off for now
   else if (seg[0] === 'bundles') out = viewBundles();
   else if (seg[0] === 'policies' && SITE.policies[seg[1]]) out = viewPolicy(seg[1]);
   else { out = view404(); m = { title: 'Page not found | PastForward', desc: (M['/'] || {}).desc || '' }; noindex = true; canonical = ORIGIN + '/'; seg = ['404']; }
@@ -2521,7 +2519,7 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}
+        ${ctaShop('Build your wall', '/vinyl', 'Shop vinyls')}
       </div>
       <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
@@ -4292,7 +4290,7 @@ function bundleStripHTML() {
     <div class="bstrip__hd"><h2 class="bstrip__h">Bundles</h2><a class="mono-xs" href="/bundles">All bundles →</a></div>
     <div class="bstrip__row">${LIVE_BUNDLES.map(b => `<a class="bchip" href="${b.href}">
       <span class="bchip__n">${esc(b.name)}</span><span class="bchip__p num">${money(b.price)} <s>${money(b.price + b.off)}</s></span></a>`).join('')}
-      <a class="bchip bchip--wall" href="/build-your-wall"><span class="bchip__n">Build your own wall</span><span class="bchip__p">Pick the pieces →</span></a></div>
+      <!-- build-your-wall chip off for now --></div>
   </div></section>`;
 }
 function viewBundles() {
@@ -4303,7 +4301,7 @@ function viewBundles() {
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
     ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
-      ${ctaShop('Build your wall', '/build-your-wall', 'Try it on a wall first')}</div>
+      ${ctaShop('Build your wall', '/vinyl', 'Shop vinyls')}</div>
   </div>`;
 }
 
@@ -4532,8 +4530,7 @@ function heroTilesHTML() {
   return `<nav class="htiles" aria-label="Bundles and Build your wall">
     ${b ? `<a class="htile htile--b" href="/bundles"><span class="htile__recs" aria-hidden="true">${recs.map(u => `<img src="${u}" alt="" decoding="async">`).join('')}</span>
       <b>Bundles</b><small>${esc(b.short || b.name)} ${money(b.price)}</small><span class="htile__ar" aria-hidden="true">→</span></a>` : ''}
-    <a class="htile htile--w" href="/build-your-wall"><span class="htile__wall" aria-hidden="true">${wall.map((u, i) => u ? `<img class="${i === 1 ? 'r' : 'p'}" src="${u}" alt="" decoding="async">` : '').join('')}</span>
-      <b>Build your wall</b><small>Try it first</small><span class="htile__ar" aria-hidden="true">→</span></a>
+    <!-- Build your wall tile off for now -->
   </nav>`;
 }
 

@@ -441,7 +441,6 @@ function chromeHTML() {
       <a class="navlink" href="/vinyl" data-nav="vinyl">Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="/posters" data-nav="posters" id="postersbtn" aria-expanded="false">Posters${wave('wave--under')}</a>
       <a class="navlink navlink--hot" href="/bundles" data-nav="bundles">Bundles${wave('wave--under')}</a>
-      <a class="navlink navlink--wall" href="/build-your-wall" data-nav="build-your-wall">Build Your Wall${wave('wave--under')}</a>
       <a class="navlink" href="/custom" data-nav="custom">Custom Vinyls${wave('wave--under')}</a>
       <a class="navlink" href="/story" data-nav="story">Our Story${wave('wave--under')}</a>
     </nav>
@@ -489,7 +488,6 @@ function chromeHTML() {
     <a href="/vinyl">Vinyls</a>
     <a href="/posters">Posters</a>
     <a href="/bundles" class="menu__hot"><span class="menu__tape">Bundles</span> <span class="menu__tag">${LIVE_BUNDLES[0] ? 'from ' + money(Math.min(...LIVE_BUNDLES.map(b => b.price))) : ''}</span></a>
-    <a href="/build-your-wall"><span class="menu__ul">Build Your Wall</span></a>
     <a href="/custom">Custom Vinyls</a>
     <a href="/story">Our Story</a>
     <a href="/faq">FAQ</a>
@@ -1258,7 +1256,7 @@ function render(opt = {}) {
   else if (seg[0] === 'search') out = viewSearch(params);
   else if (seg[0] === 'cart') out = viewCart();
   else if (seg[0] === 'wall') out = viewWall();
-  else if (seg[0] === 'build-your-wall') out = viewBuildWall();
+  else if (seg[0] === 'build-your-wall') { replaceUrl('/'); return render(opt); }   // Build Your Wall is switched off for now
   else if (seg[0] === 'bundles') out = viewBundles();
   else if (seg[0] === 'policies' && SITE.policies[seg[1]]) out = viewPolicy(seg[1]);
   else { out = view404(); m = { title: 'Page not found | PastForward', desc: (M['/'] || {}).desc || '' }; noindex = true; canonical = ORIGIN + '/'; seg = ['404']; }
