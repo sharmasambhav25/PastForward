@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v1
-**Last updated:** 2026-11-13
+**Document version:** v2
+**Last updated:** 2026-11-15
 
 > Auto-drafted from the repo (README, `src/site.json`, `src/routes.js`, `catalogue.json`, `docs/llms.txt`, `photos/`).
 > Anything marked **UNKNOWN** has no source in the repo and needs the founders' answer. Never fill an UNKNOWN with a guess in published copy.
@@ -136,17 +136,22 @@ Free delivery across India, 7–10 days. UPI, cards, net banking. No COD. No cha
 **Current metrics:** UNKNOWN (traffic, conversion rate, AOV, orders/month, repeat rate). Meta Pixel (2273618829738715) and Microsoft Clarity are live; email capture is **off** (`forms.endpoint` empty).
 
 ## Paid Ads (optional)
-Meta Pixel is installed and the Meta ad account exists. Fill in when known:
-**Target CPA / ROAS:** UNKNOWN (needs unit cost per format)
-**Hard floor:** UNKNOWN
-**Monthly budget and daily variance:** UNKNOWN
+**Account:** `1795255381757884` ("PastForward Ads"), business "Past Forward". Pixel / dataset `2273618829738715`, shared by the site and the Shopify checkout.
+**Target CPA / ROAS:** UNKNOWN (needs unit cost per format). This is the most important missing number here: without it no ad result can be called good or bad.
+**Hard floor:** UNKNOWN, for the same reason.
+**Monthly budget and daily variance:** ₹500/day on one campaign since 2026-11-14; ₹7,000 funded 2026-11-13. No monthly cap set.
+**Campaigns:** `PF Sales - AD-1 Pinteresty Room` — cold prospecting to the home page, OUTCOME_SALES, optimising Purchase, ad set "India 18-35 broad - Purchase", one ad.
 **Conversions that count:**
 | Action | Means | Value | Feeds bidding? |
 |---|---|---|---|
 | Purchase (Shopify) | Paid order | order value | Yes |
 | InitiateCheckout | Reached Shopify checkout | – | No (diagnostic) |
 | AddToCart | Item in crate | – | No |
-**Known tracking weaknesses:** Site pixel + Shopify channel pixel must share one id; cross-domain hop to shop.pastforward.shop. Verify Purchase is not double-counted.
+**Known tracking weaknesses:** (audited 2026-11-15)
+- The site and the Shopify checkout do share one pixel id, and Purchase arrives — 2 purchases and 6 AddPaymentInfo were observed from `shop.pastforward.shop` on 12 Nov. `shop.` is a subdomain, so `_fbp` carries; this is not a cross-domain break. No evidence of double counting.
+- `conversion_domain` is **not set** on the live ad (confirmed absent on two explicit API reads). Set it to `pastforward.shop` in Ads Manager — iOS purchase attribution degrades without it.
+- **All pixel data before 2026-11-15 is unusable.** 2,557 of 4,351 events over the preceding week came from `localhost` / `127.0.0.1` because no sender was host-gated. Fixed in `cf3b846`. Do not benchmark against anything older than 15 Nov.
+- Browser-only, no CAPI, so expect the usual 10–30% under-reporting.
 **Known creative risk:** Ads showing third-party album art and artist names can be rejected or reported for IP. Lead paid creative with the object, walls and custom, not a famous cover.
 **Agent may:** read, compare, flag, draft, recommend
 **Agent may not (without approval):** change budgets or bids, pause or launch, edit tracking, publish ads
@@ -155,8 +160,13 @@ Meta Pixel is installed and the Meta ad account exists. Fill in when known:
 *Decisions and tested lessons. Newest first. Keep it to about 20 active entries.*
 | Date | Learning | Evidence | Applies to | Status |
 |------|----------|----------|------------|--------|
-| | | | | |
+| 2026-11-15 | Instagram Reels is the only placement that matters; Meta self-selects there without being told to | 73% of spend, 97% of clicks, cheapest CPM (₹122 vs ₹287 Stories, ₹1,181 FB feed). Audience Network got ₹0 despite being enabled, so there is no placement waste to cut | ads, ad-creative | active |
+| 2026-11-15 | Every sender must be gated to the production host or local previews train the ad algorithm | 2,557 of 4,351 pixel events over 7 days came from localhost/127.0.0.1; an OUTCOME_SALES campaign bids on exactly those events | conversion-tracking, analytics | active |
+| 2026-11-15 | The ad promised "from ₹99" and the landing page led with a ₹999 record and no price — 74% of arrivals never viewed a product | 113 landing page views → 29 ViewContent. Hero now states all three entry prices (`4a3f5ad`) | cro, ad-creative, copywriting | watch |
+| 2026-11-15 | Purchase optimisation cannot stabilise at ₹500/day — roughly 14 purchases/week possible against the ~50/week Meta wants | Budget ÷ CPC ÷ realistic CVR; the pixel has 2 lifetime purchases, both founder tests | ads | active |
+| 2026-11-15 | The creative concept works; the problem is downstream of the click | 5.27% CTR, 4.12% website CTR, ₹2.73 CPC on Reels — well above typical ecommerce prospecting | ad-creative | watch |
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v2 (2026-11-15) — Filled Paid Ads from a live account and pixel audit (account and campaign named, budget, verified tracking facts, `conversion_domain` unset, pre-15-Nov pixel data unusable); opened Learnings with five entries from that audit. Target CPA/ROAS still UNKNOWN pending unit COGS.
 - v1 (2026-11-13) — Initial context, auto-drafted from the repo.
