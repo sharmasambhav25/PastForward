@@ -506,8 +506,12 @@ def fb_simple(h1, paras, extra=''):
 def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
     preload = ''.join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>' for f in FONT_PRELOAD)
     clarity_id = SITE.get('tracking', {}).get('clarityProjectId')
+    # Recording only runs on the real site. Without the host test a local preview and every
+    # verify_site.js pass would file session replays and heatmap data against the live project,
+    # which is the same mistake the Meta pixel made (see the gate in src/core.js).
     clarity = f'''<script type="text/javascript">
 (function(c,l,a,r,i,t,y){{
+    if(!/(^|\\.)pastforward\\.shop$/.test(l.location.hostname))return;
     c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
     var done=0;c.__pfClarity=function(){{if(done)return;done=1;t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}};
@@ -731,7 +735,11 @@ def build_site():
         body=fb_simple('Bundles.', [esc(M['/bundles']['desc'])],
                        ''.join(f"<h2>{esc(b['name'])}: ₹{b['price']:,}</h2><p>{esc(b['blurb'])} Save ₹{b['off']:,}.</p>" for b in BL)),
         ld=graph(crumbs(('Home', '/'), ('Bundles', '/bundles'))))
-    add('/build-your-wall', 'build-your-wall.html', title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
+    # Build Your Wall is switched off (src/core.js sends /build-your-wall home), so this page must
+    # stay out of the sitemap and out of the index: its copy still describes an interactive wall
+    # builder, and a searcher who clicked it would be redirected to the home page instead. Drop the
+    # noindex when the route is switched back on.
+    add('/build-your-wall', 'build-your-wall.html', noindex=True, title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
         body=fb_simple('Build your own wall.', [
             esc(M['/build-your-wall']['desc']),
             "Our interactive wall builder lets you arrange and preview your dream music wall before placing an order. Mix and match authentic upcycled vinyl records, A3 posters, A5 prints, 10×10 square album sleeves, and polaroid cards on different wall paint colors to create a custom gallery setup tailored to your space.",

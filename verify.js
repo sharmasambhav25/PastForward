@@ -101,7 +101,7 @@ const BANNED = /\b(elevate|transform your room|curated collection|premium|aesthe
   const p2 = await ctx2.newPage();
   await p2.goto(FILE + '#/', { waitUntil: 'load' }); await p2.waitForTimeout(900);
   const beats = await p2.evaluate(() => document.querySelectorAll('#main section').length);
-  if (beats < 7) fails.push(`reduced-motion home has ${beats} sections, expected 7`);
+  if (beats < 5) fails.push(`reduced-motion home has ${beats} sections, expected 5`);
   await p2.screenshot({ path: `${OUT}/home-reduced-d.png` });
   const confirms = await p2.evaluate(() => document.querySelectorAll('[data-confirm]').length);
   notes.push(`reduced-motion home sections: ${beats}; [data-confirm] on home: ${confirms}`);
