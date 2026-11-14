@@ -4530,7 +4530,8 @@ function heroTilesHTML() {
   return `<nav class="htiles" aria-label="Bundles and Build your wall">
     ${b ? `<a class="htile htile--b" href="/bundles"><span class="htile__recs" aria-hidden="true">${recs.map(u => `<img src="${u}" alt="" decoding="async">`).join('')}</span>
       <b>Bundles</b><small>${esc(b.short || b.name)} ${money(b.price)}</small><span class="htile__ar" aria-hidden="true">→</span></a>` : ''}
-    <!-- Build your wall tile off for now -->
+    <a class="htile htile--w htile--c" href="/custom"><span class="htile__cdisc" aria-hidden="true"><i>YOUR<br>ALBUM</i></span>
+      <b>Custom vinyl</b><small>Any album · ${money(FMT.vinyl.price)}</small><span class="htile__ar" aria-hidden="true">→</span></a>
   </nav>`;
 }
 
