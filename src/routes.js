@@ -130,8 +130,6 @@ function viewHome() {
     </div>
 
     <p class="fhero__tagm">${TAGLINE}<span class="fhero__subm">Upcycled 12-inch records · Made to hang</span></p>
-    <div class="fhero__hint cap">A record that already had a life</div>
-    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
     ${heroTilesHTML()}
     <div class="fhero__cta">
       ${ctaShop('Shop now', '/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
@@ -139,10 +137,8 @@ function viewHome() {
   </section>
 
 
-  <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
+  <!-- 4 ============ THE SALE: one price, said once ============ -->
   <section class="salesec" data-section="SALE">
-    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
-    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
     <div class="salesec__in">
       ${MRP.vinyl > FMT.vinyl.price
         ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
@@ -161,9 +157,8 @@ function viewHome() {
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Build your wall', '/vinyl', 'Shop vinyls')}
+        ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
       </div>
-      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
   </section>
 
@@ -184,9 +179,8 @@ function viewHome() {
     <div class="wrap" style="display:flex;flex-direction:column;align-items:center;gap:26px;position:relative;z-index:2">
       ${recordHTML(closeRec, { size: 300, big: true, id: 'droprec' })}
       <h2 class="d-l reveal" style="margin-top:10px">Be first to the next drop.</h2>
-      <p class="body-l dim reveal">New records and limited runs.</p>
+      <p class="body-l reveal dropsub">New records and limited runs.</p>
       <div class="reveal dropcta">${listHTML('listform--lg')}</div>
-      <div style="margin-top:14px">${TAGLINE}</div>
     </div>
   </section>`;
 }
@@ -1943,7 +1937,7 @@ function viewBundles() {
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
     ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
-      ${ctaShop('Build your wall', '/vinyl', 'Shop vinyls')}</div>
+      ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}</div>
   </div>`;
 }
 
