@@ -720,7 +720,7 @@ function popularLinks() {
 }
 function popularLinksHTML() {
   const l = popularLinks();
-  return l.length ? `<nav class="ftr__more mono-xs dim" aria-label="Popular">${l.map(([n, u]) => `<a href="${u}">${esc(n)}</a>`).join('')}</nav>` : '';
+  return l.length ? `<nav class="ftr__more" aria-label="Popular"><h4>Popular</h4><div class="ftr__morel">${l.map(([n, u]) => `<a href="${u}">${esc(n)}</a>`).join('')}</div></nav>` : '';
 }
 function footerHTML() {
   return `<footer class="ftr"><div class="wrap">
@@ -2516,7 +2516,6 @@ function viewHome() {
       <div style="text-align:center;margin-top:24px">
         ${ctaShop('Shop the wall', '/vinyl', 'Shop vinyls')}
       </div>
-      <div class="cap" style="text-align:center;margin-top:26px">PHOTOGRAPHED AT THE STAND · NOT A RENDER</div>
     </div>
   </section>
 
@@ -2537,9 +2536,8 @@ function viewHome() {
     <div class="wrap" style="display:flex;flex-direction:column;align-items:center;gap:26px;position:relative;z-index:2">
       ${recordHTML(closeRec, { size: 300, big: true, id: 'droprec' })}
       <h2 class="d-l reveal" style="margin-top:10px">Be first to the next drop.</h2>
-      <p class="body-l dim reveal">New records and limited runs.</p>
+      <p class="body-l reveal dropsub">New records and limited runs.</p>
       <div class="reveal dropcta">${listHTML('listform--lg')}</div>
-      <div style="margin-top:14px">${TAGLINE}</div>
     </div>
   </section>`;
 }
@@ -4296,7 +4294,7 @@ function viewBundles() {
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
     ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
-      ${ctaShop('Build your wall', '/vinyl', 'Shop vinyls')}</div>
+      ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}</div>
   </div>`;
 }
 
