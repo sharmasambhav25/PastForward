@@ -96,62 +96,7 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
-  <!-- 1 ============ THE FLEX ============
-       The brand's own standee, made kinetic: one record so large it
-       runs off every edge, the collage split behind it, the wordmark
-       and tagline set on the vinyl itself. -->
-  <section class="fhero" data-section="PASTFORWARD">
-    <div class="fhero__col">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-    </div>
-
-    <div class="fdisc" id="fdisc">
-      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
-      <div class="fdisc__spin" id="fdiscspin">
-        <div class="fdisc__gr"></div>
-        <div class="fdisc__gr2"></div>
-        <div class="fdisc__lab"></div>
-        <div class="fdisc__rule fdisc__rule--a"></div>
-        <div class="fdisc__rule fdisc__rule--b"></div>
-      </div>
-      <div class="fdisc__gloss"></div>
-      <div class="fdisc__sheen"></div>
-      <div class="fdisc__hole"></div>
-
-      <div class="fdisc__type">
-        <h1 class="fdisc__wm">
-          <img src="${window.__WORDMARK__}" alt="PastForward — Upcycled Vinyl Records & Custom Music Album Art" fetchpriority="high">
-          <span class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</span>
-        </h1>
-        <div class="fdisc__tag">${TAGLINE}</div>
-      </div>
-
-    </div>
-
-    <p class="fhero__tagm">${TAGLINE}<span class="fhero__subm">Upcycled 12-inch records · Made to hang</span></p>
-    <div class="fhero__hint cap">A record that already had a life</div>
-    <div class="fhero__hint2 cap">Upcycled · Hung, not spun</div>
-    ${heroTilesHTML()}
-    <div class="fhero__cta">
-      ${ctaShop('Shop now', '/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
-    </div>
-  </section>
-
-
-  <!-- 4 ============ THE SALE: crossed tape over a spray-painted price ============ -->
-  <section class="salesec" data-section="SALE">
-    <div class="salesec__tape salesec__tape--a" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
-    <div class="salesec__tape salesec__tape--b" aria-hidden="true"><span class="tape__t">${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}${saleTapeRun(window.matchMedia('(max-width:767px)').matches ? 2 : 4)}</span></div>
-    <div class="salesec__in">
-      ${MRP.vinyl > FMT.vinyl.price
-        ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
-        : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
-      <a class="salesec__now num" href="/vinyl" aria-label="Shop vinyls, now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</a>
-      ${assureHTML('vinyl', 'assure--band')}
-    </div>
-  </section>
-
+  <h1 class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</h1>
 
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
