@@ -2884,3 +2884,12 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 }
 /* long lists of sentences read better in a column, not across a whole laptop screen */
 .wrap.col-720 > .acc, .wrap.col-720 > form, .wrap.col-720 > p{max-width:760px}
+
+/* home tile: custom vinyl (stands in for Build your wall while it's off) */
+@media(max-width:767px){
+  .htile__cdisc{position:absolute; right:-10px; top:-14px; width:62px; height:62px; border-radius:50%;
+    background:var(--disc-img,#0b0b0b) center/100% 100%; box-shadow:3px 5px 9px rgba(0,0,0,.45); animation:htileSpin 14s linear infinite}
+  .htile__cdisc i{position:absolute; inset:31%; border-radius:50%; background:#C0353F; display:grid; place-items:center; text-align:center;
+    font:600 4.2px/1.15 var(--mono); letter-spacing:.06em; color:#F3EFE8; font-style:normal}
+}
+@media(prefers-reduced-motion:reduce){.htile__cdisc{animation:none}}
