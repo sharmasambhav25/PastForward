@@ -2896,16 +2896,8 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 
 
 /* ============================================================
-   POLISH PASS (Nov 2026): ten things that made the site look cheap
+   POLISH PASS (Nov 2026): things that made the site look cheap
    ============================================================ */
-/* 1+2. The sale is said once, flat: no crossed tape, no glow, a price you can read at a glance */
-.salesec{padding-block:clamp(56px,8vw,96px) clamp(48px,6vw,72px)}
-@media(max-width:767px){ .salesec{padding-block:56px 44px} }
-.salesec::before{display:none}
-.salesec__k{font-size:clamp(1.15rem,2.2vw,1.7rem); letter-spacing:.04em; color:var(--cream)}
-.salesec__now{font-size:clamp(4.6rem,11vw,8.5rem); filter:none !important; text-shadow:none !important; margin:6px 0 14px}
-.salesec__was s{text-decoration-color:rgba(243,239,232,.55); text-decoration-thickness:1.5px}
-
 /* 3. One price line: the price first in weight, the old price quiet beside it */
 .card__price{flex-direction:row; align-items:baseline; gap:8px; font-size:.95rem; margin-top:4px}
 .card__price .sale{order:1}

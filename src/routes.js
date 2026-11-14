@@ -96,58 +96,7 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
-  <!-- 1 ============ THE FLEX ============
-       The brand's own standee, made kinetic: one record so large it
-       runs off every edge, the collage split behind it, the wordmark
-       and tagline set on the vinyl itself. -->
-  <section class="fhero" data-section="PASTFORWARD">
-    <div class="fhero__col">
-      <i style="background-image:url(${photo('col-g')})"></i>
-      <i style="background-image:url(${photo('col-r')})"></i>
-    </div>
-
-    <div class="fdisc" id="fdisc">
-      <div class="fdiscgl" id="fdiscgl" aria-hidden="true"></div>
-      <div class="fdisc__spin" id="fdiscspin">
-        <div class="fdisc__gr"></div>
-        <div class="fdisc__gr2"></div>
-        <div class="fdisc__lab"></div>
-        <div class="fdisc__rule fdisc__rule--a"></div>
-        <div class="fdisc__rule fdisc__rule--b"></div>
-      </div>
-      <div class="fdisc__gloss"></div>
-      <div class="fdisc__sheen"></div>
-      <div class="fdisc__hole"></div>
-
-      <div class="fdisc__type">
-        <h1 class="fdisc__wm">
-          <img src="${window.__WORDMARK__}" alt="PastForward — Upcycled Vinyl Records & Custom Music Album Art" fetchpriority="high">
-          <span class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</span>
-        </h1>
-        <div class="fdisc__tag">${TAGLINE}</div>
-      </div>
-
-    </div>
-
-    <p class="fhero__tagm">${TAGLINE}<span class="fhero__subm">Upcycled 12-inch records · Made to hang</span></p>
-    ${heroTilesHTML()}
-    <div class="fhero__cta">
-      ${ctaShop('Shop now', '/vinyl', `Every record ${money(FMT.vinyl.price)}`, { attrs: ' data-cursor="SHOP"' })}
-    </div>
-  </section>
-
-
-  <!-- 4 ============ THE SALE: one price, said once ============ -->
-  <section class="salesec" data-section="SALE">
-    <div class="salesec__in">
-      ${MRP.vinyl > FMT.vinyl.price
-        ? `<p class="salesec__k">Vinyl sale · every record</p><p class="salesec__was">was <s class="num">${money(MRP.vinyl)}</s></p>`
-        : `<p class="salesec__k">Every record · one price</p><p class="salesec__was">wall hook included</p>`}
-      <a class="salesec__now num" href="/vinyl" aria-label="Shop vinyls, now ${money(FMT.vinyl.price)}">${money(FMT.vinyl.price)}</a>
-      ${assureHTML('vinyl', 'assure--band')}
-    </div>
-  </section>
-
+  <h1 class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</h1>
 
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
@@ -156,8 +105,12 @@ function viewHome() {
     <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
-      <div style="text-align:center;margin-top:34px">
-        ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
+      <!-- The ads promise "from ₹99" and land here, so the entry price has to be on the first
+           screen: without it the only offer above the fold is a ₹999 record. Read from FMT so a
+           price change in build_catalogue.py moves this line too; never hand-type one here. -->
+      <p class="body-l" style="text-align:center;margin-top:18px">Records ${money(FMT.vinyl.price)}. Posters from ${money(FMT['poster-a5'].price)}. Polaroids ${money(FMT.polaroid.price)}.</p>
+      <div style="text-align:center;margin-top:24px">
+        ${ctaShop('Shop the wall', '/vinyl', 'Shop vinyls')}
       </div>
     </div>
   </section>
