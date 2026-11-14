@@ -702,7 +702,7 @@ function popularLinks() {
 }
 function popularLinksHTML() {
   const l = popularLinks();
-  return l.length ? `<nav class="ftr__more mono-xs dim" aria-label="Popular">${l.map(([n, u]) => `<a href="${u}">${esc(n)}</a>`).join('')}</nav>` : '';
+  return l.length ? `<nav class="ftr__more" aria-label="Popular"><h4>Popular</h4><div class="ftr__morel">${l.map(([n, u]) => `<a href="${u}">${esc(n)}</a>`).join('')}</div></nav>` : '';
 }
 function footerHTML() {
   return `<footer class="ftr"><div class="wrap">
