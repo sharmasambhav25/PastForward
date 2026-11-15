@@ -2946,3 +2946,30 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 /* 10. The drop: its line reads on the pattern */
 .dropsub{color:rgba(243,239,232,.86)}
 @media(min-width:768px){ .assure--band{max-width:1100px} }
+
+/* 11. Posters catalog hero banner */
+.posters-hero{position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--border); margin-bottom:28px; background:var(--elevated)}
+.posters-hero__frame{height:clamp(340px,48vw,540px); overflow:hidden; position:relative}
+.posters-hero__img{width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block}
+.posters-hero__grad{position:absolute; left:0; right:0; bottom:0; height:55%; background:linear-gradient(to top, rgba(6,5,6,.85) 0%, rgba(6,5,6,.3) 60%, transparent 100%); pointer-events:none}
+.posters-hero__content{position:absolute; bottom:0; left:0; right:0; padding:clamp(20px,4vw,36px); display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; z-index:2}
+.posters-hero__left{max-width:600px}
+.posters-hero__right{flex-shrink:0}
+.posters-hero__eyebrow{color:var(--ember); letter-spacing:.18em; text-transform:uppercase; font-weight:600; display:block; margin-bottom:6px}
+.posters-hero__title{color:var(--cream); margin:0; line-height:1.02; text-shadow:0 2px 14px rgba(0,0,0,.9)}
+.posters-hero__sub{color:rgba(243,239,232,.92); margin:10px 0 0; max-width:44ch; line-height:1.45; text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.posters-hero__badge{background:rgba(10,8,9,.75); padding:7px 16px; border-radius:999px; border:1px solid var(--border-2); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:var(--cream); display:inline-block; white-space:nowrap}
+
+@media(max-width:767px){
+  .posters-hero{margin-bottom:20px; border-radius:14px}
+  .posters-hero__frame{height:clamp(280px,76vw,360px)}
+  .posters-hero__img{object-position:center 25%}
+  .posters-hero__grad{height:48px; background:linear-gradient(to top, rgba(6,5,6,.85) 0%, rgba(6,5,6,.3) 70%, transparent 100%)}
+  .posters-hero__content{padding:10px 14px; flex-wrap:nowrap; gap:10px; align-items:flex-end; justify-content:space-between}
+  .posters-hero__left{flex:1 1 auto; min-width:0; max-width:none}
+  .posters-hero__eyebrow{display:none}
+  .posters-hero__sub{display:none}
+  .posters-hero__title{font-size:1.4rem!important; line-height:1!important; margin:0!important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 8px rgba(0,0,0,.95)}
+  .posters-hero__badge{font-size:.65rem!important; padding:5px 11px!important; border-color:rgba(243,239,232,.2)}
+}
+

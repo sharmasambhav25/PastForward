@@ -677,18 +677,20 @@ function viewCatalog(category, subType, params) {
   let topContentHTML = '';
   if (category === 'posters' && photo('poster-wall')) {
     topContentHTML = `
-      <div class="posters-hero" style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--border);margin-bottom:28px;background:var(--elevated)">
-        <div style="height:clamp(340px,48vw,540px);overflow:hidden;position:relative">
-          <img src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block" loading="eager">
-          <!-- Subtle soft bottom fade only, leaving the top & photo clear -->
-          <div style="position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(to top, rgba(6,5,6,.85) 0%, rgba(6,5,6,.3) 60%, transparent 100%);pointer-events:none"></div>
-          <div style="position:absolute;bottom:0;left:0;right:0;padding:clamp(20px,4vw,36px);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;z-index:2">
-            <div>
-              <span class="mono-xs" style="color:var(--ember);letter-spacing:.18em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:6px">Wall Decor · On The Wall</span>
-              <h1 class="d-l" style="color:var(--cream);margin:0;line-height:1.02;text-shadow:0 2px 14px rgba(0,0,0,.9)">${h1}</h1>
-              <p class="body-l" style="color:rgba(243,239,232,.92);margin:10px 0 0;max-width:44ch;line-height:1.45;text-shadow:0 1px 6px rgba(0,0,0,.9)">${sub}</p>
+      <div class="posters-hero">
+        <div class="posters-hero__frame">
+          <img class="posters-hero__img" src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" loading="eager">
+          <!-- Soft bottom gradient, thinned on phone -->
+          <div class="posters-hero__grad"></div>
+          <div class="posters-hero__content">
+            <div class="posters-hero__left">
+              <span class="mono-xs posters-hero__eyebrow">Wall Decor · On The Wall</span>
+              <h1 class="d-l posters-hero__title">${h1}</h1>
+              <p class="body-l posters-hero__sub">${sub}</p>
             </div>
-            <span class="mono-xs" style="background:rgba(10,8,9,.75);padding:7px 16px;border-radius:999px;border:1px solid var(--border-2);backdrop-filter:blur(8px);color:var(--cream)">From ${money(FMT.polaroid.price)} · Free delivery</span>
+            <div class="posters-hero__right">
+              <span class="mono-xs posters-hero__badge">From ${money(FMT.polaroid.price)} · Free delivery</span>
+            </div>
           </div>
         </div>
       </div>
