@@ -2359,8 +2359,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .pdp__share:hover{color:var(--cream)}
 .pdp__share:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
 .pdp__blurb{margin:14px 0 0; color:rgba(243,239,232,.8); font-size:.98rem; line-height:1.6; max-width:54ch}
-.pdp__btns{display:flex; gap:12px}
-.pdp__btns .btn{flex:1; padding:0 clamp(14px, 2.5vw, 24px); white-space:nowrap}
+.pdp__atc{width:100%; margin-top:10px}
 .btn.is-done,.btn.is-done:hover{background:var(--success)}
 
 /* ---- the crate drawer: one add-on that belongs with what's in it ---- */
@@ -2765,6 +2764,7 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 .qty button{width:48px; height:52px}
 .qty span{font-size:.95rem}
 .line .qty{height:44px} .line .qty button{width:44px; height:44px}
+.pdp__atc{width:100%; margin-top:10px}
 .filterbtn{height:44px; border-radius:999px; font-size:.7rem}
 .addon__b{height:40px; font-size:.66rem}
 .iconbtn{border-radius:50%}
