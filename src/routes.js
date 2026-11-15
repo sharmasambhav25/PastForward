@@ -120,6 +120,8 @@ function viewHome() {
 
   ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
 
+  ${homeBundlesHTML()}
+
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
   <section class="why-strip" data-section="WHY">
@@ -150,6 +152,32 @@ function bestHTML(n = 6) {
       <div class="grid best__grid">${list.map(p => cardHTML(p, 'vinyl')).join('')}</div>
       <div style="text-align:center;margin-top:28px">
         <a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
+      </div>
+    </div>
+  </section>`;
+}
+
+function homeBundlesHTML() {
+  if (!photo('bundles-wall')) return '';
+  return `
+  <!-- ============ BUNDLES SPOTLIGHT ============ -->
+  <section class="sec ground home-bundles" data-section="BUNDLES" style="padding-top:clamp(24px, 3.5vw, 44px);padding-bottom:clamp(28px, 4vw, 56px)">
+    <div class="wrap">
+      <div class="home-bundles__card">
+        <div class="home-bundles__frame">
+          <img class="home-bundles__img" src="${photo('bundles-wall')}" alt="Curated gallery wall with vinyl records and music prints" loading="lazy">
+          <div class="home-bundles__grad"></div>
+          <div class="home-bundles__content">
+            <div class="home-bundles__copy">
+              <span class="mono-xs home-bundles__eyebrow">Wall Bundles · Automatic Savings</span>
+              <h2 class="d-l home-bundles__title">Build your set.<br>Save up to ₹498.</h2>
+              <p class="body-l home-bundles__sub">Combine vinyl records, A3 posters, and polaroids for your wall. The best bundle discount is applied automatically in your crate.</p>
+            </div>
+            <div class="home-bundles__action">
+              ${ctaShop('Shop bundles', '/bundles', 'Save up to ₹498')}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>`;
@@ -1930,10 +1958,32 @@ function bundleStripHTML() {
   </div></section>`;
 }
 function viewBundles() {
-  return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
+  const heroHTML = photo('bundles-wall') ? `
+    <div class="posters-hero">
+      <div class="posters-hero__frame">
+        <img class="posters-hero__img" src="${photo('bundles-wall')}" alt="Curated gallery wall with vinyl records and music prints" style="object-position:center 38%" loading="eager">
+        <!-- Soft bottom gradient, thinned on phone -->
+        <div class="posters-hero__grad"></div>
+        <div class="posters-hero__content">
+          <div class="posters-hero__left">
+            <span class="mono-xs posters-hero__eyebrow">Curated Sets · Price Drops At Checkout</span>
+            <h1 class="d-l posters-hero__title">Bundles.</h1>
+            <p class="body-l posters-hero__sub">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
+          </div>
+          <div class="posters-hero__right">
+            <span class="mono-xs posters-hero__badge">Save up to ₹498 · Free delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ` : `
     <p class="cap">Bundles · the price drops at checkout</p>
     <h1 class="shout-h">Bundles.</h1>
     <p class="body-l dim measure" style="margin:14px 0 8px">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
+  `;
+
+  return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
+    ${heroHTML}
     <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
     ${readyWallsHTML()}
     <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
