@@ -674,11 +674,27 @@ function viewCatalog(category, subType, params) {
     `;
   }
 
+  const posterHeroHTML = category === 'posters' && photo('poster-wall') ? `
+    <div class="posters-hero" style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--border);margin-bottom:28px;background:var(--elevated)">
+      <div style="height:clamp(220px,36vw,440px);overflow:hidden;position:relative">
+        <img src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block" loading="eager">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,5,6,.82) 0%, rgba(6,5,6,.15) 50%, rgba(6,5,6,.3) 100%);pointer-events:none"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:clamp(16px,3vw,28px);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div>
+            <span class="mono-xs" style="color:var(--ember);letter-spacing:.16em;text-transform:uppercase;font-weight:600">On The Wall</span>
+            <h2 class="d-m" style="margin:4px 0 0;color:var(--cream)">Your albums. Your space.</h2>
+          </div>
+          <span class="mono-xs dim" style="background:rgba(6,5,6,.65);padding:6px 14px;border-radius:999px;border:1px solid var(--border-2);backdrop-filter:blur(8px)">From ₹99 · Free delivery</span>
+        </div>
+      </div>
+    </div>` : '';
+
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
     <div class="masthead" style="border:0;padding-bottom:32px">
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
     </div>
+    ${posterHeroHTML}
     ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
