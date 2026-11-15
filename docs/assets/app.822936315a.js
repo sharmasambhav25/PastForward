@@ -3216,11 +3216,15 @@ function viewProduct(p, params) {
           }).join('')}
         </div>
 
-        <div style="display:flex;gap:12px;margin-top:26px;flex-wrap:wrap">
-          <span class="qty"><button data-pq="-1" aria-label="Decrease">−</button><span class="num" id="pdpqty">1</span><button data-pq="1" aria-label="Increase">+</button></span>
-          <button class="btn btn--primary" style="flex:1;min-width:180px" id="pdpadd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
+        <div class="pdp__actions" style="margin-top:26px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <span class="qty"><button data-pq="-1" aria-label="Decrease">−</button><span class="num" id="pdpqty">1</span><button data-pq="1" aria-label="Increase">+</button></span>
+          </div>
+          <div class="pdp__btns">
+            <button class="btn btn--buy pdp__buy" id="pdpbuy" data-buynow><span class="btn__mag">Buy now</span></button>
+            <button class="btn btn--add pdp__atc" id="pdpadd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
+          </div>
         </div>
-        <button class="btn btn--secondary pdp__buy" id="pdpbuy" data-buynow><span class="btn__mag">Buy now</span></button>
         <div id="pdpassure">${assureHTML(sel)}</div>
         <p class="payline mono-xs dim">${payLine()}</p>
 
