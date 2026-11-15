@@ -674,11 +674,22 @@ function viewCatalog(category, subType, params) {
     `;
   }
 
+  const posterHeroHTML = category === 'posters' && photo('poster-wall') ? `
+    <div class="posters-hero" style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--border);margin-bottom:28px;background:var(--elevated)">
+      <div style="height:clamp(280px,44vw,500px);overflow:hidden;position:relative">
+        <img src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block" loading="eager">
+        <div style="position:absolute;bottom:16px;right:16px">
+          <span class="mono-xs" style="background:rgba(10,8,9,.78);padding:6px 14px;border-radius:999px;border:1px solid var(--border-2);backdrop-filter:blur(8px);color:var(--cream)">Real Wall Setup · From ₹99</span>
+        </div>
+      </div>
+    </div>` : '';
+
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
-    <div class="masthead" style="border:0;padding-bottom:32px">
+    <div class="masthead" style="border:0;padding-bottom:28px">
       <h1 class="d-l">${h1}</h1>
       <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
     </div>
+    ${posterHeroHTML}
     ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
