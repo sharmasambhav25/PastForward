@@ -674,37 +674,11 @@ function viewCatalog(category, subType, params) {
     `;
   }
 
-  let topContentHTML = '';
-  if (category === 'posters' && photo('poster-wall')) {
-    topContentHTML = `
-      <div class="posters-hero" style="position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--border-2);margin-bottom:34px;background:var(--elevated);box-shadow:var(--sh-card)">
-        <div style="height:clamp(380px,54vw,560px);overflow:hidden;position:relative">
-          <img src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" style="width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block" loading="eager">
-          <!-- Darkened border & background gradients for maximum legibility -->
-          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, transparent 20%, rgba(6,5,6,.5) 70%, rgba(6,5,6,.92) 100%), linear-gradient(to top, rgba(6,5,6,.96) 0%, rgba(6,5,6,.7) 35%, rgba(6,5,6,.2) 65%, rgba(6,5,6,.6) 100%), linear-gradient(to right, rgba(6,5,6,.9) 0%, rgba(6,5,6,.5) 45%, transparent 75%);pointer-events:none"></div>
-          <div style="position:absolute;inset:0;padding:clamp(24px,4.5vw,48px);display:flex;flex-direction:column;justify-content:flex-end;z-index:2">
-            <span class="mono-xs" style="color:var(--ember);letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:10px">Wall Decor · On The Wall</span>
-            <h1 class="d-l" style="color:var(--cream);margin:0;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,.95)">${h1}</h1>
-            <p class="body-l" style="color:rgba(243,239,232,.92);margin-top:14px;max-width:48ch;line-height:1.55;text-shadow:0 1px 10px rgba(0,0,0,.9)">${sub}</p>
-            <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
-              <span class="mono-xs" style="background:rgba(18,16,17,.88);color:var(--cream);padding:7px 16px;border-radius:999px;border:1px solid var(--border-2);backdrop-filter:blur(10px)">From ${money(FMT.polaroid.price)} · A3, A5 &amp; 10×10</span>
-              <span class="mono-xs" style="background:rgba(18,16,17,.88);color:var(--cream);padding:7px 16px;border-radius:999px;border:1px solid var(--border-2);backdrop-filter:blur(10px)">Free Delivery Across India</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    topContentHTML = `
-      <div class="masthead" style="border:0;padding-bottom:32px">
-        <h1 class="d-l">${h1}</h1>
-        <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
-      </div>
-    `;
-  }
-
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
-    ${topContentHTML}
+    <div class="masthead" style="border:0;padding-bottom:32px">
+      <h1 class="d-l">${h1}</h1>
+      <p class="body-l dim measure" style="margin-top:14px">${sub}</p>
+    </div>
     ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">
