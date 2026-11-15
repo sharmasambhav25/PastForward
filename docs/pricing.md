@@ -16,6 +16,6 @@ Custom orders cost the same as the catalogue price for that format: https://past
 - **Delivers to**: India only
 - **Delivery time**: 7–10 days from order
 - **Delivery cost**: Delivery is free, anywhere in India.
-- **Payment**: UPI, cards and net banking. Cash on delivery isn't available yet.
+- **Payment**: UPI, cards, net banking & COD. Cash on delivery is available across India.
 - **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
 - **Contact**: contact@pastforward.shop · Instagram @pastforward.shop

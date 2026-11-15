@@ -48,7 +48,7 @@ def money(n):
 
 # ------------------------------------------------------------------ sources
 css = read(f'{SRC}/style.css')
-JS_ORDER = ['core.js', 'ripple.js', 'vinyllabel.js', 'albumscrub.js', 'liquid.js', 'wallpaper.js', 'routes.js', 'boot.js']
+JS_ORDER = ['shopifyanalytics.js', 'core.js', 'ripple.js', 'vinyllabel.js', 'albumscrub.js', 'liquid.js', 'wallpaper.js', 'routes.js', 'boot.js']
 js_src = {n: read(f'{SRC}/{n}') for n in JS_ORDER}
 
 CAT = json.loads(read(f'{ROOT}/catalogue.json'))
@@ -84,7 +84,7 @@ TOKENS = {
     'EMAIL': RAW_SITE['email'],
     'EMAIL_LINK': f'<a href="mailto:{RAW_SITE["email"]}">{RAW_SITE["email"]}</a>',
     'PAYMENTS': RAW_SITE['payments'],
-    'COD_LINE': 'Cash on delivery is available too.' if RAW_SITE.get('cod') else "Cash on delivery isn't available yet.",
+    'COD_LINE': 'Cash on delivery is available across India.' if RAW_SITE.get('cod') else "Cash on delivery isn't available yet.",
     'SHIPPING_LINE': shipping_line(RAW_SITE['shipping']),
     'SIZES': '<div class="spec">' + ''.join(
         f"<div>{esc(f['label'])}{' · ' + esc(size_of(f)) if size_of(f) else ''}</div>" for f in FMT.values()) + '</div>',
@@ -321,7 +321,7 @@ def single_file(payload, standalone):
 <script type="module">{vinyl3d_source(THREE_DATA)}</script>'''
     if standalone:
         return ('<!doctype html><html lang="en" class="js"><head><meta charset="utf-8">'
-                '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">'
+                '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
                 f'{head}</head><body>{body}</body></html>')
     return head + '\n' + body
 
@@ -401,7 +401,7 @@ def graph(*nodes):
 
 # ---------- the plain-HTML version of each page (what a reader without scripts gets)
 NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/posters/a5'), ('10×10 prints', '/posters/10x10'),
-       ('Polaroids', '/polaroids'), ('Build your wall', '/build-your-wall'), ('Bundles', '/bundles'), ('Custom vinyls', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
+       ('Polaroids', '/polaroids'), ('Bundles', '/bundles'), ('Custom vinyls', '/custom'), ('Our story', '/story'), ('Questions', '/faq'), ('Contact', '/contact')]
 
 def popular_links():
     out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
@@ -503,19 +503,24 @@ def fb_simple(h1, paras, extra=''):
     return fb_wrap(f'<h1>{esc(h1)}</h1>' + ''.join(f'<p>{x}</p>' for x in paras) + extra)
 
 # ---------- page shell
-def page(*, title, desc, canonical, og_image, body, ld, noindex=False):
+def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
     preload = ''.join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>' for f in FONT_PRELOAD)
     clarity_id = SITE.get('tracking', {}).get('clarityProjectId')
+    # Recording only runs on the real site. Without the host test a local preview and every
+    # verify_site.js pass would file session replays and heatmap data against the live project,
+    # which is the same mistake the Meta pixel made (see the gate in src/core.js).
     clarity = f'''<script type="text/javascript">
 (function(c,l,a,r,i,t,y){{
+    if(!/(^|\\.)pastforward\\.shop$/.test(l.location.hostname))return;
     c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    var done=0;c.__pfClarity=function(){{if(done)return;done=1;t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}};
+    setTimeout(c.__pfClarity,6000);
 }})(window, document, "clarity", "script", "{clarity_id}");
 </script>
 ''' if clarity_id else ''
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
 {head_common(title, desc, canonical, og_image, noindex)}
 {clarity}<link rel="icon" href="/favicon.ico" sizes="any">
@@ -525,7 +530,7 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False):
 {preload}
 <link rel="preload" href="/photos/wordmark-900.webp" as="image" media="(max-width:767px)" fetchpriority="high">
 <link rel="preload" href="/photos/wordmark.webp" as="image" media="(min-width:768px)" fetchpriority="high">
-<link rel="stylesheet" href="{ASSET_CSS}">
+{head}<link rel="stylesheet" href="{ASSET_CSS}">
 <script type="application/ld+json" id="route-schema">{ld}</script>
 <script src="{ASSET_JS}" defer></script>
 </head><body>
@@ -589,16 +594,24 @@ def build_site():
 
     pages = []   # (path, file, html, indexable)
 
-    def add(path, file, *, title, desc, body, ld, og_image=None, canonical=None, noindex=False):
+    def add(path, file, *, title, desc, body, ld, og_image=None, canonical=None, noindex=False, head=''):
         canon = URL + (canonical or path)
         pages.append((path, file, page(title=title, desc=desc, canonical=canon, og_image=og_image or og_default,
-                                       body=body, ld=ld, noindex=noindex), not noindex and (canonical or path) == path))
+                                       body=body, ld=ld, noindex=noindex, head=head), not noindex and (canonical or path) == path))
+
+    # the picture a page opens on is fetched alongside the script, not after it. The address must be
+    # spelled exactly as the app spells it (encodeURIComponent), or the browser fetches it twice.
+    def pre_img(href, media=''):
+        return f'<link rel="preload" as="image" href="{href}"' + (f' media="{media}"' if media else '') + '>\n'
+    def js_uri(file):
+        from urllib.parse import quote
+        return quote(file, safe="!~*'()")
 
     M = SITE['meta']
 
     # home
     add('/', 'index.html', title=M['/']['title'], desc=M['/']['desc'], body=fb_home(),
-        ld=graph(list_ld('The PastForward catalogue', P)))
+        ld=graph(list_ld('The PastForward catalogue', P)))   # no image preload here: it would only delay the script on a slow line
 
     # format listings
     LIST = [('/vinyl', 'vinyl.html', 'Vinyls', ['vinyl']),
@@ -641,7 +654,8 @@ def build_site():
         col = next((c for c in COLS if c['slug'] in p['tags']), None)
         trail = [('Home', '/')] + ([(col['name'], f"/collections/{col['slug']}")] if col else []) + [(name_of(p), product_url(p))]
         add(product_url(p), f"product/{p['slug']}.html", title=p['seo']['title'], desc=p['seo']['desc'],
-            og_image=abs_img(p['variants'][0]['image']), body=fb_product(p), ld=graph(product_ld(p), crumbs(*trail)))
+            og_image=abs_img(p['variants'][0]['image']), body=fb_product(p), ld=graph(product_ld(p), crumbs(*trail)),
+            head=pre_img('/img/' + js_uri(p['variants'][0]['image'])) + (pre_img('/photos/disc.webp') if p['variants'][0]['format'] == 'vinyl' else ''))
     # renamed products: the old address forwards to the new one
     for old, new in (CAT.get('aliases') or {}).items():
         if new in BY_SLUG and old not in BY_SLUG:
@@ -721,7 +735,11 @@ def build_site():
         body=fb_simple('Bundles.', [esc(M['/bundles']['desc'])],
                        ''.join(f"<h2>{esc(b['name'])}: ₹{b['price']:,}</h2><p>{esc(b['blurb'])} Save ₹{b['off']:,}.</p>" for b in BL)),
         ld=graph(crumbs(('Home', '/'), ('Bundles', '/bundles'))))
-    add('/build-your-wall', 'build-your-wall.html', title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
+    # Build Your Wall is switched off (src/core.js sends /build-your-wall home), so this page must
+    # stay out of the sitemap and out of the index: its copy still describes an interactive wall
+    # builder, and a searcher who clicked it would be redirected to the home page instead. Drop the
+    # noindex when the route is switched back on.
+    add('/build-your-wall', 'build-your-wall.html', noindex=True, title=M['/build-your-wall']['title'], desc=M['/build-your-wall']['desc'],
         body=fb_simple('Build your own wall.', [
             esc(M['/build-your-wall']['desc']),
             "Our interactive wall builder lets you arrange and preview your dream music wall before placing an order. Mix and match authentic upcycled vinyl records, A3 posters, A5 prints, 10×10 square album sleeves, and polaroid cards on different wall paint colors to create a custom gallery setup tailored to your space.",

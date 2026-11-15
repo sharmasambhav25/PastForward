@@ -15,8 +15,8 @@
     "freeFrom": 0
   },
 
-  "payments": "UPI, cards and net banking",
-  "cod": false,
+  "payments": "UPI, cards, net banking & COD",
+  "cod": true,
 
   "bundles": {
     "_note": "Bundle prices. Each one is a Shopify discount code (Admin > Discounts) that applies once per order; the site applies the single best one at checkout via ?discount=CODE. Set live:false until the code exists in Shopify.",
@@ -101,7 +101,11 @@
   "tracking": {
     "_note": "The pixel is off while metaPixelId is empty. Filling it in loads the Meta Pixel on pastforward.shop (PageView, ViewContent, AddToCart, InitiateCheckout); use the same pixel id Shopify's Facebook & Instagram channel uses, so the whole journey is one funnel. Before switching it on, change the 'Your cart and cookies' line in the privacy policy below, which currently says the site uses no trackers. Campaign tags (utm_*, fbclid) are passed to the Shopify checkout whether or not the pixel is on.",
     "metaPixelId": "2273618829738715",
-    "clarityProjectId": "zcm7s5unh9"
+    "clarityProjectId": "zcm7s5unh9",
+    "_shopifyNote": "Sends page views, product views and add-to-carts to Shopify analytics (Headless channel storefront 'Past Forward Headless'), so Shopify Admin sessions, reports and Live View count visits to this site. Empty shopifyShopId turns it off.",
+    "shopifyShopId": "75152949292",
+    "shopifyStorefrontId": "422853",
+    "shopifyDomain": "shop.pastforward.shop"
   },
 
   "meta": {
@@ -206,12 +210,12 @@
       ["Made to order", "Each piece is printed and put together for your order, so we can't take returns if you change your mind."],
       ["If it arrives damaged", "If your order arrives damaged, or isn't what you ordered, email {{EMAIL_LINK}} within 7 days of delivery. Include your order details and photos of the piece and the packaging. We'll send a replacement, or refund you if we can't."],
       ["About the records", "Our records are upcycled: real vinyl that already had a life. Small surface marks on the record are part of that history and aren't counted as damage."],
-      ["Refunds", "Approved refunds go back to the original payment method."]
+      ["Refunds", "Approved refunds go back to the original payment method. For Cash on Delivery orders, approved refunds are transferred via UPI or bank account."]
     ]],
     "privacy": ["Privacy", [
       ["What we collect", "Only what you give us. When you order: your name, delivery address, phone number and email, so we can deliver. When you use a form: what you type in it, such as your name, email, WhatsApp number, message, or a link to the artwork you want. When you join the list: your email."],
       ["What we use it for", "To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time."],
-      ["Payments", "Payments are handled by our payment provider. We never see or store your card or bank details."],
+      ["Payments", "Prepaid payments are handled securely by our payment provider. For Cash on Delivery orders, payment is collected directly by our delivery partner upon delivery. We never see or store your card or bank details."],
       ["Who we share it with", "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
       ["Your cart and cookies", "Your cart is saved in your own browser so it's still there when you come back. This site uses the Meta Pixel to measure which ads and posts bring visitors and sales, and to show our ads to people who have visited. You can control this in your Facebook or Instagram ad settings."],
       ["Your rights", "You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email {{EMAIL_LINK}}."]
@@ -219,7 +223,7 @@
     "terms": ["Terms", [
       ["Who we are", "PastForward makes wall decor from music: upcycled vinyl records with album art at the centre, posters, prints and polaroid cards. By ordering from this site you agree to these terms."],
       ["The products", "Our records are for hanging, not playing. Prints are made to order, and colours can look slightly different from how they appear on your screen."],
-      ["Prices and orders", "Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can't fulfil an order, we'll tell you and refund you in full."],
+      ["Prices and orders", "Prices are in Indian rupees. Prepaid orders are confirmed once payment goes through. Cash on Delivery (COD) orders are confirmed once delivery details and phone number are verified. If we ever can't fulfil an order, we'll tell you and refund you in full."],
       ["Custom orders", "When you send us an image or artwork to print, you confirm you have the right to use it."],
       ["Artwork and names", "Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label."],
       ["Delivery and returns", "See our <a href=\"/policies/shipping\">shipping</a> and <a href=\"/policies/returns\">returns</a> policies."],
@@ -482,7 +486,7 @@
       ],
       [
         "Can I order custom vinyls for custom Spotify playlists or unreleased music?",
-        "Yes! You can request any album, mixtape, personal playlist, or personal photo collage. Put the details in the form above and we will confirm the artwork."
+        "Yes. You can request any album, mixtape, personal playlist, or personal photo collage. Put the details in the form above and we will confirm the artwork."
       ],
       [
         "Where can I buy vinyl record wall decor in India?",
