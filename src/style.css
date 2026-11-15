@@ -182,6 +182,12 @@ html[data-light] #field{opacity:.22; filter:invert(1)}
 .btn--secondary{background:transparent; color:var(--cream); box-shadow:inset 0 0 0 1px var(--border-2)}
 .btn--secondary:hover{box-shadow:inset 0 0 0 1px var(--cream); transform:translateY(-2px)}
 .btn--secondary:active{transform:translateY(-1px) scale(.965)}
+.btn--add{background:var(--elevated); color:var(--cream); box-shadow:inset 0 0 0 1.5px var(--border-2), var(--sh-card)}
+.btn--add:hover{background:var(--elevated-2); box-shadow:inset 0 0 0 1.5px var(--cream), var(--sh-lift); transform:translateY(-2px)}
+.btn--add:active{background:#000; transform:translateY(-1px) scale(.965); box-shadow:var(--sh-card)}
+.btn--buy{background:var(--oxblood); color:var(--cream); box-shadow:var(--sh-card)}
+.btn--buy:hover{background:var(--ember); transform:translateY(-2px); box-shadow:var(--sh-lift)}
+.btn--buy:active{background:var(--crimson); transform:translateY(-1px) scale(.965); box-shadow:var(--sh-card)}
 .btn--ghost{background:none; height:auto; padding:6px 0; color:var(--cream)}
 .btn--ghost:active{opacity:.6}
 .btn--ghost::after{content:""; display:block; position:absolute; left:0; right:0; bottom:0; height:1px;
@@ -2353,7 +2359,8 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 .pdp__share:hover{color:var(--cream)}
 .pdp__share:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
 .pdp__blurb{margin:14px 0 0; color:rgba(243,239,232,.8); font-size:.98rem; line-height:1.6; max-width:54ch}
-.pdp__buy{width:100%; margin-top:10px}
+.pdp__btns{display:flex; gap:12px}
+.pdp__btns .btn{flex:1; padding:0 clamp(14px, 2.5vw, 24px); white-space:nowrap}
 .btn.is-done,.btn.is-done:hover{background:var(--success)}
 
 /* ---- the crate drawer: one add-on that belongs with what's in it ---- */
@@ -2758,7 +2765,6 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
 .qty button{width:48px; height:52px}
 .qty span{font-size:.95rem}
 .line .qty{height:44px} .line .qty button{width:44px; height:44px}
-.pdp__buy{width:100%; margin-top:10px}
 .filterbtn{height:44px; border-radius:999px; font-size:.7rem}
 .addon__b{height:40px; font-size:.66rem}
 .iconbtn{border-radius:50%}
