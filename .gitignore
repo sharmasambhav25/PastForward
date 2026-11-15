@@ -9,4 +9,7 @@ node_modules/
 *.log
 push.js
 server.js
+.env
+.env.*
+clarity-cache.json
 

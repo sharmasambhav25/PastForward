@@ -1062,7 +1062,10 @@ const Track = (() => {
     })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
     window.fbq('init', id);
   }
-  const fire = (name, data) => { if (id && window.fbq) { try { window.fbq('track', name, data); } catch (e) {} } };
+  const fire = (name, data) => {
+    if (id && window.fbq) { try { window.fbq('track', name, data); } catch (e) {} }
+    if (window.clarity) { try { window.clarity('event', name); } catch (e) {} }
+  };
   const vid = v => String((window.__SHOPIFY_VARIANTS__ || {})[v.sku] || v.sku);
   /* Shopify analytics: the same events a Shopify theme sends, so Shopify Admin's sessions, reports and
      Live View count visitors here, not only those who reach checkout. Visitor and visit ids live in
@@ -1153,6 +1156,7 @@ function submitForm(type, payload, via) {
       const fi = document.createElement('input'); fi.type = 'file'; fi.name = 'properties[Reference image]';
       const dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files; fm.appendChild(fi);
       const tags = Track.params();
+      Track.checkout([{ sku: 'PF-CUSTOM-' + fKey.toUpperCase(), qty: 1 }], f.price);
       add('return_to', '/checkout' + (tags ? '?' + tags : ''));
       document.body.appendChild(fm); fm.submit();
       return Promise.resolve({ ok: true, redirected: true });
@@ -1172,6 +1176,7 @@ function submitForm(type, payload, via) {
       if (payload.notes) params.set('attributes[Notes]', payload.notes);
       params.set('note', `CUSTOM ORDER: ${payload.artist || ''} — ${payload.album || ''} — ${payload.track || ''} (${f.label})` + (payload.ref ? `\nReference: ${payload.ref}` : '') + (payload.notes ? `\nNotes: ${payload.notes}` : ''));
       const tags = Track.params();
+      Track.checkout([{ sku: 'PF-CUSTOM-' + fKey.toUpperCase(), qty: 1 }], f.price);
       location.href = `https://${SHOPIFY_CONFIG.storeDomain}/cart/${variantId}:1?${params.toString()}${tags ? '&' + tags : ''}`;
       return Promise.resolve({ ok: true, redirected: true });
     }
