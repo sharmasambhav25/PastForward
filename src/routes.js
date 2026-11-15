@@ -695,6 +695,26 @@ function viewCatalog(category, subType, params) {
         </div>
       </div>
     `;
+  } else if (category === 'vinyl' && photo('vinyl-wall')) {
+    topContentHTML = `
+      <div class="posters-hero">
+        <div class="posters-hero__frame">
+          <img class="posters-hero__img" src="${photo('vinyl-wall')}" alt="Real vinyl records hung on a gallery wall" style="object-position:center 40%" loading="eager">
+          <!-- Soft bottom gradient, thinned on phone -->
+          <div class="posters-hero__grad"></div>
+          <div class="posters-hero__content">
+            <div class="posters-hero__left">
+              <span class="mono-xs posters-hero__eyebrow">Wall Decor · Real Records</span>
+              <h1 class="d-l posters-hero__title">${h1}</h1>
+              <p class="body-l posters-hero__sub">${sub}</p>
+            </div>
+            <div class="posters-hero__right">
+              <span class="mono-xs posters-hero__badge">${money(FMT.vinyl.price)} · Free delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   } else {
     topContentHTML = `
       <div class="masthead" style="border:0;padding-bottom:28px">
