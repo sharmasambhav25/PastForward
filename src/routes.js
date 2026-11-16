@@ -118,9 +118,11 @@ function viewHome() {
   <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
   ${formatsHTML()}
 
+  ${isPhone() ? homeBundlesHTML() : ''}
+
   ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
 
-  ${homeBundlesHTML()}
+  ${!isPhone() ? homeBundlesHTML() : ''}
 
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
