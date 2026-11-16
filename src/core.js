@@ -151,27 +151,20 @@ function cardHTML(p, targetFormat) {
   }
   const ar = v.format === 'vinyl' || v.format === 'print-10' ? 1 : v.ratio;
 
-  let sizeText = esc(v.label);
-  if (v.format === 'vinyl') {
-    sizeText = '12-inch record';
-  } else if (v.format === 'polaroid') {
-    sizeText = 'Polaroid card';
-  } else if (v.size && v.size !== '[CONFIRM]') {
-    sizeText = `${esc(v.label)} · ${esc(v.size)}`;
-  }
-
-  return `<a class="card" href="/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
-    <div class="card__media" style="aspect-ratio:${ar}" data-media>
-      <span class="card__badge badge">${esc(v.badge)}</span>
+  /* Clean card (Nov 2026): the picture, then album, artist and price in plain type, and a round
+     add button on the picture's corner. A record is shown close up so its label can be read. */
+  const kind = v.format === 'vinyl' ? '' : v.format === 'polaroid' ? 'Polaroid' : esc(v.label);
+  const bag = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg>';
+  return `<a class="card card--${v.format === 'vinyl' ? 'rec' : v.format === 'polaroid' ? 'pol' : 'art'}" href="/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
+    <div class="card__media" style="aspect-ratio:${v.format === 'vinyl' ? 1 : '4/5'}" data-media>
       ${v.format === 'vinyl' ? recordHTML(p, { size: 210 })
-        : v.format === 'polaroid' ? polaroidHTML(v, { style: 'width:78%' })
-        : frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + v.ratio })}
-      <button class="card__add" data-add="${p.slug}|${v.format}" aria-label="Quick add ${esc(albumText(p))}">Quick add · ${money(v.price)}</button>
+        : v.format === 'polaroid' ? polaroidHTML(v, { style: 'width:62%' })
+        : frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + ar })}
+      <button class="card__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart, ${money(v.price)}">${bag}</button>
     </div>
     <div class="card__meta">
-      <span class="card__artist">${esc(p.artist)}</span>
       <span class="card__album">${albumOf(p)}</span>
-      <span class="card__size">${sizeText}</span>
+      <span class="card__artist">${esc(p.artist)}${kind ? ` · ${kind}` : ''}</span>
       <span class="card__price num">${priceHTML(v.format, v.price)}</span>
     </div></a>`;
 }
