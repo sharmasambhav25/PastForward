@@ -101,7 +101,7 @@ function viewHome() {
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
        photograph of the real wall. Straight out of the brand's own ads. -->
-  <section class="stage" data-section="WALL DECOR">
+  <section class="stage stage--hero" data-section="WALL DECOR">
     <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
@@ -115,12 +115,17 @@ function viewHome() {
     </div>
   </section>
 
-  <!-- 5 ============ THE REST OF THE WALL: one slide per format ============ -->
-  ${formatsHTML()}
+  ${homeCatsHTML()}
+
+  ${bestHTML(8)}
+
+  ${homeBannerHTML()}
+
+  ${railHTML('Posters', '/posters', homePicks(['poster-a3'], 10).map(p => cardHTML(p, 'poster-a3')), 'A3 ' + money(FMT['poster-a3'].price) + ' · A5 ' + money(FMT['poster-a5'].price))}
 
   ${homeBundlesHTML()}
 
-  ${!isPhone() && window.mountCrate && fastGL() ? crateHTML() : bestHTML(isPhone() ? 6 : 8)}
+  ${railHTML('Polaroids', '/polaroids', homePicks(['polaroid'], 10).map(p => cardHTML(p, 'polaroid')), money(FMT.polaroid.price) + ' each · 10 for ' + money(699))}
 
   <!-- 7 ============ THE MANIFESTO ============
        Heavy grotesque with a few words swapped into display italic. -->
@@ -143,16 +148,68 @@ function viewHome() {
 /* The bestsellers as a grid you can buy from. Phones always get this (the crate below is a
    desktop piece; on a phone the home page used to show no record you could actually tap), and
    so does any larger screen where the 3D crate can't run (no GPU, or the module didn't arrive). */
-function bestHTML(n = 6) {
+function bestHTML(n = 8) {
   const list = crateList().slice(0, n);
   return `
-  <section class="best sec ground" data-section="BESTSELLERS">
+  <section class="best sec ground hm" data-section="BESTSELLERS">
     <div class="wrap">
-      <h2 class="best__h reveal">Bestsellers</h2>
+      ${secRow('Bestsellers', '/vinyl', 'Every record ' + money(FMT.vinyl.price))}
       <div class="grid best__grid">${list.map(p => cardHTML(p, 'vinyl')).join('')}</div>
-      <div style="text-align:center;margin-top:28px">
-        <a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a>
-      </div>
+      <div class="hm__more"><a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">See all ${COUNTS.vinyl} records</span></a></div>
+    </div>
+  </section>`;
+}
+
+/* ---- Home building blocks (clean pass, Nov 2026): a heading row with "View all", a row of
+   category tiles, a sideways rail of cards, and a full-width photo that introduces a category. ---- */
+function secRow(title, href, sub) {
+  return `<div class="secrow"><div><h2 class="secrow__h">${title}</h2>${sub ? `<p class="secrow__sub">${sub}</p>` : ''}</div>
+    ${href ? `<a class="secrow__all" href="${href}">View all</a>` : ''}</div>`;
+}
+function homePicks(formats, n) {
+  // featured designs first, one per artist, so a rail never repeats a face
+  const seen = new Set(), out = [];
+  const pool = P.filter(p => p.album !== '[CONFIRM]' && formats.some(f => variant(p, f)))
+    .sort((a, b) => (b.featured - a.featured) || (a.rank - b.rank));
+  for (const p of pool) { if (seen.has(p.artist)) continue; seen.add(p.artist); out.push(p); if (out.length === n) break; }
+  return out;
+}
+function railHTML(title, href, cards, sub) {
+  if (!cards.length) return '';
+  return `
+  <section class="sec ground hm hm--rail" data-section="${title.toUpperCase()}">
+    <div class="wrap">${secRow(title, href, sub)}</div>
+    <div class="hrail__nav" aria-hidden="true"><button type="button" data-rail="-1" tabindex="-1">←</button><button type="button" data-rail="1" tabindex="-1">→</button></div>
+    <div class="hrail" tabindex="0" aria-label="${title}">${cards.join('')}
+      <a class="hrail__end" href="${href}"><span>View all<br>${title.toLowerCase()}</span><i aria-hidden="true">→</i></a></div>
+  </section>`;
+}
+function homeCatsHTML() {
+  const im = (slug, f) => { const p = bySlug[slug], v = p && variant(p, f); return v ? imgSrc(v.image) : ''; };
+  const pol = P.filter(p => variant(p, 'polaroid')).slice(0, 3).map(p => imgSrc(variant(p, 'polaroid').image));
+  const tile = (href, label, sub, inner, cls = '') => `<a class="cat ${cls}" href="${href}">${inner}<span class="cat__t"><b>${label}</b><small>${sub}</small></span></a>`;
+  const ph = (k, pos = '50% 50%') => `<img class="cat__img" src="${photo(k)}" alt="" loading="lazy" decoding="async" style="object-position:${pos}">`;
+  return `
+  <section class="cats" data-section="SHOP" aria-label="Shop by category">
+    <div class="cats__row">
+      ${tile('/vinyl', 'Vinyls', money(FMT.vinyl.price), ph('vinyl-wall', '30% 50%'))}
+      ${tile('/posters', 'Posters', 'from ' + money(FMT['poster-a5'].price), ph('wall-white', '50% 30%'))}
+      ${tile('/polaroids', 'Polaroids', money(FMT.polaroid.price), `<span class="cat__fan" aria-hidden="true">${pol.map(u => `<img src="${u}" alt="" loading="lazy" decoding="async">`).join('')}</span>`, 'cat--fan')}
+      ${tile('/bundles', 'Bundles', 'save up to 30%', ph('bundles-wall', '50% 0'), 'cat--bun')}
+      ${tile('/custom', 'Custom vinyl', 'any album', ph('record-in-hand', '50% 40%'))}
+    </div>
+  </section>`;
+}
+function homeBannerHTML() {
+  if (!photo('poster-wall')) return '';
+  return `
+  <section class="hbanner" data-section="POSTERS">
+    <img class="hbanner__img" src="${photo('poster-wall')}" alt="A bedroom wall covered in album posters" loading="lazy" decoding="async">
+    <div class="hbanner__in">
+      <span class="hbanner__k">For the rest of the wall</span>
+      <h2 class="hbanner__h">Album posters</h2>
+      <p class="hbanner__p">The covers you grew up with, printed to hang. A3 and A5.</p>
+      <a class="btn btn--light" href="/posters"><span class="btn__mag">Shop posters</span></a>
     </div>
   </section>`;
 }
@@ -515,22 +572,23 @@ function artistCardHTML([artist, items], routeFormats, idx) {
     : v0.format === 'polaroid' ? polaroidHTML(v0, { style: 'width:78%' })
     : frameHTML(v0, { style: 'height:100%;width:auto;aspect-ratio:' + v0.ratio });
   const prices = items.flatMap(p => routeFormats.map(f => variant(p, f)).filter(Boolean).map(v => v.price));
+  const arh = v0.format === 'vinyl' || v0.format === 'print-10' ? 1 : v0.format === 'polaroid' ? 1.25 : 1.3333;   // tile height ÷ width, for the add chip
   const from = Math.min(...prices), id = 'ag' + idx;
   const n = items.length, word = n === 1 ? 'album' : 'albums';
   // one artist, one piece: nothing to pick between, so the card IS the product (no dropdown step)
   const only = n === 1 ? routeFormats.map(f => variant(first, f)).filter(Boolean) : [];
   if (only.length === 1) {
     const v = only[0];
-    return `<div class="ag ag--solo" data-artist="${esc(artist)}">
+    return `<div class="ag ag--solo" data-artist="${esc(artist)}" style="--arh:${arh}">
       <a class="ag__head" href="/product/${first.slug}?format=${v.format}"${artistPhoto && v.format === 'vinyl' ? '' : ` data-card="${first.slug}"`}>
         <span class="card__media ag__media" style="aspect-ratio:${ar}" data-media>${cover}</span>
         <span class="ag__meta">
           <span class="ag__name">${esc(artist)}</span>
           <span class="ag__alb">${albumOf(first)}</span>
-          <span class="ag__sub mono-xs"><span>${priceHTML(v.format, v.price)}</span></span>
+          <span class="ag__sub"><span>${priceHTML(v.format, v.price)}</span></span>
         </span>
       </a>
-      <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart">+</button>
+      <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg></button>
     </div>`;
   }
   // Several albums (or several sizes): the card opens the lead album's own page, and the albums
@@ -543,7 +601,7 @@ function artistCardHTML([artist, items], routeFormats, idx) {
       <span class="ag__meta">
         <span class="ag__name">${esc(artist)}</span>
         ${n === 1 ? `<span class="ag__alb">${albumOf(lead)}</span>` : ''}
-        <span class="ag__sub mono-xs">${n > 1 ? `<span>${n} ${word}</span>` : ''}<span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
+        <span class="ag__sub">${n > 1 ? `<span class="ag__n">${n} ${word}</span>` : ''}<span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
       </span>
       <span class="ag__chev ag__chev--go" aria-hidden="true"></span>
     </a>
@@ -779,7 +837,7 @@ function viewCatalog(category, subType, params) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
               <span>Filter</span>
             </button>
-            <span class="mono dim num">${byArtist ? `${groups.length} artist${groups.length === 1 ? '' : 's'} · ` : ''}${list.length} piece${list.length === 1 ? '' : 's'}</span>
+            <span class="mono dim num">${list.length} piece${list.length === 1 ? '' : 's'}</span>
           </div>
           <select class="sort" id="sort" aria-label="Sort">
             ${[['featured', 'Featured'], ['price-asc', 'Price low→high'], ['price-desc', 'Price high→low'], ['artist', 'Artist A→Z']]
@@ -865,8 +923,8 @@ function viewProduct(p, params) {
   const rel2 = related.length ? related : P.filter(x => x.slug !== p.slug).slice(0, 4);
   return `<div class="pliq" id="pliq" aria-hidden="true"></div>
   <div class="wrap sec pdp-wrap" style="padding-top:calc(var(--nav-h) + 24px)">
-    <div class="pdp__top mono-xs dim">
-      <span><a href="/vinyl">CATALOGUE</a> / ${col ? `<a href="/collections/${col.slug}">${esc(col.name.toUpperCase())}</a> / ` : ''}<span>${esc(albumText(p).toUpperCase())}</span></span>
+    <div class="pdp__top dim">
+      <span><a href="/">Home</a> / <a href="${sel === 'vinyl' ? '/vinyl' : sel === 'polaroid' ? '/polaroids' : '/posters'}" id="pdpcrumb">${sel === 'vinyl' ? 'Vinyls' : sel === 'polaroid' ? 'Polaroids' : 'Posters'}</a> / <span>${esc(albumText(p))}</span></span>
       <button class="pdp__share" type="button" data-share>Share <span aria-hidden="true">↗</span></button>
     </div>
     <div class="pdp${P.filter(x => x.artist === p.artist).length > 1 ? ' pdp--pick' : ''}">
@@ -885,7 +943,7 @@ function viewProduct(p, params) {
       </div>
       <div class="pdp__info">
         <div class="card__artist">${(SITE.artistPages || {})[artistSlug(p.artist)] ? `<a href="/artist/${artistSlug(p.artist)}">${esc(p.artist)}</a>` : esc(p.artist)}</div>
-        <h1 class="d-m" style="margin:6px 0 16px">${albumOf(p)}</h1>
+        <h1 class="pdp__h">${albumOf(p)}</h1>
         <div class="num" id="pdpprice" style="font-size:1.3rem">${priceHTML(v.format, v.price)}${v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : ''}</div>
         <div id="pdpbundle">${pdpBundleHTML(p, sel)}</div>
         <p class="pdp__blurb" id="pdpblurb">${esc((p.blurbs || {})[sel] || '')}</p>
@@ -925,17 +983,13 @@ function viewProduct(p, params) {
     </div>
 
     <section class="sec" data-section="SCALE">
-      ${eyebrow('SCALE')}
-      <h2 class="d-m reveal" style="margin:12px 0 24px">How big it actually is.</h2>
+      <div class="secrow"><div><h2 class="secrow__h">How big it actually is</h2></div></div>
       <div class="scaleview" id="scaleview">${scaleSVG(sel)}</div>
-      <p class="mono-xs dim" style="margin-top:14px">A 12-inch record is 30.5 centimetres across. Wider than most keyboards.</p>
+      <p class="dim" style="margin-top:14px;font-size:.9rem">A 12-inch record is 30.5 centimetres across. Wider than most keyboards.</p>
     </section>
 
     <section class="sec" style="padding-top:0">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:24px">
-        <h2 class="d-s">Goes well with</h2>
-        ${col ? `<a class="mono-xs" href="/collections/${col.slug}" style="color:var(--muted)">PART OF ${esc(col.name.toUpperCase())} →</a>` : ''}
-      </div>
+      ${secRow('You may also like', col ? '/collections/' + col.slug : '/vinyl')}
       <div class="grid">${rel2.map(cardHTML).join('')}</div>
     </section>
 
@@ -1378,6 +1432,10 @@ function mountAccordions() {
 }
 
 function mountHome() {
+  // laptop: arrows page a rail sideways (a phone just swipes it)
+  $$('.hrail__nav button').forEach(b => b.addEventListener('click', () => {
+    const r = b.closest('section').querySelector('.hrail'); if (r) r.scrollBy({ left: +b.dataset.rail * r.clientWidth * .8, behavior: 'smooth' });
+  }));
   /* One rAF loop drives every disc. Each keeps its own angle, so no two records
      are ever in phase. Rate = idle spin + scroll boost + drag momentum. */
   const spins = [];
@@ -1817,6 +1875,7 @@ function mountProduct(p, params) {
     if (!RM()) mountRipple();
     $('#pdpprice').innerHTML = priceHTML(v.format, v.price) + (v.confirmPrice ? ' ' + CONFIRM('Price for this format not set yet') : '');
     const bf = $('#barfmt'); if (bf) bf.textContent = FMT[f].label;
+    const cr = $('#pdpcrumb'); if (cr) { cr.textContent = f === 'vinyl' ? 'Vinyls' : f === 'polaroid' ? 'Polaroids' : 'Posters'; cr.setAttribute('href', f === 'vinyl' ? '/vinyl' : f === 'polaroid' ? '/polaroids' : '/posters'); }
     setAmt();
     $('#whatyouget').innerHTML = f === 'vinyl' ? 'Upcycled 12-inch record, printed centre label'
       : f === 'polaroid' ? 'Polaroid-style card, cream border, 300 GSM'
