@@ -2950,7 +2950,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 /* 11. Posters catalog hero banner */
 .posters-hero{position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--border); margin-bottom:28px; background:var(--elevated)}
 .posters-hero__frame{height:clamp(340px,48vw,540px); overflow:hidden; position:relative}
-.posters-hero__img{width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block; image-rendering:-webkit-optimize-contrast}
+.posters-hero__img{width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block}
 .posters-hero__grad{position:absolute; left:0; right:0; bottom:0; height:55%; background:linear-gradient(to top, rgba(6,5,6,.85) 0%, rgba(6,5,6,.3) 60%, transparent 100%); pointer-events:none}
 .posters-hero__content{position:absolute; bottom:0; left:0; right:0; padding:clamp(20px,4vw,36px); display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; z-index:2}
 .posters-hero__left{max-width:600px}
@@ -3011,7 +3011,6 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   height:100%;
   object-fit:contain;
   display:block;
-  image-rendering:-webkit-optimize-contrast;
 }
 .home-bundles__content{
   display:flex;
@@ -3224,7 +3223,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 .cats__row{display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; padding:0 var(--gutter); scroll-padding-inline:var(--gutter)}
 .cats__row::-webkit-scrollbar{display:none}
 .cat{position:relative; flex:0 0 40vw; max-width:220px; aspect-ratio:3/4; border-radius:var(--r-tile); overflow:hidden; background:var(--tile); scroll-snap-align:start; isolation:isolate}
-.cat__img{position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; transition:transform .7s var(--e-out-expo); image-rendering:-webkit-optimize-contrast}
+.cat__img{position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; transition:transform .7s var(--e-out-expo)}
 .cat--bun .cat__img{transform:scale(1.45); transform-origin:50% 8%}
 .cat::after{content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(6,5,6,.86) 0%, rgba(6,5,6,.28) 46%, rgba(6,5,6,0) 70%)}
 .cat__t{position:absolute; left:12px; right:12px; bottom:11px; z-index:2; display:flex; flex-direction:column; gap:1px}
@@ -3244,7 +3243,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 
 /* ---- 5. Full-width photo that introduces a category ---- */
 .hbanner{position:relative; overflow:hidden; background:var(--tile); aspect-ratio:4/5; max-height:86svh; width:100%; isolation:isolate}
-.hbanner__img{position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; image-rendering:-webkit-optimize-contrast}
+.hbanner__img{position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover}
 .hbanner::after{content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(6,5,6,.9) 0%, rgba(6,5,6,.35) 48%, rgba(6,5,6,.05) 75%)}
 .hbanner__in{position:absolute; z-index:2; left:var(--gutter); right:var(--gutter); bottom:clamp(22px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; gap:8px; max-width:560px}
 .hbanner__k{font-size:.82rem; color:rgba(255,255,255,.78)}
