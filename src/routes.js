@@ -163,12 +163,33 @@ function homeBundlesHTML() {
   <!-- ============ BUNDLES SPOTLIGHT ============ -->
   <section class="sec ground home-bundles" data-section="BUNDLES">
     <div class="wrap">
-      <div class="home-bundles__wrap">
-        <div class="home-bundles__frame">
+      <div class="home-bundles__layout">
+        <div class="home-bundles__visual">
           <img class="home-bundles__img" src="${photo('bundles-wall')}" alt="Buy Bundles 30% Off" loading="lazy">
         </div>
-        <div class="home-bundles__btnwrap">
-          ${ctaShop('Shop bundles', '/bundles', 'Up to 30% off')}
+        <div class="home-bundles__content">
+          <span class="mono-xs home-bundles__eyebrow">Wall Bundles · Automatic Savings</span>
+          <h2 class="d-l home-bundles__title">Mix your wall.<br>Save up to 30%.</h2>
+          <p class="body-l dim home-bundles__sub">Combine vinyl records, A3 posters, and polaroids. Pick your favorite albums and the best bundle discount is applied automatically in your crate at checkout.</p>
+          
+          <div class="home-bundles__deals">
+            <a class="home-bundles__deal" href="/vinyl">
+              <span class="home-bundles__deal-name">Any 3 Vinyl Records</span>
+              <span class="home-bundles__deal-price"><b class="num">${money(2499)}</b> <s class="dim num">${money(2997)}</s></span>
+            </a>
+            <a class="home-bundles__deal" href="/bundles">
+              <span class="home-bundles__deal-name">Record + A3 Poster Pair</span>
+              <span class="home-bundles__deal-price"><b class="num">${money(1149)}</b> <s class="dim num">${money(1298)}</s></span>
+            </a>
+            <a class="home-bundles__deal" href="/polaroids">
+              <span class="home-bundles__deal-name">10 Music Polaroids Pack</span>
+              <span class="home-bundles__deal-price"><b class="num">${money(699)}</b> <span class="home-bundles__tag">30% OFF</span></span>
+            </a>
+          </div>
+
+          <div class="home-bundles__btnwrap">
+            ${ctaShop('Shop all bundles', '/bundles', 'Up to 30% off')}
+          </div>
         </div>
       </div>
     </div>
