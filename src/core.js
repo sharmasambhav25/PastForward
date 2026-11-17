@@ -459,6 +459,10 @@ function chromeHTML() {
       <span class="mega__format-title">10×10 Format</span>
       <span class="mega__format-size">254 × 254mm</span>
     </a>
+    <a href="/polaroids" class="mega__format-link">
+      <span class="mega__format-title">Polaroids</span>
+      <span class="mega__format-size">Pocket-size prints</span>
+    </a>
   </div>
 
   <div class="mega mega--collections" id="mega">
