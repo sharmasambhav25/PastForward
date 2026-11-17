@@ -2526,11 +2526,6 @@ function viewHome() {
 
   ${railHTML('Polaroids', '/polaroids', homePicks(['polaroid'], 10).map(p => cardHTML(p, 'polaroid')), money(FMT.polaroid.price) + ' each · 10 for ' + money(699))}
 
-  <!-- 7 ============ THE MANIFESTO ============
-       Heavy grotesque with a few words swapped into display italic. -->
-  <section class="why-strip" data-section="WHY">
-    <p class="why-strip__t">Giving forgotten things a <b>future.</b> What once played the soundtrack to someone's youth now hangs on a <b>wall.</b></p>
-  </section>
 
   <!-- 12 ============ THE DROP ============ -->
   <section class="sec ground" data-section="THE DROP" style="text-align:center;position:relative;overflow:hidden">
