@@ -2518,6 +2518,8 @@ function viewHome() {
 
   ${homeBundlesHTML()}
 
+  ${formatsHTML()}
+
   ${railHTML('Polaroids', '/polaroids', homePicks(['polaroid'], 10).map(p => cardHTML(p, 'polaroid')), money(FMT.polaroid.price) + ' each · 10 for ' + money(699))}
 
   <!-- 7 ============ THE MANIFESTO ============
