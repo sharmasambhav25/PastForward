@@ -3249,7 +3249,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 .hbanner__k{font-size:.82rem; color:rgba(255,255,255,.78)}
 .hbanner__h{margin:0; font-family:var(--ui); font-weight:650; font-size:clamp(2rem,5vw,3.6rem); line-height:1; letter-spacing:-.03em; color:#fff}
 .hbanner__p{margin:0 0 8px; font-size:1rem; line-height:1.45; color:rgba(255,255,255,.86)}
-@media(min-width:900px){.hbanner{aspect-ratio:auto; height:min(78vh,720px)} .hbanner__img{object-position:50% 46%}}
+@media(min-width:900px){.hbanner{aspect-ratio:auto; height:min(78vh,720px)} .hbanner__img{object-position:50% 42%}}
 .btn--light{background:var(--cream); color:#141112}
 .btn--light:hover{background:#fff; transform:translateY(-2px)}
 
