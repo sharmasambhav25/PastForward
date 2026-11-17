@@ -694,8 +694,14 @@ function listHTML(cls = '') {
   return `<a class="btn btn--secondary listbtn ${cls}" href="${IG_URL}" target="_blank" rel="noopener"><span class="btn__mag">Follow @${esc(SITE.instagram)}</span></a>`;
 }
 function popularLinks() {
-  return Object.entries(SITE.landing || {}).map(([u, L]) => [L.h1.replace(/\.$/, ''), u])
-    .concat(Object.entries(SITE.artistPages || {}).map(([s, A]) => [A.name, '/artist/' + s]));
+  const top = new Set(['Travis Scott', 'Karan Aujla', 'Seedhe Maut', 'Diljit Dosanjh', 'Taylor Swift', 'The Weeknd',
+                       'Frank Ocean', 'Billie Eilish', 'Lana Del Rey', 'Kanye West', 'AP Dhillon', 'Anuv Jain',
+                       'Arctic Monkeys', 'Pink Floyd', 'Coldplay', 'Drake']);
+  const landing = Object.entries(SITE.landing || {}).map(([u, L]) => [L.h1.replace(/\.$/, ''), u]);
+  const artists = Object.entries(SITE.artistPages || {})
+    .filter(([s, A]) => top.has(A.name) || (A.items && A.items.length >= 2))
+    .map(([s, A]) => [A.name, '/artist/' + s]);
+  return landing.concat(artists);
 }
 function popularLinksHTML() {
   const l = popularLinks();
@@ -897,8 +903,10 @@ const revealIO = new IntersectionObserver(es => {
 
 const GLYPH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/·#';
 function scramble(el) {
-  if (RM()) { el.textContent = el.dataset.txt; return; }
-  const final = el.dataset.txt; let i = 0;
+  const final = el.dataset.txt || el.textContent;
+  if (!final) return;
+  if (RM()) { el.textContent = final; return; }
+  let i = 0;
   const id = setInterval(() => {
     i++;
     el.textContent = final.slice(0, i) + Array.from({ length: Math.max(0, final.length - i) },
@@ -927,7 +935,7 @@ const countIO = new IntersectionObserver(es => {
 function bindEffects(root = document) {
   $$('.reveal', root).forEach(el => revealIO.observe(el));
   $$('.lines', root).forEach(el => revealIO.observe(el));
-  $$('[data-txt]', root).forEach(el => { el.textContent = ''; scrambleIO.observe(el); });
+  $$('[data-txt]', root).forEach(el => { if (!el.textContent) el.textContent = el.dataset.txt || ''; scrambleIO.observe(el); });
   $$('[data-count]', root).forEach(el => countIO.observe(el));
   $$('.btn--primary, .btn--secondary', root).forEach(btn => {
     if (RM() || btn.__mag) return; btn.__mag = 1;
@@ -1268,7 +1276,8 @@ function render(opt = {}) {
     ogImage = imgSrc(primary(p).image, true);
   }
   else if (seg[0] === 'collections') {
-    const c = COLS.find(x => x.slug === (seg[1] || 'the-classics')) || COLS[0];
+    const targetSlug = (seg[1] === '3-am' ? 'three-am' : seg[1]) || 'the-classics';
+    const c = COLS.find(x => x.slug === targetSlug) || COLS[0];
     out = viewCatalog('collections', c.slug, params);
     m = c.seo || m; canonical = ORIGIN + '/collections/' + c.slug;
   }

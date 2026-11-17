@@ -77,8 +77,6 @@ function load3d() {
 const within = (p, ms) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
 
 function pfStart() {
-  const seoEl = document.getElementById('pf-seo');
-  if (seoEl) seoEl.remove();
   // the realistic pressing (rendered once from the 3D record, brand/disc.webp) under every CSS record
   if (window.__PHOTOS__ && window.__PHOTOS__.disc) document.documentElement.style.setProperty('--disc-img', `url(${window.__PHOTOS__.disc})`);
   document.body.insertAdjacentHTML('afterbegin', chromeHTML());
@@ -101,6 +99,8 @@ function pfStart() {
   const home = isHome();
   const gl = load3d();
   const first = () => {
+    const seoEl = document.getElementById('pf-seo');
+    if (seoEl) seoEl.remove();
     render();
     bindEffects(document);
     if (q.get('openmenu') === '1') {

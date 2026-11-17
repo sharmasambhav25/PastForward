@@ -110,36 +110,36 @@
 
   "meta": {
     "/": {
-      "title": "PastForward — Vinyl Record Wall Decor & Music Wall Art in India",
-      "desc": "Real 12-inch upcycled vinyl record wall decor & album art in India. Authentic vintage vinyl records with custom centre labels, made to hang. Free delivery across India."
+      "title": "PastForward — Upcycled Vinyl Record Wall Decor & Music Posters India",
+      "desc": "Shop real 12-inch upcycled vinyl record wall decor ({{PRICE_VINYL}}), 300 GSM album cover posters ({{PRICE_A5}}), 10×10 prints & music polaroids ({{PRICE_POLAROID}}). Free shipping across India."
     },
     "/vinyl": {
-      "title": "Vinyl Record Wall Decor & Upcycled Records in India | PastForward",
-      "desc": "Real 12-inch vinyl record wall decor with iconic album art on the centre label. Wall hook included, {{PRICE_VINYL}} each, free delivery across India."
+      "title": "Buy Decorative Vinyl Records Online India | 48+ Albums {{PRICE_VINYL}} | PastForward",
+      "desc": "Browse 48+ upcycled 12-inch decorative vinyl records ({{PRICE_VINYL}}) or 3 for ₹2,499. Real vintage vinyl restored with iconic album art, ready to hang. Free delivery across India."
     },
     "/posters": {
-      "title": "A3 Music Posters | PastForward",
-      "desc": "A3 album posters, 297 × 420mm, printed to order on 300 GSM paper. {{PRICE_A3}} each, delivered across India."
+      "title": "A3 Music Posters & Album Wall Art India (297×420mm) — {{PRICE_A3}} | PastForward",
+      "desc": "Statement A3 music posters (297×420mm) printed on heavyweight 300 GSM archival matte paper. {{PRICE_A3}} each or any 3 for ₹749. Free shipping across India."
     },
     "/posters/a3": {
-      "title": "A3 Music Posters | PastForward",
-      "desc": "A3 album posters, 297 × 420mm, printed to order on 300 GSM paper. {{PRICE_A3}} each, delivered across India."
+      "title": "A3 Music Posters & Album Wall Art India (297×420mm) — {{PRICE_A3}} | PastForward",
+      "desc": "Statement A3 music posters (297×420mm) printed on heavyweight 300 GSM archival matte paper. {{PRICE_A3}} each or any 3 for ₹749. Free shipping across India."
     },
     "/posters/a5": {
-      "title": "A5 Music Posters | PastForward",
-      "desc": "A5 album posters, 148 × 210mm, printed to order on 300 GSM paper. {{PRICE_A5}} each, delivered across India."
+      "title": "A5 Aesthetic Music Posters & Desk Prints India — {{PRICE_A5}} (5 for ₹799) | PastForward",
+      "desc": "Compact A5 album cover posters (148×210mm) on 300 GSM matte stock for study desks, hostel rooms & gallery walls. {{PRICE_A5}} each or 5 for ₹799."
     },
     "/posters/10x10": {
-      "title": "10×10 Album Art Prints | PastForward",
-      "desc": "Square 10×10 inch album prints, 254 × 254mm, printed to order on 300 GSM paper. {{PRICE_10}} each, delivered across India."
+      "title": "10×10 Square Album Cover Prints India (300 GSM Matte) — {{PRICE_10}} | PastForward",
+      "desc": "True 1:1 vinyl sleeve proportion 10×10 inch square album art prints (254×254mm) on 300 GSM matte card. {{PRICE_10}} each. Perfect for music gallery walls."
     },
     "/polaroids": {
-      "title": "Music Polaroid Cards | PastForward",
-      "desc": "Polaroid-style album cards with a cream border, on 300 GSM card. {{PRICE_POLAROID}} each, delivered across India."
+      "title": "Music Polaroid Cards & Custom Retro Album Prints India — {{PRICE_POLAROID}} | PastForward",
+      "desc": "Heavyweight 300 GSM music polaroid cards with vintage cream borders. {{PRICE_POLAROID}} each or 10-Pack for ₹699. 48+ albums or custom Spotify tracks. Delivered across India."
     },
     "/custom": {
-      "title": "Custom Vinyls & Vinyl Record Wall Decor in India | PastForward",
-      "desc": "Custom vinyls and made-to-order vinyl record wall decor: any artist, album, song or playlist set into a real 12-inch record, {{PRICE_VINYL}}. Delivered free across India."
+      "title": "Custom Vinyl Records & Personalized Music Wall Art India {{PRICE_VINYL}} | PastForward",
+      "desc": "Turn any album, Spotify playlist, song, or photo into a real 12-inch custom vinyl record ({{PRICE_VINYL}}), A3 poster ({{PRICE_A3}}), or polaroid ({{PRICE_POLAROID}}). Free shipping across India."
     },
     "/story": {
       "title": "Our Story | PastForward",
@@ -276,8 +276,8 @@
   "landing": {
     "_note": "Pages written for what people type into Google. Each one is a filtered view of the catalogue plus a few honest paragraphs. Only state what the rest of this file backs up. `formats` limits the products; `maxPrice` keeps only formats at or under that price.",
     "/vinyl-record-wall-decor": {
-      "title": "Vinyl Record Wall Decor & Wall Art in India | PastForward",
-      "desc": "Real 12-inch upcycled vinyl records with album art on the centre label, made to hang. Wall hook included, {{PRICE_VINYL}} each, free delivery across India.",
+      "title": "Vinyl Record Wall Decor India: Real 12\" Upcycled Records {{PRICE_VINYL}} | PastForward",
+      "desc": "Authentic 12-inch vintage vinyl records restored with custom album art labels ({{PRICE_VINYL}} or 3 for ₹2,499). Includes damage-free wall hook & free India delivery.",
       "h1": "Vinyl record wall decor.",
       "sub": "Real 12-inch records, made to hang. The album you love sits in the centre label. Wall hook in the box.",
       "formats": [
@@ -344,9 +344,9 @@
       ]
     },
     "/album-cover-posters": {
-      "title": "Album Cover Posters & Music Posters in India: A3, A5, 10×10 | PastForward",
-      "desc": "Album cover posters for Taylor Swift, The Weeknd, Travis Scott, AP Dhillon, BLACKPINK and more. A3 {{PRICE_A3}}, A5 {{PRICE_A5}}, 10×10 prints {{PRICE_10}}. Delivered across India.",
-      "h1": "Album cover posters.",
+      "title": "Album Cover Posters & Music Posters Online India (A3, A5, 10×10) | PastForward",
+      "desc": "Museum-grade 300 GSM matte album cover posters in A3 ({{PRICE_A3}}), A5 ({{PRICE_A5}}) & 10×10 square vinyl sleeve prints ({{PRICE_10}}). Any 3 A3 posters for ₹749. Free India delivery.",
+      "h1": "Album Cover Posters & 300 GSM Music Prints.",
       "sub": "The covers you already know by heart, printed to order in A3, A5 and a 10×10 square.",
       "formats": [
         "poster-a3",
@@ -375,9 +375,9 @@
       ]
     },
     "/gifts-for-music-lovers": {
-      "title": "Gifts for Music Lovers in India: Vinyl Wall Art & Posters | PastForward",
-      "desc": "A gift for the friend who always has headphones on: their favourite album as an upcycled vinyl record, poster or polaroid. From {{PRICE_POLAROID}}, delivered across India.",
-      "h1": "Gifts for music lovers.",
+      "title": "Gifts for Music Lovers in India: Custom Vinyls, Posters & Polaroids | PastForward",
+      "desc": "Unique gifts for music lovers in India from {{PRICE_POLAROID}} to ₹2,499. Gift their favourite album or Spotify playlist on a real 12-inch upcycled vinyl record or A3 poster.",
+      "h1": "Thoughtful Gifts for Music Lovers in India (₹99 – ₹2,499).",
       "sub": "Their favourite album, on their wall. From {{PRICE_POLAROID}}.",
       "formats": [],
       "sections": [
@@ -429,9 +429,9 @@
       "faq": []
     },
     "/wall-decor-under-500": {
-      "title": "Wall Decor Under ₹500: Music Posters & Polaroids | PastForward",
-      "desc": "Music wall decor under ₹500: A3 posters {{PRICE_A3}}, 10×10 prints {{PRICE_10}}, A5 posters {{PRICE_A5}}, polaroids {{PRICE_POLAROID}}. Free delivery across India.",
-      "h1": "Wall decor under ₹500.",
+      "title": "Aesthetic Room & Wall Decor Under ₹500 in India | PastForward",
+      "desc": "Upgrade your bedroom or hostel wall on a budget: music polaroids ({{PRICE_POLAROID}}), A5 posters ({{PRICE_A5}}), 10×10 square album prints ({{PRICE_10}}) & A3 posters ({{PRICE_A3}}). Free delivery.",
+      "h1": "Aesthetic Room & Wall Decor Under ₹500 in India.",
       "sub": "Every poster, print and polaroid here costs less than ₹500, with free delivery.",
       "formats": [
         "poster-a3",

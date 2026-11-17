@@ -17,7 +17,7 @@ CSS, JS, fonts and images ship as separate files so they are cached and load in 
 Facts that repeat across the site (email, delivery time, shipping, FAQ, policies, page titles)
 live in src/site.json. Products live in catalogue.json. Nothing in this file states a fact.
 """
-import json, os, re, base64, hashlib, shutil, html, datetime
+import json, os, re, base64, hashlib, shutil, html, datetime, unicodedata
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, 'src')
@@ -169,27 +169,25 @@ for c in COLS:
                 'desc': f"{c['desc']} Upcycled vinyl records, posters and polaroids from the {c['name']} collection, delivered across India."}
 
 def slugify(s):
+    s = unicodedata.normalize('NFKD', str(s)).encode('ASCII', 'ignore').decode('utf-8')
     return re.sub(r'[^a-z0-9]+', '-', s.lower().replace("'", '')).strip('-')
 
 def featured_order(ps):
     return sorted(ps, key=lambda p: (-int(bool(p.get('featured'))), p['artist'].lower()))
 
-# ---- artist pages: only for artists with more than one design. A one-album artist already has
-# a product page that carries every format; a second page with the same single product would be thin.
+# ---- artist pages: dedicated hub for every artist in the catalogue
 ARTIST_PAGES = {}
 for name in sorted({p['artist'] for p in P}, key=str.lower):
     ps = [p for p in P if p['artist'] == name]
-    if len(ps) < 2:
-        continue
     kinds = list(dict.fromkeys(KIND[v['format']] for p in ps for v in p['variants']))
     plural = {'Poster': 'Posters', 'Print': 'Prints', 'Polaroid': 'Polaroids'}
     words = [plural.get(k, k) for k in kinds]
     albums = [album_of(p) for p in ps if album_of(p)]
-    album_list = join_words(dict.fromkeys(albums))
+    album_list = join_words(dict.fromkeys(albums)) if albums else name
     ARTIST_PAGES[slugify(name)] = {
         'name': name,
-        'title': f"{name} {join_words(words)} | PastForward",
-        'desc': f"{name} wall art: {album_list} as {join_words([w.lower() for w in words])}. From {money(min(v['price'] for p in ps for v in p['variants']))}, delivered across India in {SITE['delivery']}.",
+        'title': f"{name} {join_words(words)} & Vinyl Wall Art | PastForward",
+        'desc': f"{name} music wall art: {album_list} as {join_words([w.lower() for w in words])}. From {money(min(v['price'] for p in ps for v in p['variants']))}, delivered across India in {SITE['delivery']}.",
         'h1': f"{name}.",
         'sub': f"{album_list}. Every {name} piece we make, in one place.",
         'items': [p['slug'] for p in ps],
@@ -197,7 +195,12 @@ for name in sorted({p['artist'] for p in P}, key=str.lower):
                       f"Pick the album, then the format: a real upcycled 12-inch record with the cover on the centre label ({money(FMT['vinyl']['price'])}), "
                       f"an A3 poster ({money(FMT['poster-a3']['price'])}), an A5 poster ({money(FMT['poster-a5']['price'])}), a 10×10 print ({money(FMT['print-10']['price'])}) "
                       f"or a polaroid card ({money(FMT['polaroid']['price'])}), depending on what each album comes in. {SITE['shipping']['line']} Delivery takes {SITE['delivery']}."]],
-        'faq': [],
+        'faq': [
+            [f"What formats are available for {name}?",
+             f"We offer {name} wall art across upcycled 12-inch vinyl records ({money(FMT['vinyl']['price'])}), A3 posters ({money(FMT['poster-a3']['price'])}), A5 posters ({money(FMT['poster-a5']['price'])}), 10×10 prints ({money(FMT['print-10']['price'])}), and polaroids ({money(FMT['polaroid']['price'])}), depending on the album."],
+            [f"How long does delivery take for {name} orders?",
+             f"All pieces are printed and assembled to order, then delivered safely across India within {SITE['delivery']} with protective transit packaging."]
+        ],
     }
 SITE['artistPages'] = ARTIST_PAGES
 
@@ -368,26 +371,67 @@ def shipping_ld():
         return None
     return {'@type': 'OfferShippingDetails',
             'shippingRate': {'@type': 'MonetaryAmount', 'value': 0, 'currency': 'INR'},
-            'shippingDestination': {'@type': 'DefinedRegion', 'addressCountry': 'IN'}}
+            'shippingDestination': {'@type': 'DefinedRegion', 'addressCountry': 'IN'},
+            'deliveryTime': {
+                '@type': 'ShippingDeliveryTime',
+                'handlingTime': {'@type': 'QuantitativeValue', 'minValue': 2, 'maxValue': 4, 'unitCode': 'd'},
+                'transitTime': {'@type': 'QuantitativeValue', 'minValue': 5, 'maxValue': 6, 'unitCode': 'd'}
+            }}
+
+MERCHANT_RETURN_POLICY = {
+    '@type': 'MerchantReturnPolicy',
+    'applicableCountry': 'IN',
+    'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    'merchantReturnDays': 7,
+    'returnMethod': 'https://schema.org/ReturnByMail',
+    'returnFees': 'https://schema.org/FreeReturn'
+}
 
 def product_ld(p):
     offers = []
+    variants_ld = []
+    prices = [v['price'] for v in p['variants']]
     for v in p['variants']:
         o = {'@type': 'Offer', 'name': v['label'], 'sku': v['sku'], 'price': v['price'], 'priceCurrency': 'INR',
              'availability': 'https://schema.org/InStock', 'url': URL + product_url(p, v['format']),
-             'seller': {'@id': URL + '/#organization'}}
+             'seller': {'@id': URL + '/#organization'},
+             'hasMerchantReturnPolicy': MERCHANT_RETURN_POLICY}
         if shipping_ld():
             o['shippingDetails'] = shipping_ld()
         offers.append(o)
-    prices = [v['price'] for v in p['variants']]
-    return {'@type': 'Product', '@id': URL + product_url(p) + '#product', 'name': name_of(p),
+
+        material = 'Upcycled authentic 12-inch vinyl record with printed center label' if v['format'] == 'vinyl' else '300 GSM Matte Archival Stock'
+        condition = 'https://schema.org/RefurbishedCondition' if v['format'] == 'vinyl' else 'https://schema.org/NewCondition'
+        var_prod = {
+            '@type': 'Product',
+            '@id': URL + product_url(p, v['format']) + '#variant',
+            'name': f"{name_of(p)} — {v['label']}",
+            'sku': v['sku'],
+            'image': abs_img(v['image']),
+            'description': p['blurbs'].get(v['format']) or p['blurbs'][p['variants'][0]['format']],
+            'brand': {'@type': 'Brand', 'name': 'PastForward'},
+            'category': 'Wall art',
+            'material': material,
+            'itemCondition': condition,
+            'offers': o
+        }
+        if size_of(v):
+            var_prod['size'] = size_of(v)
+        variants_ld.append(var_prod)
+
+    group_name = f"{name_of(p)} — Upcycled 12-Inch Vinyl Record Wall Art, Poster & Polaroid"
+    return {'@type': 'ProductGroup', '@id': URL + product_url(p) + '#productgroup', 'name': group_name,
+            'productGroupID': f"pf-{p['slug']}",
             'description': p['blurbs'][p['variants'][0]['format']],
             'image': [abs_img(v['image']) for v in p['variants']],
             'brand': {'@type': 'Brand', 'name': 'PastForward'},
             'category': 'Wall art',
-            'offers': offers[0] if len(offers) == 1 else {
+            'url': URL + product_url(p),
+            'variesBy': ['https://schema.org/size', 'https://schema.org/material'],
+            'offers': {
                 '@type': 'AggregateOffer', 'priceCurrency': 'INR', 'lowPrice': min(prices), 'highPrice': max(prices),
-                'offerCount': len(offers), 'availability': 'https://schema.org/InStock', 'offers': offers}}
+                'offerCount': len(offers), 'availability': 'https://schema.org/InStock', 'offers': offers},
+            'hasVariant': variants_ld}
 
 def list_ld(name, products, fmts=None):
     return {'@type': 'ItemList', 'name': name, 'numberOfItems': len(products), 'itemListElement': [
@@ -405,7 +449,12 @@ NAV = [('Vinyls', '/vinyl'), ('A3 posters', '/posters/a3'), ('A5 posters', '/pos
 
 def popular_links():
     out = [(L['h1'].rstrip('.'), path) for path, L in SITE.get('landing', {}).items()]
-    out += [(A['name'], f'/artist/{slug}') for slug, A in SITE.get('artistPages', {}).items()]
+    top_artists = {'Travis Scott', 'Karan Aujla', 'Seedhe Maut', 'Diljit Dosanjh', 'Taylor Swift', 'The Weeknd',
+                   'Frank Ocean', 'Billie Eilish', 'Lana Del Rey', 'Kanye West', 'AP Dhillon', 'Anuv Jain',
+                   'Arctic Monkeys', 'Pink Floyd', 'Coldplay', 'Drake'}
+    for slug, A in SITE.get('artistPages', {}).items():
+        if A['name'] in top_artists or len(A['items']) >= 2:
+            out.append((A['name'], f'/artist/{slug}'))
     return out
 
 def fb_nav():
@@ -634,6 +683,11 @@ def build_site():
         path = f"/collections/{c['slug']}"
         add(path, f"collections/{c['slug']}.html", title=c['seo']['title'], desc=c['seo']['desc'],
             body=fb_listing(c['name'], c['desc'], prods), ld=graph(crumbs(('Home', '/'), (c['name'], path)), list_ld(c['name'], prods)))
+    c_three = next(c for c in COLS if c['slug'] == 'three-am')
+    add('/collections/3-am', 'collections/3-am.html', title=c_three['seo']['title'], desc=c_three['seo']['desc'],
+        canonical='/collections/three-am', body=fb_listing(c_three['name'], c_three['desc'], collection_products('three-am')),
+        ld=graph(crumbs(('Home', '/'), (c_three['name'], '/collections/three-am'))),
+        head='<meta http-equiv="refresh" content="0; url=/collections/three-am">')
     c0 = next(c for c in COLS if c['slug'] == 'the-classics')
     add('/collections', 'collections/index.html', title=c0['seo']['title'], desc=c0['seo']['desc'], canonical='/collections/the-classics',
         body=fb_listing(c0['name'], c0['desc'], collection_products(c0['slug'])), ld=graph())
@@ -767,6 +821,10 @@ def build_site():
 
     for path, file, doc, _ in pages:
         write(os.path.join(DOCS, file), doc)
+        # Also write directory index.html for clean URL routing on GitHub Pages with trailing slashes
+        if file.endswith('.html') and not file.endswith('index.html') and file != '404.html':
+            dir_index = os.path.join(DOCS, file[:-5], 'index.html')
+            write(dir_index, doc)
     # anything else (a mistyped address) gets the app, which shows its own "not in the crate" page
     write(os.path.join(DOCS, '404.html'), page(title='Page not found | PastForward', desc=M['/']['desc'], canonical=URL + '/',
           og_image=og_default, noindex=True, ld=graph(),

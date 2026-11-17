@@ -71,7 +71,7 @@ const step = (n, key, title, body) => photo(key) ? `<div class="step reveal">
   <div class="step__info"><div class="step__n">${n}</div><h3>${esc(title)}</h3>
   <p class="body-s dim step__desc">${esc(body)}</p></div></div>` : '';
 
-const eyebrow = t => `<div class="mono dim" data-txt="${esc(t)}"></div>`;
+const eyebrow = t => `<div class="mono dim" data-txt="${esc(t)}">${esc(t)}</div>`;
 const secHead = (eb, head, sub) => `${eyebrow(eb)}<h2 class="d-l reveal" style="margin:14px 0 0">${head}</h2>${sub ? `<p class="body-l dim reveal measure" style="margin-top:16px">${sub}</p>` : ''}`;
 
 /* a transition band between two chapter grounds */
