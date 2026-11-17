@@ -638,6 +638,7 @@ function viewCatalog(category, subType, params) {
       if (subType === 'a3' || subType === 'poster-a3') selSizes = ['poster-a3'];
       else if (subType === 'a5' || subType === 'poster-a5') selSizes = ['poster-a5'];
       else if (subType === '10x10' || subType === 'print-10' || subType === 'prints') selSizes = ['print-10'];
+      else if (subType === 'polaroid' || subType === 'polaroids') selSizes = ['polaroid'];
     }
     if (!selSizes.length) selSizes = ['poster-a3'];   // no "all posters" view: the posters page opens on A3
 
@@ -773,7 +774,7 @@ function viewCatalog(category, subType, params) {
   }
 
   let topContentHTML = '';
-  if (category === 'posters' && photo('poster-wall')) {
+  if ((category === 'posters' || category === 'polaroids') && photo('poster-wall')) {
     topContentHTML = `
       <div class="posters-hero">
         <div class="posters-hero__frame">
@@ -787,7 +788,7 @@ function viewCatalog(category, subType, params) {
               <p class="body-l posters-hero__sub">${sub}</p>
             </div>
             <div class="posters-hero__right">
-              <span class="mono-xs posters-hero__badge">From ${money(FMT.polaroid.price)} · Free delivery</span>
+              <span class="mono-xs posters-hero__badge">${category === 'polaroids' ? `${money(FMT.polaroid.price)} each · Free delivery` : `From ${money(FMT.polaroid.price)} · Free delivery`}</span>
             </div>
           </div>
         </div>
@@ -1781,7 +1782,7 @@ function mountCatalog(seg, params) {
         let cur = pp.getAll('size').filter(v => v !== 'all' && v !== inp.value);
         if (!pp.has('size') && path.startsWith('/posters/')) {
           const sub = path.split('/')[2];
-          const map = { 'a3': 'poster-a3', 'a5': 'poster-a5', '10x10': 'print-10' };
+          const map = { 'a3': 'poster-a3', 'a5': 'poster-a5', '10x10': 'print-10', 'polaroid': 'polaroid' };
           if (map[sub] && map[sub] !== inp.value) cur.push(map[sub]);
         }
         if (inp.checked) cur.push(inp.value);
