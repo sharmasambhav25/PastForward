@@ -2536,6 +2536,16 @@ function viewHome() {
       <p class="body-l reveal dropsub">New records and limited runs.</p>
       <div class="reveal dropcta">${listHTML('listform--lg')}</div>
     </div>
+  </section>
+
+  <!-- THE CUT / MARQUEE: two lines of typography running opposite ways -->
+  <section data-section="THE OBJECT" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
+    ${col('r', 'col--soft col--mask')}
+    <div style="position:relative;z-index:2">
+      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
+      <div style="height:clamp(6px,1.4vw,20px)"></div>
+      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
+    </div>
   </section>`;
 }
 
