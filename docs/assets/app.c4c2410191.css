@@ -3261,7 +3261,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   .stage--hero{min-height:0; height:min(66svh,560px); padding-block:20px}
 }
 @media(min-width:900px){
-  .stage--hero{min-height:0; height:min(84vh,780px)}
+  .stage--hero{min-height:100vh; height:100vh; height:100svh; padding-top:var(--nav-h)}
 }
 .best__h{display:none}
 
