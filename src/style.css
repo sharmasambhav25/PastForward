@@ -3253,9 +3253,15 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 .btn--light{background:var(--cream); color:#141112}
 .btn--light:hover{background:#fff; transform:translateY(-2px)}
 
-/* ---- 6. Home hero: shorter on phones so the categories show under it ---- */
+/* ---- 6. Home hero: balanced wall photo with centered lockup ---- */
+.stage--hero{display:grid; place-items:center; isolation:isolate}
+.stage--hero .stage__img img{object-position:50% 38%}
+.stage--hero .stage__in{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; margin:auto}
 @media(max-width:899px){
-  .stage--hero{min-height:0; height:min(64svh,560px); display:flex; align-items:flex-end; padding-bottom:26px}
+  .stage--hero{min-height:0; height:min(66svh,560px); padding-block:20px}
+}
+@media(min-width:900px){
+  .stage--hero{min-height:0; height:min(84vh,780px)}
 }
 .best__h{display:none}
 

@@ -105,12 +105,8 @@ function viewHome() {
     <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
-      <!-- The ads promise "from ₹99" and land here, so the entry price has to be on the first
-           screen: without it the only offer above the fold is a ₹999 record. Read from FMT so a
-           price change in build_catalogue.py moves this line too; never hand-type one here. -->
-      <p class="body-l" style="text-align:center;margin-top:18px">Records ${money(FMT.vinyl.price)}. Posters from ${money(FMT['poster-a5'].price)}. Polaroids ${money(FMT.polaroid.price)}.</p>
       <div style="text-align:center;margin-top:24px">
-        ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}
+        ${ctaShop('Shop vinyls', '/vinyl')}
       </div>
     </div>
   </section>
