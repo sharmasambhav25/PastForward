@@ -125,6 +125,15 @@ function viewHome() {
 
   ${railHTML('Polaroids', '/polaroids', homePicks(['polaroid'], 10).map(p => cardHTML(p, 'polaroid')), money(FMT.polaroid.price) + ' each · 10 for ' + money(699))}
 
+  <!-- THE CUT / MARQUEE: two lines of typography running opposite ways -->
+  <section data-section="THE OBJECT" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
+    ${col('r', 'col--soft col--mask')}
+    <div style="position:relative;z-index:2">
+      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
+      <div style="height:clamp(6px,1.4vw,20px)"></div>
+      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
+    </div>
+  </section>
 
   <!-- 12 ============ THE DROP ============ -->
   <section class="sec ground" data-section="THE DROP" style="text-align:center;position:relative;overflow:hidden">
@@ -134,16 +143,6 @@ function viewHome() {
       <h2 class="d-l reveal" style="margin-top:10px">Be first to the next drop.</h2>
       <p class="body-l reveal dropsub">New records and limited runs.</p>
       <div class="reveal dropcta">${listHTML('listform--lg')}</div>
-    </div>
-  </section>
-
-  <!-- THE CUT / MARQUEE: two lines of typography running opposite ways -->
-  <section data-section="THE OBJECT" style="padding-block:clamp(34px,6vw,74px);position:relative;overflow:hidden">
-    ${col('r', 'col--soft col--mask')}
-    <div style="position:relative;z-index:2">
-      ${marq('Designed from memory  ·  Made for now  ·', 'marq--serif', '-1')}
-      <div style="height:clamp(6px,1.4vw,20px)"></div>
-      ${marq('THE ALBUM THAT RAISED YOU  ·  ON YOUR WALL  ·', 'marq--shout marq--out', '1')}
     </div>
   </section>`;
 }
