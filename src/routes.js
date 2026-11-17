@@ -197,10 +197,11 @@ function homeCatsHTML() {
   </section>`;
 }
 function homeBannerHTML() {
-  if (!photo('poster-wall')) return '';
+  const pic = photo('album-posters') || photo('poster-wall');
+  if (!pic) return '';
   return `
   <section class="hbanner" data-section="POSTERS">
-    <img class="hbanner__img" src="${photo('poster-wall')}" alt="A bedroom wall covered in album posters" loading="lazy" decoding="async">
+    <img class="hbanner__img" src="${pic}" alt="A bedroom wall covered in album posters" loading="lazy" decoding="async">
     <div class="hbanner__in">
       <span class="hbanner__k">For the rest of the wall</span>
       <h2 class="hbanner__h">Album posters</h2>
