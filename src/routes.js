@@ -7,8 +7,12 @@ const figure = (k, cap, cls = '') => photo(k) ? `<figure class="shot ${cls}">
   <img src="${photo(k)}" alt="${esc(cap)}" loading="lazy" decoding="async">
   <figcaption class="mono-xs dim">${esc(cap)}</figcaption></figure>` : '';
 
-const FORMAT_PHOTO = { 'vinyl':'record-in-hand', 'poster-a3':'wall-white', 'poster-a5':'wall-white',
+const FORMAT_PHOTO = { 'poster-a3':'wall-white', 'poster-a5':'wall-white',
                        'print-10':'wall-full', 'polaroid':'stall-red' };
+const getFormatPhoto = (p, f) => {
+  if (p && p.slug === 'rose-apt' && f === 'vinyl') return 'record-in-hand';
+  return FORMAT_PHOTO[f] || '';
+};
 
 /* ---------- v2 composition helpers ---------- */
 
@@ -941,8 +945,8 @@ function viewProduct(p, params) {
           ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}" aria-label="${esc(x.label)}">
             <img src="${imgSrc(x.image)}" alt="${esc(albumOf(p))} ${esc(x.label)} artwork by PastForward"><span>${esc(x.badge)}</span></button>`).join('')}
           ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt="${esc(albumOf(p))} ${esc(c.name)} colourway by PastForward"></button>`).join('')}
-          ${photo(FORMAT_PHOTO[sel]) ? `<button class="pdp__thumb pdp__thumb--photo" data-shot aria-label="Photograph of the real thing">
-            <img src="${photo(FORMAT_PHOTO[sel])}" alt="PastForward ${esc(FMT[sel].label)} real product photograph"><span>PHOTO</span></button>` : ''}
+          ${photo(getFormatPhoto(p, sel)) ? `<button class="pdp__thumb pdp__thumb--photo" data-shot aria-label="Photograph of the real thing">
+            <img src="${photo(getFormatPhoto(p, sel))}" alt="PastForward ${esc(FMT[sel].label)} real product photograph"><span>PHOTO</span></button>` : ''}
         </div>
       </div>
       <div class="pdp__info">
@@ -1892,7 +1896,22 @@ function mountProduct(p, params) {
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     if (pick) pick.innerHTML = albumPickInner(p, f);
-    const pt = $('.pdp__thumb--photo'); if (pt && photo(FORMAT_PHOTO[f])) { $('img', pt).src = photo(FORMAT_PHOTO[f]); }
+    const pt = $('.pdp__thumb--photo');
+    const shotPic = photo(getFormatPhoto(p, f));
+    if (pt) {
+      if (shotPic) {
+        pt.style.display = '';
+        const img = $('img', pt);
+        if (img) img.src = shotPic;
+      } else {
+        pt.style.display = 'none';
+        if (pt.classList.contains('is-on')) {
+          pt.classList.remove('is-on');
+          const defThumb = $(`.pdp__thumb[data-fmt="${f}"]`);
+          if (defThumb) defThumb.classList.add('is-on');
+        }
+      }
+    }
     $('#scaleview').innerHTML = scaleSVG(f);
     drawScale();
     setParams(pp => pp.set('format', f), { silent: true });   // the address follows; the page stays put
@@ -1919,9 +1938,11 @@ function mountProduct(p, params) {
   }));
   const shotBtn = $('.pdp__thumb--photo');
   if (shotBtn) shotBtn.addEventListener('click', () => {
+    const shotPic = photo(getFormatPhoto(p, sel));
+    if (!shotPic) return;
     $$('.pdp__thumb').forEach(x => x.classList.remove('is-on'));
     shotBtn.classList.add('is-on');
-    $('#stagemedia').innerHTML = `<img class="stagephoto" src="${photo(FORMAT_PHOTO[sel])}" alt="A PastForward ${esc(FMT[sel].label)} photographed at the stand">`;
+    $('#stagemedia').innerHTML = `<img class="stagephoto" src="${shotPic}" alt="A PastForward ${esc(FMT[sel].label)} photographed at the stand">`;
   });
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
     qty = Math.max(1, Math.min(20, qty + (+b.dataset.pq))); $('#pdpqty').textContent = qty; setAmt();
