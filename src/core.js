@@ -29,6 +29,12 @@ const sizeOf = f => (f && f.size && f.size !== '[CONFIRM]') ? f.size : '';
 const customSize = f => f === FMT.vinyl ? '12-inch record' : sizeOf(f);
 const CONTACT_EMAIL = SITE.email;
 const DELIVERY = SITE.delivery;
+/* "Order today, arrives Thu 27 Nov – Sun 30 Nov": the stated delivery window (site.json) turned into dates */
+function arriveWindow(from = new Date()) {
+  const m = String(DELIVERY).match(/(\d+)\D+(\d+)/); if (!m) return '';
+  const d = n => { const x = new Date(from); x.setDate(x.getDate() + n); return x.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }); };
+  return `${d(+m[1])} – ${d(+m[2])}`;
+}
 const IG_URL = 'https://instagram.com/' + SITE.instagram;
 const waLink = text => 'https://wa.me/' + SITE.whatsapp + (text ? '?text=' + encodeURIComponent(text) : '');
 const mailLink = (subject, body) => 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + (body ? '&body=' + encodeURIComponent(body) : '');
@@ -56,6 +62,7 @@ const fastGL = (() => {
 })();
 const ICON_LOCK = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const ICON_CHECK = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ICON_TRUCK = '<svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6h11v9H2zM13 9h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/></svg>';
 /* the reassurance line: only things that are true today, read from site.json */
 function assureHTML(format, cls = '') {
   const items = [SHIP.label, 'Delivered in ' + DELIVERY, format === 'vinyl' ? 'Wall hook included' : '', 'Arrives damaged? We replace it'].filter(Boolean);
@@ -154,19 +161,32 @@ function cardHTML(p, targetFormat) {
   /* Clean card (Nov 2026): the picture, then album, artist and price in plain type, and a round
      add button on the picture's corner. A record is shown close up so its label can be read. */
   const kind = v.format === 'vinyl' ? '' : v.format === 'polaroid' ? 'Polaroid' : esc(v.label);
-  const bag = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg>';
+  const bag = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg>';
   return `<a class="card card--${v.format === 'vinyl' ? 'rec' : v.format === 'polaroid' ? 'pol' : 'art'}" href="/product/${p.slug}?format=${v.format}" data-card="${p.slug}" data-cursor="VIEW">
     <div class="card__media" style="aspect-ratio:${v.format === 'vinyl' ? 1 : '4/5'}" data-media>
       ${v.format === 'vinyl' ? recordHTML(p, { size: 210 })
         : v.format === 'polaroid' ? polaroidHTML(v, { style: 'width:62%' })
         : frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + ar })}
-      <button class="card__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart, ${money(v.price)}">${bag}</button>
     </div>
     <div class="card__meta">
       <span class="card__album">${albumOf(p)}</span>
       <span class="card__artist">${esc(p.artist)}${kind ? ` · ${kind}` : ''}</span>
       <span class="card__price num">${priceHTML(v.format, v.price)}</span>
-    </div></a>`;
+    </div>
+    <button class="card__add" data-add="${p.slug}|${v.format}" aria-label="Add ${esc(albumText(p))} to cart, ${money(v.price)}">${bag}<span class="card__addt">Add to cart</span></button></a>`;
+}
+
+/* a size chip on a poster card: same design, other size. Swaps picture, price, link and add button. */
+function pickChip(chip) {
+  const [slug, f] = chip.dataset.chip.split('|'), p = bySlug[slug], v = p && variant(p, f);
+  const card = chip.closest('.ag'); if (!v || !card) return;
+  card.querySelectorAll('[data-chip]').forEach(c => { const on = c === chip; c.classList.toggle('is-on', on); c.setAttribute('aria-pressed', String(on)); });
+  const head = card.querySelector('.ag__head'); if (head) head.setAttribute('href', `/product/${slug}?format=${f}`);
+  const media = card.querySelector('.ag__media');
+  if (media) { media.style.aspectRatio = f === 'print-10' ? '1' : '3/4'; media.innerHTML = frameHTML(v, { style: 'height:100%;width:auto;aspect-ratio:' + v.ratio }); }
+  const price = card.querySelector('.ag__sub'); if (price) price.innerHTML = `<span>${priceHTML(f, v.price)}</span>`;
+  const add = card.querySelector('.ag__quick');
+  if (add) { add.dataset.add = `${slug}|${f}`; add.setAttribute('aria-label', `Add ${albumText(p)} ${v.label} to cart, ${money(v.price)}`); }
 }
 
 /* ---------- cart ---------- */
@@ -184,7 +204,7 @@ function addToCart(slug, format, qty = 1, originEl, opt = {}) {
      grid stays on the page, so three records for a bundle is three taps, and the crate bar at the
      bottom keeps count. Laptops get a toast either way. */
   const phone = window.matchMedia('(max-width:1023px)').matches;
-  const drawerOpens = phone && !(opt.stay && $('#cratebar') && $('#cratebar').classList.contains('is-on'));
+  const drawerOpens = phone && !opt.quiet && !(opt.stay && $('#cratebar') && $('#cratebar').classList.contains('is-on'));
   if (!phone) toast(`Added — ${albumText(p)}, ${v.label}`);
   if (originEl && opt.stay) { originEl.classList.add('is-added'); setTimeout(() => originEl.classList.remove('is-added'), 1300); }
   Track.add(p, v, qty);
@@ -304,12 +324,12 @@ function cartLinesHTML() {
       <div class="line__img">${v.format === 'vinyl' ? recordHTML(p, { size: 60 }) : `<img src="${imgSrc(v.image)}" alt="">`}</div>
       <div style="flex:1;min-width:0">
         <div class="card__artist">${esc(p.artist)}</div>
-        <div style="font-family:var(--display);font-size:1rem;line-height:1.25">${albumOf(p)}</div>
+        <div class="line__alb">${albumOf(p)}</div>
         <div class="card__size" style="margin-top:3px">${esc(v.label)}${sizeOf(v) ? ' · ' + esc(sizeOf(v)) : ''}</div>
         <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
           <span class="qty"><button data-q="${i}|-1" aria-label="Decrease">−</button><span class="num">${l.qty}</span><button data-q="${i}|1" aria-label="Increase">+</button></span>
-          <span class="num" style="font-size:.75rem">${money(l.price * l.qty)}</span>
-          <button class="btn--ghost mono-xs" data-rm="${i}" style="margin-left:auto;background:none;border:0;cursor:pointer;color:var(--muted)">Remove</button>
+          <span class="num line__amt">${money(l.price * l.qty)}</span>
+          <button class="line__rm" data-rm="${i}" aria-label="Remove ${esc(albumText(p))}">Remove</button>
         </div></div></div>`;
   }).join('');
 }
@@ -344,6 +364,7 @@ function cartFootHTML() {
       <div class="row"><span>${cartCount()} in the crate</span><span>${money(m.sub)}</span></div>
       ${bundleRowsHTML(m)}
       <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
+      <div class="row eta-row"><span>Arrives</span><span>${arriveWindow()}</span></div>
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span><span class="btn__amt num">${money(m.total)}</span></button>
     <p class="payline mono-xs dim">${payLine()}</p>`;
@@ -1388,7 +1409,9 @@ document.addEventListener('click', e => {
   const card = e.target.closest('[data-card]');
   if (card && !e.target.closest('[data-add]')) captureFlip(card);
   const add = e.target.closest('[data-add]');
-  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add, { stay: add.classList.contains('card__add') || add.classList.contains('ag__quick') }); return; }
+  if (add) { e.preventDefault(); const [s, f] = add.dataset.add.split('|'); addToCart(s, f, 1, add, { stay: add.classList.contains('card__add') || add.classList.contains('ag__quick') || add.classList.contains('pao__add'), quiet: add.classList.contains('pao__add') }); return; }
+  const chip = e.target.closest('[data-chip]');
+  if (chip) { e.preventDefault(); pickChip(chip); return; }
   if (e.target.closest('[data-opencrate]')) { openDrawer(); return; }
   if (e.target.closest('[data-close]') || e.target.id === 'scrim') { closeAll(); return; }
   const q = e.target.closest('[data-q]');

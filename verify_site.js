@@ -59,7 +59,8 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
     try {
       const ld = JSON.parse(pick(body, /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/));
       if (u.startsWith('/product/')) {
-        const prod = ld['@graph'].find(n => n['@type'] === 'Product');
+        // a Product, or (since 17 Nov) a ProductGroup with one Product per format in hasVariant
+        const prod = ld['@graph'].find(n => n['@type'] === 'Product' || n['@type'] === 'ProductGroup');
         if (!prod) fails.push(`${u}: no Product in structured data`);
         else {
           const offers = prod.offers.offers || [prod.offers];

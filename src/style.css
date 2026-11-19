@@ -1968,14 +1968,14 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 
 /* ---- album → size step (posters) ---- */
 .ag__row--multi{display:block}
-.ag__pick{all:unset; box-sizing:border-box; cursor:pointer; width:100%; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
-.ag__pick:hover{color:var(--ember)}
-.ag__pick:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+.ag__choose{all:unset; box-sizing:border-box; cursor:pointer; width:100%; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
+.ag__choose:hover{color:var(--ember)}
+.ag__choose:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
 .ag__pchev{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--border-2); display:grid; place-items:center; transition:transform .35s var(--e-out-expo), background .2s, border-color .2s}
 .ag__pchev::before{content:""; width:6px; height:6px; border-right:1.5px solid var(--cream); border-bottom:1.5px solid var(--cream); transform:translateY(-2px) rotate(45deg)}
-.ag__pick:hover .ag__pchev{border-color:var(--ember)}
+.ag__choose:hover .ag__pchev{border-color:var(--ember)}
 .ag__row.is-open .ag__pchev{transform:rotate(180deg); background:var(--oxblood); border-color:var(--oxblood)}
-.ag__row.is-open .ag__pick{color:var(--cream)}
+.ag__row.is-open .ag__choose{color:var(--cream)}
 .ag__sizes{display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s var(--e-out-expo)}
 .ag__row.is-open .ag__sizes{grid-template-rows:1fr}
 .ag__sin{overflow:hidden; min-height:0}
@@ -1990,7 +1990,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 .ag__slink .ag__price{flex:none; font-family:var(--mono); font-size:.76rem; color:var(--cream); white-space:nowrap}
 .ag__sadd{flex:none; margin-right:8px; height:30px; padding:0 14px; border-radius:999px; border:1px solid var(--border-2); background:none; color:var(--cream); font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:background .2s, border-color .2s}
 .ag__sadd:hover,.ag__sadd:focus-visible{background:var(--oxblood); border-color:var(--oxblood)}
-@media(max-width:767px){ .ag__step,.ag__slist{margin-left:45px} .ag__pick{gap:9px} .ag__sadd{padding:0 11px; margin-right:6px} .ag__badge{min-width:38px} }
+@media(max-width:767px){ .ag__step,.ag__slist{margin-left:45px} .ag__choose{gap:9px} .ag__sadd{padding:0 11px; margin-right:6px} .ag__badge{min-width:38px} }
 @media(prefers-reduced-motion:reduce){ .ag__sizes,.ag__pchev{transition:none} }
 
 /* narrow artist cards (desktop grid): badge already names the size, so drop the label and indent */
@@ -3381,3 +3381,100 @@ select.sort{font-family:var(--ui); font-size:.86rem; letter-spacing:0; text-tran
 /* Bundles intro text: laptop only. Below 900px the photo stacks on top and leads straight into the deals. */
 .home-bundles__intro{display:contents}
 @media(max-width:899px){.home-bundles__intro{display:none}}
+
+/* =====================================================================================
+   SELLING PASS (20 Nov 2026)
+   From Posterized / Reawaken Theory / Pink Matter / Daily Objects, aimed at what Clarity showed:
+   people browse the grids but rarely open a product. So every card can be bought where it sits,
+   poster cards pick their size in place, and the product page answers "when will it arrive"
+   and "what goes with it" next to the button.
+   ===================================================================================== */
+/* ---- 1. The add button under every card ---- */
+.card{display:flex; flex-direction:column}
+.card__add,.card:hover .card__add,.ag__quick,.ag__quick:hover{position:static; inset:auto; top:auto; right:auto; bottom:auto; left:auto;
+  width:100%; height:40px; margin-top:auto; padding:0 12px; border-radius:999px; border:1px solid var(--border-2); background:transparent;
+  color:var(--cream); filter:none; box-shadow:none; transform:none; opacity:1; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  font-family:var(--ui); font-size:.84rem; font-weight:600; letter-spacing:0; text-transform:none; cursor:pointer;
+  transition:background .18s var(--e-ui), color .18s var(--e-ui), border-color .18s var(--e-ui), transform .12s var(--e-ui)}
+.card__meta,.ag__meta{margin-bottom:10px}
+.card__add svg,.ag__quick svg{display:block; width:16px; height:16px; flex:none}
+.card__add:hover,.ag__quick:hover{background:var(--cream); color:#141112; border-color:var(--cream); transform:none}
+.card__add:active,.ag__quick:active{transform:scale(.97)}
+.card__add:focus-visible,.ag__quick:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+.card__add.is-added,.ag__quick.is-added{background:var(--success); border-color:var(--success); color:#fff}
+.card__add.is-added svg,.ag__quick.is-added svg{display:none}
+.card__add.is-added .card__addt,.ag__quick.is-added .card__addt{display:none}
+.card__add.is-added::after,.ag__quick.is-added::before{content:"Added ✓"; font-size:.84rem; font-family:var(--ui)}
+.ag__quick.is-added::after{content:none}
+@media(max-width:1023px){.card__add,.ag__quick{height:42px}}
+/* the catalogue card is a column so every button in a row lines up */
+.ag{display:flex; flex-direction:column; align-self:stretch}
+.ag__head{flex:1}
+.ag__choose{display:inline-flex; align-items:center; justify-content:center; gap:6px; width:100%; height:40px; margin-top:2px; border-radius:999px;
+  border:1px solid var(--border-2); font-family:var(--ui); font-size:.84rem; font-weight:600; color:var(--cream); transition:background .18s, color .18s}
+.ag__choose i{font-style:normal; transition:transform .2s}
+.ag__head:hover .ag__choose{background:var(--cream); color:#141112; border-color:var(--cream)}
+.ag__head:hover .ag__choose i{transform:translateX(3px)}
+.ag--go .ag__head{display:flex; flex-direction:column}
+.ag--go .ag__meta{flex:1}
+
+/* ---- 2. Size chips on poster cards ---- */
+.chips{display:flex; gap:6px; margin:0 0 8px}
+.chip{flex:1; min-width:0; height:34px; padding:0 4px; border-radius:999px; border:1px solid var(--border-2); background:transparent; color:var(--muted);
+  font-family:var(--ui); font-size:.78rem; font-weight:600; cursor:pointer; transition:background .15s, color .15s, border-color .15s; position:relative}
+.chip::after{content:""; position:absolute; inset:-5px -2px}   /* 44px tap area */
+.chip:hover{color:var(--cream); border-color:var(--cream)}
+.chip.is-on{background:var(--cream); border-color:var(--cream); color:#141112}
+.chip:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
+
+/* ---- 3. Product page: arrival dates, add-ons, zoom ---- */
+.eta{display:flex; align-items:center; gap:9px; margin:14px 0 0; font-size:.9rem; color:rgba(243,239,232,.86)}
+.eta .ico{flex:none; color:var(--cream)}
+.eta b{font-weight:600; color:var(--cream)}
+.paos{margin-top:18px; border:1px solid var(--border-2); border-radius:14px; padding:12px 14px 4px}
+.paos__k{margin:0 0 4px; font-size:.82rem; color:var(--muted)}
+.pao{display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--border)}
+.paos__k + .pao{border-top:0}
+.pao__img{flex:none; width:46px; height:46px; border-radius:8px; overflow:hidden; background:var(--tile); display:grid; place-items:center}
+.pao__img img{width:100%; height:100%; object-fit:cover}
+.pao__t{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px}
+.pao__t b{font-weight:600; font-size:.9rem}
+.pao__t i{font-style:normal; font-size:.76rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pao__p{font-size:.88rem; font-weight:500}
+.pao__add{flex:none; height:36px; min-width:64px; padding:0 14px; border-radius:999px; border:1px solid var(--cream); background:transparent; color:var(--cream);
+  font-family:var(--ui); font-size:.82rem; font-weight:600; cursor:pointer; position:relative; transition:background .15s, color .15s}
+.pao__add::after{content:""; position:absolute; inset:-4px}
+.pao__add:hover{background:var(--cream); color:#141112}
+.pao__add.is-added{background:var(--success); border-color:var(--success); color:#fff; font-size:0}
+.pao__add.is-added::before{content:"✓"; font-size:.95rem}
+.pdp__stage{cursor:zoom-in}
+.pdp__zoom{position:absolute; left:12px; top:12px; z-index:3; width:40px; height:40px; border-radius:50%; border:0; display:grid; place-items:center;
+  background:rgba(10,8,9,.6); color:var(--cream); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); cursor:zoom-in}
+.zoom{position:fixed; inset:0; z-index:2000; background:rgba(6,5,6,.96); display:grid; place-items:center; padding:max(16px,env(safe-area-inset-top)) 12px 16px;
+  opacity:0; transition:opacity .2s ease; cursor:zoom-out}
+.zoom.is-on{opacity:1}
+.zoom[hidden]{display:none}
+.zoom img{max-width:100%; max-height:calc(100svh - 80px); width:auto; height:auto; object-fit:contain; border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.zoom__x{position:absolute; right:12px; top:max(12px,env(safe-area-inset-top)); width:44px; height:44px; border-radius:50%; border:1px solid var(--border-2);
+  background:rgba(20,17,18,.8); color:var(--cream); font-size:1.5rem; line-height:1; cursor:pointer}
+html.is-zoom,html.is-zoom body{overflow:hidden}
+.buybar__th{flex:none; width:42px; height:42px; border-radius:8px; object-fit:cover; background:var(--tile)}
+.buybar__th.is-rec{border-radius:50%; box-shadow:0 0 0 5px #0b0a0b}
+.receipt .eta-row span:last-child{color:var(--cream)}
+@media(prefers-reduced-motion:reduce){.zoom{transition:none}}
+/* ---- 4. Crate lines in the same plain type as the cards ---- */
+.line__alb{font-family:var(--ui); font-weight:600; font-size:.98rem; line-height:1.25; letter-spacing:-.01em}
+.line .card__artist{font-size:.8rem}
+.line .card__size{font-family:var(--ui); font-size:.78rem; letter-spacing:0; text-transform:none; color:var(--muted)}
+.line__amt{font-size:.9rem; font-weight:500}
+.line__rm{margin-left:auto; min-height:40px; padding:0 4px; background:none; border:0; cursor:pointer; color:var(--muted); font-family:var(--ui); font-size:.8rem;
+  text-decoration:underline; text-underline-offset:3px}
+.line__rm:hover{color:var(--cream)}
+.addon__t{font-family:var(--ui)}
+.addon{border-style:solid; border-radius:12px}
+.receipt .row{font-family:var(--ui); letter-spacing:0; text-transform:none}
+.addon__t .mono-xs{font-family:var(--ui); font-size:.74rem; letter-spacing:0; text-transform:none}
+.addon__b{font-family:var(--ui); font-size:.82rem; font-weight:600; letter-spacing:0; text-transform:none; height:38px; border-color:var(--cream); color:var(--cream)}
+.addon__b:hover{background:var(--cream); color:#141112}
+.bnudge{font-family:var(--ui); font-size:.84rem; letter-spacing:0; text-transform:none; border-style:solid; border-radius:12px}
+.drawer .payline,.payline{font-family:var(--ui); letter-spacing:0; text-transform:none; font-size:.78rem}
