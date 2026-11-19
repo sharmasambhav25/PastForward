@@ -207,11 +207,11 @@ function homeCatsHTML() {
   </section>`;
 }
 function homeBannerHTML() {
-  const pic = photo('album-posters') || photo('poster-wall');
+  const pic = photo('prints-spread') || photo('album-posters') || photo('poster-wall');
   if (!pic) return '';
   return `
   <section class="hbanner" data-section="POSTERS">
-    <img class="hbanner__img" src="${pic}" alt="A bedroom wall covered in album posters" loading="lazy" decoding="async">
+    <img class="hbanner__img" src="${pic}" alt="PastForward album posters spread across a table" loading="lazy" decoding="async" style="object-position:45% 55%">
     <div class="hbanner__in">
       <span class="hbanner__k">For the rest of the wall</span>
       <h2 class="hbanner__h">Album posters</h2>
@@ -784,10 +784,13 @@ function viewCatalog(category, subType, params) {
 
   let topContentHTML = '';
   if ((category === 'posters' || category === 'polaroids') && photo('poster-wall')) {
+    // posters lead with the real prints; polaroids keep the wall shot
+    const heroPic = (category === 'posters' && photo('prints-spread')) || photo('poster-wall');
+    const heroAlt = heroPic === photo('poster-wall') ? 'Album cover posters hung on a bedroom wall' : 'PastForward album posters spread across a table';
     topContentHTML = `
       <div class="posters-hero">
         <div class="posters-hero__frame">
-          <img class="posters-hero__img" src="${photo('poster-wall')}" alt="Album cover posters hung on a bedroom wall" loading="eager">
+          <img class="posters-hero__img" src="${heroPic}" alt="${heroAlt}" loading="eager">
           <!-- Soft bottom gradient, thinned on phone -->
           <div class="posters-hero__grad"></div>
           <div class="posters-hero__content">
