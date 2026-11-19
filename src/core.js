@@ -1435,6 +1435,21 @@ function openSearch() {
   const i = $('#searchinput'); i.value = ''; $('#searchres').innerHTML = searchResults('');
   setTimeout(() => i.focus(), 60);
 }
+/* Someone who searched for an album we don't stock is the most useful email on this site: they are
+   telling us what to make next, by name. The custom page asks for ₹999 up front, which is the wrong
+   ask for someone still browsing, so this catches the ones who aren't ready to buy yet and records
+   the album alongside the address. Dormant until site.json > forms.endpoint is set, like every other
+   form here, so nothing a visitor types is ever silently dropped. */
+function wantHTML(q) {
+  if (!(SITE.forms && SITE.forms.endpoint)) return '';
+  return `<div style="max-width:420px;margin:34px auto 0;text-align:left">
+    <p class="mono-xs dim" style="margin-bottom:10px">OR WE'LL TELL YOU WHEN IT EXISTS</p>
+    <form data-form="wishlist" data-success="Got it. We'll email you when it exists." class="listform">
+      <input type="hidden" name="album" value="${esc(q)}">
+      <input name="email" type="email" required placeholder="your@email.com" aria-label="Email" autocomplete="email">
+      <button class="btn btn--primary"><span class="btn__mag">Email me</span></button>
+    </form><div data-form-msg></div></div>`;
+}
 function searchResults(q) {
   const list = searchProducts(q);
   if (!q) return `<div class="mono-xs dim" style="margin-bottom:12px">Suggested Collections</div>
@@ -1443,7 +1458,8 @@ function searchResults(q) {
     <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
   if (!list.length) return `<div style="padding:48px 0;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
     <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet? We can still print it.</p>
-    <a class="btn btn--secondary" href="/custom" data-close><span class="btn__mag">Request custom piece</span></a></div>`;
+    <a class="btn btn--secondary" href="/custom" data-close><span class="btn__mag">Request custom piece</span></a>
+    ${wantHTML(q)}</div>`;
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
     <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>`;
 }
