@@ -1,3 +1,4 @@
+const SITE_COD = !!require('./src/site.json').cod;
 /* QA for the single-file build (dist/qa.html, #/ routing).   node verify.js
    The live build in docs/ has its own check: node verify_site.js
    Set PF_CHROME=/path/to/chrome to use an installed Chrome instead of Playwright's download. */
@@ -43,7 +44,8 @@ const BANNED = /\b(elevate|transform your room|curated collection|premium|aesthe
       const b = text.match(BANNED); if (b) fails.push(`${name}@${w}: banned word "${b[0]}"`);
       if (/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(text)) fails.push(`${name}@${w}: emoji present`);
       if (/\[CONFIRM\]|undefined|\bNaN\b|\{\{/.test(text)) fails.push(`${name}@${w}: placeholder text on the page (${(text.match(/\[CONFIRM\]|undefined|\bNaN\b|\{\{\w*/) || [''])[0]})`);
-      if (/\bCOD\b|cash on delivery is available/i.test(text)) fails.push(`${name}@${w}: promises COD`);
+      // COD is offered only when src/site.json says so ("cod": true, Sambhav's call 20 Nov 2026); otherwise the site must not promise it
+      if (!SITE_COD && /\bCOD\b|cash on delivery is available/i.test(text)) fails.push(`${name}@${w}: promises COD`);
       // record layers
       if (tag === 'd') {
         const rec = await page.evaluate(() => {
