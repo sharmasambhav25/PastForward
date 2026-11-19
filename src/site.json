@@ -16,7 +16,7 @@
   },
 
   "payments": "UPI, cards and net banking",
-  "cod": false,
+  "cod": true,
 
   "bundles": {
     "_note": "Bundle prices. Each one is a Shopify discount code (Admin > Discounts) that applies once per order; the site applies the single best one at checkout via ?discount=CODE. Set live:false until the code exists in Shopify.",
@@ -329,7 +329,7 @@
         ],
         [
           "Delivery",
-          "{{SHIPPING_LINE}} Orders reach you in {{DELIVERY}}. Pay by {{PAYMENTS}}."
+          "{{SHIPPING_LINE}} Orders reach you in {{DELIVERY}}. Pay by {{PAYMENTS}}. {{COD_LINE}}"
         ]
       ],
       "faq": [
