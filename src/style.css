@@ -3377,3 +3377,7 @@ select.sort{font-family:var(--ui); font-size:.86rem; letter-spacing:0; text-tran
 /* Home bestsellers: two rows at every width (2, 3 or 4 across) */
 @media(max-width:767px){.best__grid>*:nth-child(n+5){display:none}}
 @media(min-width:768px) and (max-width:1199px){.best__grid>*:nth-child(n+7){display:none}}
+
+/* Bundles intro text: laptop only. Below 900px the photo stacks on top and leads straight into the deals. */
+.home-bundles__intro{display:contents}
+@media(max-width:899px){.home-bundles__intro{display:none}}
