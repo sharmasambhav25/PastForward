@@ -119,11 +119,11 @@ function viewHome() {
 
   ${bestHTML(8)}
 
+  ${homeBundlesHTML()}
+
   ${homeBannerHTML()}
 
   ${railHTML('Posters', '/posters', homePicks(['poster-a3'], 10).map(p => cardHTML(p, 'poster-a3')), 'A3 ' + money(FMT['poster-a3'].price) + ' · A5 ' + money(FMT['poster-a5'].price))}
-
-  ${homeBundlesHTML()}
 
   ${formatsHTML()}
 
@@ -200,9 +200,9 @@ function homeCatsHTML() {
     <div class="cats__row">
       ${tile('/vinyl', 'Vinyls', money(FMT.vinyl.price), ph('vinyl-wall', '30% 50%'))}
       ${tile('/posters', 'Posters', 'from ' + money(FMT['poster-a5'].price), ph('wall-white', '50% 30%'))}
+      ${tile('/custom', 'Custom vinyl', 'any album', ph('record-in-hand', '50% 40%'))}
       ${tile('/polaroids', 'Polaroids', money(FMT.polaroid.price), `<span class="cat__fan" aria-hidden="true">${pol.map(u => `<img src="${u}" alt="" loading="lazy" decoding="async">`).join('')}</span>`, 'cat--fan')}
       ${tile('/bundles', 'Bundles', 'save up to 30%', ph('bundles-wall', '50% 0'), 'cat--bun')}
-      ${tile('/custom', 'Custom vinyl', 'any album', ph('record-in-hand', '50% 40%'))}
     </div>
   </section>`;
 }
@@ -232,10 +232,6 @@ function homeBundlesHTML() {
           <img class="home-bundles__img" src="${photo('bundles-wall')}" alt="Buy Bundles 30% Off" loading="lazy">
         </div>
         <div class="home-bundles__content">
-          <span class="mono-xs home-bundles__eyebrow">Wall Bundles · Automatic Savings</span>
-          <h2 class="d-l home-bundles__title">Mix your wall.<br>Save up to 30%.</h2>
-          <p class="body-l dim home-bundles__sub">Combine vinyl records, A3 posters, and polaroids. Pick your favorite albums and the best bundle discount is applied automatically in your crate at checkout.</p>
-          
           <div class="home-bundles__deals">
             <a class="home-bundles__deal" href="/vinyl">
               <span class="home-bundles__deal-name">Any 3 Vinyl Records</span>
