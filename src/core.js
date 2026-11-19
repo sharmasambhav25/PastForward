@@ -61,7 +61,7 @@ function assureHTML(format, cls = '') {
   const items = [SHIP.label, 'Delivered in ' + DELIVERY, format === 'vinyl' ? 'Wall hook included' : '', 'Arrives damaged? We replace it'].filter(Boolean);
   return `<ul class="assure ${cls}">${items.map(t => `<li>${ICON_CHECK}<span>${esc(t)}</span></li>`).join('')}</ul>`;
 }
-const payLine = () => `${ICON_LOCK}<span>Secure checkout · ${esc(SITE.payments)}</span>`;
+const payLine = () => `${ICON_LOCK}<span>Secure checkout · ${esc(SITE.payments)}${SITE.cod ? ' · Cash on delivery' : ''}</span>`;
 const CONFIRM = (what) => `<span data-confirm title="${esc(what)}">[CONFIRM]</span>`;
 
 const CAT = window.__CATALOGUE__;
