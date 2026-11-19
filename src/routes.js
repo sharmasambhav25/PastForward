@@ -232,6 +232,11 @@ function homeBundlesHTML() {
           <img class="home-bundles__img" src="${photo('bundles-wall')}" alt="Buy Bundles 30% Off" loading="lazy">
         </div>
         <div class="home-bundles__content">
+          <div class="home-bundles__intro">
+            <span class="mono-xs home-bundles__eyebrow">Wall Bundles · Automatic Savings</span>
+            <h2 class="d-l home-bundles__title">Mix your wall.<br>Save up to 30%.</h2>
+            <p class="body-l dim home-bundles__sub">Combine vinyl records, A3 posters, and polaroids. Pick your favorite albums and the best bundle discount is applied automatically in your crate at checkout.</p>
+          </div>
           <div class="home-bundles__deals">
             <a class="home-bundles__deal" href="/vinyl">
               <span class="home-bundles__deal-name">Any 3 Vinyl Records</span>
