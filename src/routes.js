@@ -106,7 +106,7 @@ function viewHome() {
        Script over didone caps over grotesque, white, on a darkened
        photograph of the real wall. Straight out of the brand's own ads. -->
   <section class="stage stage--hero" data-section="WALL DECOR">
-    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" loading="lazy"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" loading="lazy"></div>
+    <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" decoding="async"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" fetchpriority="high"></div>
     <div class="stage__in">
       ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
       <div style="text-align:center;margin-top:24px">
@@ -596,7 +596,8 @@ function artistCardHTML([artist, items], routeFormats, idx) {
           <span class="ag__sub"><span>${priceHTML(v.format, v.price)}</span></span>
         </span>
       </a>
-      <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg></button>
+      ${sizeChipsHTML(first, v.format, routeFormats)}
+      <button class="ag__quick" data-add="${first.slug}|${v.format}" aria-label="Add ${esc(albumText(first))} by ${esc(artist)} to cart"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M12 12v4M10 14h4"/></svg><span class="card__addt">Add to cart</span></button>
     </div>`;
   }
   // Several albums (or several sizes): the card opens the lead album's own page, and the albums
@@ -612,8 +613,18 @@ function artistCardHTML([artist, items], routeFormats, idx) {
         <span class="ag__sub">${n > 1 ? `<span class="ag__n">${n} ${word}</span>` : ''}<span>from ${routeFormats.length === 1 ? priceHTML(routeFormats[0], from) : money(from)}</span></span>
       </span>
       <span class="ag__chev ag__chev--go" aria-hidden="true"></span>
+      <span class="ag__choose" aria-hidden="true">Choose ${n > 1 ? 'album' : 'size'}<i>→</i></span>
     </a>
   </div>`;
+}
+/* Poster cards: pick the size on the card itself (A3 / A5 / 10×10), the way poster stores let you
+   buy straight from the grid. The chip swaps the price, the add button and the link. */
+const CHIP_FMTS = ['poster-a3', 'poster-a5', 'print-10'];
+function sizeChipsHTML(p, sel, routeFormats) {
+  if (!routeFormats.some(f => CHIP_FMTS.includes(f))) return '';
+  const vs = CHIP_FMTS.map(f => variant(p, f)).filter(Boolean);
+  if (vs.length < 2) return '';
+  return `<div class="chips" role="group" aria-label="Size">${vs.map(x => `<button type="button" class="chip${x.format === sel ? ' is-on' : ''}" data-chip="${p.slug}|${x.format}" aria-pressed="${x.format === sel}">${FMT_TAG[x.format]}</button>`).join('')}</div>`;
 }
 function sizeTabsHTML(active) {
   return `<nav class="stabs" aria-label="Poster sizes">${SIZE_TABS.map(t => `<a class="stab${t.key === active ? ' is-on' : ''}" href="${t.href}"${t.key === active ? ' aria-current="page"' : ''}>
@@ -943,6 +954,7 @@ function viewProduct(p, params) {
       ${albumPickHTML(p, sel)}
       <div class="pdp__media">
         <div class="pdp__stage" id="stage"><div class="roomlight"></div>
+          <button class="pdp__zoom" type="button" data-zoom aria-label="See it larger"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></button>
           <div id="stagemedia" style="position:relative">${stageMedia(p, sel)}</div>
         </div>
         <div class="pdp__thumbs">
@@ -975,6 +987,8 @@ function viewProduct(p, params) {
           <button class="btn btn--buy pdp__buy" style="flex:1;min-width:180px" id="pdpbuy" data-buynow><span class="btn__mag">Buy now</span></button>
         </div>
         <button class="btn btn--add pdp__atc" id="pdpadd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
+        <p class="eta" id="pdpeta">${ICON_TRUCK}<span>Order today, arrives <b>${arriveWindow()}</b></span></p>
+        <div id="pdpaddons">${pdpAddonsHTML(p, sel)}</div>
         <div id="pdpassure">${assureHTML(sel)}</div>
         <p class="payline mono-xs dim">${payLine()}</p>
 
@@ -1006,6 +1020,7 @@ function viewProduct(p, params) {
     </section>
 
     <div class="buybar" id="buybar">
+      <img class="buybar__th${sel === 'vinyl' ? ' is-rec' : ''}" id="barth" src="${imgSrc(v.image)}" alt="" decoding="async">
       <span class="buybar__t"><b>${albumOf(p)}</b><i id="barfmt">${esc(FMT[sel].label)}</i></span>
       <button class="btn btn--primary" id="baradd"><span class="btn__mag">Add to cart</span><span class="btn__amt num" data-amt>${money(v.price)}</span></button>
     </div></div>`;
@@ -1444,6 +1459,9 @@ function mountAccordions() {
 }
 
 function mountHome() {
+  // the hero photo is what people tap first; it opens the records instead of doing nothing
+  const hero = $('.stage--hero');
+  if (hero) { hero.style.cursor = 'pointer'; hero.addEventListener('click', e => { if (!e.target.closest('a,button')) navigate('/vinyl'); }); }
   // laptop: arrows page a rail sideways (a phone just swipes it)
   $$('.hrail__nav button').forEach(b => b.addEventListener('click', () => {
     const r = b.closest('section').querySelector('.hrail'); if (r) r.scrollBy({ left: +b.dataset.rail * r.clientWidth * .8, behavior: 'smooth' });
@@ -1896,6 +1914,8 @@ function mountProduct(p, params) {
     const bl = $('#pdpblurb'); if (bl) bl.textContent = (p.blurbs || {})[f] || '';
     const as = $('#pdpassure'); if (as) as.innerHTML = assureHTML(f);
     const pb = $('#pdpbundle'); if (pb) pb.innerHTML = pdpBundleHTML(p, f);
+    const ad = $('#pdpaddons'); if (ad) ad.innerHTML = pdpAddonsHTML(p, f);
+    const th = $('#barth'); if (th) { th.src = imgSrc(v.image); th.classList.toggle('is-rec', f === 'vinyl'); }
     const ha = $('#hangacc'); if (ha) ha.hidden = f !== 'vinyl';
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
@@ -1959,6 +1979,12 @@ function mountProduct(p, params) {
       setTimeout(() => { t.textContent = was; btn.classList.remove('is-done'); btn.__flash = 0; }, 1400); }
   };
   $('#pdpadd').addEventListener('click', add);
+  const stage = $('#stage');
+  if (stage) stage.addEventListener('click', e => {
+    if (e.target.closest('.pdp__thumbs')) return;
+    const shot = $('#stagemedia img.stagephoto'), v = variant(p, sel);
+    openZoom(shot ? shot.src : imgSrc(v.image, true), `${albumText(p)}, ${v.label}`);
+  });
   $('#baradd').addEventListener('click', add);
   const pbw = $('#pdpbundle');
   if (pbw) pbw.addEventListener('click', e => { const b = e.target.closest('[data-addpair]'); if (b) addMany([wallLine(p.slug, 'vinyl'), wallLine(p.slug, 'poster-a3')], b); });
@@ -2294,6 +2320,38 @@ function mountBuildWall() {
 }
 
 /* product page: the bundle this piece counts towards */
+/* "Goes with it": the same album in the smaller formats, one tap each (Daily Objects' add-on rows,
+   Pink Matter's frequently-bought-together). A3 next to a record notes the pair price. */
+function pdpAddonsHTML(p, f) {
+  const cur = variant(p, f); if (!cur) return '';
+  const rows = ['poster-a3', 'poster-a5', 'polaroid'].filter(x => x !== f).map(x => variant(p, x))
+    .filter(v => v && v.price < cur.price).slice(0, 2);
+  if (!rows.length) return '';
+  return `<div class="paos"><p class="paos__k">Goes with it</p>${rows.map(v => {
+    const note = sizeOf(v) || (v.format === 'polaroid' ? 'Polaroid-style card' : '');
+    return `<div class="pao">
+      <span class="pao__img"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"></span>
+      <span class="pao__t"><b>${esc(v.label)}</b><i>${esc(note)}</i></span>
+      <span class="pao__p num">${money(v.price)}</span>
+      <button class="pao__add" type="button" data-add="${p.slug}|${v.format}" aria-label="Add the ${esc(v.label)} of ${esc(albumText(p))}, ${money(v.price)}">Add</button>
+    </div>`; }).join('')}</div>`;
+}
+/* tap the picture to see it larger; tap again, swipe back or Escape to close */
+function openZoom(src, alt) {
+  let z = document.getElementById('zoom');
+  if (!z) {
+    z = document.createElement('div'); z.id = 'zoom'; z.className = 'zoom'; z.setAttribute('role', 'dialog'); z.setAttribute('aria-modal', 'true');
+    z.innerHTML = '<button class="zoom__x" type="button" aria-label="Close">×</button><img alt="">';
+    document.body.appendChild(z);
+    const close = () => { z.classList.remove('is-on'); document.documentElement.classList.remove('is-zoom'); setTimeout(() => { z.hidden = true; }, 200); };
+    z.addEventListener('click', close);
+    addEventListener('keydown', e => { if (e.key === 'Escape' && !z.hidden) close(); });
+    addEventListener('popstate', () => { if (!z.hidden) close(); });
+  }
+  const img = z.querySelector('img'); img.src = src; img.alt = alt || '';
+  z.hidden = false; requestAnimationFrame(() => z.classList.add('is-on')); document.documentElement.classList.add('is-zoom');
+  z.querySelector('.zoom__x').focus({ preventScroll: true });
+}
 function pdpBundleHTML(p, f) {
   const both = variant(p, 'vinyl') && variant(p, 'poster-a3');
   const b = LIVE_BUNDLES.find(x => x.pair && both && (f === 'vinyl' || f === 'poster-a3')) || LIVE_BUNDLES.find(x => (x.need || {})[f]);
