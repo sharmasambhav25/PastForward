@@ -1781,6 +1781,11 @@ function setParams(mut, opt = {}) {
   if (opt.silent) replaceUrl(to); else navigate(to, { replace: true, keepScroll: true });
 }
 function mountCatalog(seg, params) {
+  // the banner photo gets tapped (Clarity dead clicks): it takes you down to the pieces
+  $$('.posters-hero__frame').forEach(f => { f.style.cursor = 'pointer'; f.addEventListener('click', e => {
+    if (e.target.closest('a,button')) return;
+    const g = $('.ag-grid, .grid'); if (g) scrollTo({ top: g.getBoundingClientRect().top + scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) - 70, behavior: RM() ? 'auto' : 'smooth' });
+  }); });
   const currentPath = '#' + (seg.join('/') || 'vinyl');
   const grid = $('#grid');
   const ftgl = $('#filtertgl'), rail = $('#rail');
