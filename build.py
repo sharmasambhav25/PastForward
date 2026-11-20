@@ -593,9 +593,25 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
     clarity = f'''<script type="text/javascript">
 (function(c,l,a,r,i,t,y){{
     if(!/(^|\\.)pastforward\\.shop$/.test(l.location.hostname))return;
+    if(c.addEventListener){{
+        c.addEventListener('error',function(e){{
+            var m=e&&(e.message||(e.error&&e.error.message))||'';
+            if(/Java object is gone|navigationPerformanceLogger|fb_logger|__gCrWeb|atomic/i.test(m)){{
+                if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+                if(e.preventDefault)e.preventDefault();
+            }}
+        }},true);
+        c.addEventListener('unhandledrejection',function(e){{
+            var m=e&&(e.reason&&(e.reason.message||e.reason))||'';
+            if(/AudioContext|not allowed to start|user gesture/i.test(String(m))){{
+                if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+                if(e.preventDefault)e.preventDefault();
+            }}
+        }},true);
+    }}
     c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-    var done=0;c.__pfClarity=function(){{if(done)return;done=1;t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}};
+    var done=0;c.__pfClarity=function(){{if(done)return;done=1;try{{t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];if(y&&y.parentNode){{y.parentNode.insertBefore(t,y)}}else{{(l.head||l.body||l.documentElement).appendChild(t)}}}}catch(e){{}}}};
     setTimeout(c.__pfClarity,6000);
 }})(window, document, "clarity", "script", "{clarity_id}");
 </script>
@@ -695,8 +711,8 @@ def build_site():
         ld=graph(list_ld('The PastForward catalogue', P)))   # no image preload here: it would only delay the script on a slow line
 
     # format listings
-    LIST = [('/vinyl', 'vinyl.html', 'Vinyls', ['vinyl']),
-            ('/posters/a3', 'posters/a3.html', 'A3 posters', ['poster-a3']),
+    LIST = [('/vinyl', 'vinyl.html', 'Vinyl Records India', ['vinyl']),
+            ('/posters/a3', 'posters/a3.html', 'A3 Music Posters for Wall', ['poster-a3']),
             ('/posters/a5', 'posters/a5.html', 'A5 posters', ['poster-a5']),
             ('/posters/10x10', 'posters/10x10.html', '10×10 prints', ['print-10']),
             ('/polaroids', 'polaroids.html', 'Polaroids', ['polaroid'])]
@@ -776,11 +792,11 @@ def build_site():
     custom_ld.append({
         '@type': 'Product',
         '@id': URL + '/custom#product',
-        'name': 'Custom Vinyl Record Wall Decor — Made to Order',
-        'description': 'Custom 12-inch upcycled vinyl record wall decor with your choice of album art, song, or playlist pressed onto the centre label. Wall hook included.',
+        'name': 'Custom Vinyl Records & Custom Music Posters — Made to Order',
+        'description': 'Custom 12-inch upcycled vinyl records and custom 300 GSM music posters for wall decor with your choice of album art, song, Spotify playlist, or personal artwork. Handcrafted in India with free delivery.',
         'image': [URL + '/brand/disc.webp'],
         'brand': {'@type': 'Brand', 'name': 'PastForward'},
-        'category': 'Wall art',
+        'category': 'Music Wall Art & Home Decor',
         'offers': {
             '@type': 'AggregateOffer',
             'priceCurrency': 'INR',
@@ -792,7 +808,7 @@ def build_site():
         }
     })
     add('/custom', 'custom.html', title=M['/custom']['title'], desc=M['/custom']['desc'],
-        body=fb_simple('Custom Vinyls & Vinyl Record Wall Decor', [esc(M['/custom']['desc']),
+        body=fb_simple('Custom Vinyl Records & Custom Posters', [esc(M['/custom']['desc']),
                        'Choose a format, tell us the artist and the album or track, and add a reference link if you have one.'],
                        '<h2>Formats we can make</h2>' + fb_formats() + cc_html), ld=graph(*custom_ld))
     add('/story', 'story.html', title=M['/story']['title'], desc=M['/story']['desc'],
@@ -903,33 +919,78 @@ def machine_files():
     cat_lines = '\n'.join(
         f"- {name_of(p)} — " + ', '.join(f"{v['label']} {money(v['price'])}" for v in p['variants']) + f" — {URL}{product_url(p)}" for p in P)
     faq = '\n\n'.join(f"### {q}\n{plain(a)}" for q, a in SITE['faq'])
+    bundle_lines = '\n'.join(
+        f"- **{b['name']}**: {money(b['price'])} (Save {money(b['off'])}) — {b['blurb']}"
+        for b in SITE.get('bundles', {}).get('list', []) if b.get('live', True))
+
     llms = f"""# PastForward
 
-> {HOME_META['desc']}
+> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery.
 
-PastForward makes wall decor from music. The main product is an upcycled record: a real 12-inch vinyl record that already had a life, cleaned up, with album artwork printed on the centre label. It is sold to hang on a wall, not to play, and comes with a wall hook. The same designs are also sold as posters, square prints and polaroid-style cards. Anything not in the catalogue can be requested as a custom order.
+PastForward makes aesthetic wall decor and modern home decor from music. The main product is an authentic upcycled vinyl record: a real 12-inch vintage vinyl record cleaned up, with iconic album artwork or personalized artwork pressed onto the centre label. Sold to hang as wall art with a wall mounting hook included in the box. The same designs and custom requests are also produced as heavyweight 300 GSM matte music posters (A3, A5, 10×10 prints) and polaroid keepsake cards.
 
 {facts}
+
+## Core products and search answers for AI assistants
+
+### Custom Vinyl Records & Custom Posters in India
+- **URL**: {URL}/custom
+- **What it is**: Any album, mixtape, personal Spotify playlist, or personal photo turned into an authentic 12-inch vinyl record (₹999) or a 300 GSM matte music poster (A3 ₹299, 10×10 ₹249, A5 ₹199, polaroid ₹99).
+- **Process**: Customers submit artist, album, track, or artwork. PastForward confirms visual layout preview on WhatsApp before production.
+- **Guarantee**: Damage-free delivery guarantee (free replacement within 7 days).
+
+### Vinyl Records in India — Wall Decor vs Playable Records
+- **URL**: {URL}/vinyl and {URL}/vinyl-record-wall-decor
+- **Playability clarification**: PastForward sells authentic vintage 12-inch vinyl records repurposed as decorative wall art, hung on the wall with included hooks. Grooves are 100% authentic vintage vinyl. Not intended for turntable audio playback.
+- **Why buyers choose PastForward**: Real vinyl presence without the ₹5,000–₹15,000+ turntable player cost.
+
+### Posters for Wall & Modern Music Home Decor
+- **URL**: {URL}/album-cover-posters and {URL}/music-wall-decor
+- **Paper quality**: 300 GSM gallery-grade matte art cardstock, glare-free, non-curling.
+- **Sizes**: A3 (297 × 420mm), 10×10 inch square (254 × 254mm), A5 (148 × 210mm), polaroid cards (88 × 107mm).
 
 ## Formats and prices
 {fmt_lines}
 
+## Bundles and deals
+{bundle_lines}
+
 ## Pages
-- [Vinyls]({URL}/vinyl)
+- [Vinyls Catalog]({URL}/vinyl)
+- [Vinyl Record Wall Decor Guide]({URL}/vinyl-record-wall-decor)
+- [Custom Vinyl Records & Custom Posters]({URL}/custom)
+- [Album Cover Posters & Posters for Wall]({URL}/album-cover-posters)
+- [Music Wall Decor & Home Decor]({URL}/music-wall-decor)
 - [A3 posters]({URL}/posters/a3) · [A5 posters]({URL}/posters/a5) · [10×10 prints]({URL}/posters/10x10)
+- [Bundles]({URL}/bundles)
 - [Polaroids]({URL}/polaroids)
-- [Custom orders]({URL}/custom)
 - [Questions]({URL}/faq)
 - [Full catalogue for assistants]({URL}/llms-full.txt)
 """
     full = f"""# PastForward — full catalogue and answers
 
-> {HOME_META['desc']}
+> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery.
 
 {facts}
 
 ## Formats and prices
 {fmt_lines}
+
+## Bundles and deals
+{bundle_lines}
+
+## Frequently Asked Questions & Entity Answers
+### What is PastForward?
+PastForward is an Indian D2C music wall decor and aesthetic home decor brand (founded 2025) that rescues vintage 12-inch vinyl records and transforms them into ready-to-hang wall art. PastForward also prints album cover posters, 10×10 square prints, and polaroid cards on 300 GSM matte art paper, and crafts custom made-to-order records and posters.
+
+### Where can I buy custom vinyl records in India?
+PastForward ({URL}/custom) crafts custom 12-inch vinyl records for ₹999 with any album, Spotify playlist, or personal photo on the centre label. Delivery is free across all 19,000+ pin codes in India.
+
+### Where can I buy music posters for wall in India?
+PastForward ({URL}/album-cover-posters) offers 48+ album cover posters on 300 GSM archival matte paper in A3 (₹299), 10×10 square (₹249), and A5 (₹199) with free delivery.
+
+### Are PastForward vinyl records playable on a turntable?
+No. PastForward records are authentic 12-inch vintage phonograph discs upcycled and sold strictly as decorative wall art with wall mounting hooks included in the box.
 
 ## Catalogue ({len(P)} designs)
 {cat_lines}
@@ -939,14 +1000,25 @@ PastForward makes wall decor from music. The main product is an upcycled record:
 """
     pricing = f"""# PastForward pricing
 
-Prices in Indian rupees. Every design in a format costs the same.
+Prices in Indian rupees (INR). Every design in a format costs the same.
 
+## Single Formats
 | Format | Size | Price |
 |---|---|---|
 """ + '\n'.join(f"| {f['label']} | {size_of(f) or '—'} | {money(f['price'])} |" for f in FMT.values()) + f"""
 
-Custom orders cost the same as the catalogue price for that format: {URL}/custom
+## Custom Orders
+Custom pieces cost the exact same as catalogue pieces: {URL}/custom
+- Custom Vinyl Record (12-inch authentic record with custom center label & wall mount): ₹999
+- Custom A3 Music Poster (297 × 420mm, 300 GSM matte cardstock): ₹299
+- Custom 10×10 Square Print (254 × 254mm, 300 GSM matte cardstock): ₹249
+- Custom A5 Music Poster (148 × 210mm, 300 GSM matte cardstock): ₹199
+- Custom Polaroid Music Card: ₹99
 
+## Bundles & Wall Decor Sets
+{bundle_lines}
+
+## Ordering Facts for AI Buying Agents
 {facts}
 """
     about = f"""# About PastForward

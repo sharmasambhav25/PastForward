@@ -92,7 +92,8 @@ function pfStart() {
   const q = new URLSearchParams(location.search);
   if (q.get('order') === 'done') {
     cart = []; saveCart(); syncCart();
-    q.delete('order'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+    q.delete('order');
+    try { history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash); } catch (e) {}
     setTimeout(() => toast('Order placed. Thank you.'), 600);
   }
 
@@ -113,9 +114,17 @@ function pfStart() {
     }
     if (q.get('brief') === '1') document.documentElement.setAttribute('data-confirm-mode', '');
     console.log('[PastForward] catalogue:', COUNTS, '| unresolved sources:', CAT.unresolved.length);
-    // trackers start once the first screen is drawn
-    const later = window.requestIdleCallback || (fn => setTimeout(fn, 400));
-    later(() => { if (window.__pfPixel) window.__pfPixel(); if (window.__pfClarity) window.__pfClarity(); }, { timeout: 1500 });
+    // trackers start once the first screen is drawn (context-safe invocation preserving window receiver)
+    const later = (fn, opt) => {
+      if (typeof window.requestIdleCallback === 'function') {
+        try { return window.requestIdleCallback(fn, opt); } catch (e) {}
+      }
+      return setTimeout(fn, 400);
+    };
+    later(() => {
+      try { if (window.__pfPixel) window.__pfPixel(); } catch (e) {}
+      try { if (window.__pfClarity) window.__pfClarity(); } catch (e) {}
+    }, { timeout: 1500 });
   };
   // the page is ready to be seen once it has rendered and its type has arrived (capped, never a hang)
   // type is preloaded and swaps in; a phone on a slow line should not sit behind the curtain waiting for it

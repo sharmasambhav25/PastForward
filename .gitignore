@@ -9,4 +9,8 @@ node_modules/
 *.log
 push.js
 server.js
+.env
+clarity-cache.json
+__pycache__/
+*.pyc
 
