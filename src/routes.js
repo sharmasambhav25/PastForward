@@ -487,8 +487,12 @@ function mountCrateSection(onUnmount) {
     ['album', 'artist', 'collection', 'otherLabel', 'other'].forEach((k, j) => {
       const el = cm(k); if (!el || el.textContent === f[k]) return;
       el.textContent = f[k];
-      if (!RM()) el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
-        { duration: 420, delay: j * 28, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+      if (!RM() && el.animate) {
+        try {
+          el.animate([{ transform: `translateY(${dir * 105}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
+            { duration: 420, delay: j * 28, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+        } catch (e) {}
+      }
     });
   };
   let api = null;
@@ -642,8 +646,8 @@ function viewCatalog(category, subType, params) {
   if (category === 'vinyl') {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
-    h1 = 'Vinyls.';
-    sub = 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.';
+    h1 = 'Vinyl Records India.';
+    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each with free delivery across India.';
   } else if (category === 'polaroids') {
     routeFormats = ['polaroid'];
     targetFormat = 'polaroid';
@@ -700,8 +704,8 @@ function viewCatalog(category, subType, params) {
   } else {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
-    h1 = 'Vinyls.';
-    sub = 'Upcycled 12-inch records with the album set into the label. Made to hang, not to play.';
+    h1 = 'Vinyl Records India.';
+    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each with free delivery across India.';
   }
 
   const list = filterProducts(params, routeFormats, requiredTag, only);
@@ -1080,8 +1084,8 @@ function viewCustom() {
     <div style="display:grid;gap:56px" id="customgrid">
       <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
-        <h1 class="d-l" style="max-width:18ch">Custom Vinyls &amp; Vinyl Record Wall Decor</h1>
-        <p class="body-l dim measure" style="margin-top:18px">Not in the catalogue? Say the word. Turn any artist, album, playlist or custom artwork into custom vinyls and music wall decor on a real 12-inch upcycled record. Hand-crafted and delivered free across India.</p>
+        <h1 class="d-l" style="max-width:22ch">Custom Vinyl Records &amp; Custom Posters</h1>
+        <p class="body-l dim measure" style="margin-top:18px">Not in the catalogue? Say the word. Turn any artist, album, playlist or personal artwork into custom vinyl records, custom posters (A3, A5, 10×10), or polaroid cards. Hand-crafted and delivered free across India.</p>
         <form data-form="custom" data-success="Got it. We'll be in touch." class="customform">
           <div class="frow">
             <label class="field"><span>Artist <i class="req">*</i></span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>
@@ -1557,7 +1561,7 @@ function mountHome() {
       s.grabAngle = angleAt(s.host, e); s.grabFrom = s.angle;
       s.lastA = s.grabAngle; s.lastT = performance.now(); s.vel = 0;
       s.host.style.cursor = 'grabbing';
-      s.host.setPointerCapture(e.pointerId);
+      try { s.host.setPointerCapture(e.pointerId); } catch (_) {}
       Sound.scratchStart();
     });
     s.host.addEventListener('pointermove', e => {
@@ -1854,15 +1858,23 @@ function mountCatalog(seg, params) {
   if (grid && window.__lastGridRects && !RM()) {
     $$('.card', grid).forEach(c => {
       const old = window.__lastGridRects.get(c.dataset.card); if (!old) {
-        c.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 300, easing: 'cubic-bezier(.16,1,.3,1)', delay: Math.random() * 120 });
+        if (c.animate) {
+          try {
+            c.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
+              { duration: 300, easing: 'cubic-bezier(.16,1,.3,1)', delay: Math.random() * 120 });
+          } catch (e) {}
+        }
         return;
       }
       const now = c.getBoundingClientRect();
       const dx = old.left - now.left, dy = old.top - now.top;
       if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-        c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }],
-          { duration: 400, easing: 'cubic-bezier(.76,0,.24,1)' });
+        if (c.animate) {
+          try {
+            c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }],
+              { duration: 400, easing: 'cubic-bezier(.76,0,.24,1)' });
+          } catch (e) {}
+        }
       }
     });
   }
@@ -2008,8 +2020,12 @@ function mountProduct(p, params) {
       const len = el.getTotalLength ? el.getTotalLength() : 0;
       if (!len) return;
       el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
-      el.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
-        { duration: 700, delay: i * 22, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+      if (el.animate) {
+        try {
+          el.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+            { duration: 700, delay: i * 22, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+        } catch (e) {}
+      }
     });
   }
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { drawScale(); io.disconnect(); } }), { threshold: .25 });
@@ -2018,8 +2034,12 @@ function mountProduct(p, params) {
 
 function mountCollection() {
   const s = $('#sleeve'); if (!s || RM()) { if (s) s.style.clipPath = 'none'; return; }
-  s.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)' }],
-    { duration: 900, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+  if (s.animate) {
+    try {
+      s.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)' }],
+        { duration: 900, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+    } catch (e) {}
+  }
 }
 function mountSearchPage() {
   const i = $('#pagesearch'), r = $('#pagesearchres'); if (!i) return;
@@ -2243,7 +2263,12 @@ function mountBuildWall() {
   function hang(slug, f) {
     const s = spot(f); pieces.push({ slug, format: f, x: s.x, y: s.y, r: tilt(f) }); sel = -1; draw(); Sound.tick();
     const el = wall.lastElementChild;
-    if (el && !RM()) el.querySelector('.wp__in').animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.3,1.5,.5,1)' });
+    const wpIn = el && el.querySelector('.wp__in');
+    if (wpIn && !RM() && wpIn.animate) {
+      try {
+        wpIn.animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.3,1.5,.5,1)' });
+      } catch (e) {}
+    }
   }
   /* ---- picker ---- */
   const options = f => P.filter(p => variant(p, f));
@@ -2314,7 +2339,13 @@ function mountBuildWall() {
     const used = new Set();
     want.forEach(f => { const pool = options(f).filter(p => !used.has(p.slug)); const p = pool[Math.floor(Math.random() * Math.min(pool.length, 14))]; if (!p) return; used.add(p.slug); const s = spot(f); pieces.push({ slug: p.slug, format: f, x: s.x, y: s.y, r: tilt(f) }); });
     draw(); Sound.tick();
-    if (!RM()) $$('.wp__in', wall).forEach((el, k) => el.animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, delay: k * 70, fill: 'backwards', easing: 'cubic-bezier(.3,1.5,.5,1)' }));
+    if (!RM()) $$('.wp__in', wall).forEach((el, k) => {
+      if (el.animate) {
+        try {
+          el.animate([{ transform: 'translateY(-26px) scale(1.12)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, delay: k * 70, fill: 'backwards', easing: 'cubic-bezier(.3,1.5,.5,1)' });
+        } catch (e) {}
+      }
+    });
   });
   bar.addEventListener('click', e => {
     if (e.target.closest('[data-wclear]')) { pieces = []; sel = -1; draw(); return; }
