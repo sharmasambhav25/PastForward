@@ -31,6 +31,7 @@ python3 build.py          # writes docs/ (the live site) and dist/ (single-file 
 node verify_site.js       # checks the live build: every page, phone and laptop, the path to checkout
 node verify.js            # checks the single-file build
 git add -A && git commit -m "..." && git push origin main
+python3 indexnow.py       # once the change is live: tells Bing (IndexNow) every page changed
 ```
 
 GitHub Pages publishes `docs/` a minute or two after the push. The checks need Node with Playwright (`npm i playwright && npx playwright install chromium`), or set `PF_CHROME=/path/to/chrome` to use an installed Chrome. Don't push if either check reports a failure.
