@@ -175,31 +175,63 @@ def slugify(s):
 def featured_order(ps):
     return sorted(ps, key=lambda p: (-int(bool(p.get('featured'))), p['artist'].lower()))
 
-# ---- artist pages: dedicated hub for every artist in the catalogue
+# ---- artist pages: a hub for every artist in the catalogue. Titles and headings use the words people
+# search ("travis scott posters"), and each page lists its own albums and formats, so no two read alike.
+FMT_WORD = {'vinyl': 'vinyl record', 'poster-a3': 'A3 poster', 'poster-a5': 'A5 poster', 'print-10': '10×10 print', 'polaroid': 'polaroid'}
 ARTIST_PAGES = {}
-for name in sorted({p['artist'] for p in P}, key=str.lower):
-    ps = [p for p in P if p['artist'] == name]
-    kinds = list(dict.fromkeys(KIND[v['format']] for p in ps for v in p['variants']))
-    plural = {'Poster': 'Posters', 'Print': 'Prints', 'Polaroid': 'Polaroids'}
-    words = [plural.get(k, k) for k in kinds]
-    albums = [album_of(p) for p in ps if album_of(p)]
-    album_list = join_words(dict.fromkeys(albums)) if albums else name
+_artists = sorted({p['artist'] for p in P}, key=str.lower)
+for name in _artists:
+    ps = featured_order([p for p in P if p['artist'] == name])
+    fmts = {v['format'] for p in ps for v in p['variants']}
+    has_poster = bool(fmts & {'poster-a3', 'poster-a5', 'print-10'})
+    has_vinyl = 'vinyl' in fmts
+    if has_poster and has_vinyl:
+        title_core, h1 = f"{name} Posters & Vinyl Wall Art in India", f"{name} posters & vinyl wall art."
+    elif has_poster:
+        title_core, h1 = f"{name} Posters & Prints in India", f"{name} posters."
+    elif has_vinyl:
+        title_core, h1 = f"{name} Vinyl Record Wall Art in India", f"{name} vinyl wall art."
+    else:
+        title_core, h1 = f"{name} Polaroids & Wall Art in India", f"{name} wall art."
+    albums = list(dict.fromkeys(album_of(p) for p in ps if album_of(p)))
+    album_list = join_words(albums) if albums else name
+    lo = min(v['price'] for p in ps for v in p['variants'])
+    lines = []
+    for p in ps:
+        fs = [v for v in p['variants']]
+        what = join_words([f"{FMT_WORD[v['format']]} ({money(v['price'])})" for v in fs])
+        lines.append(f"<a href=\"#/product/{p['slug']}\">{esc(album_of(p) or name)}</a>: {what}.")
+    # artists who share a collection, for people (and Google) to move sideways
+    tags = {t for p in ps for t in p['tags']}
+    kin = []
+    for other in _artists:
+        if other != name and any(t in tags for q in P if q['artist'] == other for t in q['tags']):
+            kin.append(other)
+    kin = kin[:6]
+    sections = [[f"Every {name} piece", ' '.join(lines)],
+                ["Which format to pick",
+                 ("A real upcycled 12-inch record with the cover on the centre label is the statement piece, made to hang, not to play, with a wall hook in the box. " if has_vinyl else '') +
+                 ("A3 posters fill a wall, A5 posters suit a desk or shelf, and the 10×10 print keeps the album's square shape. " if has_poster else '') +
+                 ("Polaroid cards are the cheapest way to start a wall. " if 'polaroid' in fmts else '') +
+                 f"{SITE['shipping']['line']} Delivery takes {SITE['delivery']}."]]
+    if kin:
+        sections.append([f"If you like {name}",
+                         ', '.join(f"<a href=\"#/artist/{slugify(k)}\">{esc(k)}</a>" for k in kin) + '.'])
     ARTIST_PAGES[slugify(name)] = {
         'name': name,
-        'title': f"{name} {join_words(words)} & Vinyl Wall Art | PastForward",
-        'desc': f"{name} music wall art: {album_list} as {join_words([w.lower() for w in words])}. From {money(min(v['price'] for p in ps for v in p['variants']))}, delivered across India in {SITE['delivery']}.",
-        'h1': f"{name}.",
-        'sub': f"{album_list}. Every {name} piece we make, in one place.",
+        'title': f"{title_core} | PastForward",
+        'desc': f"{name} {'posters and vinyl wall art' if has_poster and has_vinyl else 'posters' if has_poster else 'vinyl wall art' if has_vinyl else 'wall art'}: "
+                f"{album_list}. From {money(lo)}, {'free delivery' if SITE['shipping'].get('free') and not SITE['shipping'].get('freeFrom') else 'delivered'} across India in {SITE['delivery']}.",
+        'h1': h1,
+        'sub': f"{album_list}. From {money(lo)}, delivered across India.",
         'items': [p['slug'] for p in ps],
-        'sections': [[f"{name} on your wall",
-                      f"Pick the album, then the format: a real upcycled 12-inch record with the cover on the centre label ({money(FMT['vinyl']['price'])}), "
-                      f"an A3 poster ({money(FMT['poster-a3']['price'])}), an A5 poster ({money(FMT['poster-a5']['price'])}), a 10×10 print ({money(FMT['print-10']['price'])}) "
-                      f"or a polaroid card ({money(FMT['polaroid']['price'])}), depending on what each album comes in. {SITE['shipping']['line']} Delivery takes {SITE['delivery']}."]],
+        'sections': sections,
         'faq': [
-            [f"What formats are available for {name}?",
-             f"We offer {name} wall art across upcycled 12-inch vinyl records ({money(FMT['vinyl']['price'])}), A3 posters ({money(FMT['poster-a3']['price'])}), A5 posters ({money(FMT['poster-a5']['price'])}), 10×10 prints ({money(FMT['print-10']['price'])}), and polaroids ({money(FMT['polaroid']['price'])}), depending on the album."],
-            [f"How long does delivery take for {name} orders?",
-             f"All pieces are printed and assembled to order, then delivered safely across India within {SITE['delivery']} with protective transit packaging."]
+            [f"Is the {name} vinyl a real record?" if has_vinyl else f"What sizes do the {name} posters come in?",
+             "Yes. It's a real 12-inch record that already had a life, cleaned up, with the album art on the centre label. It's sold to hang, not to play." if has_vinyl
+             else "A3 (297 × 420mm), A5 (148 × 210mm) and a 10×10 inch square, depending on the album."],
+            [f"How long does a {name} order take to arrive?",
+             f"{SITE['delivery']} anywhere in India. If it arrives damaged, we replace it."],
         ],
     }
 SITE['artistPages'] = ARTIST_PAGES
@@ -831,12 +863,21 @@ def build_site():
           body=fb_simple("This one's not in the crate.", ["The page you're after doesn't exist, or moved."])))
 
     # ---- sitemap: real pages only
-    sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    # product pages list their pictures, so posters and records can turn up in Google Images
+    sm_imgs = {f"/product/{p['slug']}": list(dict.fromkeys(abs_img(v['image']) for v in p['variants'])) for p in P}
+    sm = ['<?xml version="1.0" encoding="UTF-8"?>',
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
     for path, _, _, indexable in pages:
         if indexable:
-            sm.append(f'  <url><loc>{URL}{path}</loc><lastmod>{today}</lastmod></url>')
+            imgs = ''.join(f'<image:image><image:loc>{esc(u)}</image:loc></image:image>' for u in sm_imgs.get(path, []))
+            sm.append(f'  <url><loc>{URL}{path}</loc><lastmod>{today}</lastmod>{imgs}</url>')
     sm.append('</urlset>')
     write(os.path.join(DOCS, 'sitemap.xml'), '\n'.join(sm) + '\n')
+
+    # ---- IndexNow ownership file (site.json "indexNow")
+    if SITE.get('indexNow', {}).get('key'):
+        k = SITE['indexNow']['key']
+        write(os.path.join(DOCS, f'{k}.txt'), k)
 
     # ---- files for crawlers and AI assistants, written from the same facts as the pages
     for name, text in machine_files().items():

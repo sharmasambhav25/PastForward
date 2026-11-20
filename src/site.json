@@ -505,5 +505,10 @@
         "No. A custom piece costs the same as that format in the catalogue: {{PRICE_VINYL}} for a 12-inch vinyl record."
       ]
     ]
+  },
+
+  "indexNow": {
+    "_note": "Key for IndexNow (Bing, Yandex, Seznam). The build writes docs/<key>.txt; run `python3 indexnow.py` after a deploy to tell them every page changed.",
+    "key": "837c23613d17421880f7673328414b2d"
   }
 }
