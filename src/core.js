@@ -246,7 +246,7 @@ function bundleCounts(lines) {
   const n = {}; lines.forEach(l => { n[l.format] = (n[l.format] || 0) + l.qty; }); return n;
 }
 function bundleFits(b, lines) {
-  if (b.pair) return lines.some(l => l.format === 'vinyl' && lines.some(x => x.slug === l.slug && x.format === 'poster-a3'));
+  if (b.pair) return lines.some(l => l.format === 'vinyl' && lines.some(x => x.slug === l.slug && x.format === (b.pairWith || 'print-10')));
   const n = bundleCounts(lines);
   return Object.entries(b.need || {}).every(([f, k]) => (n[f] || 0) >= k);
 }
