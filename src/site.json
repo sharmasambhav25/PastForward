@@ -38,14 +38,15 @@
       {
         "id": "pair",
         "code": "BUNDLEPAIR",
-        "name": "A record + its A3 poster",
-        "short": "Record + poster",
+        "name": "A record + its 10×10 print",
+        "short": "Record + 10×10",
         "pair": true,
-        "price": 1149,
+        "pairWith": "print-10",
+        "price": 1099,
         "off": 149,
         "live": true,
         "href": "/bundles?scroll=sets",
-        "blurb": "The album on vinyl and the same album as an A3 poster, hung side by side."
+        "blurb": "The album on vinyl and the same album as a square 10×10 print, hung side by side."
       },
       {
         "id": "a3x3",
