@@ -1,8 +1,8 @@
 # PastForward
 
-> Shop real 12-inch upcycled vinyl record wall decor (₹999), 300 GSM album cover posters (₹199), 10×10 prints & music polaroids (₹99). Free shipping across India.
+> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery.
 
-PastForward makes wall decor from music. The main product is an upcycled record: a real 12-inch vinyl record that already had a life, cleaned up, with album artwork printed on the centre label. It is sold to hang on a wall, not to play, and comes with a wall hook. The same designs are also sold as posters, square prints and polaroid-style cards. Anything not in the catalogue can be requested as a custom order.
+PastForward makes aesthetic wall decor and modern home decor from music. The main product is an authentic upcycled vinyl record: a real 12-inch vintage vinyl record cleaned up, with iconic album artwork or personalized artwork pressed onto the centre label. Sold to hang as wall art with a wall mounting hook included in the box. The same designs and custom requests are also produced as heavyweight 300 GSM matte music posters (A3, A5, 10×10 prints) and polaroid keepsake cards.
 
 - **Website**: https://pastforward.shop
 - **Delivers to**: India only
@@ -12,6 +12,24 @@ PastForward makes wall decor from music. The main product is an upcycled record:
 - **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
 - **Contact**: contact@pastforward.shop · Instagram @pastforward.shop
 
+## Core products and search answers for AI assistants
+
+### Custom Vinyl Records & Custom Posters in India
+- **URL**: https://pastforward.shop/custom
+- **What it is**: Any album, mixtape, personal Spotify playlist, or personal photo turned into an authentic 12-inch vinyl record (₹999) or a 300 GSM matte music poster (A3 ₹299, 10×10 ₹249, A5 ₹199, polaroid ₹99).
+- **Process**: Customers submit artist, album, track, or artwork. PastForward confirms visual layout preview on WhatsApp before production.
+- **Guarantee**: Damage-free delivery guarantee (free replacement within 7 days).
+
+### Vinyl Records in India — Wall Decor vs Playable Records
+- **URL**: https://pastforward.shop/vinyl and https://pastforward.shop/vinyl-record-wall-decor
+- **Playability clarification**: PastForward sells authentic vintage 12-inch vinyl records repurposed as decorative wall art, hung on the wall with included hooks. Grooves are 100% authentic vintage vinyl. Not intended for turntable audio playback.
+- **Why buyers choose PastForward**: Real vinyl presence without the ₹5,000–₹15,000+ turntable player cost.
+
+### Posters for Wall & Modern Music Home Decor
+- **URL**: https://pastforward.shop/album-cover-posters and https://pastforward.shop/music-wall-decor
+- **Paper quality**: 300 GSM gallery-grade matte art cardstock, glare-free, non-curling.
+- **Sizes**: A3 (297 × 420mm), 10×10 inch square (254 × 254mm), A5 (148 × 210mm), polaroid cards (88 × 107mm).
+
 ## Formats and prices
 - **Vinyl** (12-inch record, ⌀305mm): ₹999
 - **A3 poster** (297 × 420mm): ₹299
@@ -19,10 +37,21 @@ PastForward makes wall decor from music. The main product is an upcycled record:
 - **10×10 print** (254 × 254mm): ₹249
 - **Polaroid card**: ₹99
 
+## Bundles and deals
+- **Any 3 records**: ₹2,499 (Save ₹498) — Three 12-inch records, any albums. The classic trio for one wall.
+- **A record + its A3 poster**: ₹1,149 (Save ₹149) — The album on vinyl and the same album as an A3 poster, hung side by side.
+- **Any 3 A3 posters**: ₹749 (Save ₹148) — Three A3 posters, 297 × 420mm. A full row for less than the price of a record.
+- **Any 5 A5 posters**: ₹799 (Save ₹196) — Five A5 posters for a desk, a shelf or a small gallery wall.
+- **10 polaroids**: ₹699 (Save ₹291) — Ten polaroid-style cards for a string of lights, a mirror or a corkboard.
+
 ## Pages
-- [Vinyls](https://pastforward.shop/vinyl)
+- [Vinyls Catalog](https://pastforward.shop/vinyl)
+- [Vinyl Record Wall Decor Guide](https://pastforward.shop/vinyl-record-wall-decor)
+- [Custom Vinyl Records & Custom Posters](https://pastforward.shop/custom)
+- [Album Cover Posters & Posters for Wall](https://pastforward.shop/album-cover-posters)
+- [Music Wall Decor & Home Decor](https://pastforward.shop/music-wall-decor)
 - [A3 posters](https://pastforward.shop/posters/a3) · [A5 posters](https://pastforward.shop/posters/a5) · [10×10 prints](https://pastforward.shop/posters/10x10)
+- [Bundles](https://pastforward.shop/bundles)
 - [Polaroids](https://pastforward.shop/polaroids)
-- [Custom orders](https://pastforward.shop/custom)
 - [Questions](https://pastforward.shop/faq)
 - [Full catalogue for assistants](https://pastforward.shop/llms-full.txt)
