@@ -209,7 +209,7 @@ function addToCart(slug, format, qty = 1, originEl, opt = {}) {
   if (originEl && opt.stay) { originEl.classList.add('is-added'); setTimeout(() => originEl.classList.remove('is-added'), 1300); }
   Track.add(p, v, qty);
   Sound.tick();
-  const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM()) badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); };
+  const bounceBadge = () => { const badge = $('#cartcount'); if (badge && !RM() && badge.animate) { try { badge.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.34,1.32,.64,1)' }); } catch (e) {} } };
   flyToCart(originEl, bounceBadge);
   if (drawerOpens) openDrawer();
 }
@@ -300,7 +300,7 @@ function syncCrateBar(bump) {
   if (on) el.innerHTML = crateBarHTML();
   el.classList.toggle('is-on', on); el.setAttribute('aria-hidden', String(!on));
   document.body.classList.toggle('has-cratebar', on);
-  if (on && bump && !RM()) el.animate([{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-6px) scale(1.025)' }, { transform: 'translateY(0) scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+  if (on && bump && !RM() && el.animate) { try { el.animate([{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-6px) scale(1.025)' }, { transform: 'translateY(0) scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' }); } catch (e) {} }
 }
 let crateTick = 0;
 addEventListener('scroll', () => { if (crateTick) return; crateTick = requestAnimationFrame(() => { crateTick = 0; if (!parseHash().path.split('/')[1]) syncCrateBar(); }); }, { passive: true });
@@ -393,12 +393,16 @@ function removeToast(t, instant) {
     if (RM()) return;
     siblings.forEach((c, i) => {
       const dy = before[i] - c.getBoundingClientRect().top;
-      if (Math.abs(dy) > .5) c.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+      if (Math.abs(dy) > .5 && c.animate) { try { c.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.3,1.6,.5,1)' }); } catch (e) {} }
     });
   };
   if (instant || RM()) { settle(); return; }
-  t.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(6px) scale(.96)' }],
-    { duration: 220, easing: 'cubic-bezier(.4,0,1,1)' }).onfinish = settle;
+  if (t.animate) {
+    try {
+      t.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(6px) scale(.96)' }],
+        { duration: 220, easing: 'cubic-bezier(.4,0,1,1)' }).onfinish = settle;
+    } catch (e) { settle(); }
+  } else { settle(); }
 }
 
 /* ---------- drawer / overlays ---------- */
@@ -604,7 +608,7 @@ const Sound = (() => {
 
   function ensureCtx() {
     if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
-    if (ctx && ctx.state === 'suspended') ctx.resume();
+    if (ctx && ctx.state === 'suspended') { try { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
     return ctx;
   }
   function noiseBuffer(seconds) {
@@ -758,27 +762,32 @@ function footerHTML() {
 
 /* ---------- effects ---------- */
 function initGrain() {
-  const c = $('#grain'); if (!c) return;
-  const S = 128; c.width = S; c.height = S;
-  c.style.width = '100%'; c.style.height = '100%';
-  const ctx = c.getContext('2d');
-  const tiles = [];
-  for (let t = 0; t < 4; t++) {
-    const d = ctx.createImageData(S, S);
-    for (let i = 0; i < d.data.length; i += 4) {
-      const v = 90 + Math.random() * 76;
-      d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255;
+  try {
+    const c = $('#grain'); if (!c) return;
+    const S = 128; c.width = S; c.height = S;
+    c.style.width = '100%'; c.style.height = '100%';
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    const tiles = [];
+    for (let t = 0; t < 4; t++) {
+      const d = ctx.createImageData(S, S);
+      for (let i = 0; i < d.data.length; i += 4) {
+        const v = 90 + Math.random() * 76;
+        d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255;
+      }
+      ctx.putImageData(d, 0, 0); tiles.push(c.toDataURL('image/png'));
     }
-    ctx.putImageData(d, 0, 0); tiles.push(c.toDataURL('image/png'));
-  }
-  const el = document.createElement('div');
-  el.id = 'grain'; el.style.cssText = c.style.cssText;
-  c.replaceWith(el);
-  const g = $('#grain');
-  g.style.backgroundImage = `url(${tiles[0]})`;
-  if (RM() || window.matchMedia('(max-width:767px)').matches) return;
-  let i = 0;
-  setInterval(() => { i = (i + 1) % 4; g.style.backgroundImage = `url(${tiles[i]})`; }, 83);
+    const el = document.createElement('div');
+    el.id = 'grain'; el.style.cssText = c.style.cssText;
+    c.replaceWith(el);
+    const g = $('#grain');
+    if (g && tiles[0]) {
+      g.style.backgroundImage = `url(${tiles[0]})`;
+      if (RM() || window.matchMedia('(max-width:767px)').matches) return;
+      let i = 0;
+      setInterval(() => { i = (i + 1) % 4; g.style.backgroundImage = `url(${tiles[i]})`; }, 83);
+    }
+  } catch (e) {}
 }
 
 /* ------------------------------------------------------------------
@@ -1007,12 +1016,16 @@ function playFlip(target) {
   document.body.appendChild(ghost);
   target.style.opacity = '0';
   const sx = to.width / rect.width, sy = to.height / rect.height, s = Math.min(sx, sy);
-  ghost.animate([
-    { transform: 'translate(0,0) scale(1)' },
-    { transform: `translate(${to.left + to.width / 2 - (rect.left + rect.width / 2)}px,${to.top + to.height / 2 - (rect.top + rect.height / 2)}px) scale(${s})` }
-  ], { duration: 480, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => {
-    ghost.remove(); target.style.opacity = '';
-  };
+  if (ghost.animate) {
+    try {
+      ghost.animate([
+        { transform: 'translate(0,0) scale(1)' },
+        { transform: `translate(${to.left + to.width / 2 - (rect.left + rect.width / 2)}px,${to.top + to.height / 2 - (rect.top + rect.height / 2)}px) scale(${s})` }
+      ], { duration: 480, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => {
+        ghost.remove(); target.style.opacity = '';
+      };
+    } catch (e) { ghost.remove(); target.style.opacity = ''; }
+  } else { ghost.remove(); target.style.opacity = ''; }
 }
 
 /* ---------- Shopify Configuration & Checkout Integration ---------- */
@@ -1063,7 +1076,15 @@ const Track = (() => {
       /* The queue above holds init and every event. The script is fetched after the first screen has
          rendered (or on the first touch, whichever comes first), so it never competes with the page. */
       let sent = false;
-      const load = () => { if (sent) return; sent = true; t = b.createElement(e); t.async = true; t.src = v; x = b.getElementsByTagName(e)[0]; x.parentNode.insertBefore(t, x); };
+      const load = () => {
+        if (sent) return; sent = true;
+        try {
+          t = b.createElement(e); t.async = true; t.src = v;
+          x = b.getElementsByTagName(e)[0];
+          if (x && x.parentNode) x.parentNode.insertBefore(t, x);
+          else (b.head || b.body || b.documentElement).appendChild(t);
+        } catch (err) {}
+      };
       f.__pfPixel = load;
       ['pointerdown', 'keydown', 'scroll'].forEach(ev => addEventListener(ev, load, { once: true, passive: true, capture: true }));
       setTimeout(load, 6000);                                   // never later than this
@@ -1348,8 +1369,12 @@ function render(opt = {}) {
   if (!opt.quiet) Track.page(seg, currentProduct, curV);
   if (currentProduct && !opt.quiet) Track.view(currentProduct, curV);
   // the page arrives with a short rise; a filter or "load more" on the same page doesn't replay it
-  if (!RM() && !opt.quiet && !firstRender) main.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
-    { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
+  if (!RM() && !opt.quiet && !firstRender && main.animate) {
+    try {
+      main.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
+    } catch (e) {}
+  }
   firstRender = false;
 }
 function go(hash) { navigate(hash); }
@@ -1376,22 +1401,27 @@ let hashSilent = false;
 function navigate(to, opt = {}) {
   let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
   if (!cleanUrls()) {
-    if (opt.replace) { hashSilent = true; history.replaceState(null, '', '#' + p); hashSilent = false; onRoute(opt); }
+    if (opt.replace) { hashSilent = true; try { history.replaceState(null, '', '#' + p); } catch (e) {} hashSilent = false; onRoute(opt); }
     else location.hash = p;
     return;
   }
   if (p === location.pathname + location.search) return;
-  history[opt.replace ? 'replaceState' : 'pushState'](null, '', p); onRoute(opt);
+  try { history[opt.replace ? 'replaceState' : 'pushState'](null, '', p); } catch (e) {}
+  onRoute(opt);
 }
 /* change the address without touching the page (the product page's format switch does its own DOM work) */
 function replaceUrl(to) {
-  let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
-  history.replaceState(null, '', cleanUrls() ? p : '#' + p);
+  try {
+    let p = String(to).replace(/^#/, ''); if (!p.startsWith('/')) p = '/' + p;
+    history.replaceState(null, '', cleanUrls() ? p : '#' + p);
+  } catch (e) {}
 }
 function cleanHomeUrl() {
-  const h = location.hash;
-  if (cleanUrls() && h.startsWith('#/')) history.replaceState(null, '', h.slice(1));
-  else if (h === '#/' || h === '#') history.replaceState(null, '', location.pathname + location.search);
+  try {
+    const h = location.hash;
+    if (cleanUrls() && h.startsWith('#/')) history.replaceState(null, '', h.slice(1));
+    else if (h === '#/' || h === '#') history.replaceState(null, '', location.pathname + location.search);
+  } catch (e) {}
 }
 addEventListener('hashchange', () => { if (hashSilent) return; cleanHomeUrl(); onRoute(); });
 addEventListener('popstate', () => { if (cleanUrls()) onRoute(); });
@@ -1437,7 +1467,11 @@ document.addEventListener('submit', e => {
     if (!msg) return;
     msg.innerHTML = `<p class="formnote" role="status">${html}</p>`;
     if (hide) f.style.display = 'none';
-    if (!RM()) msg.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
+    if (!RM() && msg.animate) {
+      try {
+        msg.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
+      } catch (e) {}
+    }
   };
   submitForm(f.dataset.form, data, via).then(res => {
     btns.forEach(b => { b.disabled = false; });
