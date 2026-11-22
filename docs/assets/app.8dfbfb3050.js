@@ -3430,12 +3430,21 @@ function albumPickInner(p, sel) {
       ${th}<span class="apick__n">${albumOf(x)}${!on && v.format !== sel ? `<span class="apick__f">${x.variants.length === 1 ? esc(FMT[v.format].label) + ' only' : 'Not in ' + esc(FMT[sel].label)}</span>` : ''}</span></a>`;
   }).join('');
 }
+/* the closed dropdown: the album on screen now, and a chevron */
+function albumDropBtn(p, sel) {
+  const v = variant(p, sel) || primary(p);
+  return `<span class="apick__th${v.format === 'vinyl' ? ' apick__th--rec' : ''}"><img src="${imgSrc(v.image)}" alt="" decoding="async"></span>
+    <span class="apick__n">${albumOf(p)}</span><span class="adrop__chev" aria-hidden="true"></span>`;
+}
 function albumPickHTML(p, sel) {
   const n = P.filter(x => x.artist === p.artist).length;
   if (n < 2) return '';
   return `<nav class="apick" id="apick" aria-label="Albums by ${esc(p.artist)}">
     <p class="apick__k mono-xs"><b>Choose the album</b><span>${esc(p.artist)} · ${n} to pick from</span></p>
-    <div class="apick__row" id="apickrow">${albumPickInner(p, sel)}</div>
+    <div class="adrop" id="adrop">
+      <button type="button" class="adrop__btn" id="adropbtn" aria-haspopup="true" aria-expanded="false" aria-controls="apickrow">${albumDropBtn(p, sel)}</button>
+      <div class="apick__row adrop__list" id="apickrow" hidden>${albumPickInner(p, sel)}</div>
+    </div>
   </nav>`;
 }
 function viewProduct(p, params) {
@@ -4438,6 +4447,7 @@ function mountProduct(p, params) {
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     if (pick) pick.innerHTML = albumPickInner(p, f);
+    const db = $('#adropbtn'); if (db) db.innerHTML = albumDropBtn(p, f);
     $$('.pdp__thumb--gal').forEach(b => { b.style.display = b.dataset.galfmt === f ? '' : 'none'; b.classList.remove('is-on'); });
     $$('.pdp__thumb[data-fmt]').forEach(b => { b.style.display = b.dataset.fmt === f ? '' : 'none'; });
     const pt = $('.pdp__thumb--photo');
@@ -4472,8 +4482,14 @@ function mountProduct(p, params) {
       try { Sound.tick(); } catch (err) {}
       navigate(a.getAttribute('href'), { replace: true, keepScroll: true });
     });
-    const on = $('.apick__a.is-on', pick);   // keep the chosen album in view when the row scrolls sideways
-    if (on && pick.scrollWidth > pick.clientWidth) pick.scrollLeft = Math.max(0, on.offsetLeft - (pick.clientWidth - on.offsetWidth) / 2);
+    // the album list is a dropdown: the button opens it; a pick, Escape or a click elsewhere closes it
+    const dbtn = $('#adropbtn');
+    const setOpen = o => { pick.hidden = !o; dbtn.setAttribute('aria-expanded', String(o)); $('#adrop').classList.toggle('is-open', o); };
+    dbtn.addEventListener('click', e => { e.stopPropagation(); setOpen(pick.hidden); if (!pick.hidden) { const a = $('.apick__a.is-on', pick) || $('.apick__a', pick); a && a.focus({ preventScroll: true }); } });
+    const offClick = e => { if (!document.body.contains(dbtn)) { document.removeEventListener('click', offClick); document.removeEventListener('keydown', offKey); return; }
+      if (!pick.hidden && !e.target.closest('#adrop')) setOpen(false); };
+    const offKey = e => { if (e.key === 'Escape' && !pick.hidden) { setOpen(false); dbtn.focus(); } };
+    document.addEventListener('click', offClick); document.addEventListener('keydown', offKey);
   }
   $$('.fmt button').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
   $$('.pdp__thumb[data-fmt]').forEach(b => b.addEventListener('click', () => setFmt(b.dataset.fmt)));
