@@ -9,6 +9,17 @@ const figure = (k, cap, cls = '') => photo(k) ? `<figure class="shot ${cls}">
 
 const FORMAT_PHOTO = { 'poster-a3':'wall-white', 'poster-a5':'wall-white',
                        'print-10':'wall-full', 'polaroid':'stall-red' };
+/* extra photos per record, per format: [photo key, alt text] in scroll order */
+const GALLERY = {
+  'sabrina-carpenter-espresso': { vinyl: [
+    ['sabrina-espresso-wall', 'Espresso vinyl by PastForward hung on a bedroom wall in evening light'],
+    ['sabrina-espresso-bed', 'Espresso vinyl by PastForward on a bed with polaroids and a lilac lamp'],
+  ] },
+};
+const galleryOf = (p, f) => ((GALLERY[p.slug] || {})[f] || []).filter(([k]) => photo(k));
+const galleryThumbs = (p, sel) => Object.entries(GALLERY[p.slug] || {}).flatMap(([f, list]) => list.filter(([k]) => photo(k)).map(([k, alt]) =>
+  `<button class="pdp__thumb pdp__thumb--gal" data-gal="${k}" data-galfmt="${f}" aria-label="Photo: ${esc(alt)}"${f === sel ? '' : ' style="display:none"'}>
+    <img src="${photo(k)}" alt="${esc(alt)}" loading="lazy" decoding="async"></button>`)).join('');
 const getFormatPhoto = (p, f) => {
   if (p && p.slug === 'rose-apt' && f === 'vinyl') return 'record-in-hand';
   return FORMAT_PHOTO[f] || '';
@@ -965,6 +976,7 @@ function viewProduct(p, params) {
           ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}" aria-label="${esc(x.label)}">
             <img src="${imgSrc(x.image)}" alt="${esc(albumOf(p))} ${esc(x.label)} artwork by PastForward"><span>${esc(x.badge)}</span></button>`).join('')}
           ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt="${esc(albumOf(p))} ${esc(c.name)} colourway by PastForward"></button>`).join('')}
+          ${galleryThumbs(p, sel)}
           ${photo(getFormatPhoto(p, sel)) ? `<button class="pdp__thumb pdp__thumb--photo" data-shot aria-label="Photograph of the real thing">
             <img src="${photo(getFormatPhoto(p, sel))}" alt="PastForward ${esc(FMT[sel].label)} real product photograph"><span>PHOTO</span></button>` : ''}
         </div>
@@ -1937,6 +1949,7 @@ function mountProduct(p, params) {
     $$('.fmt button').forEach(b => { b.classList.toggle('is-on', b.dataset.fmt === f); b.setAttribute('aria-pressed', String(b.dataset.fmt === f)); });
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     if (pick) pick.innerHTML = albumPickInner(p, f);
+    $$('.pdp__thumb--gal').forEach(b => { b.style.display = b.dataset.galfmt === f ? '' : 'none'; b.classList.remove('is-on'); });
     const pt = $('.pdp__thumb--photo');
     const shotPic = photo(getFormatPhoto(p, f));
     if (pt) {
@@ -1976,6 +1989,11 @@ function mountProduct(p, params) {
   $$('.pdp__thumb[data-cw]').forEach(b => b.addEventListener('click', () => {
     const img = $('#stagemedia img'); if (img) img.src = imgSrc(b.dataset.cw);
     $$('.pdp__thumb').forEach(x => x.classList.remove('is-on')); b.classList.add('is-on');
+  }));
+  $$('.pdp__thumb--gal').forEach(b => b.addEventListener('click', () => {
+    const it = galleryOf(p, sel).find(([k]) => k === b.dataset.gal); if (!it) return;
+    $$('.pdp__thumb').forEach(x => x.classList.remove('is-on')); b.classList.add('is-on');
+    $('#stagemedia').innerHTML = `<img class="stagephoto stagephoto--gal" src="${photo(it[0])}" alt="${esc(it[1])}">`;
   }));
   const shotBtn = $('.pdp__thumb--photo');
   if (shotBtn) shotBtn.addEventListener('click', () => {
