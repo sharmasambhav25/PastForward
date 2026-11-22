@@ -858,7 +858,7 @@ def build_site():
            '</ul>'
            '<h2>Automatic Bundle Discounts</h2><p>When you build a wall with multiple pieces, our crate automatically applies bundle savings at checkout:</p><ul>'
            '<li><strong>Any 3 Vinyl Records:</strong> ₹2,499 (Save ₹498)</li>'
-           '<li><strong>Any Record + Any 10×10 Print:</strong> ₹1,099 (Save ₹149)</li>'
+           '<li><strong>Any Record + Any 10×10 Print:</strong> ₹1,199 (Save ₹49)</li>'
            '<li><strong>Any 3 A3 Posters:</strong> ₹749 (Save ₹148)</li>'
            '<li><strong>Any 5 A5 Posters:</strong> ₹799 (Save ₹196)</li>'
            '<li><strong>10 Polaroids:</strong> ₹699 (Save ₹291)</li>'

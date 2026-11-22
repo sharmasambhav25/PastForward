@@ -244,7 +244,7 @@ function homeBundlesHTML() {
             </a>
             <a class="home-bundles__deal" href="/bundles">
               <span class="home-bundles__deal-name">Record + 10×10 Print Pair</span>
-              <span class="home-bundles__deal-price"><b class="num">${money(FMT.vinyl.price + FMT['print-10'].price - 149)}</b> <s class="dim num">${money(FMT.vinyl.price + FMT['print-10'].price)}</s></span>
+              <span class="home-bundles__deal-price"><b class="num">${money(FMT.vinyl.price + FMT['print-10'].price - 49)}</b> <s class="dim num">${money(FMT.vinyl.price + FMT['print-10'].price)}</s></span>
             </a>
             <a class="home-bundles__deal" href="/polaroids">
               <span class="home-bundles__deal-name">10 Music Polaroids Pack</span>

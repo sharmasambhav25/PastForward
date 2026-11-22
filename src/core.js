@@ -246,7 +246,7 @@ function bundleCounts(lines) {
   const n = {}; lines.forEach(l => { n[l.format] = (n[l.format] || 0) + l.qty; }); return n;
 }
 function bundleFits(b, lines) {
-  // BUNDLEPAIR in Shopify: buy any record, get ₹149 off any 10×10 print (once per order)
+  // BUNDLEPAIR in Shopify: buy any record, get ₹49 off any 10×10 print (once per order)
   if (b.pair) return lines.some(l => l.format === 'vinyl') && lines.some(l => l.format === 'print-10');
   const n = bundleCounts(lines);
   return Object.entries(b.need || {}).every(([f, k]) => (n[f] || 0) >= k);
