@@ -2398,6 +2398,16 @@ function pairPartner(p, f) {
 }
 function pdpBundleHTML(p, f) {
   const pairB = LIVE_BUNDLES.find(x => x.pair), q = pairB && (f === 'vinyl' || f === 'print-10') ? pairPartner(p, f) : null;
+  if (pairB && f === 'vinyl') {
+    const prints = P.filter(x => variant(x, 'print-10') && x.album !== '[CONFIRM]' && !/^custom/.test(x.slug))
+      .sort((a, b) => (b.slug === p.slug) - (a.slug === p.slug) || (b.featured - a.featured) || (a.rank - b.rank));
+    if (prints.length) {
+      const total = variant(p, 'vinyl').price + variant(prints[0], 'print-10').price - pairB.off;
+      return `<div class="pdpp"><div class="pdpp__h"><span class="pdpb__k mono-xs">Pair</span><span>Add a 10×10 print — record + print for <b class="num">${money(total)}</b></span><span class="pdpb__s mono-xs">save ${money(pairB.off)}</span></div>
+        <div class="pdpp__row">${prints.map(x => { const v = variant(x, 'print-10'); return `<button class="pdpp__it" data-addpair="${p.slug}|${x.slug}" aria-label="Add ${esc(albumText(x))} 10×10 print with this record"><img src="${imgSrc(v.image)}" alt="" loading="lazy" decoding="async"><span>${x.slug === p.slug ? 'This album' : esc(albumText(x))}</span></button>`; }).join('')}</div>
+        <p class="pdpp__n mono-xs">Tap a print to add it with this record</p></div>`;
+    }
+  }
   if (q) {
     const rec = f === 'vinyl' ? p : q, pr = f === 'vinyl' ? q : p;
     const total = variant(rec, 'vinyl').price + variant(pr, 'print-10').price - pairB.off;
