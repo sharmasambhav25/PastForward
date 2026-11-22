@@ -246,7 +246,8 @@ function bundleCounts(lines) {
   const n = {}; lines.forEach(l => { n[l.format] = (n[l.format] || 0) + l.qty; }); return n;
 }
 function bundleFits(b, lines) {
-  if (b.pair) return lines.some(l => l.format === 'vinyl' && lines.some(x => x.slug === l.slug && x.format === 'poster-a3'));
+  // BUNDLEPAIR in Shopify: buy any record, get ₹149 off any 10×10 print (once per order)
+  if (b.pair) return lines.some(l => l.format === 'vinyl') && lines.some(l => l.format === 'print-10');
   const n = bundleCounts(lines);
   return Object.entries(b.need || {}).every(([f, k]) => (n[f] || 0) >= k);
 }
@@ -265,7 +266,7 @@ function bundleNudge(lines, current) {
   return best;
 }
 function bundleWord(f, k) {
-  const w = { vinyl: ['record', 'records'], 'poster-a3': ['A3 poster', 'A3 posters'], 'poster-a5': ['A5 poster', 'A5 posters'], polaroid: ['polaroid', 'polaroids'] }[f] || ['piece', 'pieces'];
+  const w = { vinyl: ['record', 'records'], 'poster-a3': ['A3 poster', 'A3 posters'], 'poster-a5': ['A5 poster', 'A5 posters'], 'print-10': ['10×10 print', '10×10 prints'], polaroid: ['polaroid', 'polaroids'] }[f] || ['piece', 'pieces'];
   return k === 1 ? w[0] : w[1];
 }
 function cartMaths() {
@@ -539,7 +540,8 @@ function chromeHTML() {
   <canvas id="grain" aria-hidden="true"></canvas><div id="vignette" aria-hidden="true"></div>
   <div id="field" aria-hidden="true"></div>
   <div id="corners" aria-hidden="false">
-  </div>`;
+  </div>
+  ${SITE.whatsapp ? `<a class="wafab" href="${waLink('Hi PastForward, I have a question: ')}" target="_blank" rel="noopener" aria-label="Questions? Message us on WhatsApp"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.6 5.8 5.1 2.8 1.1 3.4.9 4 .8.6-.1 1.9-.8 2.2-1.6.3-.8.3-1.4.2-1.6-.1-.1-.3-.2-.6-.4z"/></svg></a>` : ''}`;
 }
 
 /* the substrate: two sets of very large, very faint groove arcs.

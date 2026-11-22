@@ -243,8 +243,8 @@ function homeBundlesHTML() {
               <span class="home-bundles__deal-price"><b class="num">${money(2499)}</b> <s class="dim num">${money(2997)}</s></span>
             </a>
             <a class="home-bundles__deal" href="/bundles">
-              <span class="home-bundles__deal-name">Record + A3 Poster Pair</span>
-              <span class="home-bundles__deal-price"><b class="num">${money(1149)}</b> <s class="dim num">${money(1298)}</s></span>
+              <span class="home-bundles__deal-name">Record + 10×10 Print Pair</span>
+              <span class="home-bundles__deal-price"><b class="num">${money(FMT.vinyl.price + FMT['print-10'].price - 149)}</b> <s class="dim num">${money(FMT.vinyl.price + FMT['print-10'].price)}</s></span>
             </a>
             <a class="home-bundles__deal" href="/polaroids">
               <span class="home-bundles__deal-name">10 Music Polaroids Pack</span>
@@ -2004,7 +2004,7 @@ function mountProduct(p, params) {
   });
   $('#baradd').addEventListener('click', add);
   const pbw = $('#pdpbundle');
-  if (pbw) pbw.addEventListener('click', e => { const b = e.target.closest('[data-addpair]'); if (b) addMany([wallLine(p.slug, 'vinyl'), wallLine(p.slug, 'poster-a3')], b); });
+  if (pbw) pbw.addEventListener('click', e => { const b = e.target.closest('[data-addpair]'); if (b) { const [r, s] = b.dataset.addpair.split('|'); addMany([wallLine(r, 'vinyl'), wallLine(s, 'print-10')], b); } });
   const buy = $('#pdpbuy');
   if (buy) buy.addEventListener('click', () => { const v = variant(p, sel); checkout([{ sku: v.sku, qty, price: v.price }], buy); });
   // the buy bar shows whenever the real button isn't on screen, including on arrival when it sits below the fold
@@ -2082,7 +2082,7 @@ function miniWallHTML(lines, cls = '') {
 }
 const BUNDLE_PICS = {
   records3: () => ['taylor-swift-1989', 'the-weeknd-after-hours', 'frank-ocean-blonde'].map(s => wallLine(s, 'vinyl')),
-  pair: () => [wallLine('the-weeknd-after-hours', 'vinyl'), wallLine('the-weeknd-after-hours', 'poster-a3')],
+  pair: () => [wallLine('travis-scott-utopia', 'vinyl'), wallLine('travis-scott-utopia', 'print-10')],
   a3x3: () => ['travis-scott-utopia', 'sabrina-carpenter-espresso', 'pink-floyd-the-dark-side-of-the-moon-1973'].map(s => wallLine(s, 'poster-a3')),
   a5x5: () => P.filter(p => variant(p, 'poster-a5')).slice(0, 5).map(p => wallLine(p.slug, 'poster-a5')),
   pol10: () => P.filter(p => variant(p, 'polaroid')).slice(0, 6).map(p => wallLine(p.slug, 'polaroid'))
@@ -2139,7 +2139,7 @@ function viewBundles() {
 
 const WALL_SETS = [
   { name: 'The Swift three', note: 'Three eras on one wall', lines: ['taylor-swift-1989', 'taylor-swift-lover', 'taylor-swift-reputation'].map(s => ['vinyl', s]) },
-  { name: 'After Hours, twice', note: 'The record and its A3 poster', lines: [['vinyl', 'the-weeknd-after-hours'], ['poster-a3', 'the-weeknd-after-hours']] },
+  { name: 'Utopia, twice', note: 'The record and its 10×10 print', lines: [['vinyl', 'travis-scott-utopia'], ['print-10', 'travis-scott-utopia']] },
   { name: 'The poster wall', note: 'Three A3 posters in a row', lines: ['frank-ocean-blonde', 'travis-scott-utopia', 'sabrina-carpenter-espresso'].map(s => ['poster-a3', s]) }
 ];
 const WALL_COLOURS = [['#E9E2D6', 'Plaster'], ['#AEB8A2', 'Sage'], ['#C08566', 'Clay'], ['#2B2728', 'Charcoal']];
@@ -2388,11 +2388,25 @@ function openZoom(src, alt) {
   z.hidden = false; requestAnimationFrame(() => z.classList.add('is-on')); document.documentElement.classList.add('is-zoom');
   z.querySelector('.zoom__x').focus({ preventScroll: true });
 }
+/* the other half of a record + 10×10 pair: the same album if it comes in that format,
+   otherwise the best seller that does */
+function pairPartner(p, f) {
+  const other = f === 'vinyl' ? 'print-10' : 'vinyl';
+  if (variant(p, other)) return p;
+  return P.filter(q => variant(q, other) && q.album !== '[CONFIRM]' && !/^custom/.test(q.slug))
+    .sort((a, b) => (b.featured - a.featured) || (a.rank - b.rank))[0] || null;
+}
 function pdpBundleHTML(p, f) {
-  const both = variant(p, 'vinyl') && variant(p, 'poster-a3');
-  const b = LIVE_BUNDLES.find(x => x.pair && both && (f === 'vinyl' || f === 'poster-a3')) || LIVE_BUNDLES.find(x => (x.need || {})[f]);
+  const pairB = LIVE_BUNDLES.find(x => x.pair), q = pairB && (f === 'vinyl' || f === 'print-10') ? pairPartner(p, f) : null;
+  if (q) {
+    const rec = f === 'vinyl' ? p : q, pr = f === 'vinyl' ? q : p;
+    const total = variant(rec, 'vinyl').price + variant(pr, 'print-10').price - pairB.off;
+    const what = rec.slug === pr.slug ? (f === 'vinyl' ? 'this album as a 10×10 print' : 'this album on vinyl')
+      : (f === 'vinyl' ? `the ${esc(albumText(pr))} 10×10 print` : `the ${esc(albumText(rec))} record`);
+    return `<button class="pdpb" data-addpair="${rec.slug}|${pr.slug}"><span class="pdpb__k mono-xs">Pair</span><span>Record + 10×10 print for <b class="num">${money(total)}</b></span><span class="pdpb__s mono-xs">add ${what} · save ${money(pairB.off)} →</span></button>`;
+  }
+  const b = LIVE_BUNDLES.find(x => !x.pair && (x.need || {})[f]);
   if (!b) return '';
-  if (b.pair) return `<button class="pdpb" data-addpair="${p.slug}"><span class="pdpb__k mono-xs">Bundle</span><span>The record + its A3 poster for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">add both · save ${money(b.off)} →</span></button>`;
   return `<a class="pdpb" href="${b.href}"><span class="pdpb__k mono-xs">Bundle</span><span>${esc(b.name)} for <b class="num">${money(b.price)}</b></span><span class="pdpb__s mono-xs">save ${money(b.off)} →</span></a>`;
 }
 

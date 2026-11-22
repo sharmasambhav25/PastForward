@@ -3478,3 +3478,15 @@ html.is-zoom,html.is-zoom body{overflow:hidden}
 .addon__b:hover{background:var(--cream); color:#141112}
 .bnudge{font-family:var(--ui); font-size:.84rem; letter-spacing:0; text-transform:none; border-style:solid; border-radius:12px}
 .drawer .payline,.payline{font-family:var(--ui); letter-spacing:0; text-transform:none; font-size:.78rem}
+
+/* WhatsApp: questions, one tap. Sits above the phone buy bar and crate bar when they're up. */
+.wafab{position:fixed; z-index:175; right:calc(16px + env(safe-area-inset-right, 0px)); bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+  width:52px; height:52px; border-radius:50%; display:grid; place-items:center; background:#25D366; color:#fff;
+  box-shadow:0 6px 22px rgba(0,0,0,.35); transition:transform .25s var(--e-out-expo), bottom .3s var(--e-out-expo)}
+.wafab:hover{transform:translateY(-2px) scale(1.04)}
+.wafab:focus-visible{outline:2px solid var(--cream); outline-offset:3px}
+@media(max-width:1023px){
+  body.has-cratebar .wafab,
+  body:has(.buybar.is-on) .wafab{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
+}
+@media print{.wafab{display:none}}
