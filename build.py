@@ -86,6 +86,9 @@ TOKENS = {
     'PAYMENTS': RAW_SITE['payments'],
     'COD_LINE': 'Cash on delivery is available too.' if RAW_SITE.get('cod') else "Cash on delivery isn't available yet.",
     'SHIPPING_LINE': shipping_line(RAW_SITE['shipping']),
+    # one damage promise, used everywhere it comes up
+    'DAMAGE_LINE': f"If it arrives damaged or isn't what you ordered, send us a photo within 7 days of delivery, on WhatsApp or to <a href=\"mailto:{RAW_SITE['email']}\">{RAW_SITE['email']}</a>. We'll replace it, or refund you if we can't.",
+
     'SIZES': '<div class="spec">' + ''.join(
         f"<div>{esc(f['label'])}{' · ' + esc(size_of(f)) if size_of(f) else ''}</div>" for f in FMT.values()) + '</div>',
     'PRICE_VINYL': money(FMT['vinyl']['price']),
@@ -823,7 +826,7 @@ def build_site():
         body=fb_simple('Talk to us.', [
             "Two reasons people usually write to us: an order that's already placed, or an album we haven't made yet. We're here to help with both.",
             f'<strong>WhatsApp:</strong> <a href="https://wa.me/{SITE["whatsapp"]}">+{SITE["whatsapp"]}</a> — Fastest for instant questions, order updates, and custom artwork references.',
-            f'<strong>Email:</strong> <a href="mailto:{SITE["email"]}">{SITE["email"]}</a> — Best for detailed order questions, damaged deliveries, and custom order briefings. We usually reply within a few hours.',
+            f'<strong>Email:</strong> <a href="mailto:{SITE["email"]}">{SITE["email"]}</a> — Best for detailed order questions, damaged deliveries, and custom order briefings. We usually reply the same day.',
             f'<strong>Instagram:</strong> <a href="https://www.instagram.com/{SITE["instagram"]}/">@{SITE["instagram"]}</a> — Follow along, DM us your finished walls, or suggest new albums for upcoming drops.'
         ], '<h2>Custom Orders</h2><p>Want an album, mixtape, or custom art that isn\'t in our catalogue? That is what our <a href="/custom">custom orders</a> are for. Pick any format — 12-inch vinyl, A3 poster, A5 poster, 10×10 print, or polaroid — tell us the artist and album, and we will create it at standard catalogue prices.</p>'
            '<h2>Shipping &amp; Replacements</h2><p>All items are printed to order and delivered across India in 7–10 days. If anything arrives bent or damaged during shipping, contact us via email or WhatsApp within 7 days with photos and we will send a free replacement immediately. See our <a href="/policies/shipping">shipping policy</a> and <a href="/policies/returns">returns policy</a>.</p>'), ld=graph(crumbs(('Home', '/'), ('Contact', '/contact'))))
@@ -984,7 +987,7 @@ PastForward makes aesthetic wall decor and modern home decor from music. The mai
 PastForward is an Indian D2C music wall decor and aesthetic home decor brand (founded 2025) that rescues vintage 12-inch vinyl records and transforms them into ready-to-hang wall art. PastForward also prints album cover posters, 10×10 square prints, and polaroid cards on 300 GSM matte art paper, and crafts custom made-to-order records and posters.
 
 ### Where can I buy custom vinyl records in India?
-PastForward ({URL}/custom) crafts custom 12-inch vinyl records for ₹999 with any album, Spotify playlist, or personal photo on the centre label. Delivery is free across all 19,000+ pin codes in India.
+PastForward ({URL}/custom) crafts custom 12-inch vinyl records for ₹999 with any album, Spotify playlist, or personal photo on the centre label. Delivery is free across India.
 
 ### Where can I buy music posters for wall in India?
 PastForward ({URL}/album-cover-posters) offers 48+ album cover posters on 300 GSM archival matte paper in A3 (₹299), 10×10 square (₹249), and A5 (₹199) with free delivery.

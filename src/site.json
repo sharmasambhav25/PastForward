@@ -111,7 +111,7 @@
   "meta": {
     "/": {
       "title": "PastForward — Upcycled Vinyl Record Wall Decor & Music Posters India",
-      "desc": "Shop real 12-inch upcycled vinyl record wall decor ({{PRICE_VINYL}}), 300 GSM album cover posters ({{PRICE_A5}}), 10×10 prints & music polaroids ({{PRICE_POLAROID}}). Free shipping across India."
+      "desc": "Shop real 12-inch upcycled vinyl record wall decor ({{PRICE_VINYL}}), 300 GSM album cover posters (from {{PRICE_A5}}), 10×10 prints ({{PRICE_10}}) and music polaroids ({{PRICE_POLAROID}}). Free shipping across India."
     },
     "/vinyl": {
       "title": "Buy Decorative Vinyl Records Online India | 48+ Albums {{PRICE_VINYL}} | PastForward",
@@ -192,7 +192,7 @@
     ["What does delivery cost?", "{{SHIPPING_LINE}}"],
     ["How can I pay?", "By {{PAYMENTS}}, on a secure checkout. {{COD_LINE}}"],
     ["Do you ship outside India?", "Not yet. We deliver anywhere in India for now."],
-    ["What if it arrives damaged?", "Email {{EMAIL_LINK}} within 7 days of delivery with a photo, and we'll put it right. See <a href=\"/policies/returns\">returns</a>."],
+    ["What if it arrives damaged?", "{{DAMAGE_LINE}} See <a href=\"/policies/returns\">returns</a>."],
     ["Can you make one that isn't on the site?", "Yes. That's what <a href=\"/custom\">custom orders</a> are for — tell us the artist and album and we'll make it."],
     ["How do I look after it?", "Wipe with a dry cloth. Keep it out of direct sunlight — same as the original."]
   ],
@@ -202,13 +202,13 @@
     "shipping": ["Shipping", [
       ["Where we deliver", "We deliver anywhere in India."],
       ["How long it takes", "Every piece is made to order. Your order reaches you within {{DELIVERY}} of being placed."],
-      ["What it costs", "Any delivery charge is shown at checkout, before you pay."],
+      ["What it costs", "{{SHIPPING_LINE}}"],
       ["Your address", "Please check your delivery address and phone number before you order. If something's wrong, email {{EMAIL_LINK}} as soon as you can and we'll fix it before it ships."],
-      ["Questions", "Email {{EMAIL_LINK}}. We usually reply right away."]
+      ["Questions", "WhatsApp us or email {{EMAIL_LINK}}. We usually reply the same day."]
     ]],
     "returns": ["Returns", [
       ["Made to order", "Each piece is printed and put together for your order, so we can't take returns if you change your mind."],
-      ["If it arrives damaged", "If your order arrives damaged, or isn't what you ordered, email {{EMAIL_LINK}} within 7 days of delivery. Include your order details and photos of the piece and the packaging. We'll send a replacement, or refund you if we can't."],
+      ["If it arrives damaged", "{{DAMAGE_LINE}} Include your order number and photos of the piece and the packaging."],
       ["About the records", "Our records are upcycled: real vinyl that already had a life. Small surface marks on the record are part of that history and aren't counted as damage."],
       ["Refunds", "Approved refunds go back to the original payment method."]
     ]],
@@ -378,7 +378,7 @@
         ],
         [
           "What if it arrives bent or damaged?",
-          "Email {{EMAIL_LINK}} within 7 days of delivery with a photo and we'll put it right."
+          "{{DAMAGE_LINE}}"
         ]
       ]
     },
@@ -480,7 +480,7 @@
       ],
       [
         "How custom vinyl and custom poster orders work in India",
-        "Choose your format and submit your request above. We confirm the artwork preview with you on WhatsApp or email before anything is produced. Once approved, your order is carefully pressed or printed, packed in protective unbendable mailers, and delivered free across India (all 19,000+ pin codes). {{SHIPPING_LINE}}"
+        "Choose your format and submit your request above. We confirm the artwork preview with you on WhatsApp or email before anything is produced. Once approved, your order is carefully pressed or printed, packed in protective unbendable mailers, and delivered across India. {{SHIPPING_LINE}}"
       ]
     ],
     "faq": [
@@ -498,11 +498,11 @@
       ],
       [
         "What paper and materials are used for custom posters and vinyls?",
-        "Custom vinyl records use authentic 12-inch reclaimed phonograph discs (⌀305mm) with UV-resistant center labels and pre-installed hanging hooks. Custom posters use heavy 300 GSM archival matte artboard that prevents curling and reflections."
+        "Custom vinyl records use authentic 12-inch reclaimed phonograph discs (⌀305mm) with printed centre labels and pre-installed hanging hooks. Custom posters use heavy 300 GSM archival matte artboard that prevents curling and reflections."
       ],
       [
         "Where can I buy custom vinyl records and custom posters in India?",
-        "PastForward hand-crafts and delivers custom vinyl records and custom posters across all 19,000+ pin codes in India with free shipping and 7–10 day delivery."
+        "PastForward hand-crafts and delivers custom vinyl records and custom posters across India with free shipping and 7–10 day delivery."
       ],
       [
         "Can you add custom text, anniversary dates, or personalized messages?",
