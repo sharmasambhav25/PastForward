@@ -3458,7 +3458,7 @@ function viewProduct(p, params) {
           <div id="stagemedia" style="position:relative">${stageMedia(p, sel)}</div>
         </div>
         <div class="pdp__thumbs">
-          ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}" aria-label="${esc(x.label)}">
+          ${p.variants.map(x => `<button class="pdp__thumb ${x.format === sel ? 'is-on' : ''}" data-fmt="${x.format}"${x.format === sel ? '' : ' style="display:none"'} aria-label="${esc(x.label)}">
             <img src="${imgSrc(x.image)}" alt="${esc(albumOf(p))} ${esc(x.label)} artwork by PastForward"><span>${esc(x.badge)}</span></button>`).join('')}
           ${(p.colourway || []).map(c => `<button class="pdp__thumb" data-cw="${esc(c.image)}" aria-label="${esc(c.name)} colourway"><img src="${imgSrc(c.image)}" alt="${esc(albumOf(p))} ${esc(c.name)} colourway by PastForward"></button>`).join('')}
           ${galleryThumbs(p, sel)}
@@ -4411,6 +4411,10 @@ function mountProduct(p, params) {
   if (!RM()) mountRipple();
   // the buttons carry the amount for the chosen format and quantity
   const setAmt = () => { const v = variant(p, sel); $$('[data-amt]').forEach(el => { el.textContent = money(v.price * qty); }); };
+  // the thumb row only shows pictures of the chosen format; one picture alone needs no row
+  const syncThumbRow = () => { const row = $('.pdp__thumbs'); if (!row) return;
+    row.style.display = $$('.pdp__thumb', row).filter(b => b.style.display !== 'none').length > 1 ? '' : 'none'; };
+  syncThumbRow();
   const setFmt = f => {
     if (!variant(p, f)) return; sel = f;
     const v = variant(p, f);
@@ -4435,6 +4439,7 @@ function mountProduct(p, params) {
     $$('.pdp__thumb').forEach(b => b.classList.toggle('is-on', b.dataset.fmt === f));
     if (pick) pick.innerHTML = albumPickInner(p, f);
     $$('.pdp__thumb--gal').forEach(b => { b.style.display = b.dataset.galfmt === f ? '' : 'none'; b.classList.remove('is-on'); });
+    $$('.pdp__thumb[data-fmt]').forEach(b => { b.style.display = b.dataset.fmt === f ? '' : 'none'; });
     const pt = $('.pdp__thumb--photo');
     const shotPic = photo(getFormatPhoto(p, f));
     if (pt) {
@@ -4451,6 +4456,7 @@ function mountProduct(p, params) {
         }
       }
     }
+    syncThumbRow();
     $('#scaleview').innerHTML = scaleSVG(f);
     drawScale();
     setParams(pp => pp.set('format', f), { silent: true });   // the address follows; the page stays put
