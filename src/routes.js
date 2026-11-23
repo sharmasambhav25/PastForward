@@ -658,7 +658,7 @@ function viewCatalog(category, subType, params) {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
     h1 = 'Vinyl Records India.';
-    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each with free delivery across India.';
+    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each, with free delivery across India over ' + money(SHIP.freeFrom) + '.';
   } else if (category === 'polaroids') {
     routeFormats = ['polaroid'];
     targetFormat = 'polaroid';
@@ -716,7 +716,7 @@ function viewCatalog(category, subType, params) {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
     h1 = 'Vinyl Records India.';
-    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each with free delivery across India.';
+    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each, with free delivery across India over ' + money(SHIP.freeFrom) + '.';
   }
 
   const list = filterProducts(params, routeFormats, requiredTag, only);
@@ -846,7 +846,7 @@ function viewCatalog(category, subType, params) {
               <p class="body-l posters-hero__sub">${sub}</p>
             </div>
             <div class="posters-hero__right">
-              <span class="mono-xs posters-hero__badge">${money(FMT.vinyl.price)} · Free delivery</span>
+              <span class="mono-xs posters-hero__badge">${money(FMT.vinyl.price)} · Free delivery over ${money(SHIP.freeFrom)}</span>
             </div>
           </div>
         </div>
