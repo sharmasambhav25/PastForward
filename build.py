@@ -499,7 +499,7 @@ def fb_nav():
         ' · '.join(f'<a href="/policies/{k}">{esc(v[0])}</a>' for k, v in SITE['policies'].items()) + '</p></nav>'
 
 def fb_facts():
-    bits = [SITE['shipping']['label'], f"Delivered in {SITE['delivery']} across India", f"Pay by {SITE['payments']}"]
+    bits = [SITE['shipping']['label'], f"Delivered in {SITE['delivery']} across India", f"Pay by {SITE['payments']}" + (' or cash on delivery' if SITE.get('cod') else '')]
     return '<p>' + ' · '.join(esc(b) for b in bits if b) + '</p>'
 
 def fb_products(products, fmts=None):
@@ -560,7 +560,7 @@ def fb_product(p):
                + ('Every vinyl piece is made using a real upcycled 12-inch vinyl record that had a previous life, restored and fitted with custom-designed album artwork. Made to hang, not to play. A wall mounting hook is provided in every box. ' if any(v['format'] == 'vinyl' for v in p['variants']) else '')
                + 'Printed works use archival-grade pigment ink on heavyweight 300 GSM paper. To maintain vibrant colors, display out of direct sunlight and wipe gently with a dry microfibre cloth.</p>')
     out.append('<h2>Shipping &amp; Damaged Delivery Guarantee</h2><p>'
-               + f"Every piece is printed and assembled when you order. Delivered across India within {SITE['delivery']}. {SITE['shipping']['label']}. If your order arrives damaged or bent in transit, email us within 7 days of delivery with photos of the package and item for an immediate free replacement. See our <a href=\"/policies/shipping\">shipping policy</a> and <a href=\"/policies/returns\">returns policy</a>.</p>")
+               + f"Every piece is printed and assembled when you order. Delivered across India within {SITE['delivery']}. {SITE['shipping']['label']}. {TOKENS['DAMAGE_LINE']} See our <a href=\"/policies/shipping\">shipping policy</a> and <a href=\"/policies/returns\">returns policy</a>.</p>")
     if more:
         out.append(f"<h2>More from {esc(p['artist'])}</h2>{fb_products(more)}")
     if slugify(p['artist']) in SITE['artistPages']:
@@ -771,6 +771,14 @@ def build_site():
                   f'<link rel="canonical" href="{URL}{product_url(p)}"><meta http-equiv="refresh" content="0; url={product_url(p)}">'
                   f'<meta name="robots" content="noindex,follow"></head><body><p><a href="{product_url(p)}">{esc(name_of(p))}</a></p></body></html>')
 
+    # the Shopify-only custom product: its old Shopify address forwards (via the theme redirect) to /product/custom-album-artwork
+    for f in ('product/custom-album-artwork.html', 'product/custom-album-artwork/index.html'):
+        write(os.path.join(DOCS, f),
+              f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Custom orders | PastForward</title>'
+              f'<link rel="canonical" href="{URL}/custom"><meta http-equiv="refresh" content="0; url=/custom">'
+              f'<meta name="robots" content="noindex,follow"><script>location.replace("/custom"+location.search)</script></head>'
+              f'<body><p><a href="/custom">Custom orders</a></p></body></html>')
+
     # content pages
     add('/faq', 'faq.html', title=M['/faq']['title'], desc=M['/faq']['desc'],
         body=fb_wrap('<h1>Questions</h1>' + ''.join(f'<h2>{esc(q)}</h2><div>{site_links(a)}</div>' for q, a in SITE['faq'])),
@@ -830,7 +838,7 @@ def build_site():
             f'<strong>Email:</strong> <a href="mailto:{SITE["email"]}">{SITE["email"]}</a> — Best for detailed order questions, damaged deliveries, and custom order briefings. We usually reply the same day.',
             f'<strong>Instagram:</strong> <a href="https://www.instagram.com/{SITE["instagram"]}/">@{SITE["instagram"]}</a> — Follow along, DM us your finished walls, or suggest new albums for upcoming drops.'
         ], '<h2>Custom Orders</h2><p>Want an album, mixtape, or custom art that isn\'t in our catalogue? That is what our <a href="/custom">custom orders</a> are for. Pick any format — 12-inch vinyl, A3 poster, A5 poster, 10×10 print, or polaroid — tell us the artist and album, and we will create it at standard catalogue prices.</p>'
-           '<h2>Shipping &amp; Replacements</h2><p>All items are printed to order and delivered across India in 7–10 days. If anything arrives bent or damaged during shipping, contact us via email or WhatsApp within 7 days with photos and we will send a free replacement immediately. See our <a href="/policies/shipping">shipping policy</a> and <a href="/policies/returns">returns policy</a>.</p>'), ld=graph(crumbs(('Home', '/'), ('Contact', '/contact'))))
+           '<h2>Shipping &amp; Replacements</h2><p>All items are printed to order and delivered across India in 7–10 days. ' + TOKENS['DAMAGE_LINE'] + ' See our <a href="/policies/shipping">shipping policy</a> and <a href="/policies/returns">returns policy</a>.</p>'), ld=graph(crumbs(('Home', '/'), ('Contact', '/contact'))))
     for k, (name, sections) in SITE['policies'].items():
         path = f'/policies/{k}'
         add(path, f'policies/{k}.html', title=M[path]['title'], desc=M[path]['desc'],
@@ -865,7 +873,7 @@ def build_site():
            '<li><strong>10 Polaroids:</strong> ₹699 (Save ₹291)</li>'
            '</ul>'
            '<h2>Hanging &amp; Wall Care</h2><p>Every vinyl record includes an adhesive-backed wall mounting hook in the package. Posters, prints, and polaroids are lightweight and mount cleanly using Blu-Tack, command poster strips, or washi tape without peeling or damaging wall paint.</p>'
-           '<h2>Delivery &amp; Guarantee</h2><p>All pieces are crafted to order and shipped across India in 7–10 days with protective packaging. In the rare event of transit damage, we provide hassle-free replacements within 7 days of delivery.</p>'),
+           '<h2>Delivery &amp; Guarantee</h2><p>All pieces are crafted to order and shipped across India in 7–10 days with protective packaging. If anything arrives damaged, send us a photo within 7 days of delivery and we\'ll replace it, or refund you if we can\'t.</p>'),
         ld=graph(crumbs(('Home', '/'), ('Build your wall', '/build-your-wall'))))
     for path, h1 in (('/cart', 'The crate.'), ('/search', 'Search.'), ('/wall', 'Send us a wall.')):
         add(path, path[1:] + '.html', title=M[path]['title'], desc=M[path]['desc'], noindex=True,
@@ -918,7 +926,7 @@ def machine_files():
 - **Delivery time**: {SITE['delivery']} from order
 - **Delivery cost**: {ship}
 - **Payment**: {SITE['payments']}. {TOKENS['COD_LINE']}
-- **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, email within 7 days of delivery for a replacement or refund.
+- **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, send a photo on WhatsApp or by email within 7 days of delivery for a replacement, or a refund if a replacement isn't possible.
 - **Contact**: {SITE['email']} · Instagram @{SITE['instagram']}"""
     cat_lines = '\n'.join(
         f"- {name_of(p)} — " + ', '.join(f"{v['label']} {money(v['price'])}" for v in p['variants']) + f" — {URL}{product_url(p)}" for p in P)
@@ -941,7 +949,7 @@ PastForward makes aesthetic wall decor and modern home decor from music. The mai
 - **URL**: {URL}/custom
 - **What it is**: Any album, mixtape, personal Spotify playlist, or personal photo turned into an authentic 12-inch vinyl record (₹999) or a 300 GSM matte music poster (A3 ₹299, 10×10 ₹249, A5 ₹199, polaroid ₹99).
 - **Process**: Customers submit artist, album, track, or artwork. PastForward confirms visual layout preview on WhatsApp before production.
-- **Guarantee**: Damage-free delivery guarantee (free replacement within 7 days).
+- **Guarantee**: Arrives damaged or wrong? Send a photo within 7 days for a replacement, or a refund if we can't replace it.
 
 ### Vinyl Records in India — Wall Decor vs Playable Records
 - **URL**: {URL}/vinyl and {URL}/vinyl-record-wall-decor

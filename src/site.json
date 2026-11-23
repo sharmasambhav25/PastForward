@@ -217,6 +217,7 @@
       ["What we collect", "Only what you give us. When you order: your name, delivery address, phone number and email, so we can deliver. When you use a form: what you type in it, such as your name, email, WhatsApp number, message, or a link to the artwork you want. When you join the list: your email."],
       ["What we use it for", "To make and deliver your order, to reply to you, and, if you joined the list, to tell you about new drops. You can leave the list at any time."],
       ["Payments", "Payments are handled by our payment provider. We never see or store your card or bank details."],
+      ["Checkout", "Checkout runs on Shopify, which processes your order details for us under the <a href=\"https://www.shopify.com/legal/privacy\">Shopify Privacy Policy</a>."],
       ["Who we share it with", "Only the people who need it to get your order to you, such as our payment provider and delivery partner. We don't sell your data."],
       ["Your cart and cookies", "Your cart is saved in your own browser so it's still there when you come back. This site uses the Meta Pixel to measure which ads and posts bring visitors and sales, and to show our ads to people who have visited. You can control this in your Facebook or Instagram ad settings."],
       ["Your rights", "You can ask us what we hold about you, ask us to correct it, or ask us to delete it. Email {{EMAIL_LINK}}."]
@@ -224,7 +225,7 @@
     "terms": ["Terms", [
       ["Who we are", "PastForward makes wall decor from music: upcycled vinyl records with album art at the centre, posters, prints and polaroid cards. By ordering from this site you agree to these terms."],
       ["The products", "Our records are for hanging, not playing. Prints are made to order, and colours can look slightly different from how they appear on your screen."],
-      ["Prices and orders", "Prices are in Indian rupees. An order is confirmed once payment goes through. If we ever can't fulfil an order, we'll tell you and refund you in full."],
+      ["Prices and orders", "Prices are in Indian rupees. An order is confirmed once payment goes through, or when you place it if you choose cash on delivery. If we ever can't fulfil an order, we'll tell you and refund you in full."],
       ["Custom orders", "When you send us an image or artwork to print, you confirm you have the right to use it."],
       ["Artwork and names", "Album artwork, artist names and titles belong to their respective owners. PastForward is not affiliated with or endorsed by any artist or label."],
       ["Delivery and returns", "See our <a href=\"/policies/shipping\">shipping</a> and <a href=\"/policies/returns\">returns</a> policies."],
