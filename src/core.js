@@ -1335,6 +1335,7 @@ function render(opt = {}) {
 
   if (!seg.length) out = viewHome();
   else if (seg[0] === 'vinyl') out = viewCatalog('vinyl', null, params);
+  else if (seg[0] === 'vinyl-by-artist') out = viewCatalog('vinyl', 'artists', params);
   else if (seg[0] === 'posters') {
     out = viewCatalog('posters', seg[1], params);
     if (!seg[1]) { m = M['/posters/a3'] || m; canonical = ORIGIN + '/posters/a3'; }
@@ -1384,7 +1385,7 @@ function render(opt = {}) {
   main.innerHTML = out;
   bindEffects(main);
   $$('.hdr__nav [data-nav]').forEach(a => {
-    const isAct = a.dataset.nav === seg[0] || (seg[0] === 'collections' && a.dataset.nav === 'collection');
+    const isAct = a.dataset.nav === seg[0] || (seg[0] === 'vinyl-by-artist' && a.dataset.nav === 'vinyl') || (seg[0] === 'collections' && a.dataset.nav === 'collection');
     a.classList.toggle('is-active', isAct);
   });
   if (typeof window.__afterRender === 'function') window.__afterRender(seg, params);

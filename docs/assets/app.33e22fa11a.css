@@ -3518,3 +3518,19 @@ html.is-zoom,html.is-zoom body{overflow:hidden}
 .fship__bar i{display:block; height:100%; border-radius:inherit; background:var(--oxblood); transition:width .5s cubic-bezier(.2,.8,.2,1)}
 .fship.is-done .fship__bar i{background:#5fae7b}
 @media (prefers-reduced-motion:reduce){.fship__bar i{transition:none}}
+
+/* ---- vinyl: every record / by artist, and a quick row of artists ---- */
+.stabs--vinyl{margin-bottom:18px; padding-bottom:0; border-bottom:0}
+.vchips{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 40px; padding-bottom:22px; border-bottom:1px solid var(--border)}
+.vchip{padding:7px 14px; border:1px solid var(--border-2); border-radius:999px; color:var(--cream); text-decoration:none; font-size:.86rem; white-space:nowrap; transition:border-color .2s, background .2s}
+.vchip:hover{border-color:var(--ember)}
+.vchip--all{border-color:transparent; color:var(--muted)}
+.vchip--all:hover{color:var(--cream)}
+.stabs--vinyl.stabs--solo{margin-bottom:40px; padding-bottom:22px; border-bottom:1px solid var(--border)}
+@media(max-width:767px){
+  .stabs--vinyl{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); overflow:visible; margin:-10px 0 14px; padding:0}
+  .vchips{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin:0 -16px 28px; padding:0 16px 16px; gap:6px}
+  .vchips::-webkit-scrollbar{display:none}
+  .stabs--vinyl.stabs--solo{margin-bottom:28px; padding-bottom:16px}
+}
+@media(prefers-reduced-motion:reduce){ .vchip{transition:none} }

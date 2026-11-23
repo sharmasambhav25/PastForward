@@ -647,6 +647,24 @@ function sizeTabsHTML(active) {
       ${t.f ? `<span class="stab__meta mono-xs num">${money(FMT[t.f].price)}</span>` : `<span class="stab__meta mono-xs">every size</span>`}
     </a>`).join('')}</nav>`;
 }
+/* vinyl: every record, or the same records grouped by artist, plus a quick row of artists */
+function vinylTabsHTML(active, list) {
+  const nArt = new Set(withVinyl.map(p => p.artist)).size;
+  const tabs = [['all', '/vinyl', 'Every record', withVinyl.length + ' designs'], ['artists', '/vinyl-by-artist', 'By artist', nArt + ' artists']];
+  const counts = new Map();
+  withVinyl.forEach(p => counts.set(p.artist, (counts.get(p.artist) || 0) + 1));
+  const TOP = ['The Weeknd', 'Travis Scott', 'Taylor Swift', 'Billie Eilish'];
+  const pages = SITE.artistPages || {};
+  const rank = a => TOP.includes(a) ? TOP.indexOf(a) : TOP.length;   // best-selling artists lead
+  const arts = [...counts.keys()].filter(a => pages[artistSlug(a)])
+    .sort((a, b) => (rank(a) - rank(b)) || (counts.get(b) - counts.get(a)) || a.localeCompare(b))
+    .slice(0, 14);
+  const chips = active === 'all' && arts.length ? `<nav class="vchips" aria-label="Shop vinyl by artist">
+      ${arts.map(a => `<a class="vchip" href="/artist/${artistSlug(a)}?format=vinyl">${esc(a)}</a>`).join('')}
+      <a class="vchip vchip--all" href="/vinyl-by-artist">All artists →</a></nav>` : '';
+  return `<nav class="stabs stabs--vinyl${chips ? '' : ' stabs--solo'}" aria-label="Browse vinyl">${tabs.map(([k, href, name, meta]) => `<a class="stab${k === active ? ' is-on' : ''}" href="${href}"${k === active ? ' aria-current="page"' : ''}>
+      <span class="stab__name">${name}</span><span class="stab__meta mono-xs num">${meta}</span></a>`).join('')}</nav>${chips}`;
+}
 function viewCatalog(category, subType, params) {
   let routeFormats = [];
   let h1 = '', sub = '';
@@ -657,8 +675,10 @@ function viewCatalog(category, subType, params) {
   if (category === 'vinyl') {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';
-    h1 = 'Vinyl Records India.';
-    sub = 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each, with free delivery across India over ' + money(SHIP.freeFrom) + '.';
+    h1 = subType === 'artists' ? 'Vinyl by artist.' : 'Vinyl Records India.';
+    sub = subType === 'artists'
+      ? 'Every artist we make records for. Pick one, then the album. ' + money(FMT.vinyl.price) + ' each, wall hook included.'
+      : 'Authentic 12-inch upcycled records with iconic album art on the centre label. Made to hang, not to play. Wall hook included, ' + money(FMT.vinyl.price) + ' each, with free delivery across India over ' + money(SHIP.freeFrom) + '.';
   } else if (category === 'polaroids') {
     routeFormats = ['polaroid'];
     targetFormat = 'polaroid';
@@ -724,7 +744,8 @@ function viewCatalog(category, subType, params) {
   const posterTotal = P.filter(p => p.variants.some(v => ['poster-a3', 'poster-a5', 'print-10'].includes(v.format))).length;
   const on = (k, v) => params.getAll(k).includes(v) ? 'checked' : '';
   const shown = +(params.get('n') || 60);
-  const byArtist = category === 'vinyl' || category === 'posters' || category === 'polaroids';
+  // vinyl shows every record; the artist view lives at /vinyl-by-artist
+  const byArtist = (category === 'vinyl' && subType === 'artists') || category === 'posters' || category === 'polaroids';
   const groups = byArtist ? artistGroups(list) : null;
   const total = byArtist ? groups.length : list.length;
 
@@ -863,6 +884,7 @@ function viewCatalog(category, subType, params) {
 
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
     ${topContentHTML}
+    ${category === 'vinyl' ? vinylTabsHTML(subType === 'artists' ? 'artists' : 'all', list) : ''}
     ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
       <aside class="rail" id="rail" aria-label="Filters">

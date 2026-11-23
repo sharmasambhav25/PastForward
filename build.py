@@ -716,6 +716,7 @@ def build_site():
 
     # format listings
     LIST = [('/vinyl', 'vinyl.html', 'Vinyl Records India', ['vinyl']),
+            ('/vinyl-by-artist', 'vinyl-by-artist.html', 'Vinyl Records by Artist', ['vinyl']),
             ('/posters/a3', 'posters/a3.html', 'A3 Music Posters for Wall', ['poster-a3']),
             ('/posters/a5', 'posters/a5.html', 'A5 posters', ['poster-a5']),
             ('/posters/10x10', 'posters/10x10.html', '10×10 prints', ['print-10']),
