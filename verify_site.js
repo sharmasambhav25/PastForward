@@ -135,7 +135,7 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
   {
     const ctx = await browser.newContext(PHONE), page = await ctx.newPage();
     await page.goto(BASE + '/product/the-weeknd-after-hours?utm_source=ig&utm_campaign=launch&fbclid=TEST123', { waitUntil: 'load' }); await page.waitForSelector('#pdpadd');
-    await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag');      // tags survive moving around the site
+    await page.goto(BASE + '/vinyl-by-artist', { waitUntil: 'load' }); await page.waitForSelector('.ag');      // tags survive moving around the site (artist view moved here on 23 Nov)
     const u = await page.evaluate(() => { const p = bySlug['the-weeknd-after-hours'], v = variant(p, 'vinyl'); return checkoutUrl([{ sku: v.sku, qty: 1, price: v.price }]); });
     if (!/utm_source=ig/.test(u || '') || !/utm_campaign=launch/.test(u || '') || !/fbclid=TEST123/.test(u || '')) fails.push(`campaign tags are not carried to checkout: ${u}`);
     if (await page.evaluate(() => !(SITE.tracking && SITE.tracking.metaPixelId) && !!window.fbq)) fails.push('the Meta Pixel loaded although site.json has no pixel id');
@@ -188,7 +188,7 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
   await page.reload({ waitUntil: 'load' }); await page.waitForSelector('#pdpadd');
   if ((await page.evaluate(() => cartCount())) !== 1) fails.push('cart did not survive a reload');
   // catalogue: filtering keeps your place; a one-album artist goes straight to the record
-  await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag');
+  await page.goto(BASE + '/vinyl-by-artist', { waitUntil: 'load' }); await page.waitForSelector('.ag');
   const cat = await page.evaluate(() => ({ cards: document.querySelectorAll('.ag').length, solo: document.querySelectorAll('.ag--solo').length, more: !!document.getElementById('loadmore') }));
   notes.push(`vinyl page: ${cat.cards} artists on first load, ${cat.solo} open straight to the record`);
   if (cat.more) fails.push('vinyl page hides part of the catalogue behind "Load more"');
@@ -200,7 +200,7 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
   if (!/collection=the-classics/.test(f.q) || f.n >= cat.cards) fails.push('collection filter did not apply');
   // an artist with several albums: the card opens an album's page, and the other albums are chosen there, in place
   {
-    await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag--go');
+    await page.goto(BASE + '/vinyl-by-artist', { waitUntil: 'load' }); await page.waitForSelector('.ag--go');
     if (await page.evaluate(() => document.querySelectorAll('.ag__drop, .ag__pick').length)) fails.push('the catalogue still has album dropdowns');
     const before = await page.evaluate(() => history.length);
     await page.click('.ag--go .ag__head >> nth=0'); await page.waitForSelector('#apick .apick__a');
@@ -215,7 +215,7 @@ const decode = s => (s || '').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").rep
     if (!a1.on || !a1.on.startsWith(a1.title.trim())) fails.push(`the chooser does not mark the album on show: ${JSON.stringify(a1)}`);
     if (a1.sw > a1.vw) fails.push('the album chooser makes the product page scroll sideways');
     notes.push(`album chooser: ${a0.n} albums, ${a0.path} -> ${a1.path}`);
-    await page.goto(BASE + '/vinyl', { waitUntil: 'load' }); await page.waitForSelector('.ag');
+    await page.goto(BASE + '/vinyl-by-artist', { waitUntil: 'load' }); await page.waitForSelector('.ag');
   }
   await page.click('.ag--solo .ag__head >> nth=0'); await page.waitForSelector('#pdpadd');
   // forms: the custom order and contact forms hand over a real, written message

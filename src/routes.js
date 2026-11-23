@@ -731,7 +731,7 @@ function viewCatalog(category, subType, params) {
     sub = esc(landing.sub);
     const reqFmts = params.getAll('format');
     routeFormats = reqFmts.length ? reqFmts : (landing.formats || []);
-    targetFormat = routeFormats.length === 1 ? routeFormats[0] : (routeFormats.length ? routeFormats : null);
+    targetFormat = routeFormats.length === 1 ? routeFormats[0] : (routeFormats.length ? routeFormats : (landing.cardFormats || null));
   } else {
     routeFormats = ['vinyl'];
     targetFormat = 'vinyl';

@@ -465,6 +465,54 @@
         ]
       ],
       "faq": []
+    },
+    "/rap-posters": {
+      "title": "Rap & Hip-Hop Posters in India: Travis Scott, Eminem, Seedhe Maut | PastForward",
+      "desc": "Rap and hip-hop posters and vinyl wall art: Travis Scott, Eminem, Post Malone, Seedhe Maut, Kanye West, Drake, Juice WRLD, Karan Aujla and more. A3 posters {{PRICE_A3}}, A5 {{PRICE_A5}}, records {{PRICE_VINYL}}. Delivered across India.",
+      "h1": "Rap posters.",
+      "sub": "Travis Scott, Eminem, Post Malone, Kanye, Drake and desi hip-hop, as posters, prints and records.",
+      "formats": [],
+      "artists": [
+        "Travis Scott",
+        "Kanye West",
+        "Drake",
+        "Eminem",
+        "Juice WRLD",
+        "Post Malone",
+        "MGK",
+        "Cochise",
+        "Luca Brassi",
+        "Seedhe Maut",
+        "Karan Aujla",
+        "RM"
+      ],
+      "cardFormats": [
+        "poster-a3",
+        "poster-a5",
+        "print-10",
+        "vinyl",
+        "polaroid"
+      ],
+      "sections": [
+        [
+          "Rap and hip-hop album covers",
+          "Travis Scott's Utopia and Rodeo, Kanye's Graduation, Eminem's The Death of Slim Shady, Post Malone's Sunflower, Juice WRLD's Goodbye & Good Riddance, plus Seedhe Maut's Lunch Break and Karan Aujla's At Peace from closer to home. Pick a cover, then the format."
+        ],
+        [
+          "Sizes and prices",
+          "A3 posters (297 × 420mm) are {{PRICE_A3}}, A5 posters {{PRICE_A5}}, 10×10 prints {{PRICE_10}}, and a real upcycled 12-inch record with the cover on the label is {{PRICE_VINYL}}. Not every album comes in every format."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ],
+      "faq": [
+        [
+          "Can I get a rapper or album you don't list?",
+          "Yes, through <a href=\"#/custom\">custom orders</a>."
+        ]
+      ]
     }
   },
 
@@ -496,7 +544,7 @@
       ],
       [
         "Are custom vinyl records playable on a turntable?",
-        "No. Like every record we make, our custom vinyls are designed to hang as wall decor, not to play on a turntable. The authentic vintage vinyl grooves are 100% real, but they are crafted and sold as aesthetic music wall decor."
+        "No. Like every record we make, our custom vinyls are designed to hang as wall decor, not to play on a turntable. The authentic vintage vinyl grooves are 100% real, but they are made and sold as music wall decor."
       ],
       [
         "Can I order custom posters or vinyl for Spotify playlists or unreleased music?",

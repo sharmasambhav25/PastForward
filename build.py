@@ -229,6 +229,7 @@ for name in _artists:
         'h1': h1,
         'sub': f"{album_list}. From {money(lo)}, delivered across India.",
         'items': [p['slug'] for p in ps],
+        'cardFormats': ['poster-a3', 'poster-a5', 'print-10', 'vinyl', 'polaroid'] if has_poster else None,
         'sections': sections,
         'faq': [
             [f"Is the {name} vinyl a real record?" if has_vinyl else f"What sizes do the {name} posters come in?",
@@ -242,9 +243,13 @@ SITE['artistPages'] = ARTIST_PAGES
 
 # ---- landing pages (site.json "landing"): resolve each one to the products it shows
 def landing_items(L):
-    fmts, cap = L.get('formats') or [], L.get('maxPrice')
+    fmts, cap, artists = L.get('formats') or [], L.get('maxPrice'), set(L.get('artists') or [])
     ok = lambda v: (not fmts or v['format'] in fmts) and (cap is None or v['price'] <= cap)
-    return [p['slug'] for p in featured_order(P) if any(ok(v) for v in p['variants'])]
+    ps = [p for p in featured_order(P) if not artists or p['artist'] in artists]
+    if L.get('cardFormats'):   # what the page leads with: products in the first-listed format come first
+        rank = {f: i for i, f in enumerate(L['cardFormats'])}
+        ps = sorted(ps, key=lambda p: min(rank.get(v['format'], 99) for v in p['variants']))
+    return [p['slug'] for p in ps if any(ok(v) for v in p['variants'])]
 for path, L in SITE.get('landing', {}).items():
     L['items'] = landing_items(L)
 
@@ -570,7 +575,7 @@ def fb_product(p):
     return fb_wrap(''.join(out))
 
 def fb_landing(L, products):
-    fmts = L.get('formats') or None
+    fmts = L.get('formats') or L.get('cardFormats') or None
     copy = ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in L.get('sections', []))
     faq = ''.join(f'<h3>{esc(q)}</h3><p>{site_links(a)}</p>' for q, a in L.get('faq', []))
     return fb_wrap(f"<h1>{esc(L['h1'].rstrip('.'))}</h1><p>{esc(L['sub'])}</p>{fb_facts()}"
