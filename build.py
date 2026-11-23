@@ -954,7 +954,7 @@ PastForward makes aesthetic wall decor and modern home decor from music. The mai
 ### Custom Vinyl Records & Custom Posters in India
 - **URL**: {URL}/custom
 - **What it is**: Any album, mixtape, personal Spotify playlist, or personal photo turned into an authentic 12-inch vinyl record (₹999) or a 300 GSM matte music poster (A3 ₹299, 10×10 ₹249, A5 ₹199, polaroid ₹99).
-- **Process**: Customers submit artist, album, track, or artwork. PastForward confirms visual layout preview on WhatsApp before production.
+- **Process**: Customers submit artist, album, track, or artwork. PastForward makes it to order after payment.
 - **Guarantee**: Arrives damaged or wrong? Send a photo within 7 days for a replacement, or a refund if we can't replace it.
 
 ### Vinyl Records in India — Wall Decor vs Playable Records

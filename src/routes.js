@@ -1121,7 +1121,7 @@ function viewCustom() {
   const defaultFormat = FMT.vinyl;
   const canPay = !!customVariantId('vinyl');
   const stepsList = canPay
-    ? [['01', 'Tell us the album, send a photo'], ['02', 'Pay to place the order'], ['03', 'Approve the design on WhatsApp'], ['04', 'We make it and ship it']]
+    ? [['01', 'Tell us the album, send a photo'], ['02', 'Pay to place the order'], ['03', 'We make it and ship it']]
     : [['01', 'Choose format & album'], ['02', 'We confirm the artwork and send a payment link'], ['03', 'We craft it and ship it']];
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
     <div style="display:grid;gap:56px" id="customgrid">
@@ -1164,7 +1164,7 @@ function viewCustom() {
               <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} and confirm</span></button>
             <ul class="customnext body-s">
               <li><b>Next:</b> your address on Shopify's secure checkout.</li>
-              <li><b>After you pay:</b> we send the design to your WhatsApp. Nothing is made until you approve it.</li>
+              <li><b>After you pay:</b> we make it to order and ship it in ${DELIVERY}.</li>
             </ul>
             <p class="payline mono-xs dim">${payLine()}</p>`
           : `<div class="btnrow">
