@@ -644,6 +644,34 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
 {body}
 </body></html>'''
 
+# ---- smaller copies of the big photos, for phones
+# A phone needs at most its screen width × pixel density: 800px covers a 2x screen, 1400px a 3x
+# one, both at full width. The browser picks from the set (srcset); desktops still get the
+# original, so nothing looks softer anywhere. Copies are cached in .photocache by source content.
+PHOTO_STEPS = (800, 1400)
+def photo_sizes(k, path):
+    from PIL import Image
+    import hashlib
+    with Image.open(path) as im:
+        w0, h0 = im.size
+        steps = [w for w in PHOTO_STEPS if w < w0 * 0.85]
+        if not steps:
+            return None
+        key = hashlib.sha1(read(path, 'rb')).hexdigest()[:12]
+        cache = os.path.join(ROOT, '.photocache')
+        os.makedirs(cache, exist_ok=True)
+        out = []
+        for w in steps:
+            fn = f'{k}-{w}.webp'
+            cached = os.path.join(cache, f'{k}-{w}-{key}.webp')
+            if not os.path.exists(cached):
+                small = im.convert('RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB').resize((w, round(h0 * w / w0)), Image.LANCZOS)
+                small.save(cached, 'WEBP', quality=88, method=6)
+            shutil.copy2(cached, os.path.join(DOCS, 'photos', fn))
+            out.append(f'/photos/{fn} {w}w')
+        out.append(f'/photos/{k}.webp {w0}w')
+    return ', '.join(out)
+
 def collection_products(slug, fmts=None):
     return [p for p in P if slug in p['tags'] and (not fmts or any(v['format'] in fmts for v in p['variants']))]
 
@@ -666,10 +694,13 @@ def build_site():
     for f in sorted(os.listdir(IMG)):
         if f.endswith('.webp'):
             shutil.copy2(os.path.join(IMG, f), os.path.join(DOCS, 'img', f))
-    site_photos = {}
+    site_photos, photo_sets = {}, {}
     for k, path in PHOTO_FILES.items():
         shutil.copy2(path, os.path.join(DOCS, 'photos', k + '.webp'))
         site_photos[k] = f'/photos/{k}.webp'
+        sizes = photo_sizes(k, path)
+        if sizes:
+            photo_sets[site_photos[k]] = sizes
     shutil.copy2(f'{ROOT}/brand/wordmark.webp', os.path.join(DOCS, 'photos', 'wordmark.webp'))
     shutil.copy2(f'{ROOT}/brand/wordmark-900.webp', os.path.join(DOCS, 'photos', 'wordmark-900.webp'))   # phones: same mark, 35 KB instead of 85
     shutil.copy2(f'{ROOT}/vendor/three.module.min.js', os.path.join(DOCS, 'vendor', 'three.module.min.js'))
@@ -695,7 +726,8 @@ def build_site():
     gl_url = asset('vinyl3d', 'js', vinyl3d_source('/vendor/three.module.min.js'))
     ASSET_CSS = asset('app', 'css', font_css(False) + css)
     payload = js_payload(base='/img/', photos=site_photos, wordmark='/photos/wordmark.webp',
-                         extra={'__CLEAN_URLS__': True, '__VINYL3D_URL__': gl_url, '__WORDMARK_SM__': '/photos/wordmark-900.webp'})
+                         extra={'__CLEAN_URLS__': True, '__VINYL3D_URL__': gl_url, '__WORDMARK_SM__': '/photos/wordmark-900.webp',
+                                '__PHOTO_SETS__': photo_sets})
     ASSET_JS = asset('app', 'js', payload + '\n' + APP_JS)
 
     pages = []   # (path, file, html, indexable)

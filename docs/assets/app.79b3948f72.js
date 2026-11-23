@@ -8,6 +8,7 @@ window.__IMG_BASE_LG__ = null;
 window.__CLEAN_URLS__ = true;
 window.__VINYL3D_URL__ = "/assets/vinyl3d.b939cedea6.js";
 window.__WORDMARK_SM__ = "/photos/wordmark-900.webp";
+window.__PHOTO_SETS__ = {"/photos/album-posters.webp": "/photos/album-posters-800.webp 800w, /photos/album-posters-1400.webp 1400w, /photos/album-posters.webp 2048w", "/photos/board-closeup.webp": "/photos/board-closeup-800.webp 800w, /photos/board-closeup.webp 975w", "/photos/poster-wall.webp": "/photos/poster-wall-800.webp 800w, /photos/poster-wall-1400.webp 1400w, /photos/poster-wall.webp 2048w", "/photos/printer.webp": "/photos/printer-800.webp 800w, /photos/printer.webp 973w", "/photos/prints-spread.webp": "/photos/prints-spread-800.webp 800w, /photos/prints-spread-1400.webp 1400w, /photos/prints-spread.webp 2400w", "/photos/record-in-hand.webp": "/photos/record-in-hand-800.webp 800w, /photos/record-in-hand.webp 983w", "/photos/sabrina-espresso-bed.webp": "/photos/sabrina-espresso-bed-800.webp 800w, /photos/sabrina-espresso-bed.webp 1086w", "/photos/sabrina-espresso-wall.webp": "/photos/sabrina-espresso-wall-800.webp 800w, /photos/sabrina-espresso-wall.webp 1087w", "/photos/vinyl-wall.webp": "/photos/vinyl-wall-800.webp 800w, /photos/vinyl-wall-1400.webp 1400w, /photos/vinyl-wall.webp 2048w", "/photos/wall-full.webp": "/photos/wall-full-800.webp 800w, /photos/wall-full.webp 976w", "/photos/wall-person.webp": "/photos/wall-person-800.webp 800w, /photos/wall-person.webp 973w", "/photos/wall-white.webp": "/photos/wall-white-800.webp 800w, /photos/wall-white.webp 978w", "/photos/disc.webp": "/photos/disc-800.webp 800w, /photos/disc.webp 1200w"};
 /* ===== shopifyanalytics.js ===== */
 /* Shopify's own analytics helper (@shopify/hydrogen-react 2026.4.4: sendShopifyAnalytics, getClientBrowserParameters, buildUUID),
    bundled with esbuild. Lets Shopify Admin (sessions, reports, Live View) count visits to this site. Used by Track in core.js. */
@@ -1338,6 +1339,15 @@ function updatePageSEO({ title, description, canonical, ogImage, noindex }) {
 /* the static page that was served carries structured data for ITS route; once the visitor
    moves on inside the app it no longer describes what is on screen, so it goes */
 let firstRender = true;
+/* Big photos come with smaller copies (window.__PHOTO_SETS__, made by the build). Giving each
+   <img> the set lets a phone fetch the copy that matches its screen; desktops still get the
+   original. sizes="100vw" is the safe upper bound, so the pick is never softer than the screen. */
+function withPhotoSets(html) {
+  const sets = window.__PHOTO_SETS__;
+  if (!sets) return html;
+  return html.replace(/<img\b([^>]*?)\ssrc="([^"]+)"/g, (m, pre, src) =>
+    sets[src] && !/\ssrcset=/.test(m) ? `<img${pre} src="${src}" srcset="${sets[src]}" sizes="100vw"` : m);
+}
 function render(opt = {}) {
   const { path, params } = parseHash();
   let seg = path.split('/').filter(Boolean);
@@ -1410,7 +1420,7 @@ function render(opt = {}) {
   if (!firstRender && !opt.quiet) { const ld = document.getElementById('route-schema'); if (ld) ld.remove(); }
   // tear down the page we're leaving: WebGL contexts, frame loops, observers
   (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
-  main.innerHTML = out;
+  main.innerHTML = withPhotoSets(out);
   bindEffects(main);
   $$('.hdr__nav [data-nav]').forEach(a => {
     const isAct = a.dataset.nav === seg[0] || (seg[0] === 'vinyl-by-artist' && a.dataset.nav === 'vinyl') || (seg[0] === 'collections' && a.dataset.nav === 'collection');

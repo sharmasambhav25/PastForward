@@ -14,3 +14,4 @@ clarity-cache.json
 __pycache__/
 *.pyc
 
+.photocache/

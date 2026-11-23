@@ -1320,6 +1320,15 @@ function updatePageSEO({ title, description, canonical, ogImage, noindex }) {
 /* the static page that was served carries structured data for ITS route; once the visitor
    moves on inside the app it no longer describes what is on screen, so it goes */
 let firstRender = true;
+/* Big photos come with smaller copies (window.__PHOTO_SETS__, made by the build). Giving each
+   <img> the set lets a phone fetch the copy that matches its screen; desktops still get the
+   original. sizes="100vw" is the safe upper bound, so the pick is never softer than the screen. */
+function withPhotoSets(html) {
+  const sets = window.__PHOTO_SETS__;
+  if (!sets) return html;
+  return html.replace(/<img\b([^>]*?)\ssrc="([^"]+)"/g, (m, pre, src) =>
+    sets[src] && !/\ssrcset=/.test(m) ? `<img${pre} src="${src}" srcset="${sets[src]}" sizes="100vw"` : m);
+}
 function render(opt = {}) {
   const { path, params } = parseHash();
   let seg = path.split('/').filter(Boolean);
@@ -1392,7 +1401,7 @@ function render(opt = {}) {
   if (!firstRender && !opt.quiet) { const ld = document.getElementById('route-schema'); if (ld) ld.remove(); }
   // tear down the page we're leaving: WebGL contexts, frame loops, observers
   (window.__unmounts || []).splice(0).forEach(f => { try { f(); } catch (e) {} });
-  main.innerHTML = out;
+  main.innerHTML = withPhotoSets(out);
   bindEffects(main);
   $$('.hdr__nav [data-nav]').forEach(a => {
     const isAct = a.dataset.nav === seg[0] || (seg[0] === 'vinyl-by-artist' && a.dataset.nav === 'vinyl') || (seg[0] === 'collections' && a.dataset.nav === 'collection');
