@@ -645,10 +645,11 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
 </body></html>'''
 
 # ---- smaller copies of the big photos, for phones
-# A phone needs at most its screen width × pixel density: 800px covers a 2x screen, 1400px a 3x
-# one, both at full width. The browser picks from the set (srcset); desktops still get the
-# original, so nothing looks softer anywhere. Copies are cached in .photocache by source content.
-PHOTO_STEPS = (800, 1400)
+# A phone shows at most its screen width × pixel density (about 780px on a 2x phone, 1170px on a
+# 3x one). Each copy is 1.5× that and saved at near-lossless quality, so what reaches the screen is
+# indistinguishable from the original. The browser picks from the set (srcset); desktops still get
+# the original. Copies are cached in .photocache by source content.
+PHOTO_STEPS = (1200, 1800)
 def photo_sizes(k, path):
     from PIL import Image
     import hashlib
@@ -666,9 +667,13 @@ def photo_sizes(k, path):
             cached = os.path.join(cache, f'{k}-{w}-{key}.webp')
             if not os.path.exists(cached):
                 small = im.convert('RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB').resize((w, round(h0 * w / w0)), Image.LANCZOS)
-                small.save(cached, 'WEBP', quality=88, method=6)
+                small.save(cached, 'WEBP', quality=95, method=6)
+            if os.path.getsize(cached) >= os.path.getsize(path):
+                continue   # no lighter than the original: the original serves this size
             shutil.copy2(cached, os.path.join(DOCS, 'photos', fn))
             out.append(f'/photos/{fn} {w}w')
+        if not out:
+            return None
         out.append(f'/photos/{k}.webp {w0}w')
     return ', '.join(out)
 
