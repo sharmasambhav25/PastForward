@@ -1330,7 +1330,8 @@ function viewCart() {
       <a class="btn btn--secondary" href="/vinyl"><span class="btn__mag">Browse the catalogue</span></a>`
     : `<div class="mono-xs dim num" style="margin:16px 0 26px">${cartCount()} IN THE CRATE</div>
       ${cartLinesHTML()}
-      <div class="receipt" style="margin-top:32px">
+      <div style="margin-top:28px">${freeShipHTML(m)}${addonHTML()}</div>
+      <div class="receipt" style="margin-top:20px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
         ${bundleRowsHTML(m)}
         <div class="row"><span>Delivery</span>${shippingRow(m.goods)}</div>

@@ -3509,3 +3509,12 @@ html.is-zoom,html.is-zoom body{overflow:hidden}
 .apick .adrop__list .apick__a{max-width:none; width:100%; border-radius:10px; border-color:transparent; background:transparent; backdrop-filter:none; -webkit-backdrop-filter:none}
 .apick .adrop__list .apick__a:hover{transform:none; border-color:var(--border-2); background:rgba(243,239,232,.05)}
 .apick .adrop__list .apick__a.is-on{border-color:var(--cream); background:rgba(243,239,232,.08)}
+
+/* free-delivery meter in the crate */
+.fship{margin:0 0 12px; padding:10px 12px; border:1px solid var(--border-2); border-radius:10px}
+.fship__t{font-size:.86rem; line-height:1.35}
+.fship__t b{color:var(--cream); font-weight:600}
+.fship__bar{height:4px; margin-top:8px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden}
+.fship__bar i{display:block; height:100%; border-radius:inherit; background:var(--oxblood); transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.fship.is-done .fship__bar i{background:#5fae7b}
+@media (prefers-reduced-motion:reduce){.fship__bar i{transition:none}}

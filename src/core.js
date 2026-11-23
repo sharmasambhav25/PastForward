@@ -345,8 +345,31 @@ function shippingRow(total) {
   return SHIP.fee ? `<span>${money(SHIP.fee)} <span class="dim">· free over ${money(SHIP.freeFrom)}</span></span>`
     : `<span class="dim">Free over ${money(SHIP.freeFrom)}</span>`;
 }
-/* one add-on worth offering: the same album in a cheaper format that isn't in the cart yet */
+/* how far the crate is from free delivery (0 when it's already free or there's no fee) */
+function shipGap(m) { return SHIP.fee && SHIP.freeFrom && m.goods > 0 && m.goods < SHIP.freeFrom ? SHIP.freeFrom - m.goods : 0; }
+/* the free-delivery meter: how much more, what it saves, and a bar that fills */
+function freeShipHTML(m) {
+  if (!SHIP.fee || !SHIP.freeFrom || !m.goods) return '';
+  const gap = shipGap(m), pct = Math.min(100, Math.round(m.goods / SHIP.freeFrom * 100));
+  return `<div class="fship${gap ? '' : ' is-done'}" role="status">
+      <div class="fship__t">${gap ? `Add <b>${money(gap)}</b> more and delivery is free <span class="dim">· saves ${money(SHIP.fee)}</span>`
+        : `Delivery is free on this order`}</div>
+      <div class="fship__bar" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
+}
+/* one add-on worth offering: the same album in a cheaper format that isn't in the cart yet.
+   When the crate is short of free delivery, prefer the cheapest one that gets it over the line. */
 function cartAddon() {
+  const gap = shipGap(cartMaths());
+  if (gap) {
+    const opts = [];
+    for (const l of cart) {
+      const p = bySlug[l.slug];
+      ['polaroid', 'poster-a5', 'print-10', 'poster-a3', 'vinyl'].forEach(f => { const x = variant(p, f);
+        if (x && x.price >= gap && !cart.some(c => c.slug === p.slug && c.format === x.format)) opts.push({ p, v: x, clears: true }); });
+    }
+    opts.sort((a, b) => a.v.price - b.v.price);
+    if (opts[0]) return opts[0];
+  }
   for (const l of cart) {
     const p = bySlug[l.slug];
     const v = ['polaroid', 'poster-a5', 'poster-a3', 'print-10'].map(f => variant(p, f))
@@ -359,14 +382,14 @@ function addonHTML() {
   const a = cartAddon(); if (!a) return '';
   return `<div class="addon">
       <img src="${imgSrc(a.v.image)}" alt="" loading="lazy" decoding="async">
-      <div class="addon__t"><span class="mono-xs dim">Goes with it</span><span>${albumOf(a.p)} · ${esc(a.v.label)}</span></div>
+      <div class="addon__t"><span class="mono-xs dim">${a.clears ? 'Add this and delivery is free' : 'Goes with it'}</span><span>${albumOf(a.p)} · ${esc(a.v.label)}</span></div>
       <button class="addon__b" data-add="${a.p.slug}|${a.v.format}" aria-label="Add ${esc(albumText(a.p))}, ${esc(a.v.label)}">Add · ${money(a.v.price)}</button>
     </div>`;
 }
 function cartFootHTML() {
   if (!cart.length) return '';
   const m = cartMaths();
-  return `${addonHTML()}<div class="receipt" style="margin-bottom:16px">
+  return `${freeShipHTML(m)}${addonHTML()}<div class="receipt" style="margin-bottom:16px">
       <div class="row"><span>${cartCount()} in the crate</span><span>${money(m.sub)}</span></div>
       ${bundleRowsHTML(m)}
       <div class="row"><span>Delivery</span>${shippingRow(m.goods)}</div>
