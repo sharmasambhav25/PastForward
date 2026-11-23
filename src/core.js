@@ -1320,14 +1320,19 @@ function updatePageSEO({ title, description, canonical, ogImage, noindex }) {
 /* the static page that was served carries structured data for ITS route; once the visitor
    moves on inside the app it no longer describes what is on screen, so it goes */
 let firstRender = true;
-/* Big photos come with smaller copies (window.__PHOTO_SETS__, made by the build). Giving each
-   <img> the set lets a phone fetch the copy that matches its screen; desktops still get the
-   original. sizes="100vw" is the safe upper bound, so the pick is never softer than the screen. */
+/* Photos come as a ladder of sizes in WebP and AVIF (window.__PHOTO_SETS__, made by the build).
+   Each <img> becomes a <picture>: the browser takes AVIF if it can, and from the ladder the lightest
+   copy that covers 1.5× the screen (sizes="150vw"), so nothing ever looks softer than the screen.
+   picture{display:contents} keeps the layout exactly as it was with the bare <img>. */
 function withPhotoSets(html) {
   const sets = window.__PHOTO_SETS__;
   if (!sets) return html;
-  return html.replace(/<img\b([^>]*?)\ssrc="([^"]+)"/g, (m, pre, src) =>
-    sets[src] && !/\ssrcset=/.test(m) ? `<img${pre} src="${src}" srcset="${sets[src]}" sizes="100vw"` : m);
+  return html.replace(/<img\b[^>]*>/g, tag => {
+    const m = tag.match(/\ssrc="([^"]+)"/), set = m && sets[m[1]];
+    if (!set || /\ssrcset=/.test(tag)) return tag;
+    const img = tag.replace(/^<img\b/, `<img srcset="${set.webp}" sizes="150vw"`);
+    return set.avif ? `<picture class="pic"><source type="image/avif" srcset="${set.avif}" sizes="150vw">${img}</picture>` : img;
+  });
 }
 function render(opt = {}) {
   const { path, params } = parseHash();

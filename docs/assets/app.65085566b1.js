@@ -8,7 +8,7 @@ window.__IMG_BASE_LG__ = null;
 window.__CLEAN_URLS__ = true;
 window.__VINYL3D_URL__ = "/assets/vinyl3d.b939cedea6.js";
 window.__WORDMARK_SM__ = "/photos/wordmark-900.webp";
-window.__PHOTO_SETS__ = {"/photos/album-posters.webp": "/photos/album-posters-1200.webp 1200w, /photos/album-posters.webp 2048w", "/photos/poster-wall.webp": "/photos/poster-wall-1200.webp 1200w, /photos/poster-wall.webp 2048w", "/photos/prints-spread.webp": "/photos/prints-spread-1200.webp 1200w, /photos/prints-spread.webp 2400w", "/photos/vinyl-wall.webp": "/photos/vinyl-wall-1200.webp 1200w, /photos/vinyl-wall.webp 2048w"};
+window.__PHOTO_SETS__ = {"/photos/album-posters.webp": {"webp": "/photos/album-posters-640.webp 640w, /photos/album-posters-960.webp 960w, /photos/album-posters-1280.webp 1280w, /photos/album-posters-1600.webp 1600w, /photos/album-posters.webp 2048w", "avif": "/photos/album-posters-640.avif 640w, /photos/album-posters-960.avif 960w, /photos/album-posters-1280.avif 1280w, /photos/album-posters-1600.avif 1600w, /photos/album-posters-2048.avif 2048w"}, "/photos/bundles-wall.webp": {"webp": "/photos/bundles-wall-640.webp 640w, /photos/bundles-wall.webp 819w", "avif": "/photos/bundles-wall-640.avif 640w, /photos/bundles-wall-819.avif 819w"}, "/photos/poster-wall.webp": {"webp": "/photos/poster-wall-640.webp 640w, /photos/poster-wall-960.webp 960w, /photos/poster-wall-1280.webp 1280w, /photos/poster-wall-1600.webp 1600w, /photos/poster-wall.webp 2048w", "avif": "/photos/poster-wall-640.avif 640w, /photos/poster-wall-960.avif 960w, /photos/poster-wall-1280.avif 1280w, /photos/poster-wall-1600.avif 1600w, /photos/poster-wall-2048.avif 2048w"}, "/photos/printer.webp": {"webp": "/photos/printer-640.webp 640w, /photos/printer.webp 973w"}, "/photos/prints-spread.webp": {"webp": "/photos/prints-spread-640.webp 640w, /photos/prints-spread-960.webp 960w, /photos/prints-spread-1280.webp 1280w, /photos/prints-spread.webp 2400w"}, "/photos/vinyl-wall.webp": {"webp": "/photos/vinyl-wall-640.webp 640w, /photos/vinyl-wall-960.webp 960w, /photos/vinyl-wall-1280.webp 1280w, /photos/vinyl-wall-1600.webp 1600w, /photos/vinyl-wall.webp 2048w", "avif": "/photos/vinyl-wall-640.avif 640w, /photos/vinyl-wall-960.avif 960w, /photos/vinyl-wall-1280.avif 1280w, /photos/vinyl-wall-1600.avif 1600w, /photos/vinyl-wall-2048.avif 2048w"}, "/photos/wall-person.webp": {"webp": "/photos/wall-person-640.webp 640w, /photos/wall-person.webp 973w"}, "/photos/wall-white.webp": {"webp": "/photos/wall-white-640.webp 640w, /photos/wall-white.webp 978w"}, "/photos/disc.webp": {"webp": "/photos/disc-640.webp 640w, /photos/disc.webp 1200w"}};
 /* ===== shopifyanalytics.js ===== */
 /* Shopify's own analytics helper (@shopify/hydrogen-react 2026.4.4: sendShopifyAnalytics, getClientBrowserParameters, buildUUID),
    bundled with esbuild. Lets Shopify Admin (sessions, reports, Live View) count visits to this site. Used by Track in core.js. */
@@ -1339,14 +1339,19 @@ function updatePageSEO({ title, description, canonical, ogImage, noindex }) {
 /* the static page that was served carries structured data for ITS route; once the visitor
    moves on inside the app it no longer describes what is on screen, so it goes */
 let firstRender = true;
-/* Big photos come with smaller copies (window.__PHOTO_SETS__, made by the build). Giving each
-   <img> the set lets a phone fetch the copy that matches its screen; desktops still get the
-   original. sizes="100vw" is the safe upper bound, so the pick is never softer than the screen. */
+/* Photos come as a ladder of sizes in WebP and AVIF (window.__PHOTO_SETS__, made by the build).
+   Each <img> becomes a <picture>: the browser takes AVIF if it can, and from the ladder the lightest
+   copy that covers 1.5× the screen (sizes="150vw"), so nothing ever looks softer than the screen.
+   picture{display:contents} keeps the layout exactly as it was with the bare <img>. */
 function withPhotoSets(html) {
   const sets = window.__PHOTO_SETS__;
   if (!sets) return html;
-  return html.replace(/<img\b([^>]*?)\ssrc="([^"]+)"/g, (m, pre, src) =>
-    sets[src] && !/\ssrcset=/.test(m) ? `<img${pre} src="${src}" srcset="${sets[src]}" sizes="100vw"` : m);
+  return html.replace(/<img\b[^>]*>/g, tag => {
+    const m = tag.match(/\ssrc="([^"]+)"/), set = m && sets[m[1]];
+    if (!set || /\ssrcset=/.test(tag)) return tag;
+    const img = tag.replace(/^<img\b/, `<img srcset="${set.webp}" sizes="150vw"`);
+    return set.avif ? `<picture class="pic"><source type="image/avif" srcset="${set.avif}" sizes="150vw">${img}</picture>` : img;
+  });
 }
 function render(opt = {}) {
   const { path, params } = parseHash();

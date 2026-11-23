@@ -644,38 +644,62 @@ def page(*, title, desc, canonical, og_image, body, ld, noindex=False, head=''):
 {body}
 </body></html>'''
 
-# ---- smaller copies of the big photos, for phones
-# A phone shows at most its screen width × pixel density (about 780px on a 2x phone, 1170px on a
-# 3x one). Each copy is 1.5× that and saved at near-lossless quality, so what reaches the screen is
-# indistinguishable from the original. The browser picks from the set (srcset); desktops still get
-# the original. Copies are cached in .photocache by source content.
-PHOTO_STEPS = (1200, 1800)
+# ---- photos sized for every screen, in two formats
+# For each photo the build makes a ladder of widths (PHOTO_STEPS) in WebP and AVIF, saved at
+# near-lossless quality. The page tells the browser each photo may fill 1.5× the screen width
+# (sizes="150vw"), so every device picks the lightest copy that is still 1.5× sharper than its
+# screen. AVIF is used where the browser supports it; others get WebP. A copy is only kept when
+# it is lighter than the file the browser would otherwise take. Copies are cached in .photocache.
+PHOTO_STEPS = (640, 960, 1280, 1600, 1920, 2400)
 def photo_sizes(k, path):
     from PIL import Image
     import hashlib
+    key = hashlib.sha1(read(path, 'rb')).hexdigest()[:12]
+    cache = os.path.join(ROOT, '.photocache')
+    os.makedirs(cache, exist_ok=True)
+    orig_size = os.path.getsize(path)
+    webp, avif = [], []
     with Image.open(path) as im:
         w0, h0 = im.size
-        steps = [w for w in PHOTO_STEPS if w < w0 * 0.85]
-        if not steps:
-            return None
-        key = hashlib.sha1(read(path, 'rb')).hexdigest()[:12]
-        cache = os.path.join(ROOT, '.photocache')
-        os.makedirs(cache, exist_ok=True)
-        out = []
-        for w in steps:
-            fn = f'{k}-{w}.webp'
-            cached = os.path.join(cache, f'{k}-{w}-{key}.webp')
-            if not os.path.exists(cached):
-                small = im.convert('RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB').resize((w, round(h0 * w / w0)), Image.LANCZOS)
-                small.save(cached, 'WEBP', quality=95, method=6)
-            if os.path.getsize(cached) >= os.path.getsize(path):
-                continue   # no lighter than the original: the original serves this size
-            shutil.copy2(cached, os.path.join(DOCS, 'photos', fn))
-            out.append(f'/photos/{fn} {w}w')
-        if not out:
-            return None
-        out.append(f'/photos/{k}.webp {w0}w')
-    return ', '.join(out)
+        src = im.convert('RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB')
+        for w in [x for x in PHOTO_STEPS if x < w0 * 0.9] + [w0]:
+            small = None
+            for ext, kw in (('webp', dict(quality=95, method=6)), ('avif', dict(quality=88, speed=4))):
+                fn = f'{k}.{ext}' if w == w0 and ext == 'webp' else f'{k}-{w}.{ext}'
+                if w == w0 and ext == 'webp':
+                    webp.append((f'/photos/{fn}', w, orig_size))
+                    continue
+                cached = os.path.join(cache, f'{k}-{w}-{key}.{ext}')
+                if not os.path.exists(cached):
+                    small = small or (src if w == w0 else src.resize((w, round(h0 * w / w0)), Image.LANCZOS))
+                    small.save(cached, ext.upper(), **kw)
+                (webp if ext == 'webp' else avif).append((cached, w, os.path.getsize(cached), fn))
+    def keep(lst):
+        out, cap = [], orig_size
+        for item in sorted(lst, key=lambda x: -x[1]):   # largest first: each smaller copy must be lighter than the one above
+            if item[2] < cap or item[0].startswith('/photos/'):
+                out.append(item); cap = min(cap, item[2]) if not item[0].startswith('/photos/') else cap
+        return sorted(out, key=lambda x: x[1])
+    def emit(lst):
+        parts = []
+        for item in lst:
+            if item[0].startswith('/photos/'):
+                parts.append(f'{item[0]} {item[1]}w')
+            else:
+                shutil.copy2(item[0], os.path.join(DOCS, 'photos', item[3]))
+                parts.append(f'/photos/{item[3]} {item[1]}w')
+        return ', '.join(parts)
+    webp_k = keep(webp)
+    avif_k = [a for a in keep(avif) if a[2] < next((x[2] for x in webp if x[1] == a[1]), orig_size)]
+    if len(webp_k) < 2 and not avif_k:
+        return None
+    use_avif = bool(avif_k) and any(a[1] == w0 for a in avif_k)   # AVIF only when it covers every size up to the original
+    if len(webp_k) < 2 and not use_avif:
+        return None   # nothing lighter than the original: plain <img>
+    out = {'webp': emit(webp_k)}
+    if use_avif:
+        out['avif'] = emit(avif_k)
+    return out
 
 def collection_products(slug, fmts=None):
     return [p for p in P if slug in p['tags'] and (not fmts or any(v['format'] in fmts for v in p['variants']))]
