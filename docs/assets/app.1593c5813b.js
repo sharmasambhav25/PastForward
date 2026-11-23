@@ -1218,6 +1218,16 @@ function submitForm(type, payload, via) {
     if (payload.whatsapp && !/^\+/.test(payload.whatsapp)) payload.whatsapp = '+91 ' + payload.whatsapp;
     const file = payload.refimg && payload.refimg.size ? payload.refimg : null;
     delete payload.refimg;
+    /* pressing Pay again (back from checkout, or a double tap) must not add a second copy:
+       the same request within the hour goes straight back to the checkout it already has */
+    const sig = [fKey, payload.artist, payload.album, payload.track, payload.whatsapp, payload.ref, payload.notes, file ? file.name + file.size : ''].join('|');
+    let last = null; try { last = JSON.parse(sessionStorage.getItem('pf_custom_sent') || 'null'); } catch (e) {}
+    if (SHOPIFY_CONFIG.storeDomain && variantId && last && last.sig === sig && Date.now() - last.t < 36e5) {
+      const tags = Track.params();
+      location.href = `https://${SHOPIFY_CONFIG.storeDomain}/checkout${tags ? '?' + tags : ''}`;
+      return Promise.resolve({ ok: true, redirected: true });
+    }
+    try { sessionStorage.setItem('pf_custom_sent', JSON.stringify({ sig, t: Date.now() })); } catch (e) {}
     if (SHOPIFY_CONFIG.storeDomain && variantId && file) {
       /* with an image: post a real form to the store's cart so Shopify uploads the image and
          attaches it to the order line, then go straight on to checkout */
@@ -3635,14 +3645,14 @@ function viewCustom() {
   const defaultFormat = FMT.vinyl;
   const canPay = !!customVariantId('vinyl');
   const stepsList = canPay
-    ? [['01', 'Choose format & album'], ['02', 'Pay to confirm your order'], ['03', 'We craft it and ship it']]
+    ? [['01', 'Tell us the album, send a photo'], ['02', 'Pay to place the order'], ['03', 'Approve the design on WhatsApp'], ['04', 'We make it and ship it']]
     : [['01', 'Choose format & album'], ['02', 'We confirm the artwork and send a payment link'], ['03', 'We craft it and ship it']];
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 56px)">
     <div style="display:grid;gap:56px" id="customgrid">
       <style>#customgrid{grid-template-columns:1fr} @media(min-width:1000px){#customgrid{grid-template-columns:1fr 320px;gap:80px}}</style>
       <div>
         <h1 class="d-l" style="max-width:22ch">Custom Vinyl Records &amp; Custom Posters</h1>
-        <p class="body-l dim measure" style="margin-top:18px">Not in the catalogue? Say the word. Turn any artist, album, playlist or personal artwork into custom vinyl records, custom posters (A3, A5, 10×10), or polaroid cards. Hand-crafted and delivered free across India.</p>
+        <p class="body-l dim measure" style="margin-top:18px">Not in the catalogue? Say the word. Turn any artist, album, playlist or personal artwork into custom vinyl records, custom posters (A3, A5, 10×10), or polaroid cards. Hand-crafted and delivered across India in ${DELIVERY}.</p>
         <form data-form="custom" data-success="Got it. We'll be in touch." class="customform">
           <div class="frow">
             <label class="field"><span>Artist <i class="req">*</i></span><input name="artist" required placeholder="e.g. Travis Scott" autocomplete="off"></label>
@@ -3653,10 +3663,10 @@ function viewCustom() {
             <label class="field"><span>Format <i class="req">*</i></span><select name="format" id="customformat" required><option value="" selected disabled>Choose a format</option>${Object.entries(FMT).map(([k, f]) => `<option value="${k}">${esc(f.label)} · ${money(f.price)}</option>`).join('')}</select></label>
           </div>
           <div class="frow">
-            <label class="field"><span>Your name <i class="req">*</i></span><input name="name" required placeholder="Your name" autocomplete="name"></label>
+            ${canPay ? '' : `<label class="field"><span>Your name <i class="req">*</i></span><input name="name" required placeholder="Your name" autocomplete="name"></label>`}
             <label class="field"><span>WhatsApp number <i class="req">*</i></span><span class="telin"><b>+91</b><input name="whatsapp" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" placeholder="98765 43210" required autocomplete="tel-national" title="A 10-digit mobile number"></span></label>
           </div>
-          <label class="field"><span>Email <i class="req">*</i></span><input name="email" type="email" required placeholder="your@email.com" autocomplete="email"></label>
+          ${canPay ? '' : `<label class="field"><span>Email <i class="req">*</i></span><input name="email" type="email" required placeholder="your@email.com" autocomplete="email"></label>`}
           <div class="frow">
             <label class="field"><span>Reference link (optional)</span><input name="ref" type="url" inputmode="url" placeholder="https://… Spotify, Pinterest, Instagram"></label>
             <label class="field"><span>Or upload an image (optional)</span><span class="filein"><input name="refimg" type="file" accept="image/*" id="customimg"><span class="filein__ui" id="customimgui"><b>Choose image</b><em>JPG or PNG, up to 10 MB</em></span></span></label>
@@ -3666,7 +3676,7 @@ function viewCustom() {
           <div class="custom-summary" id="customsummary">
             <div>
               <div class="mono-xs dim" id="customsummaryformat">Format: choose one above</div>
-              <div class="body-s dim" style="margin-top:4px">Includes custom design, printing and safe packaging${SHIP.free && !SHIP.freeFrom ? ', with free delivery' : ''}</div>
+              <div class="body-s dim" style="margin-top:4px">Includes custom design, printing and safe packaging${SHIP.free && !SHIP.freeFrom ? ', with free delivery' : SHIP.fee && SHIP.freeFrom ? `. Delivery ${money(SHIP.fee)}, free over ${money(SHIP.freeFrom)}` : ''}</div>
             </div>
             <div style="text-align:right">
               <div class="num" id="customsummaryprice" style="font-size:1.35rem;font-weight:600;color:var(--cream)">${money(defaultFormat.price)}</div>
@@ -3676,6 +3686,10 @@ function viewCustom() {
 
           ${canPay ? `<button class="btn btn--primary" id="customsubmitbtn" style="justify-self:start">
               <span class="btn__mag" id="custombtntext">Pay ${money(defaultFormat.price)} and confirm</span></button>
+            <ul class="customnext body-s">
+              <li><b>Next:</b> your address on Shopify's secure checkout.</li>
+              <li><b>After you pay:</b> we send the design to your WhatsApp. Nothing is made until you approve it.</li>
+            </ul>
             <p class="payline mono-xs dim">${payLine()}</p>`
           : `<div class="btnrow">
               <button class="btn btn--primary" id="customsubmitbtn" data-via="whatsapp"><span class="btn__mag">Send request on WhatsApp</span></button>

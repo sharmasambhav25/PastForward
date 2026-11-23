@@ -3534,3 +3534,9 @@ html.is-zoom,html.is-zoom body{overflow:hidden}
   .stabs--vinyl.stabs--solo{margin-bottom:28px; padding-bottom:16px}
 }
 @media(prefers-reduced-motion:reduce){ .vchip{transition:none} }
+
+/* ---- custom order: what happens after Pay ---- */
+.customnext{list-style:none; margin:2px 0 0; padding:12px 16px; display:grid; gap:6px; border-left:2px solid var(--oxblood); background:var(--elevated); color:var(--muted)}
+.customnext b{color:var(--cream); font-weight:600}
+@media(min-width:768px){ .steps:has(> :nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(min-width:1200px){ .steps:has(> :nth-child(4)){grid-template-columns:repeat(4,minmax(0,1fr))} }

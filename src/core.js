@@ -1200,6 +1200,16 @@ function submitForm(type, payload, via) {
     if (payload.whatsapp && !/^\+/.test(payload.whatsapp)) payload.whatsapp = '+91 ' + payload.whatsapp;
     const file = payload.refimg && payload.refimg.size ? payload.refimg : null;
     delete payload.refimg;
+    /* pressing Pay again (back from checkout, or a double tap) must not add a second copy:
+       the same request within the hour goes straight back to the checkout it already has */
+    const sig = [fKey, payload.artist, payload.album, payload.track, payload.whatsapp, payload.ref, payload.notes, file ? file.name + file.size : ''].join('|');
+    let last = null; try { last = JSON.parse(sessionStorage.getItem('pf_custom_sent') || 'null'); } catch (e) {}
+    if (SHOPIFY_CONFIG.storeDomain && variantId && last && last.sig === sig && Date.now() - last.t < 36e5) {
+      const tags = Track.params();
+      location.href = `https://${SHOPIFY_CONFIG.storeDomain}/checkout${tags ? '?' + tags : ''}`;
+      return Promise.resolve({ ok: true, redirected: true });
+    }
+    try { sessionStorage.setItem('pf_custom_sent', JSON.stringify({ sig, t: Date.now() })); } catch (e) {}
     if (SHOPIFY_CONFIG.storeDomain && variantId && file) {
       /* with an image: post a real form to the store's cart so Shopify uploads the image and
          attaches it to the order line, then go straight on to checkout */
