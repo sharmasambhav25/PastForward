@@ -290,7 +290,10 @@ function bundleWord(f, k) {
 function cartMaths() {
   let sub = 0; cart.forEach(l => sub += l.price * l.qty);
   const bundle = bestBundle(cart), saved = bundle ? bundle.off : 0;
-  return { sub, bundle, saved, sets: bundle ? 1 : 0, total: sub - saved, nudge: bundleNudge(cart, bundle) };
+  const goods = sub - saved;
+  // the delivery fee checkout will add (site.json > shipping), so the crate total matches what they pay
+  const ship = SHIP.free && SHIP.freeFrom && SHIP.fee && goods > 0 && goods < SHIP.freeFrom ? SHIP.fee : 0;
+  return { sub, bundle, saved, sets: bundle ? 1 : 0, goods, ship, total: goods + ship, nudge: bundleNudge(cart, bundle) };
 }
 function bundleRowsHTML(m) {
   const nudge = m.nudge ? `<a class="bnudge" href="${m.nudge.b.href}" data-close>Add ${m.nudge.left} more ${bundleWord(m.nudge.f, m.nudge.left)} · <b>${esc(m.nudge.b.name)} for ${money(m.nudge.b.price)}</b><span aria-hidden="true">→</span></a>` : '';
@@ -304,7 +307,7 @@ function crateBarHTML() {
   // short enough to read at a glance on a 360px phone
   const sub = m.nudge ? `${m.nudge.left} more = ${m.nudge.b.short || m.nudge.b.name} ${money(m.nudge.b.price)}`
     : m.bundle ? `Bundle on · you save ${money(m.saved)}`
-    : SHIP.freeFrom && m.total < SHIP.freeFrom ? `${money(SHIP.freeFrom - m.total)} more for free delivery` : 'Free delivery';
+    : SHIP.freeFrom && m.goods < SHIP.freeFrom ? `${money(SHIP.freeFrom - m.goods)} more for free delivery` : 'Free delivery';
   return `<button class="cratebar__open" data-opencrate aria-label="Open your crate: ${n} ${n === 1 ? 'piece' : 'pieces'}, ${money(m.total)}">
       <span class="cratebar__stack" aria-hidden="true">${thumbs}</span>
       <span class="cratebar__txt"><b>${n} in your crate</b><i>${esc(sub)}</i></span></button>
@@ -357,7 +360,7 @@ function cartLinesHTML() {
 function shippingRow(total) {
   if (!SHIP.free) return '<span class="dim">Shown at checkout</span>';
   if (!SHIP.freeFrom || total >= SHIP.freeFrom) return '<span class="ok">Free</span>';
-  return SHIP.fee ? `<span>${money(SHIP.fee)}</span> <span class="dim">· free over ${money(SHIP.freeFrom)}</span>`
+  return SHIP.fee ? `<span>${money(SHIP.fee)} <span class="dim">· free over ${money(SHIP.freeFrom)}</span></span>`
     : `<span class="dim">Free over ${money(SHIP.freeFrom)}</span>`;
 }
 /* one add-on worth offering: the same album in a cheaper format that isn't in the cart yet */
@@ -384,7 +387,7 @@ function cartFootHTML() {
   return `${addonHTML()}<div class="receipt" style="margin-bottom:16px">
       <div class="row"><span>${cartCount()} in the crate</span><span>${money(m.sub)}</span></div>
       ${bundleRowsHTML(m)}
-      <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
+      <div class="row"><span>Delivery</span>${shippingRow(m.goods)}</div>
       <div class="row eta-row"><span>Arrives</span><span>${arriveWindow()}</span></div>
       <div class="row total"><span>Total</span><span>${money(m.total)}</span></div></div>
     <button class="btn btn--primary" style="width:100%" data-checkout><span class="btn__mag">Checkout</span><span class="btn__amt num">${money(m.total)}</span></button>
@@ -3820,7 +3823,7 @@ function viewCart() {
       <div class="receipt" style="margin-top:32px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
         ${bundleRowsHTML(m)}
-        <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
+        <div class="row"><span>Delivery</span>${shippingRow(m.goods)}</div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
       <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout</span><span class="btn__amt num">${money(m.total)}</span></button>

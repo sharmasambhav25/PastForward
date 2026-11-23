@@ -1333,7 +1333,7 @@ function viewCart() {
       <div class="receipt" style="margin-top:32px">
         <div class="row"><span>Subtotal</span><span>${money(m.sub)}</span></div>
         ${bundleRowsHTML(m)}
-        <div class="row"><span>Delivery</span>${shippingRow(m.total)}</div>
+        <div class="row"><span>Delivery</span>${shippingRow(m.goods)}</div>
         <div class="row total"><span>Total</span><span>${money(m.total)}</span></div>
       </div>
       <button class="btn btn--primary" style="width:100%;margin-top:24px" data-checkout><span class="btn__mag">Checkout</span><span class="btn__amt num">${money(m.total)}</span></button>
