@@ -3,7 +3,7 @@
    ============================================================ */
 function initChrome() {
   $('#cartbtn').addEventListener('click', () => { Sound.tick(); openDrawer(); });
-  $('#menubtn').addEventListener('click', () => { Sound.tick(); lastFocus = document.activeElement; $('#menu').classList.add('is-open'); document.body.style.overflow = 'hidden'; });
+  $('#menubtn').addEventListener('click', () => { Sound.tick(); backdropInert(true); lastFocus = document.activeElement; $('#menu').classList.add('is-open'); document.body.style.overflow = 'hidden'; });
   $('#searchbtn').addEventListener('click', () => { Sound.tick(); openSearch(); });
   const mb = $('#megabtn'), mega = $('#mega');
   const pb = $('#postersbtn'), megaposters = $('#megaposters');

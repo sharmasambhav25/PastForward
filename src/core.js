@@ -436,12 +436,47 @@ function removeToast(t, instant) {
 
 /* ---------- drawer / overlays ---------- */
 let lastFocus = null;
-function openDrawer() { lastFocus = document.activeElement; $('#drawer').classList.add('is-open'); $('#scrim').classList.add('is-open'); document.body.style.overflow = 'hidden'; const b = $('#drawer button'); if (b) b.focus(); }
+/* While the cart, menu or search is open, everything behind it is inert: no focus, no clicks,
+   hidden from screen readers. aria-modal alone doesn't stop Tab from wandering out. */
+function backdropInert(on) {
+  ['#hdr', '#mega', '#megaposters', '#cratebar', '#main', '.ftr', '.wafab', '.skip'].forEach(s => { const el = $(s); if (el) el.inert = on; });
+}
+/* phones: the crate is a bottom sheet. Drag the handle or header down; past a third of its height,
+   or flicked faster than 0.5px/ms, it closes. Otherwise it settles back. */
+function initSheetDrag() {
+  const d = $('#drawer'); if (!d || d.dataset.drag) return; d.dataset.drag = '1';
+  const phone = () => matchMedia('(max-width:767px)').matches;
+  let y0 = 0, t0 = 0, dy = 0, on = false;
+  const start = e => {
+    if (!phone() || !d.classList.contains('is-open') || !e.target.closest('.drawer__grab,.drawer__hd') || e.target.closest('button')) return;
+    on = true; y0 = e.clientY; t0 = performance.now(); dy = 0; d.classList.add('is-dragging');
+    try { d.setPointerCapture(e.pointerId); } catch (er) {}
+  };
+  const move = e => {
+    if (!on) return;
+    dy = e.clientY - y0;
+    const y = dy > 0 ? dy : dy * 0.2;   // a little give upward, like rubber
+    d.style.transform = `translateY(${y}px)`;
+    const scrim = $('#scrim'); if (scrim) scrim.style.opacity = String(Math.max(0, 1 - dy / d.offsetHeight));
+  };
+  const end = () => {
+    if (!on) return; on = false; d.classList.remove('is-dragging');
+    const v = dy / Math.max(1, performance.now() - t0);
+    d.style.transform = ''; const scrim = $('#scrim'); if (scrim) scrim.style.opacity = '';
+    if (dy > d.offsetHeight / 3 || v > 0.5) closeAll();
+  };
+  d.addEventListener('pointerdown', start);
+  d.addEventListener('pointermove', move);
+  d.addEventListener('pointerup', end);
+  d.addEventListener('pointercancel', end);
+}
+function openDrawer() { initSheetDrag(); backdropInert(true); lastFocus = document.activeElement; $('#drawer').classList.add('is-open'); $('#scrim').classList.add('is-open'); document.body.style.overflow = 'hidden'; const b = $('#drawer button'); if (b) b.focus(); }
 function closeAll() {
   ['#drawer', '#menu', '#search'].forEach(s => { const el = $(s); if (el) el.classList.remove('is-open'); });
   $('#scrim').classList.remove('is-open'); $('#mega').classList.remove('is-open');
   const mp = $('#megaposters'); if (mp) mp.classList.remove('is-open');
   document.body.style.overflow = '';
+  backdropInert(false);
   if (lastFocus) { try { lastFocus.focus(); } catch (e) {} lastFocus = null; }
 }
 
@@ -530,6 +565,7 @@ function chromeHTML() {
   <div id="overlays">
   <div class="scrim" id="scrim"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-label="Cart" aria-modal="true">
+    <div class="drawer__grab" aria-hidden="true"><i></i></div>
     <div class="drawer__hd"><span class="drawer__title">The crate</span><button class="iconbtn" data-close aria-label="Close cart">×</button></div>
     <div class="drawer__body" id="drawerbody"></div>
     <div class="drawer__ft" id="drawerft"></div>
@@ -1424,7 +1460,7 @@ function render(opt = {}) {
   if (!opt.quiet) Track.page(seg, currentProduct, curV);
   if (currentProduct && !opt.quiet) Track.view(currentProduct, curV);
   // the page arrives with a short rise; a filter or "load more" on the same page doesn't replay it
-  if (!RM() && !opt.quiet && !firstRender && main.animate) {
+  if (!RM() && !opt.quiet && !opt.viaTransition && !firstRender && main.animate) {
     try {
       main.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
         { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
@@ -1447,7 +1483,12 @@ function routeHash() {
 }
 function onRoute(opt = {}) {
   if (opt.keepScroll) { const y = scrollY; render({ quiet: true }); scrollTo({ top: y, left: 0, behavior: 'instant' }); return; }
-  scrollTo({ top: 0, left: 0, behavior: 'instant' }); render();
+  const turn = () => { scrollTo({ top: 0, left: 0, behavior: 'instant' }); render({ viaTransition: !!viaVT }); };
+  /* a page change dissolves: the old page fades as the new one rises, and the header stays put
+     (View Transitions). Browsers without it, or with reduced motion, get the plain swap. */
+  const viaVT = document.startViewTransition && !RM() && !firstRender;
+  if (viaVT) { try { document.startViewTransition(turn); return; } catch (e) {} }
+  turn();
 }
 /* navigate(to)                      a new page: history entry, scroll to top, entrance
    navigate(to, {replace, keepScroll}) the same page in a new state (a filter, a sort, load more):
@@ -1542,6 +1583,7 @@ addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); }
 });
 function openSearch() {
+  backdropInert(true);
   lastFocus = document.activeElement;
   $('#search').classList.add('is-open'); document.body.style.overflow = 'hidden';
   const i = $('#searchinput'); i.value = ''; $('#searchres').innerHTML = searchResults('');
