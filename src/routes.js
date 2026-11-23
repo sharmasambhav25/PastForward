@@ -826,7 +826,7 @@ function viewCatalog(category, subType, params) {
               <p class="body-l posters-hero__sub">${sub}</p>
             </div>
             <div class="posters-hero__right">
-              <span class="mono-xs posters-hero__badge">${category === 'polaroids' ? `${money(FMT.polaroid.price)} each · Free delivery` : `From ${money(FMT.polaroid.price)} · Free delivery`}</span>
+              <span class="mono-xs posters-hero__badge">${category === 'polaroids' ? `${money(FMT.polaroid.price)} each` : `From ${money(FMT.polaroid.price)}`}${SHIP.label ? ' · ' + esc(SHIP.label) : ''}</span>
             </div>
           </div>
         </div>

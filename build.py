@@ -71,7 +71,8 @@ def shipping_line(sh):
     if not sh.get('free'):
         return 'Any delivery charge is shown at checkout, before you pay.'
     if sh.get('freeFrom'):
-        return f"Delivery is free on orders of {money(sh['freeFrom'])} and above, anywhere in India. Below that, the delivery charge is shown at checkout before you pay."
+        below = f"orders below that pay a flat {money(sh['fee'])} delivery charge, shown at checkout before you pay" if sh.get('fee') else "below that, the delivery charge is shown at checkout before you pay"
+        return f"Delivery is free on orders of {money(sh['freeFrom'])} and above, anywhere in India; {below}."
     return 'Delivery is free, anywhere in India.'
 
 def shipping_short(sh):

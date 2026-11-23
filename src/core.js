@@ -285,7 +285,8 @@ function crateBarHTML() {
     return `<i class="cratebar__th${v.format === 'vinyl' ? ' is-rec' : ''}"><img src="${imgSrc(v.image)}" alt="" decoding="async"></i>`; }).join('');
   // short enough to read at a glance on a 360px phone
   const sub = m.nudge ? `${m.nudge.left} more = ${m.nudge.b.short || m.nudge.b.name} ${money(m.nudge.b.price)}`
-    : m.bundle ? `Bundle on · you save ${money(m.saved)}` : 'Free delivery';
+    : m.bundle ? `Bundle on · you save ${money(m.saved)}`
+    : SHIP.freeFrom && m.total < SHIP.freeFrom ? `${money(SHIP.freeFrom - m.total)} more for free delivery` : 'Free delivery';
   return `<button class="cratebar__open" data-opencrate aria-label="Open your crate: ${n} ${n === 1 ? 'piece' : 'pieces'}, ${money(m.total)}">
       <span class="cratebar__stack" aria-hidden="true">${thumbs}</span>
       <span class="cratebar__txt"><b>${n} in your crate</b><i>${esc(sub)}</i></span></button>
@@ -338,7 +339,8 @@ function cartLinesHTML() {
 function shippingRow(total) {
   if (!SHIP.free) return '<span class="dim">Shown at checkout</span>';
   if (!SHIP.freeFrom || total >= SHIP.freeFrom) return '<span class="ok">Free</span>';
-  return `<span class="dim">Free over ${money(SHIP.freeFrom)}</span>`;
+  return SHIP.fee ? `<span>${money(SHIP.fee)}</span> <span class="dim">· free over ${money(SHIP.freeFrom)}</span>`
+    : `<span class="dim">Free over ${money(SHIP.freeFrom)}</span>`;
 }
 /* one add-on worth offering: the same album in a cheaper format that isn't in the cart yet */
 function cartAddon() {
