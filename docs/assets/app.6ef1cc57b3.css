@@ -4,7 +4,7 @@
    ============================================================ */
 :root{
   --ink:#060506; --elevated:#121011; --elevated-2:#1B1718;
-  --oxblood:#8E1F2B; --ember:#C0353F; --rose:#E0A6A0;
+  --oxblood:#8E1F2B; --ember:#C0353F; --ember-ink:#D0535C; --rose:#E0A6A0;
   --crimson:#962934; --collage-grey:#939391;
   --paper:#EDE7DD; --paper-ink:#161314;
   --cream:#F3EFE8; --muted:#8E8781;
@@ -206,7 +206,7 @@ html[data-light] #field{opacity:.22; filter:invert(1)}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E8781' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:right 14px center; padding-right:36px}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ember); outline:none}
-.field .err{color:var(--ember); font-family:var(--mono); font-size:.65rem; letter-spacing:.1em; margin-top:6px; display:block}
+.field .err{color:var(--ember-ink); font-family:var(--mono); font-size:.65rem; letter-spacing:.1em; margin-top:6px; display:block}
 
 [data-confirm]{border-bottom:1px dashed var(--border-2); cursor:help}
 html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-offset:2px}
@@ -234,7 +234,7 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
   text-transform:uppercase; color:var(--cream); padding:7px 0; transition:color var(--d-micro) var(--e-ui), transform 280ms var(--e-spring)}
 .navlink:hover,.navlink.is-active{color:#fff}
 /* header option H2: Bundles is a strip of the sale tape, Build Your Wall is underlined in red */
-.navlink--hot{background:#D8312A; color:#0b0809!important; padding:6px 12px 5px; transform:rotate(-2deg); box-shadow:0 6px 16px rgba(216,49,42,.28)}
+.navlink--hot{background:#DB423B; color:#0b0809!important; padding:6px 12px 5px; transform:rotate(-2deg); box-shadow:0 6px 16px rgba(216,49,42,.28)}
 .navlink--hot:hover,.navlink--hot.is-active{transform:rotate(1deg) scale(1.06)}
 .navlink--hot svg{display:none}
 .navlink--wall{box-shadow:inset 0 -2px 0 var(--ember); padding-bottom:5px}
@@ -274,7 +274,7 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
   transition:opacity 180ms var(--e-ui), transform 220ms var(--e-spring), visibility 0s 220ms}
 .mega.is-open{visibility:visible; pointer-events:auto; opacity:1; transform:translateY(0);
   transition:opacity 180ms var(--e-ui), transform 220ms var(--e-spring)}
-.mega h4{font-family:var(--mono); font-size:.70rem; letter-spacing:.2em; color:var(--ember);
+.mega h4{font-family:var(--mono); font-size:.70rem; letter-spacing:.2em; color:var(--ember-ink);
   text-transform:uppercase; margin:0 0 14px}
 
 /* Posters dropdown */
@@ -327,7 +327,7 @@ html[data-confirm-mode] [data-confirm]{outline:1px dashed var(--ember); outline-
 .menu > a{font-family:var(--shout); font-weight:400; text-transform:uppercase; letter-spacing:.04em; color:var(--cream); font-size:clamp(1.55rem, 4.3vh, 2rem); line-height:1.12}
 .menu > a{padding:clamp(7px, 1.5vh, 13px) 0}
 .menu > a:first-of-type{margin-top:clamp(36px, 6vh, 56px)}
-.menu__tape{display:inline-block; background:#D8312A; color:#0b0809; padding:3px 12px 1px; transform:rotate(-2deg); box-shadow:0 6px 16px rgba(216,49,42,.3); margin:4px 0}
+.menu__tape{display:inline-block; background:#DB423B; color:#0b0809; padding:3px 12px 1px; transform:rotate(-2deg); box-shadow:0 6px 16px rgba(216,49,42,.3); margin:4px 0}
 .menu__ul{box-shadow:inset 0 -3px 0 var(--ember); padding-bottom:2px}
 .menu .menu__hot .menu__tag{font-size:.62rem; color:#F2B8B1}
 .menu .menu__sublinks{display:flex; gap:6px; padding:2px 0 6px; flex-wrap:wrap}
@@ -501,7 +501,7 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream); backgr
 .spec-retro__item:hover{transform:translateX(5px); color:#fff}
 .spec-retro__bullet{position:relative; width:7px; height:7px; border-radius:50%; background:var(--ember); box-shadow:0 0 0 2px var(--ink), 0 0 0 4px rgba(192,53,63,.30), 0 0 8px rgba(192,53,63,.65); flex-shrink:0; transition:box-shadow var(--d-micro) var(--e-ui), transform var(--d-micro) var(--e-ui)}
 .spec-retro__item:hover .spec-retro__bullet{transform:scale(1.18); box-shadow:0 0 0 2px var(--ink), 0 0 0 5px rgba(192,53,63,.45), 0 0 12px rgba(192,53,63,.9)}
-.spec-retro__num{font-family:var(--mono); font-size:.60rem; font-weight:600; letter-spacing:.12em; color:var(--ember); flex-shrink:0; opacity:.9}
+.spec-retro__num{font-family:var(--mono); font-size:.60rem; font-weight:600; letter-spacing:.12em; color:var(--ember-ink); flex-shrink:0}
 .spec-retro__text{flex:1; min-width:0; line-height:1.4}
 .spec-retro__dot{color:var(--ember); margin:0 .55em; opacity:.85}
 .spec-retro__item--dim{color:var(--muted); opacity:.8}
@@ -1091,7 +1091,7 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream); backgr
   font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--cream);
   top:50%; transform:translateY(-50%);
   text-shadow:0 1px 4px rgba(0,0,0,.95), 0 2px 10px rgba(0,0,0,.85)}
-.annot__lab b{color:var(--ember); font-weight:400; margin-right:.7em}
+.annot__lab b{color:var(--ember-ink); font-weight:400; margin-right:.7em}
 
 .annot__pt::before{content:""; position:absolute; top:50%; height:1px;
   background:linear-gradient(90deg,rgba(192,53,63,.8),rgba(243,239,232,.35))}
@@ -1839,7 +1839,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 .ag__list{list-style:none; margin:12px 0 0; padding:0; border-top:1px solid var(--border)}
 .ag__row{display:flex; align-items:center; border-bottom:1px solid var(--border)}
 .ag__link{flex:1; min-width:0; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
-.ag__link:hover{color:var(--ember)}
+.ag__link:hover{color:var(--ember-ink)}
 .ag__thumb{flex:none; width:42px; height:42px; display:grid; place-items:center; overflow:hidden; background:var(--elevated)}
 .ag__thumb img{width:100%; height:100%; object-fit:cover}
 .ag__thumb--rec{background:none}
@@ -1969,7 +1969,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 /* ---- album → size step (posters) ---- */
 .ag__row--multi{display:block}
 .ag__choose{all:unset; box-sizing:border-box; cursor:pointer; width:100%; display:flex; align-items:center; gap:12px; padding:10px 0; transition:color .2s}
-.ag__choose:hover{color:var(--ember)}
+.ag__choose:hover{color:var(--ember-ink)}
 .ag__choose:focus-visible{outline:2px solid var(--ember); outline-offset:2px}
 .ag__pchev{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--border-2); display:grid; place-items:center; transition:transform .35s var(--e-out-expo), background .2s, border-color .2s}
 .ag__pchev::before{content:""; width:6px; height:6px; border-right:1.5px solid var(--cream); border-bottom:1.5px solid var(--cream); transform:translateY(-2px) rotate(45deg)}
@@ -2055,13 +2055,13 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 .hdr{flex-direction:column; align-items:stretch}
 .hdr__in{flex:1}
 /* the sale ribbon: red caution tape, text running */
-.tape{--tape:#D8312A; display:block; overflow:hidden; background:var(--tape); color:#0b0809; text-decoration:none;
+.tape{--tape:#DB423B; display:block; overflow:hidden; background:var(--tape); color:#0b0809; text-decoration:none;
   font-family:var(--shout); text-transform:uppercase; white-space:nowrap}
 .tape__t{display:inline-flex; will-change:transform; animation:tapeRun 38s linear infinite}
 .tape__i{display:inline-flex; align-items:center}
 .tape__i>*{padding-inline:.7em}
 .tape__i b{font-weight:400; letter-spacing:.04em}
-.tape__i s{text-decoration-thickness:2px; opacity:.6}
+.tape__i s{text-decoration-thickness:2px}
 .tape__i em{font-style:normal; background:#0b0809; color:var(--tape); padding:0 .3em}
 .tape__i>span::after{content:"✦"; margin-left:1.4em; font-size:.7em; vertical-align:.12em}
 @keyframes tapeRun{to{transform:translateX(-50%)}}
@@ -2078,7 +2078,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 .ag__sub .mrp{margin-right:.35em}
 
 /* ---- the sale section: two strips of tape crossing over a spray-painted price ---- */
-.salesec{--tape:#D8312A; position:relative; overflow:hidden; background:#0b0809; text-align:center;
+.salesec{--tape:#DB423B; position:relative; overflow:hidden; background:#0b0809; text-align:center;
   padding:clamp(130px,13vw,180px) var(--gutter) clamp(48px,5vw,80px); isolation:isolate}
 .salesec::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
   background:radial-gradient(60% 50% at 50% 55%, rgba(216,49,42,.22), transparent 70%)}
@@ -2332,7 +2332,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
   font-size:clamp(3rem,13vw,7.2rem); color:var(--cream); text-align:center}
 .best__h i{font-style:normal; color:var(--ember)}
 @media(min-width:768px){.best{padding-block:96px 104px}}
-.best .cap{color:var(--ember)}
+.best .cap{color:var(--ember-ink)}
 .fhero__subm{display:block; margin-top:10px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
   text-transform:uppercase; color:rgba(243,239,232,.74)}
 @media(hover:none){
@@ -2375,7 +2375,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 
 /* ---- forms that say what they do ---- */
 .formnote{margin:16px 0 0; padding:14px 16px; border:1px solid var(--border-2); background:var(--elevated); font-size:.95rem; line-height:1.5; max-width:560px}
-.formnote a,.acc .panel__in a,.policy a{color:var(--ember)}
+.formnote a,.acc .panel__in a,.policy a{color:var(--ember-ink)}
 .btnrow{display:flex; flex-wrap:wrap; gap:10px}
 .customform{margin-top:40px; display:grid; gap:18px; max-width:560px}
 .frow{display:grid; gap:18px; grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
@@ -2437,7 +2437,7 @@ html{overflow-x:hidden}
 /* ---------- product page: choose the album ---------- */
 .apick{min-width:0}
 .apick__k{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0 0 10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
-.apick__k b{font-weight:500; color:var(--ember)}
+.apick__k b{font-weight:500; color:var(--ember-ink)}
 .apick__row{display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; -webkit-overflow-scrolling:touch;
   margin-inline:calc(var(--gutter, 16px) * -1); padding:2px var(--gutter, 16px) 4px}
 .apick__row::-webkit-scrollbar{display:none}
@@ -2700,7 +2700,7 @@ button.pdpb{width:100%; font:inherit; text-align:left; cursor:pointer}
   .htile:active{transform:scale(.95)}
   .htile b{position:relative; z-index:2; font:400 16px/1 var(--shout); text-transform:uppercase; letter-spacing:.03em}
   .htile small{position:relative; z-index:2; margin-top:4px; font:500 8.5px/1.2 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--rose)}
-  .htile--b{background:#D8312A; border-color:transparent; color:#0b0809} .htile--b small{color:#0b0809}
+  .htile--b{background:#DB423B; border-color:transparent; color:#0b0809} .htile--b small{color:#0b0809}
   .htile__ar{position:absolute; z-index:2; right:9px; bottom:9px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
     background:#0b0809; color:var(--cream); font-size:11px; transition:transform .3s var(--e-spring)}
   .htile--w .htile__ar{background:var(--oxblood)}
@@ -3019,7 +3019,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   text-align:left;
 }
 .home-bundles__eyebrow{
-  color:var(--ember);
+  color:var(--ember-ink);
   letter-spacing:.18em;
   text-transform:uppercase;
   font-weight:600;

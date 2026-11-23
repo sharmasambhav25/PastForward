@@ -2599,7 +2599,7 @@ const lockup = (script, caps, tag, cls = '') => `<div class="lockup ${cls}">
 
 /* a line of type cropped by the viewport on both sides */
 const marq = (text, variant, speed) => `<div class="marq ${variant}" data-marq="${speed}">
-  <div class="marq__t">${Array(6).fill(`<span>${esc(text)}</span>`).join('')}</div></div>`;
+  <div class="marq__t">${Array(6).fill(0).map((_, i) => `<span${i ? ' aria-hidden="true"' : ''}>${esc(text)}</span>`).join('')}</div></div>`;   // read once, not six times
 
 const bleed = (key, cap, sub, cls = '') => photo(key) ? `<div class="bleed ${cls}">
   <img src="${photo(key)}" alt="${esc(cap)}" loading="lazy" decoding="async">
@@ -3702,7 +3702,7 @@ function viewCustom() {
         ${SITE.customCopy ? landingCopyHTML(SITE.customCopy) : ''}
         <div class="steps" style="margin-top:64px">
           ${stepsList.map(([n, t]) =>
-            `<div class="reveal"><div class="mono num" style="color:var(--oxblood)">${n}</div>
+            `<div class="reveal"><div class="mono num" style="color:var(--ember-ink)">${n}</div>
               <div class="d-s" style="margin-top:8px">${t}</div>${wave('wave--divider', 'margin-top:14px')}</div>`).join('')}
         </div>
       </div>
