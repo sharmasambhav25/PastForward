@@ -1654,12 +1654,13 @@ function makeItItem(o) {
     ${o.artist ? `<span class="makeit__a">${esc(o.artist)}</span>` : ''}
     <span class="makeit__cta">${own ? 'In stock' : 'Make it'} <b class="num">${money(own ? ((own.variants.find(v => v.format === 'vinyl') || {}).price || own.from) : FMT.vinyl.price)}</b></span></a>`;
 }
-function makeItHTML(q) {
+/* more = shown under results we do have (an artist search): only the albums we don't stock */
+function makeItHTML(q, more = false) {
   const skel = '<span class="makeit__item makeit__item--skel" aria-hidden="true"><span class="makeit__rec"><span class="makeit__disc"></span></span><span class="makeit__t">&nbsp;</span><span class="makeit__a">&nbsp;</span></span>';
-  return `<section class="makeit" data-makeit="${esc(q)}" aria-live="polite">
-    <p class="makeit__k mono-xs">Not in the crate yet</p>
+  return `<section class="makeit${more ? ' makeit--more' : ''}" data-makeit="${esc(q)}"${more ? ' data-more' : ''} aria-live="polite">
+    <p class="makeit__k mono-xs">${more ? 'Want a different one?' : 'Not in the crate yet'}</p>
     <h3 class="makeit__h">We'll make it for you</h3>
-    <p class="makeit__s">Tap the right one and we press it onto a real 12-inch record. ${money(FMT.vinyl.price)}, delivered in ${esc(DELIVERY)}.</p>
+    <p class="makeit__s">${more ? 'Any other album, pressed' : 'Tap the right one and we press it'} onto a real 12-inch record. ${money(FMT.vinyl.price)}, delivered in ${esc(DELIVERY)}.</p>
     <div class="makeit__grid" data-makeit-grid>${skel.repeat(4)}</div>
     <a class="makeit__own" href="${makeItLink({ album: q })}" data-close><span>Not one of these? Tell us the album</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     ${wantHTML(q)}</section>`;
@@ -1670,7 +1671,7 @@ function lookupSongs(q) {
   const ctl = 'AbortController' in window ? new AbortController() : null;
   const t = setTimeout(() => ctl && ctl.abort(), 4500);
   const url = 'https://itunes.apple.com/search?' + new URLSearchParams({ term: q, entity: 'song', country: 'in', limit: '25' });
-  const clean = s => s.replace(/\s*[([](?:from|feat\.?|ft\.?|with|original motion picture soundtrack|deluxe[^)\]]*|remastered[^)\]]*|\d{4} remaster)\b[^)\]]*[)\]]/gi, '').replace(/\s+-\s+(single|ep)$/i, '').trim();
+  const clean = s => s.replace(/\s*[([](?:from|feat\.?|ft\.?|with|original motion picture soundtrack|[^)\]]*edition|deluxe[^)\]]*|remastered[^)\]]*|\d{4} remaster)\b[^)\]]*[)\]]/gi, '').replace(/\s+-\s+(single|ep)$/i, '').trim();
   const words = key.split(' ').filter(Boolean);
   const pr = fetch(url, ctl ? { signal: ctl.signal } : {}).then(r => r.json()).then(d => {
     const seen = new Set(), out = [];
@@ -1683,9 +1684,11 @@ function lookupSongs(q) {
       if (!words.every(w => hay.split(' ').some(h => h.startsWith(w) || (w.length > 4 && lev(h, w) <= 1)))) continue;
       const k = norm(title + '|' + artist); if (seen.has(k)) continue; seen.add(k);
       out.push({ album: title, artist, art: x.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.') });
-      if (out.length === 4) break;
+      if (out.length === 10) break;
     }
-    return out;
+    // they typed an artist ("coldplay"): only that artist's own albums, not every collab they're on
+    const theirs = out.filter(o => norm(o.artist).trim() === key || norm(o.artist).includes(key));
+    return theirs.length ? theirs : out;
   }).catch(() => []).finally(() => clearTimeout(t));
   MK_CACHE.set(key, pr);
   return pr;
@@ -1700,8 +1703,11 @@ function hydrateMakeIt() {
         const grid = el.isConnected && el.querySelector('[data-makeit-grid]'); if (!grid) return;
         // a song from an album we already stock ("blinding lights" is on After Hours): send them to it
         const same = (a, b) => { a = norm(a).trim(); b = norm(b).trim(); return !!a && !!b && (a === b || a.startsWith(b + ' ') || b.startsWith(a + ' ')); };
+        const more = el.hasAttribute('data-more');
         list = list.map(o => { const own = P.find(p => same(p.artist, o.artist) && same(p.album, o.album)); return own ? { ...o, own } : o; })
-          .sort((a, b) => (b.own ? 1 : 0) - (a.own ? 1 : 0));
+          .filter(o => !(more && o.own))   // the ones we stock are already in the grid above
+          .sort((a, b) => (b.own ? 1 : 0) - (a.own ? 1 : 0)).slice(0, 4);
+        if (more && !list.length) { el.outerHTML = anyAlbumHTML(q, 'vinyl', true); return; }
         grid.innerHTML = (list.length ? list : [{ album: q }]).map(makeItItem).join('');
         if (list[0] && list[0].own) {
           el.querySelector('.makeit__k').textContent = 'In the crate';
@@ -1721,9 +1727,10 @@ function searchResults(q) {
     <div class="mono-xs dim" style="margin-top:28px;margin-bottom:14px">Featured in the crate</div>
     <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
   if (!list.length) { hydrateMakeIt(); return makeItHTML(q); }
+  hydrateMakeIt();
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
     <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>
-    ${anyAlbumHTML(q, 'vinyl', true)}`;
+    ${makeItHTML(q, true)}`;
 }
 function norm(s) { return s.toLowerCase().replace(/[^a-z0-9 ]/g, ''); }
 function lev(a, b) {
