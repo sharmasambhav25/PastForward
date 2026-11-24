@@ -3505,3 +3505,29 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
 }
 .bpage .bcta{margin-top:72px}
 @media(prefers-reduced-motion:reduce){ .sc__p, .boffer, .boffer__cta, .boffer__cta svg{transition:none} .boffer:hover .sc__p, .bsets .wset:hover .sc__p{transform:none} }
+
+/* bundles hero, v2: a full-bleed band of real photos with the headline over it */
+.bhero2{position:relative; padding-top:var(--nav-h); isolation:isolate}
+.bhero2__band{display:grid; grid-template-columns:repeat(3,1fr); gap:3px; height:clamp(480px,84vh,860px); background:#000}
+.bhero2__band--2{grid-template-columns:repeat(2,1fr)} .bhero2__band--1{grid-template-columns:1fr}
+.bhero2__shot{margin:0; position:relative; overflow:hidden}
+.bhero2__shot img, .bhero2__shot picture{width:100%; height:100%; object-fit:cover; display:block}
+.bhero2__shot img{transform:scale(1.04); transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+.bhero2__shot:hover img{transform:scale(1.07)}
+.bhero2::after{content:""; position:absolute; z-index:1; left:0; right:0; bottom:0; height:62%; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(8,6,7,.55) 45%, rgba(8,6,7,.92))}
+.bhero2__over{position:absolute; z-index:2; left:0; right:0; bottom:clamp(24px,5vh,56px)}
+.bhero2__k{color:var(--cream); letter-spacing:.16em; margin:0 0 12px; opacity:.9}
+.bhero2__h{font-family:var(--shout); font-weight:400; text-transform:uppercase; color:var(--cream); margin:0;
+  font-size:clamp(3.6rem,11vw,10.5rem); line-height:.86; letter-spacing:-.01em; text-shadow:0 6px 40px rgba(0,0,0,.35)}
+.bhero2__real{position:absolute; z-index:2; top:calc(var(--nav-h) + 16px); right:16px; padding:7px 11px; border-radius:999px; background:rgba(10,8,8,.6);
+  color:var(--cream); letter-spacing:.12em; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px)}
+.bhero2--plain{padding-top:calc(var(--nav-h) + 40px)} .bhero2--plain::after{display:none} .bhero2--plain .bhero2__over{position:static}
+.bhero2__below{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 32px; padding-top:28px}
+.bhero2__lede{margin:0; max-width:520px; color:var(--muted)}
+@media(max-width:699px){
+  .bhero2__band{grid-template-columns:repeat(2,1fr); height:min(78vh,620px)}
+  .bhero2__band .bhero2__shot:nth-child(3){display:none}
+  .bhero2__h{font-size:clamp(3.2rem,17vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){ .bhero2__shot img{transition:none; transform:none} }

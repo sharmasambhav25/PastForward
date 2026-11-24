@@ -2234,24 +2234,27 @@ function bundleStripHTML() {
 }
 function viewBundles() {
   const best = LIVE_BUNDLES.reduce((m, b) => Math.max(m, pctOff(b)), 0);
-  const shots = [['wall-full', 'Records and posters from PastForward hung together on a white wall'],
+  /* edge to edge, like a lookbook: three real photos of the pieces at home, the headline set over them */
+  const shots = [['wall-person', 'Someone looking at a wall of PastForward records and posters'],
                  ['sabrina-espresso-wall', 'A PastForward record and poster above a bed in evening light'],
-                 ['records-table', 'Upcycled records laid out on a table before they are hung']].filter(([k]) => photo(k));
+                 ['sabrina-espresso-bed', 'A PastForward record on a bed with a poster and polaroids']].filter(([k]) => photo(k));
   return `<div class="bpage">
-  <section class="bhero wrap" style="padding-top:calc(var(--nav-h) + 36px)">
-    <div class="bhero__copy">
-      <p class="cap">Bundles · up to ${best}% off</p>
-      <h1 class="shout-h">Fill a wall<br>for less.</h1>
-      <p class="body-l dim measure bhero__lede">Put the pieces in your crate and the bundle price comes off at checkout, on its own. No code to type.</p>
-      <ol class="bsteps">
-        <li><b>1</b><span>Pick your pieces</span></li>
-        <li><b>2</b><span>The price drops at checkout</span></li>
-        <li><b>3</b><span>Free delivery, ${esc(DELIVERY)}</span></li>
-      </ol>
+  <section class="bhero2${shots.length ? '' : ' bhero2--plain'}">
+    ${shots.length ? `<div class="bhero2__band bhero2__band--${shots.length}">${shots.map(([k, alt], i) => `<figure class="bhero2__shot"><img src="${photo(k)}" alt="${esc(alt)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></figure>`).join('')}</div>
+    <span class="bhero2__real mono-xs">Real pieces, real walls</span>` : ''}
+    <div class="bhero2__over wrap">
+      <p class="bhero2__k mono-xs">Bundles · up to ${best}% off</p>
+      <h1 class="bhero2__h">Fill a wall<br>for less.</h1>
     </div>
-    ${shots.length ? `<div class="bhero__shots bhero__shots--${shots.length}">${shots.map(([k, alt], i) => `<figure class="bhero__shot bhero__shot--${i}"><img src="${photo(k)}" alt="${esc(alt)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></figure>`).join('')}
-      <span class="bhero__real mono-xs">Real pieces, real walls</span></div>` : ''}
   </section>
+  <div class="wrap bhero2__below">
+    <p class="body-l bhero2__lede">Put the pieces in your crate and the bundle price comes off at checkout, on its own. No code to type.</p>
+    <ol class="bsteps">
+      <li><b>1</b><span>Pick your pieces</span></li>
+      <li><b>2</b><span>The price drops at checkout</span></li>
+      <li><b>3</b><span>Free delivery, ${esc(DELIVERY)}</span></li>
+    </ol>
+  </div>
   <section class="wrap boffers-wrap" aria-label="The offers">
     <div class="bsec__hd"><h2 class="bsec__h">The offers</h2><p class="bsec__s dim">One bundle per order. If your crate fits more than one, we take the one that saves you the most.</p></div>
     <div class="boffers">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
