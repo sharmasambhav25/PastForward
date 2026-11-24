@@ -1604,18 +1604,29 @@ function wantHTML(q) {
       <button class="btn btn--primary"><span class="btn__mag">Email me</span></button>
     </form><div data-form-msg></div></div>`;
 }
+/* "not here? we'll make it": the way out when the catalogue doesn't have someone's album.
+   Carries what they typed into the custom form. */
+function anyAlbumHTML(q = '', fmt = 'vinyl', close = false) {
+  const f = (typeof FMT !== 'undefined' && FMT[fmt]) || FMT.vinyl;
+  const qs = new URLSearchParams(); if (q) qs.set('q', q); qs.set('format', fmt in FMT ? fmt : 'vinyl');
+  return `<a class="anyalbum" href="/custom?${qs}"${close ? ' data-close' : ''}>
+    <span class="anyalbum__k mono-xs">${q ? `Not the one?` : `Don't see your album?`}</span>
+    <span class="anyalbum__t">We'll make any album as a ${esc(f.label.toLowerCase())} <span class="num">· ${money(f.price)}</span></span>
+    <span class="anyalbum__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>`;
+}
 function searchResults(q) {
   const list = searchProducts(q);
   if (!q) return `<div class="mono-xs dim" style="margin-bottom:12px">Suggested Collections</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 5).map(c => `<a class="pill" href="/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
     <div class="mono-xs dim" style="margin-top:28px;margin-bottom:14px">Featured in the crate</div>
     <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
-  if (!list.length) return `<div style="padding:48px 0;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
-    <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet? We can still print it.</p>
-    <a class="btn btn--secondary" href="/custom" data-close><span class="btn__mag">Request custom piece</span></a>
+  if (!list.length) return `<div style="padding:40px 0 48px;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
+    <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet. We can still make it for you.</p>
+    <a class="btn btn--primary" href="/custom?${new URLSearchParams({ q, format: 'vinyl' })}" data-close><span class="btn__mag">Make “${esc(q)}” for ${money(FMT.vinyl.price)}</span></a>
     ${wantHTML(q)}</div>`;
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
-    <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>`;
+    <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>
+    ${anyAlbumHTML(q, 'vinyl', true)}`;
 }
 function norm(s) { return s.toLowerCase().replace(/[^a-z0-9 ]/g, ''); }
 function lev(a, b) {

@@ -3298,3 +3298,33 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
   .drawer__hd{padding-top:6px; touch-action:none}
   .drawer__body{min-height:120px}
 }
+
+/* ---------- the design in the frame opens it ---------- */
+.fmts__titles{cursor:pointer}
+.fmts__th{position:relative}
+.fmts__th::after{content:"VIEW"; position:absolute; left:50%; bottom:10px; transform:translate(-50%,6px); padding:5px 10px 4px; border-radius:999px;
+  background:rgba(6,5,6,.78); color:var(--cream); font:500 var(--fs-11)/1 var(--mono); letter-spacing:.16em; opacity:0; transition:opacity .35s ease, transform .45s cubic-bezier(.2,.8,.2,1); pointer-events:none}
+.fmts__th.is-on::after{opacity:1; transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){ .fmts__th::after{transition:none} }
+
+/* ---------- "don't see your album?" ---------- */
+.anyalbum{display:grid; grid-template-columns:1fr auto; align-items:center; gap:6px 16px; margin:48px 0 0; padding:20px 22px;
+  border:1px solid var(--border-2); border-radius:12px; background:var(--elevated); color:var(--cream); text-decoration:none;
+  transition:border-color .25s ease, background .25s ease, transform .2s ease}
+.anyalbum__k{color:var(--ember-ink); grid-column:1}
+.anyalbum__t{grid-column:1; font-size:var(--fs-17); line-height:1.3; text-wrap:balance}
+.anyalbum__t .num{color:var(--muted)}
+.anyalbum__go{grid-column:2; grid-row:1/3; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:var(--ember); color:var(--cream); transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.anyalbum__go svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.anyalbum:hover{border-color:var(--cream)}
+.anyalbum:hover .anyalbum__go{transform:translateX(3px)}
+.anyalbum:active{transform:scale(.98)}
+.anyalbum:focus-visible{outline:2px solid var(--ember); outline-offset:4px}
+#searchres .anyalbum,#pagesearchres .anyalbum{margin-top:28px}
+#search a.anyalbum{display:grid; padding:20px 22px}   /* the search panel shares the menu's link styles */
+
+/* the carousel's blurred backdrops: once one has faded out it stops being painted at all
+   (it was still re-blurring under the visible one); the fade itself is unchanged */
+.fmts__bg{visibility:hidden; transition:opacity .9s ease, transform 5s ease, visibility 0s linear .9s}
+.fmts__bg.is-on{visibility:visible; transition:opacity .9s ease, transform 5s ease, visibility 0s}
+@media(prefers-reduced-motion:reduce){ .fmts__bg,.fmts__bg.is-on{transition:none} }

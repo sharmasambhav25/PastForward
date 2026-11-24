@@ -358,10 +358,13 @@ function mountFormats() {
   };
   // always moves on by itself while on screen; a click/swipe just restarts the 4s count
   const restart = () => { clearInterval(timer); if (visible) timer = setInterval(() => go(k + 1), 4000); };
+  // the design in the frame is the way in: tapping it, its title or the backdrop opens it
+  const openCur = () => { const a = cs[k % n] && cs[k % n].querySelector('a'); if (a) navigate(a.getAttribute('href')); };
+  root.querySelector('.fmts__titles').addEventListener('click', openCur);
   root.querySelector('[data-fp]').addEventListener('click', () => go(k - 1));
   root.querySelector('[data-fx]').addEventListener('click', () => go(k + 1));
   ths.forEach(t => {
-    t.addEventListener('click', () => go(+t.dataset.k));
+    t.addEventListener('click', () => { if (+t.dataset.k === k) openCur(); else go(+t.dataset.k); });
     t.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') e.preventDefault(); });   // no focus-scroll on touch
   });
   root.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(k + 1); if (e.key === 'ArrowLeft') go(k - 1); });
@@ -908,7 +911,8 @@ function viewCatalog(category, subType, params) {
         ${list.length ? `${byArtist
             ? `<div class="grid ag-grid" id="agrid">${groups.slice(0, shown).map((g, i) => artistCardHTML(g, routeFormats, i)).join('')}</div>`
             : `<div class="grid" id="grid">${list.slice(0, shown).map(p => cardHTML(p, targetFormat)).join('')}</div>`}
-          ${total > shown ? `<div style="text-align:center;margin-top:48px"><button class="btn btn--secondary" id="loadmore"><span class="btn__mag">Load more</span></button></div>` : ''}`
+          ${total > shown ? `<div style="text-align:center;margin-top:48px"><button class="btn btn--secondary" id="loadmore"><span class="btn__mag">Load more</span></button></div>` : ''}
+          ${anyAlbumHTML('', FMT[targetFormat] ? targetFormat : 'vinyl')}`
         : `<div style="padding:80px 0;text-align:center">
             <p class="d-s">Nothing matches that combination.</p>
             <p class="body-s dim" style="margin:8px 0 20px">Loosen a filter.</p>
@@ -1201,6 +1205,10 @@ function mountCustom() {
   if (!form) return;
 
   const artistInput = form.querySelector('[name="artist"]'), titleInput = form.querySelector('[name="album"]');
+  // arriving from search or "don't see your album?": keep what they typed, and the format they were shopping
+  { const params = parseHash().params, q = (params.get('q') || '').trim().slice(0, 80), f = params.get('format'), fs = form.querySelector('[name="format"]');
+    if (q && titleInput && !titleInput.value) titleInput.value = q;
+    if (f && fs && fs.querySelector(`option[value="${CSS.escape(f)}"]`) && !fs.value) fs.value = f; }
   if (host && window.mountVinylLabel) {
     let label;
     try { label = window.mountVinylLabel(host, { artist: artistInput?.value, title: titleInput?.value }); }
@@ -2039,10 +2047,18 @@ function mountProduct(p, params) {
     const img = $('#stagemedia img'); if (img) img.src = imgSrc(b.dataset.cw);
     $$('.pdp__thumb').forEach(x => x.classList.remove('is-on')); b.classList.add('is-on');
   }));
+  /* a photo thumb answers at once (its ring moves), then the big photo swaps in when it's
+     decoded, at the size this screen needs, so the tap never waits on a full-size image */
+  let swapN = 0;
+  const swapStage = html => {
+    const n = ++swapN, box = document.createElement('div'); box.innerHTML = withPhotoSets(html);
+    const img = box.querySelector('img'), ready = img && img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+    ready.then(() => { const st = $('#stagemedia'); if (n === swapN && st) st.replaceChildren(...box.childNodes); });
+  };
   $$('.pdp__thumb--gal').forEach(b => b.addEventListener('click', () => {
     const it = galleryOf(p, sel).find(([k]) => k === b.dataset.gal); if (!it) return;
     $$('.pdp__thumb').forEach(x => x.classList.remove('is-on')); b.classList.add('is-on');
-    $('#stagemedia').innerHTML = `<img class="stagephoto stagephoto--gal" src="${photo(it[0])}" alt="${esc(it[1])}">`;
+    swapStage(`<img class="stagephoto stagephoto--gal" src="${photo(it[0])}" alt="${esc(it[1])}">`);
   }));
   const shotBtn = $('.pdp__thumb--photo');
   if (shotBtn) shotBtn.addEventListener('click', () => {
@@ -2050,7 +2066,7 @@ function mountProduct(p, params) {
     if (!shotPic) return;
     $$('.pdp__thumb').forEach(x => x.classList.remove('is-on'));
     shotBtn.classList.add('is-on');
-    $('#stagemedia').innerHTML = `<img class="stagephoto" src="${shotPic}" alt="A PastForward ${esc(FMT[sel].label)} photographed at the stand">`;
+    swapStage(`<img class="stagephoto" src="${shotPic}" alt="A PastForward ${esc(FMT[sel].label)} photographed at the stand">`);
   });
   $$('[data-pq]').forEach(b => b.addEventListener('click', () => {
     qty = Math.max(1, Math.min(20, qty + (+b.dataset.pq))); $('#pdpqty').textContent = qty; setAmt();
