@@ -44,8 +44,6 @@ A5 POSTER-BILLIE EILISH-BAD GUY.webp	poster-a5 · Billie Eilish · Bad Guy
 A5 POSTER-EMINEM-DEATH OF SLIM SHADY.webp	poster-a5 · Eminem · The Death of Slim Shady
 A5 POSTER-TALOR SWIFT-LOVER.webp	poster-a5 · Taylor Swift · Lover
 A5-LANA DEL REY-BLUEBIRD.webp	poster-a5 · Lana Del Rey · Bluebird
-A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM) (1).webp	EXCLUDED: byte-identical duplicate
-A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM).webp	poster-a5 · Taylor Swift · august
 A5-POSTER-Ariana Grande-thank u, next.webp	poster-a5 · Ariana Grande · thank u, next
 A5-POSTER-BILLY JOEL-THE STRANGER.webp	poster-a5 · Billy Joel · The Stranger
 A5-POSTER-COLDPLAY-PARACHUTES-YELLOW.webp	poster-a5 · Coldplay · Parachutes / Yellow

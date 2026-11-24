@@ -21,7 +21,6 @@ NON_PRODUCT = {
 }
 # hard-excluded (customer name in filename / duplicates / ambiguous held back)
 DENY = {
-    'A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM) (1)': 'byte-identical duplicate',
 }
 # colourway variants attached to a parent file
 COLOURWAY = {
@@ -34,7 +33,6 @@ OVERRIDE = {
     'A3-POSTER-SUNFLOWER-POST MALONE':          ('Post Malone', 'Sunflower'),
     'A5-POSTER-SUNFLOWER-POST MALONE':          ('Post Malone', 'Sunflower'),
     '10x10inch POSTER-TICKETS TO MY DOWNFALL-MGK': ('MGK', 'Tickets to My Downfall'),
-    'A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM)':    ('Taylor Swift', 'august'),
     'VINYL-INDIGO-RM':                          ('RM', 'Indigo'),
     'VINYL-MAROON-LOVE IS LIKE':                ('Maroon 5', 'Love Is Like'),
     '10X10INCH-THANK U NEXT-ARIANA GRANDE':     ('Ariana Grande', 'thank u, next'),
@@ -83,6 +81,7 @@ SLUG_ALIASES = {
     'sabrina-carpenter': 'sabrina-carpenter-espresso',
     # Nov 2026: the Dil Nu record was the same art as the EP it comes from
     'ap-dhillon-dil-nu': 'ap-dhillon-two-hearts-never-break-the-same',
+    'taylor-swift-august': 'taylor-swift-lover',   # Nov 2026: the august poster was taken down
 }
 
 ARTIST_FIX = {

@@ -2288,31 +2288,6 @@
    "rank": 5
   },
   {
-   "slug": "taylor-swift-august",
-   "artist": "Taylor Swift",
-   "album": "august",
-   "variants": [
-    {
-     "format": "poster-a5",
-     "label": "A5 poster",
-     "size": "148 × 210mm",
-     "price": 199,
-     "confirmPrice": false,
-     "ratio": 0.7072,
-     "badge": "A5",
-     "image": "A5-POSTER-AUGUST-TAYLOR SWIFT(CUSTOM).webp",
-     "sku": "PF-TAYLOR-SWIFT-AUGUST-POSTER-A5",
-     "alt": "august by Taylor Swift — A5 poster by PastForward"
-    }
-   ],
-   "tags": [
-    "pop-canon"
-   ],
-   "featured": false,
-   "from": 199,
-   "rank": 999
-  },
-  {
    "slug": "taylor-swift-lover",
    "artist": "Taylor Swift",
    "album": "Lover",
@@ -3063,20 +3038,19 @@
   }
  },
  "counts": {
-  "products": 86,
+  "products": 85,
   "vinyl": 66,
-  "posters": 46,
+  "posters": 45,
   "prints": 14,
   "polaroids": 22,
-  "variants": 148,
+  "variants": 147,
   "artists": 59
  },
  "aliases": {
   "arctic-monkeys": "arctic-monkeys-am",
   "sabrina-carpenter": "sabrina-carpenter-espresso",
-  "ap-dhillon-dil-nu": "ap-dhillon-two-hearts-never-break-the-same"
+  "ap-dhillon-dil-nu": "ap-dhillon-two-hearts-never-break-the-same",
+  "taylor-swift-august": "taylor-swift-lover"
  },
- "unresolved": [
-  "byte-identical duplicate"
- ]
+ "unresolved": []
 }
