@@ -115,8 +115,8 @@
       "desc": "Shop real 12-inch upcycled vinyl record wall decor ({{PRICE_VINYL}}), 300 GSM album cover posters (from {{PRICE_A5}}), 10×10 prints ({{PRICE_10}}) and music polaroids ({{PRICE_POLAROID}}). Free delivery across India over ₹499."
     },
     "/vinyl": {
-      "title": "Buy Decorative Vinyl Records Online India | 48+ Albums {{PRICE_VINYL}} | PastForward",
-      "desc": "Browse 48+ upcycled 12-inch decorative vinyl records ({{PRICE_VINYL}}) or 3 for ₹2,499. Real vintage vinyl restored with iconic album art, ready to hang. Free delivery across India over ₹499."
+      "title": "Buy Decorative Vinyl Records Online India | 65+ Albums {{PRICE_VINYL}} | PastForward",
+      "desc": "Browse 65+ upcycled 12-inch decorative vinyl records ({{PRICE_VINYL}}) or 3 for ₹2,499. Real vintage vinyl restored with iconic album art, ready to hang. Free delivery across India over ₹499."
     },
     "/vinyl-by-artist": {
       "title": "Vinyl Records by Artist | {{PRICE_VINYL}} Wall Decor India | PastForward",
@@ -304,7 +304,7 @@
         ],
         [
           "Explore the catalogue or request custom",
-          "Browse over 48+ iconic albums in our <a href=\"/vinyl\">vinyl records collection</a>, or turn any song, playlist, or personal photo into a piece of music history through <a href=\"/custom\">custom vinyl records</a>."
+          "Browse over 65 iconic albums in our <a href=\"/vinyl\">vinyl records collection</a>, or turn any song, playlist, or personal photo into a piece of music history through <a href=\"/custom\">custom vinyl records</a>."
         ]
       ],
       "faq": [

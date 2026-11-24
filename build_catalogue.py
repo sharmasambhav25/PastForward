@@ -49,6 +49,27 @@ OVERRIDE = {
     'A5-POSTER-The Beatles-Members':            ('The Beatles', 'Members'),
     '10X10INCH-THE BEATLES-MEMBERS':            ('The Beatles', 'Members'),
     'POLAROID-THE BEATLES-MEMBER':              ('The Beatles', 'Members'),
+    # Nov 2026: vinyl labels made from the official cover art
+    'VINYL-KENDRICK LAMAR-GNX': ('Kendrick Lamar', 'GNX'),
+    'VINYL-KENDRICK LAMAR-DAMN': ('Kendrick Lamar', 'DAMN.'),
+    'VINYL-SZA-SOS': ('SZA', 'SOS'),
+    'VINYL-TAYLOR SWIFT-THE TORTURED POETS DEPARTMENT': ('Taylor Swift', 'The Tortured Poets Department'),
+    'VINYL-BILLIE EILISH-HIT ME HARD AND SOFT': ('Billie Eilish', 'Hit Me Hard and Soft'),
+    'VINYL-OLIVIA RODRIGO-SOUR': ('Olivia Rodrigo', 'SOUR'),
+    'VINYL-SABRINA CARPENTER-SHORT N SWEET': ('Sabrina Carpenter', "Short n' Sweet"),
+    'VINYL-THE WEEKND-STARBOY': ('The Weeknd', 'Starboy'),
+    'VINYL-TRAVIS SCOTT-ASTROWORLD': ('Travis Scott', 'Astroworld'),
+    'VINYL-TYLER THE CREATOR-CHROMAKOPIA': ('Tyler, The Creator', 'CHROMAKOPIA'),
+    'VINYL-LANA DEL REY-BORN TO DIE': ('Lana Del Rey', 'Born to Die'),
+    'VINYL-HARRY STYLES-HARRYS HOUSE': ('Harry Styles', "Harry's House"),
+    'VINYL-DRAKE-TAKE CARE': ('Drake', 'Take Care'),
+    'VINYL-POST MALONE-HOLLYWOODS BLEEDING': ('Post Malone', "Hollywood's Bleeding"),
+    'VINYL-TAME IMPALA-THE SLOW RUSH': ('Tame Impala', 'The Slow Rush'),
+    'VINYL-COLDPLAY-MUSIC OF THE SPHERES': ('Coldplay', 'Music of the Spheres'),
+    'VINYL-DILJIT DOSANJH-GOAT': ('Diljit Dosanjh', 'G.O.A.T.'),
+    'VINYL-AP DHILLON-TWO HEARTS NEVER BREAK THE SAME': ('AP Dhillon', 'Two Hearts Never Break the Same'),
+    'VINYL-PRATEEK KUHAD-COLD MESS': ('Prateek Kuhad', 'cold/mess'),
+    'VINYL-KARAN AUJLA-MAKING MEMORIES': ('Karan Aujla', 'Making Memories'),
 }
 
 # SKUs that already exist in Shopify under an older name. Keeping them means the
@@ -119,7 +140,7 @@ ALBUM_FIX = {
 
 COLLECTIONS = [
     ('desi-lineage', 'Desi Lineage', 'The ones that only hit if you grew up here.',
-     ['Seedhe Maut','Diljit Dosanjh','AP Dhillon','Karan Aujla','Anuv Jain']),
+     ['Seedhe Maut','Diljit Dosanjh','AP Dhillon','Karan Aujla','Anuv Jain','Prateek Kuhad']),
     ('the-classics', 'The Classics', 'Records that were on a wall before you were born.',
      ['Pink Floyd','Nirvana','Queen','The Beatles',"Guns N' Roses",'Billy Joel','ABBA','The Strokes','Arctic Monkeys','Buckethead']),
     ('pop-canon', 'Pop Canon', 'The choruses everyone in the room already knows.',
@@ -127,9 +148,9 @@ COLLECTIONS = [
     ('k-wave', 'K-Wave', 'Sleeve art built to be looked at, not just heard.',
      ['BLACKPINK','Jennie','Lisa','Rosé','NewJeans','RM']),
     ('drop-zone', 'The Drop Zone', 'Rap covers that were always meant to be posters.',
-     ['Kanye West','Travis Scott','Eminem','Drake','MGK','Juice WRLD','Cochise','Luca Brassi','Spider-Verse']),
+     ['Kanye West','Travis Scott','Eminem','Drake','MGK','Juice WRLD','Cochise','Luca Brassi','Spider-Verse','Kendrick Lamar','Tyler, The Creator']),
     ('three-am', '3 A.M.', 'For the records that only make sense after midnight.',
-     ['The Weeknd','Frank Ocean','Lana Del Rey','Juice WRLD','Billie Eilish']),
+     ['The Weeknd','Frank Ocean','Lana Del Rey','Juice WRLD','Billie Eilish','SZA','Tame Impala']),
     ('main-stage', 'Main Stage', 'Festival sets, printed and hung up.',
      ['Avicii','Martin Garrix','Swedish House Mafia','Marshmello']),
     ('off-genre', 'Off Genre', 'Not music. Still the reason someone stops walking.',

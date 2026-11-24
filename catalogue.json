@@ -76,6 +76,31 @@
    "rank": 999
   },
   {
+   "slug": "ap-dhillon-two-hearts-never-break-the-same",
+   "artist": "AP Dhillon",
+   "album": "Two Hearts Never Break the Same",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-AP DHILLON-TWO HEARTS NEVER BREAK THE SAME.webp",
+     "sku": "PF-AP-DHILLON-TWO-HEARTS-NEVER-BREAK-THE-SAME-VINYL",
+     "alt": "Two Hearts Never Break the Same by AP Dhillon — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "desi-lineage"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "arctic-monkeys-am",
    "artist": "Arctic Monkeys",
    "album": "AM",
@@ -275,6 +300,32 @@
    "rank": 999
   },
   {
+   "slug": "billie-eilish-hit-me-hard-and-soft",
+   "artist": "Billie Eilish",
+   "album": "Hit Me Hard and Soft",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-BILLIE EILISH-HIT ME HARD AND SOFT.webp",
+     "sku": "PF-BILLIE-EILISH-HIT-ME-HARD-AND-SOFT-VINYL",
+     "alt": "Hit Me Hard and Soft by Billie Eilish — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon",
+    "three-am"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "billy-joel-the-stranger",
    "artist": "Billy Joel",
    "album": "The Stranger",
@@ -461,6 +512,31 @@
    "rank": 999
   },
   {
+   "slug": "coldplay-music-of-the-spheres",
+   "artist": "Coldplay",
+   "album": "Music of the Spheres",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-COLDPLAY-MUSIC OF THE SPHERES.webp",
+     "sku": "PF-COLDPLAY-MUSIC-OF-THE-SPHERES-VINYL",
+     "alt": "Music of the Spheres by Coldplay — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "coldplay-parachutes-yellow",
    "artist": "Coldplay",
    "album": "Parachutes / Yellow",
@@ -571,6 +647,31 @@
    "rank": 11
   },
   {
+   "slug": "diljit-dosanjh-goat",
+   "artist": "Diljit Dosanjh",
+   "album": "G.O.A.T.",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-DILJIT DOSANJH-GOAT.webp",
+     "sku": "PF-DILJIT-DOSANJH-GOAT-VINYL",
+     "alt": "G.O.A.T. by Diljit Dosanjh — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "desi-lineage"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "drake-one-dance",
    "artist": "Drake",
    "album": "One Dance",
@@ -605,6 +706,31 @@
    ],
    "featured": false,
    "from": 99,
+   "rank": 999
+  },
+  {
+   "slug": "drake-take-care",
+   "artist": "Drake",
+   "album": "Take Care",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-DRAKE-TAKE CARE.webp",
+     "sku": "PF-DRAKE-TAKE-CARE-VINYL",
+     "alt": "Take Care by Drake — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
    "rank": 999
   },
   {
@@ -868,6 +994,31 @@
    "rank": 999
   },
   {
+   "slug": "harry-styles-harrys-house",
+   "artist": "Harry Styles",
+   "album": "Harry's House",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-HARRY STYLES-HARRYS HOUSE.webp",
+     "sku": "PF-HARRY-STYLES-HARRYS-HOUSE-VINYL",
+     "alt": "Harry's House by Harry Styles — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "jennie-mantra",
    "artist": "Jennie",
    "album": "Mantra",
@@ -994,6 +1145,81 @@
    "rank": 4
   },
   {
+   "slug": "karan-aujla-making-memories",
+   "artist": "Karan Aujla",
+   "album": "Making Memories",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-KARAN AUJLA-MAKING MEMORIES.webp",
+     "sku": "PF-KARAN-AUJLA-MAKING-MEMORIES-VINYL",
+     "alt": "Making Memories by Karan Aujla — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "desi-lineage"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "kendrick-lamar-damn",
+   "artist": "Kendrick Lamar",
+   "album": "DAMN.",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-KENDRICK LAMAR-DAMN.webp",
+     "sku": "PF-KENDRICK-LAMAR-DAMN-VINYL",
+     "alt": "DAMN. by Kendrick Lamar — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "kendrick-lamar-gnx",
+   "artist": "Kendrick Lamar",
+   "album": "GNX",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-KENDRICK LAMAR-GNX.webp",
+     "sku": "PF-KENDRICK-LAMAR-GNX-VINYL",
+     "alt": "GNX by Kendrick Lamar — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "lana-del-rey-bluebird",
    "artist": "Lana Del Rey",
    "album": "Bluebird",
@@ -1064,6 +1290,31 @@
    ],
    "featured": false,
    "from": 99,
+   "rank": 999
+  },
+  {
+   "slug": "lana-del-rey-born-to-die",
+   "artist": "Lana Del Rey",
+   "album": "Born to Die",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-LANA DEL REY-BORN TO DIE.webp",
+     "sku": "PF-LANA-DEL-REY-BORN-TO-DIE-VINYL",
+     "alt": "Born to Die by Lana Del Rey — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "three-am"
+   ],
+   "featured": false,
+   "from": 999,
    "rank": 999
   },
   {
@@ -1388,6 +1639,31 @@
    "rank": 10
   },
   {
+   "slug": "olivia-rodrigo-sour",
+   "artist": "Olivia Rodrigo",
+   "album": "SOUR",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-OLIVIA RODRIGO-SOUR.webp",
+     "sku": "PF-OLIVIA-RODRIGO-SOUR-VINYL",
+     "alt": "SOUR by Olivia Rodrigo — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "pink-floyd-the-dark-side-of-the-moon-1973",
    "artist": "Pink Floyd",
    "album": "The Dark Side of the Moon (1973)",
@@ -1498,6 +1774,31 @@
    "rank": 999
   },
   {
+   "slug": "post-malone-hollywoods-bleeding",
+   "artist": "Post Malone",
+   "album": "Hollywood's Bleeding",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-POST MALONE-HOLLYWOODS BLEEDING.webp",
+     "sku": "PF-POST-MALONE-HOLLYWOODS-BLEEDING-VINYL",
+     "alt": "Hollywood's Bleeding by Post Malone — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "post-malone-sunflower",
    "artist": "Post Malone",
    "album": "Sunflower",
@@ -1544,6 +1845,31 @@
    ],
    "featured": false,
    "from": 199,
+   "rank": 999
+  },
+  {
+   "slug": "prateek-kuhad-coldmess",
+   "artist": "Prateek Kuhad",
+   "album": "cold/mess",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-PRATEEK KUHAD-COLD MESS.webp",
+     "sku": "PF-PRATEEK-KUHAD-COLDMESS-VINYL",
+     "alt": "cold/mess by Prateek Kuhad — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "desi-lineage"
+   ],
+   "featured": false,
+   "from": 999,
    "rank": 999
   },
   {
@@ -1743,6 +2069,31 @@
    "rank": 999
   },
   {
+   "slug": "sabrina-carpenter-short-n-sweet",
+   "artist": "Sabrina Carpenter",
+   "album": "Short n' Sweet",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-SABRINA CARPENTER-SHORT N SWEET.webp",
+     "sku": "PF-SABRINA-CARPENTER-SHORT-N-SWEET-VINYL",
+     "alt": "Short n' Sweet by Sabrina Carpenter — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "seedhe-maut-lunch-break-11k",
    "artist": "Seedhe Maut",
    "album": "Lunch Break / 11K",
@@ -1856,6 +2207,56 @@
    ],
    "tags": [
     "main-stage"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "sza-sos",
+   "artist": "SZA",
+   "album": "SOS",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-SZA-SOS.webp",
+     "sku": "PF-SZA-SOS-VINYL",
+     "alt": "SOS by SZA — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "three-am"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "tame-impala-the-slow-rush",
+   "artist": "Tame Impala",
+   "album": "The Slow Rush",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-TAME IMPALA-THE SLOW RUSH.webp",
+     "sku": "PF-TAME-IMPALA-THE-SLOW-RUSH-VINYL",
+     "alt": "The Slow Rush by Tame Impala — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "three-am"
    ],
    "featured": false,
    "from": 999,
@@ -2082,6 +2483,31 @@
    "rank": 999
   },
   {
+   "slug": "taylor-swift-the-tortured-poets-department",
+   "artist": "Taylor Swift",
+   "album": "The Tortured Poets Department",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-TAYLOR SWIFT-THE TORTURED POETS DEPARTMENT.webp",
+     "sku": "PF-TAYLOR-SWIFT-THE-TORTURED-POETS-DEPARTMENT-VINYL",
+     "alt": "The Tortured Poets Department by Taylor Swift — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "pop-canon"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "the-beatles-members",
    "artist": "The Beatles",
    "album": "Members",
@@ -2266,6 +2692,79 @@
    "rank": 0
   },
   {
+   "slug": "the-weeknd-starboy",
+   "artist": "The Weeknd",
+   "album": "Starboy",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-THE WEEKND-STARBOY.webp",
+     "sku": "PF-THE-WEEKND-STARBOY-VINYL",
+     "alt": "Starboy by The Weeknd — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "three-am"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "travis-utopia",
+   "artist": "Travis",
+   "album": "Utopia",
+   "variants": [
+    {
+     "format": "poster-a5",
+     "label": "A5 poster",
+     "size": "148 × 210mm",
+     "price": 199,
+     "confirmPrice": false,
+     "ratio": 0.7072,
+     "badge": "A5",
+     "image": "A5-POSTER-TRAVIS-UTOPIA.webp",
+     "sku": "PF-TRAVIS-UTOPIA-POSTER-A5",
+     "alt": "Utopia by Travis — A5 poster by PastForward"
+    }
+   ],
+   "tags": [],
+   "featured": false,
+   "from": 199,
+   "rank": 999
+  },
+  {
+   "slug": "travis-scott-astroworld",
+   "artist": "Travis Scott",
+   "album": "Astroworld",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-TRAVIS SCOTT-ASTROWORLD.webp",
+     "sku": "PF-TRAVIS-SCOTT-ASTROWORLD-VINYL",
+     "alt": "Astroworld by Travis Scott — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
    "slug": "travis-scott-rodeo",
    "artist": "Travis Scott",
    "album": "Rodeo",
@@ -2320,18 +2819,6 @@
      "alt": "Utopia by Travis Scott — A3 poster by PastForward"
     },
     {
-     "format": "poster-a5",
-     "label": "A5 poster",
-     "size": "148 × 210mm",
-     "price": 199,
-     "confirmPrice": false,
-     "ratio": 0.7072,
-     "badge": "A5",
-     "image": "A5-POSTER-TRAVIS-UTOPIA.webp",
-     "sku": "PF-TRAVIS-UTOPIA-POSTER-A5",
-     "alt": "Utopia by Travis Scott — A5 poster by PastForward"
-    },
-    {
      "format": "print-10",
      "label": "10×10 print",
      "size": "254 × 254mm",
@@ -2362,6 +2849,31 @@
    "featured": true,
    "from": 99,
    "rank": 1
+  },
+  {
+   "slug": "tyler-the-creator-chromakopia",
+   "artist": "Tyler, The Creator",
+   "album": "CHROMAKOPIA",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-TYLER THE CREATOR-CHROMAKOPIA.webp",
+     "sku": "PF-TYLER-THE-CREATOR-CHROMAKOPIA-VINYL",
+     "alt": "CHROMAKOPIA by Tyler, The Creator — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
   },
   {
    "slug": "wwe-the-rock",
@@ -2424,7 +2936,8 @@
     "Diljit Dosanjh",
     "AP Dhillon",
     "Karan Aujla",
-    "Anuv Jain"
+    "Anuv Jain",
+    "Prateek Kuhad"
    ]
   },
   {
@@ -2490,7 +3003,9 @@
     "Juice WRLD",
     "Cochise",
     "Luca Brassi",
-    "Spider-Verse"
+    "Spider-Verse",
+    "Kendrick Lamar",
+    "Tyler, The Creator"
    ]
   },
   {
@@ -2502,7 +3017,9 @@
     "Frank Ocean",
     "Lana Del Rey",
     "Juice WRLD",
-    "Billie Eilish"
+    "Billie Eilish",
+    "SZA",
+    "Tame Impala"
    ]
   },
   {
@@ -2570,18 +3087,17 @@
   }
  },
  "counts": {
-  "products": 65,
-  "vinyl": 48,
+  "products": 86,
+  "vinyl": 68,
   "posters": 46,
   "prints": 14,
   "polaroids": 22,
-  "variants": 130,
-  "artists": 53
+  "variants": 150,
+  "artists": 59
  },
  "aliases": {
   "arctic-monkeys": "arctic-monkeys-am",
-  "sabrina-carpenter": "sabrina-carpenter-espresso",
-  "travis-utopia": "travis-scott-utopia"
+  "sabrina-carpenter": "sabrina-carpenter-espresso"
  },
  "unresolved": [
   "byte-identical duplicate"
