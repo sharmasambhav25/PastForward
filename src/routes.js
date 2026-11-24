@@ -111,6 +111,7 @@ function viewHome() {
    .slice(0, 5).forEach(p => { polas.push(p); seenArt.add(p.artist); });
 
   return `
+  <h1 class="sr-only">PastForward — Upcycled Vinyl Records & Custom Music Album Art</h1>
 
   <!-- 6 ============ THE AD CARD, AS A SECTION ============
        Script over didone caps over grotesque, white, on a darkened
@@ -118,11 +119,9 @@ function viewHome() {
   <section class="stage stage--hero" data-section="WALL DECOR">
     <div class="stage__img"><img class="stage__bg" src="${photo('wall-full')}" alt="" aria-hidden="true" decoding="async"><img class="stage__fg" src="${photo('wall-full')}" alt="A PastForward wall" fetchpriority="high"></div>
     <div class="stage__in">
-      <h1 class="lockup"><span class="lockup__script">Classic</span><span class="lockup__caps">Vinyl Records</span><span class="lockup__tag">Wall Decor</span><span class="sr-only"> by PastForward: upcycled records and custom music album art</span></h1>
-      <p class="hero__line">Real 12-inch records, made to hang, not to play. <b class="num">${money(FMT.vinyl.price)}</b> each.</p>
-      <div class="hero__acts">
+      ${lockup('Classic', 'Vinyl Records', 'Wall Decor')}
+      <div style="text-align:center;margin-top:24px">
         ${ctaShop('Shop vinyls', '/vinyl')}
-        <a class="hero__alt" href="/custom">Make your own<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
       </div>
     </div>
   </section>

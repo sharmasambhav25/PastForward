@@ -1867,7 +1867,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
   border-radius:50%; background:var(--oxblood); transform:scale(0); transition:transform .65s var(--e-out-expo)}
 /* a soft ring breathes out from it, so the eye finds it */
 .cta-shop::after{content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; z-index:-2;
-  border:2px solid rgba(192,53,63,.7); opacity:0}
+  border:2px solid rgba(192,53,63,.7); opacity:0; animation:ctaPulse 2.8s ease-out 1.2s infinite}
 @keyframes ctaPulse{0%{opacity:1; transform:scale(1)} 70%,100%{opacity:0; transform:scale(1.14,1.42)}}
 .cta-shop__disc{width:46px; height:46px; border-radius:50%; flex:none; position:relative;
   background:var(--disc-img, #0b0a0b) center/100% 100%; box-shadow:0 2px 8px rgba(0,0,0,.45); animation:ctaSpin 3.2s linear infinite}
@@ -1881,7 +1881,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 @keyframes ctaRoll{0%,36%{transform:translateY(0)} 44%,86%{transform:translateY(-1.3em)} 94%,100%{transform:translateY(-2.6em)}}
 .cta-shop__arrow{width:48px; height:48px; border-radius:50%; flex:none; display:grid; place-items:center; overflow:hidden; background:var(--oxblood); color:var(--cream);
   transition:background .3s, color .3s, transform .45s var(--e-spring)}
-.cta-shop__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cta-shop__arrow svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; animation:ctaNudge 2.8s ease-in-out 1s infinite}
 @keyframes ctaNudge{0%,62%,100%{transform:none} 74%{transform:translateX(5px)} 86%{transform:translateX(-1px)}}
 @keyframes ctaArrow{0%{transform:none} 45%{transform:translateX(34px)} 46%{transform:translateX(-34px)} 100%{transform:none}}
 @media(hover:hover){
@@ -3430,25 +3430,8 @@ html.is-zoom,html.is-zoom body{overflow:hidden}
 picture.pic{display:contents}
 
 /* ================= craft v2 ================= */
-/* hero: the lockup is the page's h1; one plain line with the price; one primary, one quiet action */
-.stage--hero h1.lockup{margin:0; font-size:inherit; font-weight:inherit}
-.hero__line{margin:clamp(14px,1.6vw,22px) auto 0; max-width:34ch; font-size:clamp(.98rem,1.25vw,1.12rem); line-height:1.5;
-  color:rgba(243,239,232,.86); text-shadow:0 1px 18px rgba(0,0,0,.6); text-wrap:balance}
-.hero__line b{color:var(--cream); font-weight:600}
-.hero__acts{display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:clamp(20px,2.4vw,30px)}
-.hero__alt{display:inline-flex; align-items:center; gap:.5em; min-height:44px; padding:0 6px; color:var(--cream); text-decoration:none;
-  font-family:var(--mono); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; text-shadow:0 1px 14px rgba(0,0,0,.7);
-  background:linear-gradient(currentColor,currentColor) 6px calc(100% - 10px)/calc(100% - 12px) 1px no-repeat; transition:background-size .3s var(--e-out-expo), color .2s}
-.hero__alt svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s var(--e-out-expo)}
-@media(hover:hover){ .hero__alt:hover svg{transform:translateX(4px)} .hero__alt:hover{color:#fff} }
-.hero__alt:focus-visible{outline:2px solid var(--cream); outline-offset:3px}
-@media(min-width:768px){ .hero__acts{flex-direction:row; gap:28px} }
-
-/* the hero button: the record keeps turning (the one thing that moves on its own); the ring and arrow wait for a touch */
-@media(hover:hover){ .cta-shop:hover::after{animation:ctaPulse 1.4s ease-out 1} .cta-shop:hover .cta-shop__arrow svg{animation:ctaNudge 1.2s ease-in-out 1} }
-
 /* every press answers within a frame */
-.btn:active,.cta-shop:active,.addon__b:active,.vchip:active,.stab:active,.hero__alt:active{transform:scale(.98); transition-duration:80ms}
+.btn:active,.cta-shop:active,.addon__b:active,.vchip:active,.stab:active{transform:scale(.98); transition-duration:80ms}
 
 /* type that sets itself well: balanced headings, no lonely last words */
 h1,h2,h3,.d-l,.d-m,.d-s{text-wrap:balance}
@@ -3477,4 +3460,3 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
   .drawer__hd{padding-top:6px; touch-action:none}
   .drawer__body{min-height:120px}
 }
-@media(max-width:767px){ .stage--hero{height:min(82svh,700px)} }
