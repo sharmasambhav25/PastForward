@@ -1209,6 +1209,9 @@ function mountCustom() {
   const artistInput = form.querySelector('[name="artist"]'), titleInput = form.querySelector('[name="album"]');
   // arriving from search or "don't see your album?": keep what they typed, and the format they were shopping
   { const params = parseHash().params, q = (params.get('q') || '').trim().slice(0, 80), f = params.get('format'), fs = form.querySelector('[name="format"]');
+    const a = (params.get('artist') || '').trim().slice(0, 80), al = (params.get('album') || '').trim().slice(0, 80);
+    if (a && artistInput && !artistInput.value) artistInput.value = a;
+    if (al && titleInput && !titleInput.value) titleInput.value = al;
     if (q && titleInput && !titleInput.value) titleInput.value = q;
     if (f && fs && fs.querySelector(`option[value="${CSS.escape(f)}"]`) && !fs.value) fs.value = f; }
   if (host && window.mountVinylLabel) {

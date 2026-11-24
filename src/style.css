@@ -3335,3 +3335,65 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
 @media(min-width:768px){.lcopy--guide .lcopy__grid{grid-template-columns:1fr;gap:36px}}
 .lcopy--guide .lcopy__faq{margin-top:40px}
 .lcopy__shophead{letter-spacing:.18em;text-transform:uppercase;margin:0 0 20px;padding-top:32px;border-top:1px solid var(--border)}
+
+/* ---- search with no match: "We'll make it for you" (live covers from Apple Music) ---- */
+.makeit{position:relative; margin:4px 0 8px; padding:30px 22px 24px; border-radius:18px; text-align:center; overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%, rgba(192,53,63,.22), transparent 60%), var(--elevated); border:1px solid rgba(243,233,222,.12)}
+.makeit__k{color:var(--ember-ink); letter-spacing:.14em; margin:0 0 10px}
+.makeit__h{font-family:var(--display); font-weight:500; font-size:clamp(1.6rem,4.4vw,2.5rem); line-height:1.05; letter-spacing:-.02em; margin:0; color:var(--cream)}
+.makeit__s{max-width:440px; margin:10px auto 0; font-size:var(--fs-15); line-height:1.45; color:var(--muted); text-wrap:balance}
+.makeit__grid{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:26px 0 0; text-align:left}
+.makeit__grid > *{flex:0 1 calc(25% - 11px); min-width:0}
+.makeit__grid > :only-child{flex-basis:250px}
+#search .makeit a.makeit__item, .makeit__item{display:flex; flex-direction:column; align-items:stretch; gap:3px; padding:10px 10px 12px; border-radius:14px; color:var(--cream); text-decoration:none;
+  background:rgba(243,233,222,.04); border:1px solid rgba(243,233,222,.10);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .25s ease, background .25s ease}
+.makeit__rec{display:block; position:relative; width:100%; aspect-ratio:1; margin-bottom:10px}
+.makeit__rec .record{width:100% !important; max-width:none}
+.makeit__rec .record__disc{transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.makeit__rec .record__label{left:24%; top:24%; width:52%; height:52%}   /* the cover is the point here: show it big */
+.makeit__t{font-family:var(--display); font-size:var(--fs-15); line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.makeit__a{font-size:var(--fs-12); color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.makeit__cta{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:12px; padding:9px 12px; border-radius:999px;
+  background:var(--ember); color:var(--cream); font-family:var(--mono); font-size:var(--fs-11); letter-spacing:.06em; text-transform:uppercase;
+  box-shadow:0 6px 18px rgba(192,53,63,.35); transition:background .25s ease, transform .25s ease; align-self:stretch; white-space:nowrap}
+.makeit__cta b{font-weight:600; letter-spacing:.02em}
+.makeit__item:hover, .makeit__item:focus-visible{transform:translateY(-4px); border-color:var(--ember); background:rgba(192,53,63,.08)}
+.makeit__item:hover .record__disc{transform:rotate(200deg)}
+.makeit__item:active{transform:scale(.97)}
+.makeit__item:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+/* while Apple answers: grey records breathing in place */
+.makeit__item--skel{pointer-events:none}
+.makeit__disc{position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle, rgba(243,233,222,.14) 0 16%, #0b0909 17% 100%);
+  animation:mkpulse 1.2s ease-in-out infinite alternate}
+.makeit__item--skel .makeit__t, .makeit__item--skel .makeit__a{border-radius:4px; background:rgba(243,233,222,.07); color:transparent; animation:mkpulse 1.2s ease-in-out infinite alternate}
+.makeit__item--skel .makeit__a{width:60%}
+@keyframes mkpulse{from{opacity:.45} to{opacity:1}}
+/* nothing on Apple either: a blank record with what they typed on the label */
+.makeit__blank{position:absolute; inset:0; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle, var(--cream) 0 30%, #1a1414 30.5% 31.5%, #0b0909 32% 100%); box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.makeit__blankt{max-width:26%; font-family:var(--display); font-size:var(--fs-13); line-height:1.1; color:#1a1414; text-align:center; overflow:hidden; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical}
+/* covers arrive one after another */
+.makeit.is-ready .makeit__item{animation:mkin .5s cubic-bezier(.2,.8,.2,1) both}
+.makeit.is-ready .makeit__item:nth-child(2){animation-delay:.06s}
+.makeit.is-ready .makeit__item:nth-child(3){animation-delay:.12s}
+.makeit.is-ready .makeit__item:nth-child(4){animation-delay:.18s}
+@keyframes mkin{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+#search .makeit a.makeit__own, .makeit__own{display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:8px 4px; color:var(--cream); font-size:var(--fs-14);
+  text-decoration:underline; text-decoration-color:rgba(243,233,222,.35); text-underline-offset:4px}
+.makeit__own svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .25s ease}
+.makeit__own:hover{text-decoration-color:var(--ember)}
+.makeit__own:hover svg{transform:translateX(3px)}
+@media(max-width:640px){
+  .makeit{padding:26px 14px 20px}
+  .makeit__grid{gap:10px}
+  .makeit__grid > *{flex-basis:calc(50% - 5px)}
+  .makeit__grid > :only-child{flex-basis:78%}
+  .makeit__cta{padding:8px 10px; font-size:var(--fs-11)}
+}
+@media(prefers-reduced-motion:reduce){
+  .makeit__item, .makeit__rec .record__disc, .makeit.is-ready .makeit__item{transition:none; animation:none}
+  .makeit__item:hover{transform:none}
+  .makeit__item:hover .record__disc{transform:none}
+  .makeit__disc, .makeit__item--skel .makeit__t, .makeit__item--skel .makeit__a{animation:none}
+}

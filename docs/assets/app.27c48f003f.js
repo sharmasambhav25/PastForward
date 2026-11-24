@@ -1633,16 +1633,83 @@ function anyAlbumHTML(q = '', fmt = 'vinyl', close = false) {
     <span class="anyalbum__t">We'll make any album as a ${esc(f.label.toLowerCase())} <span class="num">· ${money(f.price)}</span></span>
     <span class="anyalbum__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>`;
 }
+/* Searched for something we don't stock: don't leave them on "nothing matches". Look the song or
+   album up on Apple Music (public search, no key) and show the real covers as records they can
+   tap straight into the custom order form, artist and album already filled in. If Apple has
+   nothing or is slow, the same panel still offers to make whatever they typed. */
+const MK_CACHE = new Map();
+let mkTimer = 0;
+function makeItLink(o) {
+  const qs = new URLSearchParams(o.artist ? { artist: o.artist, album: o.album, format: 'vinyl' } : { q: o.album, format: 'vinyl' });
+  return `/custom?${qs}`;
+}
+function makeItItem(o) {
+  const blank = !o.art;
+  return `<a class="makeit__item${blank ? ' makeit__item--blank' : ''}" href="${makeItLink(o)}" data-close>
+    <span class="makeit__rec">${blank
+      ? `<span class="makeit__blank"><span class="makeit__blankt">${esc(o.album)}</span></span>`
+      : recordHTML(null, { src: o.art, alt: `${o.album} by ${o.artist}`, size: 200 })}</span>
+    <span class="makeit__t">${esc(o.album)}</span>
+    ${o.artist ? `<span class="makeit__a">${esc(o.artist)}</span>` : ''}
+    <span class="makeit__cta">Make it <b class="num">${money(FMT.vinyl.price)}</b></span></a>`;
+}
+function makeItHTML(q) {
+  const skel = '<span class="makeit__item makeit__item--skel" aria-hidden="true"><span class="makeit__rec"><span class="makeit__disc"></span></span><span class="makeit__t">&nbsp;</span><span class="makeit__a">&nbsp;</span></span>';
+  return `<section class="makeit" data-makeit="${esc(q)}" aria-live="polite">
+    <p class="makeit__k mono-xs">Not in the crate yet</p>
+    <h3 class="makeit__h">We'll make it for you</h3>
+    <p class="makeit__s">Tap the right one and we press it onto a real 12-inch record. ${money(FMT.vinyl.price)}, delivered in ${esc(DELIVERY)}.</p>
+    <div class="makeit__grid" data-makeit-grid>${skel.repeat(4)}</div>
+    <a class="makeit__own" href="${makeItLink({ album: q })}" data-close><span>Not one of these? Tell us the album</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    ${wantHTML(q)}</section>`;
+}
+function lookupSongs(q) {
+  const key = norm(q).trim();
+  if (MK_CACHE.has(key)) return MK_CACHE.get(key);
+  const ctl = 'AbortController' in window ? new AbortController() : null;
+  const t = setTimeout(() => ctl && ctl.abort(), 4500);
+  const url = 'https://itunes.apple.com/search?' + new URLSearchParams({ term: q, entity: 'song', country: 'in', limit: '25' });
+  const clean = s => s.replace(/\s*[([](?:from|feat\.?|ft\.?|with)\b[^)\]]*[)\]]/gi, '').replace(/\s+-\s+(single|ep)$/i, '').trim();
+  const words = key.split(' ').filter(Boolean);
+  const pr = fetch(url, ctl ? { signal: ctl.signal } : {}).then(r => r.json()).then(d => {
+    const seen = new Set(), out = [];
+    for (const x of d.results || []) {
+      const title = clean(x.trackName || ''), artist = (x.artistName || '').split(/\s*(?:,|&| x | feat\.?)\s*/i)[0];
+      if (!title || !x.artworkUrl100) continue;
+      if (/remix|\bmix\b|instrumental|lofi|lo-fi|karaoke|cover|slowed|reverb|sped up|8d|version\)|tribute|unplugged|reprise/i.test(x.trackName + ' ' + x.collectionName)) continue;
+      const hay = norm(title + ' ' + x.artistName + ' ' + (x.collectionName || ''));
+      if (!words.every(w => hay.split(' ').some(h => h.startsWith(w) || (w.length > 4 && lev(h, w) <= 1)))) continue;
+      const k = norm(title + '|' + artist); if (seen.has(k)) continue; seen.add(k);
+      out.push({ album: title, artist, art: x.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.') });
+      if (out.length === 4) break;
+    }
+    return out;
+  }).catch(() => []).finally(() => clearTimeout(t));
+  MK_CACHE.set(key, pr);
+  return pr;
+}
+function hydrateMakeIt() {
+  clearTimeout(mkTimer);
+  mkTimer = setTimeout(() => {
+    document.querySelectorAll('[data-makeit]:not([data-mk])').forEach(el => {
+      el.dataset.mk = '1';
+      const q = el.dataset.makeit;
+      lookupSongs(q).then(list => {
+        const grid = el.isConnected && el.querySelector('[data-makeit-grid]'); if (!grid) return;
+        grid.innerHTML = (list.length ? list : [{ album: q }]).map(makeItItem).join('');
+        grid.classList.toggle('is-one', !list.length);
+        el.classList.add('is-ready');
+      });
+    });
+  }, 260);
+}
 function searchResults(q) {
   const list = searchProducts(q);
   if (!q) return `<div class="mono-xs dim" style="margin-bottom:12px">Suggested Collections</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">${COLS.slice(0, 5).map(c => `<a class="pill" href="/collections/${c.slug}" data-close>${esc(c.name)}</a>`).join('')}</div>
     <div class="mono-xs dim" style="margin-top:28px;margin-bottom:14px">Featured in the crate</div>
     <div class="grid">${P.filter(p => p.featured).slice(0, 4).map(cardHTML).join('')}</div>`;
-  if (!list.length) return `<div style="padding:40px 0 48px;text-align:center"><p class="d-s">Nothing matches "${esc(q)}"</p>
-    <p class="body-s dim" style="margin:8px 0 20px">Not in the catalogue yet. We can still make it for you.</p>
-    <a class="btn btn--primary" href="/custom?${new URLSearchParams({ q, format: 'vinyl' })}" data-close><span class="btn__mag">Make “${esc(q)}” for ${money(FMT.vinyl.price)}</span></a>
-    ${wantHTML(q)}</div>`;
+  if (!list.length) { hydrateMakeIt(); return makeItHTML(q); }
   return `<div class="mono-xs dim" style="margin-bottom:14px">${list.length} result${list.length > 1 ? 's' : ''}</div>
     <div class="grid">${list.slice(0, 12).map(cardHTML).join('')}</div>
     ${anyAlbumHTML(q, 'vinyl', true)}`;
@@ -3801,6 +3868,9 @@ function mountCustom() {
   const artistInput = form.querySelector('[name="artist"]'), titleInput = form.querySelector('[name="album"]');
   // arriving from search or "don't see your album?": keep what they typed, and the format they were shopping
   { const params = parseHash().params, q = (params.get('q') || '').trim().slice(0, 80), f = params.get('format'), fs = form.querySelector('[name="format"]');
+    const a = (params.get('artist') || '').trim().slice(0, 80), al = (params.get('album') || '').trim().slice(0, 80);
+    if (a && artistInput && !artistInput.value) artistInput.value = a;
+    if (al && titleInput && !titleInput.value) titleInput.value = al;
     if (q && titleInput && !titleInput.value) titleInput.value = q;
     if (f && fs && fs.querySelector(`option[value="${CSS.escape(f)}"]`) && !fs.value) fs.value = f; }
   if (host && window.mountVinylLabel) {
