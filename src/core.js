@@ -1625,14 +1625,15 @@ function makeItLink(o) {
   return `/custom?${qs}`;
 }
 function makeItItem(o) {
-  const blank = !o.art;
-  return `<a class="makeit__item${blank ? ' makeit__item--blank' : ''}" href="${makeItLink(o)}" data-close>
+  const blank = !o.art, own = o.own;
+  const href = own ? `/product/${own.slug}${own.variants.some(v => v.format === 'vinyl') ? '?format=vinyl' : ''}` : makeItLink(o);
+  return `<a class="makeit__item${blank ? ' makeit__item--blank' : ''}${own ? ' makeit__item--own' : ''}" href="${href}" data-close>
     <span class="makeit__rec">${blank
       ? `<span class="makeit__blank"><span class="makeit__blankt">${esc(o.album)}</span></span>`
       : recordHTML(null, { src: o.art, alt: `${o.album} by ${o.artist}`, size: 200 })}</span>
     <span class="makeit__t">${esc(o.album)}</span>
     ${o.artist ? `<span class="makeit__a">${esc(o.artist)}</span>` : ''}
-    <span class="makeit__cta">Make it <b class="num">${money(FMT.vinyl.price)}</b></span></a>`;
+    <span class="makeit__cta">${own ? 'In stock' : 'Make it'} <b class="num">${money(own ? ((own.variants.find(v => v.format === 'vinyl') || {}).price || own.from) : FMT.vinyl.price)}</b></span></a>`;
 }
 function makeItHTML(q) {
   const skel = '<span class="makeit__item makeit__item--skel" aria-hidden="true"><span class="makeit__rec"><span class="makeit__disc"></span></span><span class="makeit__t">&nbsp;</span><span class="makeit__a">&nbsp;</span></span>';
@@ -1650,15 +1651,16 @@ function lookupSongs(q) {
   const ctl = 'AbortController' in window ? new AbortController() : null;
   const t = setTimeout(() => ctl && ctl.abort(), 4500);
   const url = 'https://itunes.apple.com/search?' + new URLSearchParams({ term: q, entity: 'song', country: 'in', limit: '25' });
-  const clean = s => s.replace(/\s*[([](?:from|feat\.?|ft\.?|with)\b[^)\]]*[)\]]/gi, '').replace(/\s+-\s+(single|ep)$/i, '').trim();
+  const clean = s => s.replace(/\s*[([](?:from|feat\.?|ft\.?|with|original motion picture soundtrack|deluxe[^)\]]*|remastered[^)\]]*|\d{4} remaster)\b[^)\]]*[)\]]/gi, '').replace(/\s+-\s+(single|ep)$/i, '').trim();
   const words = key.split(' ').filter(Boolean);
   const pr = fetch(url, ctl ? { signal: ctl.signal } : {}).then(r => r.json()).then(d => {
     const seen = new Set(), out = [];
     for (const x of d.results || []) {
-      const title = clean(x.trackName || ''), artist = (x.artistName || '').split(/\s*(?:,|&| x | feat\.?)\s*/i)[0];
+      const title = clean(x.collectionName || x.trackName || ''), artist = (x.artistName || '').split(/\s*(?:,|&| x | feat\.?)\s*/i)[0];
       if (!title || !x.artworkUrl100) continue;
+      if (/\b(best of|greatest hits|all time hits|hits of|collection|essentials|top \d+|\d+ hits|super singer|bollywood (instrumental )?hits|starring)\b/i.test(x.collectionName || '') || /various artists/i.test(x.collectionArtistName || '')) continue;   // compilations aren't an album to press
       if (/remix|\bmix\b|instrumental|lofi|lo-fi|karaoke|cover|slowed|reverb|sped up|8d|version\)|tribute|unplugged|reprise/i.test(x.trackName + ' ' + x.collectionName)) continue;
-      const hay = norm(title + ' ' + x.artistName + ' ' + (x.collectionName || ''));
+      const hay = norm(title + ' ' + (x.trackName || '') + ' ' + x.artistName);   // the song they typed still finds its album
       if (!words.every(w => hay.split(' ').some(h => h.startsWith(w) || (w.length > 4 && lev(h, w) <= 1)))) continue;
       const k = norm(title + '|' + artist); if (seen.has(k)) continue; seen.add(k);
       out.push({ album: title, artist, art: x.artworkUrl100.replace(/\/\d+x\d+bb\./, '/600x600bb.') });
@@ -1677,7 +1679,16 @@ function hydrateMakeIt() {
       const q = el.dataset.makeit;
       lookupSongs(q).then(list => {
         const grid = el.isConnected && el.querySelector('[data-makeit-grid]'); if (!grid) return;
+        // a song from an album we already stock ("blinding lights" is on After Hours): send them to it
+        const same = (a, b) => { a = norm(a).trim(); b = norm(b).trim(); return !!a && !!b && (a === b || a.startsWith(b + ' ') || b.startsWith(a + ' ')); };
+        list = list.map(o => { const own = P.find(p => same(p.artist, o.artist) && same(p.album, o.album)); return own ? { ...o, own } : o; })
+          .sort((a, b) => (b.own ? 1 : 0) - (a.own ? 1 : 0));
         grid.innerHTML = (list.length ? list : [{ album: q }]).map(makeItItem).join('');
+        if (list[0] && list[0].own) {
+          el.querySelector('.makeit__k').textContent = 'In the crate';
+          el.querySelector('.makeit__h').textContent = 'We have the album';
+          el.querySelector('.makeit__s').textContent = `It's on ${list[0].album} by ${list[0].artist}. Or pick another and we'll make it for ${money(FMT.vinyl.price)}.`;
+        }
         grid.classList.toggle('is-one', !list.length);
         el.classList.add('is-ready');
       });

@@ -51,31 +51,6 @@
    "rank": 999
   },
   {
-   "slug": "ap-dhillon-dil-nu",
-   "artist": "AP Dhillon",
-   "album": "Dil Nu",
-   "variants": [
-    {
-     "format": "vinyl",
-     "label": "Vinyl",
-     "size": "12-inch record, ⌀305mm",
-     "price": 999,
-     "confirmPrice": false,
-     "ratio": 1.0,
-     "badge": "12″",
-     "image": "VINYL-AP DHILLON-DIL NU.webp",
-     "sku": "PF-AP-DHILLON-DIL-NU-VINYL",
-     "alt": "Dil Nu by AP Dhillon — Vinyl by PastForward"
-    }
-   ],
-   "tags": [
-    "desi-lineage"
-   ],
-   "featured": false,
-   "from": 999,
-   "rank": 999
-  },
-  {
    "slug": "ap-dhillon-two-hearts-never-break-the-same",
    "artist": "AP Dhillon",
    "album": "Two Hearts Never Break the Same",
@@ -677,18 +652,6 @@
    "album": "One Dance",
    "variants": [
     {
-     "format": "vinyl",
-     "label": "Vinyl",
-     "size": "12-inch record, ⌀305mm",
-     "price": 999,
-     "confirmPrice": false,
-     "ratio": 1.0,
-     "badge": "12″",
-     "image": "VINYL-DRAKE-ONE DANCE.webp",
-     "sku": "PF-DRAKE-ONE-DANCE-VINYL",
-     "alt": "One Dance by Drake — Vinyl by PastForward"
-    },
-    {
      "format": "polaroid",
      "label": "Polaroid card",
      "size": "[CONFIRM]",
@@ -724,6 +687,31 @@
      "image": "VINYL-DRAKE-TAKE CARE.webp",
      "sku": "PF-DRAKE-TAKE-CARE-VINYL",
      "alt": "Take Care by Drake — Vinyl by PastForward"
+    }
+   ],
+   "tags": [
+    "drop-zone"
+   ],
+   "featured": false,
+   "from": 999,
+   "rank": 999
+  },
+  {
+   "slug": "drake-views",
+   "artist": "Drake",
+   "album": "Views",
+   "variants": [
+    {
+     "format": "vinyl",
+     "label": "Vinyl",
+     "size": "12-inch record, ⌀305mm",
+     "price": 999,
+     "confirmPrice": false,
+     "ratio": 1.0,
+     "badge": "12″",
+     "image": "VINYL-DRAKE-VIEWS.webp",
+     "sku": "PF-DRAKE-VIEWS-VINYL",
+     "alt": "Views by Drake — Vinyl by PastForward"
     }
    ],
    "tags": [
@@ -2001,18 +1989,6 @@
    "album": "Espresso",
    "variants": [
     {
-     "format": "vinyl",
-     "label": "Vinyl",
-     "size": "12-inch record, ⌀305mm",
-     "price": 999,
-     "confirmPrice": false,
-     "ratio": 1.0,
-     "badge": "12″",
-     "image": "VINYL-Sabrina Carpenter.webp",
-     "sku": "PF-SABRINA-CARPENTER-NA-VINYL",
-     "alt": "Espresso by Sabrina Carpenter — Vinyl by PastForward"
-    },
-    {
      "format": "poster-a3",
      "label": "A3 poster",
      "size": "297 × 420mm",
@@ -3088,16 +3064,17 @@
  },
  "counts": {
   "products": 86,
-  "vinyl": 68,
+  "vinyl": 66,
   "posters": 46,
   "prints": 14,
   "polaroids": 22,
-  "variants": 150,
+  "variants": 148,
   "artists": 59
  },
  "aliases": {
   "arctic-monkeys": "arctic-monkeys-am",
-  "sabrina-carpenter": "sabrina-carpenter-espresso"
+  "sabrina-carpenter": "sabrina-carpenter-espresso",
+  "ap-dhillon-dil-nu": "ap-dhillon-two-hearts-never-break-the-same"
  },
  "unresolved": [
   "byte-identical duplicate"

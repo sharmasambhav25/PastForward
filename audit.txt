@@ -88,7 +88,6 @@ Table banner.webp	brand asset — not a product
 VINYL -TAYLOR SWIFT-1989.webp	vinyl · Taylor Swift · 1989
 VINYL-ABBA Little Things.webp	vinyl · ABBA · Little Things
 VINYL-ANUV JAIN-ALAG AASMAN.webp	vinyl · Anuv Jain · Alag Aasman
-VINYL-AP DHILLON-DIL NU.webp	vinyl · AP Dhillon · Dil Nu
 VINYL-AP DHILLON-TWO HEARTS NEVER BREAK THE SAME.webp	vinyl · AP Dhillon · Two Hearts Never Break the Same
 VINYL-AVICII-AVICI(01).webp	vinyl · Avicii · Avīci (01)
 VINYL-BILLIE EILISH-BAD GUY.webp	vinyl · Billie Eilish · Bad Guy
@@ -101,8 +100,8 @@ VINYL-CHARLIE PUTH-NINE TRACK MIND.webp	vinyl · Charlie Puth · Nine Track Mind
 VINYL-COLDPLAY-MUSIC OF THE SPHERES.webp	vinyl · Coldplay · Music of the Spheres
 VINYL-COLDPLAY-PARACHUTES-YELLOW.webp	vinyl · Coldplay · Parachutes / Yellow
 VINYL-DILJIT DOSANJH-GOAT.webp	vinyl · Diljit Dosanjh · G.O.A.T.
-VINYL-DRAKE-ONE DANCE.webp	vinyl · Drake · One Dance
 VINYL-DRAKE-TAKE CARE.webp	vinyl · Drake · Take Care
+VINYL-DRAKE-VIEWS.webp	vinyl · Drake · Views
 VINYL-DUA LIPA-HOUDINI.webp	vinyl · Dua Lipa · Houdini
 VINYL-FRANK OCEAN-BLONDE.webp	vinyl · Frank Ocean · Blonde
 VINYL-GUNS N' ROSES-APPETITE FOR DESTRUCTION.webp	vinyl · Guns N' Roses · Appetite for Destruction
@@ -138,7 +137,6 @@ VINYL-SABRINA CARPENTER-SHORT N SWEET.webp	vinyl · Sabrina Carpenter · Short n
 VINYL-STRANGER THINGS-SEASON 4.webp	vinyl · Stranger Things · Season 4
 VINYL-SWEDISH HOUSE MAFIA-DON'T YOU WORRY CHILD.webp	vinyl · Swedish House Mafia · Don't You Worry Child
 VINYL-SZA-SOS.webp	vinyl · SZA · SOS
-VINYL-Sabrina Carpenter.webp	vinyl · Sabrina Carpenter · Espresso
 VINYL-TAME IMPALA-THE SLOW RUSH.webp	vinyl · Tame Impala · The Slow Rush
 VINYL-TAYLOR SWIFT-LOVER.webp	vinyl · Taylor Swift · Lover
 VINYL-TAYLOR SWIFT-REPUTATION.webp	vinyl · Taylor Swift · Reputation

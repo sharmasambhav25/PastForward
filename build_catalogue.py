@@ -39,9 +39,8 @@ OVERRIDE = {
     'VINYL-MAROON-LOVE IS LIKE':                ('Maroon 5', 'Love Is Like'),
     '10X10INCH-THANK U NEXT-ARIANA GRANDE':     ('Ariana Grande', 'thank u, next'),
     'A3-POSTER-Am I Dreaming-Spiderman':        ('Spider-Verse', 'Am I Dreaming'),
-    # the artwork is the AM cover (the white waveform); the Sabrina Carpenter label has "Espresso" printed on it
+    # the artwork is the AM cover (the white waveform)
     'VINYLS-ARCTIC MONKEYS':                    ('Arctic Monkeys', 'AM'),
-    'VINYL-Sabrina Carpenter':                  ('Sabrina Carpenter', 'Espresso'),
     'VINYL-ABBA Little Things':                 ('ABBA', 'Little Things'),
     'VINYL-Pink Floyd (The Darkside of the Moon 1973)': ('Pink Floyd', 'The Dark Side of the Moon (1973)'),
     'VINYL-The Beatles MEMBERS':                ('The Beatles', 'Members'),
@@ -70,18 +69,20 @@ OVERRIDE = {
     'VINYL-AP DHILLON-TWO HEARTS NEVER BREAK THE SAME': ('AP Dhillon', 'Two Hearts Never Break the Same'),
     'VINYL-PRATEEK KUHAD-COLD MESS': ('Prateek Kuhad', 'cold/mess'),
     'VINYL-KARAN AUJLA-MAKING MEMORIES': ('Karan Aujla', 'Making Memories'),
+    'VINYL-DRAKE-VIEWS': ('Drake', 'Views'),
 }
 
 # SKUs that already exist in Shopify under an older name. Keeping them means the
 # site still maps to the same Shopify variant, so checkout keeps working after a rename.
 SKU_KEEP = {
     'VINYLS-ARCTIC MONKEYS':   'PF-ARCTIC-MONKEYS-NA-VINYL',
-    'VINYL-Sabrina Carpenter': 'PF-SABRINA-CARPENTER-NA-VINYL',
 }
 # old product slugs that should keep working (the site forwards them to the new page)
 SLUG_ALIASES = {
     'arctic-monkeys':    'arctic-monkeys-am',
     'sabrina-carpenter': 'sabrina-carpenter-espresso',
+    # Nov 2026: the Dil Nu record was the same art as the EP it comes from
+    'ap-dhillon-dil-nu': 'ap-dhillon-two-hearts-never-break-the-same',
 }
 
 ARTIST_FIX = {
