@@ -3398,3 +3398,110 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
 }
 .makeit__item--own .makeit__cta{background:var(--cream); color:#120d0d; box-shadow:0 6px 18px rgba(243,233,222,.18)}
 .makeit--more{margin-top:36px}
+
+/* ================= Bundles page, Nov 2026 ================= */
+/* hero: the offer in words on the left, real photos of real pieces on the right */
+.bhero{display:grid; gap:28px; align-items:center; padding-bottom:24px}
+.bhero__lede{margin:16px 0 22px}
+.bsteps{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
+.bsteps li{display:flex; align-items:center; gap:10px; padding:8px 14px 8px 8px; border-radius:999px; background:var(--elevated); border:1px solid rgba(243,233,222,.12); font-size:var(--fs-14)}
+.bsteps b{width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:var(--ember); color:var(--cream); font:600 var(--fs-12)/1 var(--mono)}
+.bhero__shots{position:relative; display:grid; gap:10px; grid-template-columns:1.25fr 1fr; grid-template-rows:1fr 1fr; aspect-ratio:5/4}
+.bhero__shot{margin:0; border-radius:16px; overflow:hidden; background:var(--elevated); box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.bhero__shot img{width:100%; height:100%; object-fit:cover; display:block}
+.bhero__shot--0{grid-row:1/3}
+.bhero__shots--1{grid-template-columns:1fr; grid-template-rows:1fr} .bhero__shots--1 .bhero__shot--0{grid-row:auto}
+.bhero__shots--2 .bhero__shot--1{grid-row:1/3}
+.bhero__real{position:absolute; left:12px; bottom:12px; padding:6px 10px; border-radius:999px; background:rgba(10,8,8,.72); color:var(--cream); letter-spacing:.12em; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px)}
+@media(min-width:900px){ .bhero{grid-template-columns:1fr 1.05fr; gap:56px; min-height:min(640px,78vh)} }
+
+.bsec__hd{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:8px 24px; margin:0 0 20px}
+.bsec__h{font-family:var(--shout); font-weight:400; text-transform:uppercase; font-size:clamp(2.1rem,5vw,3.6rem); line-height:.95; margin:0}
+.bsec__s{max-width:460px; margin:0; font-size:var(--fs-15); line-height:1.45}
+.boffers-wrap{margin-top:40px}
+
+/* the wall itself: painted wall, soft window light, skirting board, wooden floor */
+.sc{--wall:#E6DED1; position:relative; aspect-ratio:4/3; overflow:hidden; isolation:isolate; background:var(--wall)}
+.sc::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(90% 70% at 18% 0%, rgba(255,246,228,.38), transparent 60%), radial-gradient(120% 90% at 100% 100%, rgba(0,0,0,.22), transparent 55%),
+  repeating-linear-gradient(90deg, rgba(0,0,0,.018) 0 2px, transparent 2px 5px)}
+.sc--wide{aspect-ratio:16/10}
+.sc__hang{position:absolute; z-index:2; left:4%; right:4%; top:8%; bottom:21%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5%}
+.sc__row{display:flex; align-items:center; justify-content:center; gap:3.2%; width:100%}
+.sc__p{display:block; flex:none; width:var(--w); position:relative; transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.sc__p--vinyl .record{width:100% !important; max-width:none}
+.sc .record::before{box-shadow:0 12px 18px -6px rgba(0,0,0,.5), 0 3px 5px rgba(0,0,0,.28) !important}   /* a record hung on a light wall: a tight shadow, not the halo it gets on the dark site */
+.sc__p--paper{background:#f4efe6; padding:0; box-shadow:0 14px 22px -8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.2)}
+.sc__p--paper img{width:100%; height:100%; object-fit:cover; display:block}
+.sc__pol{display:block; background:#fbf8f2; padding:6% 6% 22%; box-shadow:0 10px 16px -6px rgba(0,0,0,.4)}
+.sc__pol img{width:100%; aspect-ratio:1; object-fit:cover; display:block}
+.sc__p--pol:nth-child(odd){transform:rotate(-3deg)} .sc__p--pol:nth-child(even){transform:rotate(2.5deg) translateY(4%)}
+.sc__skirt{position:absolute; z-index:1; left:0; right:0; bottom:11%; height:2.6%; background:linear-gradient(180deg,#faf6ef,#e3dbcd 70%,#b9b0a1); box-shadow:0 -1px 0 rgba(0,0,0,.08)}
+.sc__floor{position:absolute; z-index:1; left:0; right:0; bottom:0; height:11%;
+  background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 40%), repeating-linear-gradient(90deg,#7a5537 0 18%,#6f4c31 18% 18.4%,#80593a 18.4% 37%,#6d4a30 37% 37.4%), #74502f}
+.sc__bench{position:absolute; z-index:3; left:50%; bottom:6%; width:40%; height:7%; transform:translateX(-50%); border-radius:3px;
+  background:linear-gradient(180deg,#8a6446,#5e412b); box-shadow:0 10px 18px rgba(0,0,0,.35)}
+.sc__vase{position:absolute; left:10%; bottom:100%; width:7%; aspect-ratio:.6; border-radius:44% 44% 30% 30%/60% 60% 26% 26%; background:linear-gradient(100deg,#f4efe6,#c9c0b0)}
+.sc__books{position:absolute; right:10%; bottom:100%; width:9%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 35% 35%,#6f8a5a,#3f5733); box-shadow:0 0 0 2px rgba(0,0,0,.04)}
+
+/* offer cards: a big lead card and four around it */
+.boffers{display:grid; gap:14px; grid-template-columns:1fr}
+.boffer{display:flex; flex-direction:column; border-radius:20px; overflow:hidden; background:var(--elevated); border:1px solid rgba(243,233,222,.1); transition:border-color .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)}
+.boffer__pic{position:relative; display:block}
+.boffer__save{position:absolute; z-index:4; top:12px; left:12px; padding:7px 11px; border-radius:999px; background:var(--ember); color:var(--cream); font:600 var(--fs-11)/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; box-shadow:0 6px 16px rgba(192,53,63,.35)}
+.boffer__body{display:flex; flex-direction:column; gap:6px; padding:18px 18px 20px; flex:1}
+.boffer__h{font-family:var(--shout); font-weight:400; text-transform:uppercase; font-size:clamp(1.6rem,2.6vw,2.1rem); line-height:.95; margin:0}
+.boffer__price{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:4px 0 0}
+.boffer__price b{font-size:var(--fs-27); font-weight:500; color:var(--cream)}
+.boffer__price s{color:var(--muted); font-size:var(--fs-15)}
+.boffer__each{font:var(--fs-12)/1 var(--mono); color:var(--ember-ink); letter-spacing:.04em; text-transform:uppercase}
+.boffer__blurb{margin:2px 0 10px; color:var(--muted); font-size:var(--fs-14); line-height:1.45; flex:1}
+.boffer__cta{align-self:flex-start; display:inline-flex; align-items:center; gap:10px; padding:11px 16px 11px 18px; border-radius:999px; background:var(--cream); color:#140f0f; font:600 var(--fs-14)/1 var(--body); transition:background .25s ease, transform .25s ease}
+.boffer__cta svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; transition:transform .25s ease}
+.boffer:hover{border-color:rgba(243,233,222,.28)}
+.boffer:hover .sc__p{transform:translateY(-3px)}
+.boffer:hover .boffer__cta{background:#fff} .boffer:hover .boffer__cta svg{transform:translateX(3px)}
+.boffer__cta:focus-visible{outline:2px solid var(--ember); outline-offset:3px}
+@media(min-width:700px){ .boffers{grid-template-columns:1fr 1fr} .boffer--lead{grid-column:1/-1} .boffer--lead .sc{aspect-ratio:16/8} }
+@media(min-width:1100px){
+  .boffers{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .boffer--lead{flex-direction:row; align-items:stretch}
+  .boffer--lead .boffer__pic{flex:0 0 64%}
+  .boffer--lead .sc{aspect-ratio:16/8.4; height:100%}
+  .boffer--lead .boffer__body{justify-content:center; padding:32px 36px; gap:10px}
+  .boffer--lead .boffer__h{font-size:clamp(2.6rem,3.6vw,3.6rem)}
+  .boffer--lead .boffer__price b{font-size:2.2rem}
+  .boffer--lead .boffer__blurb{flex:none; font-size:var(--fs-15)}
+  .boffer:not(.boffer--lead) .boffer__blurb{display:none}
+  .boffer:not(.boffer--lead) .boffer__h{font-size:1.75rem}
+}
+/* ready-made walls: swipe on a phone, a grid on a laptop */
+.bsets{margin-top:80px}
+.bsets__row{display:grid; gap:14px; grid-template-columns:repeat(4,minmax(0,1fr))}
+.bsets .wset{display:flex; flex-direction:column; border-radius:18px; overflow:hidden; background:var(--elevated); border:1px solid rgba(243,233,222,.1); transition:border-color .3s ease}
+.bsets .wset:hover{border-color:rgba(243,233,222,.28)}
+.bsets .wset:hover .sc__p{transform:translateY(-3px)}
+.bsets .wset .sc{aspect-ratio:5/4}
+.bsets .wset__meta{display:flex; flex-direction:column; gap:4px; padding:14px 14px 16px; flex:1}
+.wset__note{color:var(--ember-ink); letter-spacing:.1em; margin:0}
+.bsets .wset__h{font-family:var(--shout); font-weight:400; text-transform:uppercase; font-size:var(--fs-24); line-height:1; margin:2px 0 0}
+.wset__list{margin:2px 0 12px; color:var(--muted); font-size:var(--fs-13); line-height:1.4; flex:1}
+.wset__foot{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.bsets .wset__p{margin:0; display:flex; flex-direction:column; line-height:1.15}
+.bsets .wset__p b{font-size:var(--fs-20); font-weight:500; color:var(--cream)}
+.bsets .wset__p s{font-size:var(--fs-13); color:var(--muted); margin:0}
+.wset__add{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:0; border-radius:999px; background:var(--ember); color:var(--cream); font:600 var(--fs-13)/1 var(--body); cursor:pointer; white-space:nowrap;
+  box-shadow:0 6px 16px rgba(192,53,63,.3); transition:background .25s ease, transform .2s ease}
+.wset__add svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.wset__add:hover{background:#d23f49} .wset__add:active{transform:scale(.96)}
+.wset__add.is-added{background:var(--cream); color:#140f0f}
+.wset__add:focus-visible{outline:2px solid var(--cream); outline-offset:3px}
+@media(max-width:1099px){ .bsets__row{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(max-width:699px){
+  .bsets__row{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; margin-inline:calc(var(--gutter) * -1); padding:0 var(--gutter) 8px; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  .bsets__row::-webkit-scrollbar{display:none}
+  .bsets .wset{flex:0 0 82%; scroll-snap-align:start}
+  .bhero__shots{aspect-ratio:4/3}
+}
+.bpage .bcta{margin-top:72px}
+@media(prefers-reduced-motion:reduce){ .sc__p, .boffer, .boffer__cta, .boffer__cta svg{transition:none} .boffer:hover .sc__p, .bsets .wset:hover .sc__p{transform:none} }

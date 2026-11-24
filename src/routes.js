@@ -2175,16 +2175,51 @@ const BUNDLE_PICS = {
   a5x5: () => P.filter(p => variant(p, 'poster-a5')).slice(0, 5).map(p => wallLine(p.slug, 'poster-a5')),
   pol10: () => P.filter(p => variant(p, 'polaroid')).slice(0, 6).map(p => wallLine(p.slug, 'polaroid'))
 };
-function bundleCardHTML(b) {
-  const pic = (BUNDLE_PICS[b.id] || (() => []))().filter(Boolean);
+/* ---------- bundles page (Nov 2026 redesign) ----------
+   Every bundle is drawn as a real wall: the pieces at their true sizes (a record is 305mm, an A3
+   poster 297 × 420mm ...), hung on a painted wall above a skirting board and a floor, so a buyer
+   sees what the set will look like at home instead of a few thumbnails floating in a box. */
+const SCENE_MM = { vinyl: [305, 305], 'poster-a3': [297, 420], 'poster-a5': [148, 210], 'print-10': [254, 254], polaroid: [86, 134] };
+function sceneHTML(items, o = {}) {
+  items = items.filter(Boolean);
+  const per = items.some(l => l.format === 'polaroid') ? 5 : items.length > 3 && items.every(l => l.format === 'poster-a5') ? 5 : 6;
+  const rows = []; for (let i = 0; i < items.length; i += per) rows.push(items.slice(i, i + per));
+  const W = o.mm || 1500;
+  const piece = (l, i) => {
+    const pr = bySlug[l.slug], v = variant(pr, l.format), [w, h] = SCENE_MM[l.format] || [300, 300];
+    const st = `--w:${(w / W * 100).toFixed(2)}%;--i:${i}`;
+    if (l.format === 'vinyl') return `<span class="sc__p sc__p--vinyl" style="${st}">${recordHTML(pr, { size: 220 })}</span>`;
+    const img = `<img src="${imgSrc(v.image)}" alt="${esc(v.alt)}" loading="lazy" decoding="async">`;
+    if (l.format === 'polaroid') return `<span class="sc__p sc__p--pol" style="${st}"><span class="sc__pol">${img}</span></span>`;
+    return `<span class="sc__p sc__p--paper" style="${st};aspect-ratio:${w}/${h}">${img}</span>`;
+  };
+  let n = 0;
+  return `<div class="sc${o.cls ? ' ' + o.cls : ''}" style="--wall:${o.wall || '#E6DED1'}" aria-hidden="true">
+    <div class="sc__hang">${rows.map(r => `<div class="sc__row">${r.map(l => piece(l, n++)).join('')}</div>`).join('')}</div>
+    <i class="sc__skirt"></i><i class="sc__floor"></i>${o.bench ? '<i class="sc__bench"><b class="sc__vase"></b><b class="sc__books"></b></i>' : ''}
+  </div>`;
+}
+const OFFER_SCENES = {
+  records3: { wall: '#E4DCCD', lines: () => ['taylor-swift-1989', 'the-weeknd-after-hours', 'frank-ocean-blonde'].map(s => wallLine(s, 'vinyl')), cta: 'Pick your 3 records', unit: 3, unitWord: 'a record', mm: 1180 },
+  pair: { wall: '#A9B39C', lines: () => [wallLine('travis-scott-utopia', 'vinyl'), wallLine('travis-scott-utopia', 'print-10')], cta: 'Pick a record', mm: 980 },
+  a3x3: { wall: '#C48A6A', lines: () => ['frank-ocean-blonde', 'travis-scott-utopia', 'pink-floyd-the-dark-side-of-the-moon-1973'].map(s => wallLine(s, 'poster-a3')), cta: 'Pick 3 posters', unit: 3, unitWord: 'a poster', mm: 1180 },
+  a5x5: { wall: '#2E2A2B', lines: () => P.filter(p => variant(p, 'poster-a5')).slice(0, 5).map(p => wallLine(p.slug, 'poster-a5')), cta: 'Pick 5 posters', unit: 5, unitWord: 'a poster', mm: 960 },
+  pol10: { wall: '#D9CFC0', lines: () => P.filter(p => variant(p, 'polaroid')).slice(0, 10).map(p => wallLine(p.slug, 'polaroid')), cta: 'Pick 10 polaroids', unit: 10, unitWord: 'a polaroid', mm: 640 }
+};
+const pctOff = b => Math.round(b.off / (b.price + b.off) * 100);
+function bundleCardHTML(b, i) {
+  const sc = OFFER_SCENES[b.id] || { lines: () => [], cta: 'Shop the bundle' };
   const was = b.price + b.off;
-  return `<article class="bcard reveal">
-    <a class="bcard__pic" href="${b.href}" aria-hidden="true" tabindex="-1">${miniWallHTML(pic, 'mwall--' + b.id)}</a>
-    <div class="bcard__save mono-xs">Save ${money(b.off)}</div>
-    <h3 class="bcard__h">${esc(b.name)}</h3>
-    <p class="bcard__p num"><span class="bcard__now">${money(b.price)}</span> <s class="dim">${money(was)}</s></p>
-    <p class="bcard__blurb dim">${esc(b.blurb)}</p>
-    ${ctaShop('Shop the bundle', b.href, `Save ${money(b.off)}`, { sm: true })}
+  const each = sc.unit ? `<span class="boffer__each">${money(Math.round(b.price / sc.unit))} ${esc(sc.unitWord.replace(/^an? /, 'per '))}</span>` : `<span class="boffer__each">${money(b.off)} off the print</span>`;
+  return `<article class="boffer reveal${i === 0 ? ' boffer--lead' : ''}">
+    <a class="boffer__pic" href="${b.href}" tabindex="-1" aria-hidden="true">${sceneHTML(sc.lines(), { wall: sc.wall, mm: i === 0 ? 1500 : sc.mm, bench: i === 0, cls: i === 0 ? 'sc--wide' : '' })}
+      <span class="boffer__save">Save ${money(b.off)} · ${pctOff(b)}% off</span></a>
+    <div class="boffer__body">
+      <h3 class="boffer__h">${esc(b.name)}</h3>
+      <p class="boffer__price num"><b>${money(b.price)}</b><s>${money(was)}</s>${each}</p>
+      <p class="boffer__blurb">${esc(b.blurb)}</p>
+      <a class="boffer__cta" href="${b.href}"><span>${esc(sc.cta)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
   </article>`;
 }
 /* a strip of the bundles for other pages */
@@ -2198,39 +2233,45 @@ function bundleStripHTML() {
   </div></section>`;
 }
 function viewBundles() {
-  const topHTML = photo('bundles-wall') ? `
-    <div class="bundles-top">
-      <div class="bundles-top__copy">
-        <p class="cap">Bundles · up to 30% off</p>
-        <h1 class="shout-h">Bundles.</h1>
-        <p class="body-l dim measure" style="margin:16px 0 20px">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
-        <div class="mono-xs" style="color:var(--ember);letter-spacing:.14em;text-transform:uppercase;font-weight:600">Up to 30% off · Automatic checkout discount</div>
-      </div>
-      <div class="bundles-top__visual">
-        <img src="${photo('bundles-wall')}" alt="Buy Bundles 30% Off" loading="eager">
-      </div>
+  const best = LIVE_BUNDLES.reduce((m, b) => Math.max(m, pctOff(b)), 0);
+  const shots = [['wall-full', 'Records and posters from PastForward hung together on a white wall'],
+                 ['sabrina-espresso-wall', 'A PastForward record and poster above a bed in evening light'],
+                 ['records-table', 'Upcycled records laid out on a table before they are hung']].filter(([k]) => photo(k));
+  return `<div class="bpage">
+  <section class="bhero wrap" style="padding-top:calc(var(--nav-h) + 36px)">
+    <div class="bhero__copy">
+      <p class="cap">Bundles · up to ${best}% off</p>
+      <h1 class="shout-h">Fill a wall<br>for less.</h1>
+      <p class="body-l dim measure bhero__lede">Put the pieces in your crate and the bundle price comes off at checkout, on its own. No code to type.</p>
+      <ol class="bsteps">
+        <li><b>1</b><span>Pick your pieces</span></li>
+        <li><b>2</b><span>The price drops at checkout</span></li>
+        <li><b>3</b><span>Free delivery, ${esc(DELIVERY)}</span></li>
+      </ol>
     </div>
-  ` : `
-    <p class="cap">Bundles · the price drops at checkout</p>
-    <h1 class="shout-h">Bundles.</h1>
-    <p class="body-l dim measure" style="margin:14px 0 8px">Put the pieces in your crate and the bundle price is applied for you at checkout. One bundle per order: we use whichever saves you the most.</p>
-  `;
-
-  return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
-    ${topHTML}
-    <div class="bgrid">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
-    ${readyWallsHTML()}
-    <div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
-      ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}</div>
+    ${shots.length ? `<div class="bhero__shots bhero__shots--${shots.length}">${shots.map(([k, alt], i) => `<figure class="bhero__shot bhero__shot--${i}"><img src="${photo(k)}" alt="${esc(alt)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></figure>`).join('')}
+      <span class="bhero__real mono-xs">Real pieces, real walls</span></div>` : ''}
+  </section>
+  <section class="wrap boffers-wrap" aria-label="The offers">
+    <div class="bsec__hd"><h2 class="bsec__h">The offers</h2><p class="bsec__s dim">One bundle per order. If your crate fits more than one, we take the one that saves you the most.</p></div>
+    <div class="boffers">${LIVE_BUNDLES.map(bundleCardHTML).join('')}</div>
+  </section>
+  ${readyWallsHTML()}
+  <div class="wrap"><div class="bcta reveal"><p class="d-s">Not sure what goes together?</p>
+    ${ctaShop('Shop vinyls', '/vinyl', `Every record ${money(FMT.vinyl.price)}`)}</div></div>
   </div>`;
 }
 
 const WALL_SETS = [
-  { name: 'The Swift three', note: 'Three eras on one wall', lines: ['taylor-swift-1989', 'taylor-swift-lover', 'taylor-swift-reputation'].map(s => ['vinyl', s]) },
-  { name: 'Utopia, twice', note: 'The record and its 10×10 print', lines: [['vinyl', 'travis-scott-utopia'], ['print-10', 'travis-scott-utopia']] },
-  { name: 'The poster wall', note: 'Three A3 posters in a row', lines: ['frank-ocean-blonde', 'travis-scott-utopia', 'sabrina-carpenter-espresso'].map(s => ['poster-a3', s]) }
+  { name: 'The Swift three', note: 'Three eras, one wall', wall: '#E7DCE0', lines: ['taylor-swift-1989', 'taylor-swift-lover', 'taylor-swift-reputation'].map(s => ['vinyl', s]) },
+  { name: 'Rap royalty', note: 'Kendrick twice, and Astroworld', wall: '#C7B49A', lines: ['kendrick-lamar-gnx', 'kendrick-lamar-damn', 'travis-scott-astroworld'].map(s => ['vinyl', s]) },
+  { name: 'Desi on repeat', note: 'Diljit, Karan Aujla, AP Dhillon', wall: '#AEB8A2', lines: ['diljit-dosanjh-goat', 'karan-aujla-making-memories', 'ap-dhillon-two-hearts-never-break-the-same'].map(s => ['vinyl', s]) },
+  { name: 'After midnight', note: 'SZA, Frank Ocean, The Weeknd', wall: '#3A3436', lines: ['sza-sos', 'frank-ocean-blonde', 'the-weeknd-starboy'].map(s => ['vinyl', s]) },
+  { name: 'Pop, loud', note: 'Sabrina, Olivia, Billie', wall: '#E9C9C2', lines: ['sabrina-carpenter-short-n-sweet', 'olivia-rodrigo-sour', 'billie-eilish-hit-me-hard-and-soft'].map(s => ['vinyl', s]) },
+  { name: 'Indie corner', note: 'Arctic Monkeys, Tame Impala, The Strokes', wall: '#B9C4CC', lines: ['arctic-monkeys-am', 'tame-impala-the-slow-rush', 'the-strokes-is-this-it'].map(s => ['vinyl', s]) },
+  { name: 'Utopia, twice', note: 'The record and its 10×10 print', wall: '#A9B39C', lines: [['vinyl', 'travis-scott-utopia'], ['print-10', 'travis-scott-utopia']] },
+  { name: 'The poster row', note: 'Three A3 posters, side by side', wall: '#C48A6A', lines: ['frank-ocean-blonde', 'travis-scott-utopia', 'sabrina-carpenter-espresso'].map(s => ['poster-a3', s]) }
 ];
-const WALL_COLOURS = [['#E9E2D6', 'Plaster'], ['#AEB8A2', 'Sage'], ['#C08566', 'Clay'], ['#2B2728', 'Charcoal']];
 function setPriceHTML(lines) {
   const pr = linesPrice(lines);
   return `<span class="num">${money(pr.total)}</span>${pr.b ? ` <s class="dim num">${money(pr.sub)}</s>` : ''}`;
@@ -2238,23 +2279,32 @@ function setPriceHTML(lines) {
 function wallSets() {
   return WALL_SETS.map(s => ({ ...s, items: s.lines.map(([f, sl]) => wallLine(sl, f)).filter(Boolean) })).filter(s => s.items.length === s.lines.length);
 }
-/* ready-made sets: shown on the Bundles page */
+/* ready-made sets: shown on the Bundles page, each one goes into the crate with one tap */
 function readyWallsHTML() {
   const sets = wallSets(); if (!sets.length) return '';
-  return `<section class="bsets" id="sets" aria-label="Ready-made sets">
-    <h2 class="shout-h shout-h--sm">Ready-made sets.</h2>
-    <div class="bw__sets">${sets.map((s, i) => `<article class="wset reveal">
-      <div class="wset__wall" style="--wall:${WALL_COLOURS[i % 3][0]}">${miniWallHTML(s.items)}</div>
-      <div class="wset__meta"><h3 class="wset__h">${esc(s.name)}</h3><p class="mono-xs dim">${esc(s.note)}</p>
-        <p class="wset__p">${setPriceHTML(s.items)}</p>
-        <button class="btn btn--primary wset__add" data-addset="${i}"><span class="btn__mag">Add the set</span></button></div>
-    </article>`).join('')}</div></section>`;
+  return `<section class="bsets wrap" id="sets" aria-label="Ready-made walls">
+    <div class="bsec__hd"><h2 class="bsec__h">Ready-made walls</h2><p class="bsec__s dim">Sets we'd hang ourselves. One tap puts all of it in your crate, already at the bundle price. Swap any piece later in the crate.</p></div>
+    <div class="bsets__row">${sets.map((s, i) => {
+      const pr = linesPrice(s.items);
+      return `<article class="wset reveal">
+      ${sceneHTML(s.items, { wall: s.wall, mm: s.items.length === 2 ? 980 : 1150 })}
+      <div class="wset__meta">
+        <p class="wset__note mono-xs">${esc(s.note)}</p>
+        <h3 class="wset__h">${esc(s.name)}</h3>
+        <p class="wset__list">${s.items.map(l => esc(bySlug[l.slug].album) + (s.items.some(x => x.slug === l.slug && x !== l) ? ` ${l.format === 'vinyl' ? 'record' : esc(FMT[l.format].label)}` : '')).join(' · ')}</p>
+        <div class="wset__foot">
+          <p class="wset__p num"><b>${money(pr.total)}</b>${pr.b ? `<s>${money(pr.sub)}</s>` : ''}</p>
+          <button class="wset__add" data-addset="${i}"><span class="wset__addt">Add all ${s.items.length}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></button>
+        </div>
+      </div>
+    </article>`; }).join('')}</div></section>`;
 }
 function mountBundles() {
   const sets = wallSets();
   $$('[data-addset]').forEach(b => b.addEventListener('click', () => {
     addMany(sets[+b.dataset.addset].items, b);
-    const t = b.querySelector('.btn__mag'); t.textContent = 'Added'; setTimeout(() => { t.textContent = 'Add the set'; }, 1400);
+    const t = b.querySelector('.wset__addt'), was = t.textContent; t.textContent = 'In your crate'; b.classList.add('is-added');
+    setTimeout(() => { t.textContent = was; b.classList.remove('is-added'); }, 1600);
   }));
 }
 
