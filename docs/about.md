@@ -9,7 +9,7 @@ The same designs are available as A3 and A5 posters, 10×10 inch square prints a
 - **Website**: https://pastforward.shop
 - **Delivers to**: India only
 - **Delivery time**: 7–10 days from order
-- **Delivery cost**: Delivery is free on orders of ₹1,499 and above, anywhere in India; orders below that pay a flat ₹99 delivery charge, shown at checkout before you pay.
+- **Delivery cost**: Delivery is free on orders of ₹499 and above, anywhere in India; orders below that pay a flat ₹99 delivery charge, shown at checkout before you pay.
 - **Payment**: UPI, cards and net banking. Cash on delivery is available too.
 - **Returns**: made to order, so no change-of-mind returns. If an order arrives damaged or wrong, send a photo on WhatsApp or by email within 7 days of delivery for a replacement, or a refund if a replacement isn't possible.
 - **Contact**: contact@pastforward.shop · Instagram @pastforward.shop

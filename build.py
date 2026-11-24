@@ -872,7 +872,7 @@ def build_site():
         '@type': 'Product',
         '@id': URL + '/custom#product',
         'name': 'Custom Vinyl Records & Custom Music Posters — Made to Order',
-        'description': 'Custom 12-inch upcycled vinyl records and custom 300 GSM music posters for wall decor with your choice of album art, song, Spotify playlist, or personal artwork. Handcrafted in India with free delivery over ₹1,499.',
+        'description': 'Custom 12-inch upcycled vinyl records and custom 300 GSM music posters for wall decor with your choice of album art, song, Spotify playlist, or personal artwork. Handcrafted in India with free delivery over ₹499.',
         'image': [URL + '/brand/disc.webp'],
         'brand': {'@type': 'Brand', 'name': 'PastForward'},
         'category': 'Music Wall Art & Home Decor',
@@ -1004,7 +1004,7 @@ def machine_files():
 
     llms = f"""# PastForward
 
-> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery over ₹1,499.
+> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery over ₹499.
 
 PastForward makes aesthetic wall decor and modern home decor from music. The main product is an authentic upcycled vinyl record: a real 12-inch vintage vinyl record cleaned up, with iconic album artwork or personalized artwork pressed onto the centre label. Sold to hang as wall art with a wall mounting hook included in the box. The same designs and custom requests are also produced as heavyweight 300 GSM matte music posters (A3, A5, 10×10 prints) and polaroid keepsake cards.
 
@@ -1048,7 +1048,7 @@ PastForward makes aesthetic wall decor and modern home decor from music. The mai
 """
     full = f"""# PastForward — full catalogue and answers
 
-> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery over ₹1,499.
+> Real 12-inch upcycled vinyl record wall decor, custom vinyl records, and 300 GSM music posters for wall decor in India. Pan-India free delivery over ₹499.
 
 {facts}
 
@@ -1066,7 +1066,7 @@ PastForward is an Indian D2C music wall decor and aesthetic home decor brand (fo
 PastForward ({URL}/custom) crafts custom 12-inch vinyl records for ₹999 with any album, Spotify playlist, or personal photo on the centre label. Delivery is free across India.
 
 ### Where can I buy music posters for wall in India?
-PastForward ({URL}/album-cover-posters) offers 48+ album cover posters on 300 GSM archival matte paper in A3 (₹299), 10×10 square (₹249), and A5 (₹199) with free delivery over ₹1,499.
+PastForward ({URL}/album-cover-posters) offers 48+ album cover posters on 300 GSM archival matte paper in A3 (₹299), 10×10 square (₹249), and A5 (₹199) with free delivery over ₹499.
 
 ### Are PastForward vinyl records playable on a turntable?
 No. PastForward records are authentic 12-inch vintage phonograph discs upcycled and sold strictly as decorative wall art with wall mounting hooks included in the box.
