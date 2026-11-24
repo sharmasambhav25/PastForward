@@ -406,12 +406,23 @@ def crumbs(*items):
     return {'@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': i + 1, 'name': n, 'item': URL + u} for i, (n, u) in enumerate(items)]}
 
-def shipping_ld():
+def shipping_ld(price=None):
+    """Delivery for one item at this price, as Google reads it. Mirrors site.json "shipping":
+    free on everything, or free from `freeFrom` with `fee` below it. None if delivery is not free at all
+    (the charge is then only known at checkout)."""
     sh = SITE['shipping']
-    if not (sh.get('free') and not sh.get('freeFrom')):
+    if not sh.get('free'):
         return None
+    if sh.get('freeFrom') and price is not None and price < sh['freeFrom']:
+        if not sh.get('fee'):
+            return None
+        rate = sh['fee']
+    elif sh.get('freeFrom') and price is None:
+        return None
+    else:
+        rate = 0
     return {'@type': 'OfferShippingDetails',
-            'shippingRate': {'@type': 'MonetaryAmount', 'value': 0, 'currency': 'INR'},
+            'shippingRate': {'@type': 'MonetaryAmount', 'value': rate, 'currency': 'INR'},
             'shippingDestination': {'@type': 'DefinedRegion', 'addressCountry': 'IN'},
             'deliveryTime': {
                 '@type': 'ShippingDeliveryTime',
@@ -437,8 +448,8 @@ def product_ld(p):
              'availability': 'https://schema.org/InStock', 'url': URL + product_url(p, v['format']),
              'seller': {'@id': URL + '/#organization'},
              'hasMerchantReturnPolicy': MERCHANT_RETURN_POLICY}
-        if shipping_ld():
-            o['shippingDetails'] = shipping_ld()
+        if shipping_ld(v['price']):
+            o['shippingDetails'] = shipping_ld(v['price'])
         offers.append(o)
 
         material = 'Upcycled authentic 12-inch vinyl record with printed center label' if v['format'] == 'vinyl' else '300 GSM Matte Archival Stock'
@@ -456,8 +467,8 @@ def product_ld(p):
             'itemCondition': condition,
             'offers': o
         }
-        if size_of(v):
-            var_prod['size'] = size_of(v)
+        # Google rejects a variant group that varies by size unless every variant names one
+        var_prod['size'] = size_of(v) or size_of(FMT.get(v['format'], {})) or f"One size ({v['label']})"
         variants_ld.append(var_prod)
 
     group_name = f"{name_of(p)} — Upcycled 12-Inch Vinyl Record Wall Art, Poster & Polaroid"
@@ -578,12 +589,22 @@ def fb_landing(L, products):
     fmts = L.get('formats') or L.get('cardFormats') or None
     copy = ''.join(f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in L.get('sections', []))
     faq = ''.join(f'<h3>{esc(q)}</h3><p>{site_links(a)}</p>' for q, a in L.get('faq', []))
+    words = copy + (f'<h2>Questions</h2>{faq}' if faq else '')
+    if L.get('copyFirst'):   # guides: the answer first, then the pieces
+        return fb_wrap(f"<h1>{esc(L['h1'].rstrip('.'))}</h1><p>{esc(L['sub'])}</p>{words}"
+                       f"<h2>{esc(L.get('shopHeading') or 'The pieces')}</h2>{fb_products(products, fmts)}{fb_facts()}")
     return fb_wrap(f"<h1>{esc(L['h1'].rstrip('.'))}</h1><p>{esc(L['sub'])}</p>{fb_facts()}"
-                   f"{fb_products(products, fmts)}{copy}" + (f'<h2>Questions</h2>{faq}' if faq else ''))
+                   f"{fb_products(products, fmts)}{words}")
 
 def landing_ld(L, path, products):
     name = L['h1'].rstrip('.')
     nodes = [crumbs(('Home', '/'), (name, path)), list_ld(name, products, L.get('formats') or None)]
+    if L.get('copyFirst'):   # a guide is an article as well as a list of pieces
+        nodes.append({'@type': 'Article', '@id': URL + path + '#article', 'headline': name,
+                      'description': L['desc'], 'url': URL + path, 'inLanguage': 'en-IN',
+                      'author': {'@id': URL + '/#organization'}, 'publisher': {'@id': URL + '/#organization'},
+                      'datePublished': L.get('published', '2026-11-24'), 'dateModified': L.get('updated', L.get('published', '2026-11-24')),
+                      'image': abs_img(products[0]['variants'][0]['image']) if products else None})
     if L.get('faq'):
         nodes.append({'@type': 'FAQPage', '@id': URL + path + '#faq', 'mainEntity': [
             {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in L['faq']]})
@@ -801,7 +822,9 @@ def build_site():
         prods = collection_products(c['slug'])
         path = f"/collections/{c['slug']}"
         add(path, f"collections/{c['slug']}.html", title=c['seo']['title'], desc=c['seo']['desc'],
-            body=fb_listing(c['name'], c['desc'], prods), ld=graph(crumbs(('Home', '/'), (c['name'], path)), list_ld(c['name'], prods)))
+            body=fb_wrap(f"<h1>{esc(c['name'])}</h1><p>{esc(c['desc'])}</p>{fb_facts()}{fb_products(prods)}" + ''.join(
+                f'<h2>{esc(h)}</h2><p>{site_links(t)}</p>' for h, t in SITE.get('collectionCopy', {}).get(c['slug'], {}).get('sections', []))),
+            ld=graph(crumbs(('Home', '/'), (c['name'], path)), list_ld(c['name'], prods)))
     c_three = next(c for c in COLS if c['slug'] == 'three-am')
     add('/collections/3-am', 'collections/3-am.html', title=c_three['seo']['title'], desc=c_three['seo']['desc'],
         canonical='/collections/three-am', body=fb_listing(c_three['name'], c_three['desc'], collection_products('three-am')),
@@ -865,9 +888,9 @@ def build_site():
         {'@type': 'Offer', 'name': 'Custom A5 Music Poster', 'price': '199', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'},
         {'@type': 'Offer', 'name': 'Custom Music Polaroid Card', 'price': '99', 'priceCurrency': 'INR', 'availability': 'https://schema.org/InStock', 'url': URL + '/custom'}
     ]
-    if shipping_ld():
-        for off in custom_prod_offers:
-            off['shippingDetails'] = shipping_ld()
+    for off in custom_prod_offers:
+        if shipping_ld(int(off['price'])):
+            off['shippingDetails'] = shipping_ld(int(off['price']))
     custom_ld.append({
         '@type': 'Product',
         '@id': URL + '/custom#product',

@@ -3328,3 +3328,10 @@ p,.body-l,.body-s,.measure{text-wrap:pretty}
 .fmts__bg{visibility:hidden; transition:opacity .9s ease, transform 5s ease, visibility 0s linear .9s}
 .fmts__bg.is-on{visibility:visible; transition:opacity .9s ease, transform 5s ease, visibility 0s}
 @media(prefers-reduced-motion:reduce){ .fmts__bg,.fmts__bg.is-on{transition:none} }
+
+/* guides: the words come first, in one readable column, then the pieces */
+.lcopy--guide{margin:0 0 48px;padding-top:0;border-top:0}
+.lcopy--guide .lcopy__grid{grid-template-columns:1fr;gap:32px;max-width:68ch}
+@media(min-width:768px){.lcopy--guide .lcopy__grid{grid-template-columns:1fr;gap:36px}}
+.lcopy--guide .lcopy__faq{margin-top:40px}
+.lcopy__shophead{letter-spacing:.18em;text-transform:uppercase;margin:0 0 20px;padding-top:32px;border-top:1px solid var(--border)}

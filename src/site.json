@@ -513,6 +513,214 @@
           "Yes, through <a href=\"#/custom\">custom orders</a>."
         ]
       ]
+    },
+    "/music-polaroids": {
+      "title": "Music Polaroids: Album Cover Polaroid Cards for Your Wall, {{PRICE_POLAROID}} | PastForward",
+      "desc": "Album cover polaroid cards of Taylor Swift, The Weeknd, Travis Scott, Billie Eilish, Rosé, Diljit Dosanjh and more. {{PRICE_POLAROID}} each, delivered across India.",
+      "h1": "Music polaroids.",
+      "sub": "Album covers as polaroid-style cards, {{PRICE_POLAROID}} each. Start a wall with five.",
+      "formats": [
+        "polaroid"
+      ],
+      "sections": [
+        [
+          "What they are",
+          "Polaroid-style cards printed with an album cover, with the white border and thick bottom edge you know from instant photos. They are printed to order, not instant film."
+        ],
+        [
+          "How people use them",
+          "In a tight grid above a bed or desk, round the edge of a mirror, on a string with clips, or tucked into the corner of a frame next to a poster of the same album."
+        ],
+        [
+          "Mixing them with bigger pieces",
+          "A polaroid of the album next to its A3 poster or its upcycled record makes a small set. Most albums here come in more than one format."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ],
+      "faq": [
+        [
+          "Are these real instant film photos?",
+          "No. They are printed cards in the polaroid shape, made to put on a wall."
+        ],
+        [
+          "Can I get a polaroid of an album you don't list?",
+          "Yes, through <a href=\"#/custom\">custom orders</a>."
+        ]
+      ]
+    },
+    "/posters-for-bedroom": {
+      "title": "Music Posters for Bedroom Walls in India: A3, A5 & 10×10 | PastForward",
+      "desc": "Album cover posters for your bedroom wall: A3 {{PRICE_A3}}, A5 {{PRICE_A5}}, 10×10 prints {{PRICE_10}}. Taylor Swift, Travis Scott, The Weeknd, AP Dhillon and more. Delivered across India.",
+      "h1": "Posters for your bedroom.",
+      "sub": "Album covers in A3, A5 and a 10×10 square, for the wall you look at most.",
+      "formats": [
+        "poster-a3",
+        "poster-a5",
+        "print-10"
+      ],
+      "sections": [
+        [
+          "Which size for which wall",
+          "Above a bed, an A3 (297 × 420mm) or two reads from the doorway. Beside a desk or on a shelf, A5 (148 × 210mm) is enough. The 10×10 square keeps the album's own shape. More on this in the <a href=\"#/poster-size-guide\">poster size guide</a>."
+        ],
+        [
+          "Putting them up",
+          "Removable mounting putty or poster strips hold paper without marking most painted walls. Ordinary tape can lift paint when it comes off. For layouts, see <a href=\"#/poster-wall-ideas-for-bedroom\">poster wall ideas</a>."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ],
+      "faq": [
+        [
+          "Do the posters come framed?",
+          "No. They come unframed, so you can use your own frame or put them straight on the wall."
+        ]
+      ]
+    },
+    "/poster-size-guide": {
+      "copyFirst": true,
+      "shopHeading": "Posters in these sizes",
+      "title": "Poster Sizes in India: A3 vs A5 vs 10×10 in cm and Inches | PastForward",
+      "desc": "A3 is 29.7 × 42 cm (11.7 × 16.5 in), A5 is 14.8 × 21 cm (5.8 × 8.3 in), a 10×10 print is 25.4 cm square. What each size suits on a wall, with prices.",
+      "h1": "Poster sizes, explained.",
+      "sub": "A3, A5 and 10×10 in centimetres and inches, and what each one is good for on a wall.",
+      "formats": [
+        "poster-a3",
+        "poster-a5",
+        "print-10"
+      ],
+      "sections": [
+        [
+          "A3: 29.7 × 42 cm (11.7 × 16.5 inches)",
+          "The size most people mean by a wall poster. Big enough to read from across a room, small enough for a hostel or rented room. Ours are {{PRICE_A3}}."
+        ],
+        [
+          "A5: 14.8 × 21 cm (5.8 × 8.3 inches)",
+          "A quarter of an A3, about the size of a paperback page. Good on a desk, a shelf, a bedside wall or in a cluster of small pieces. Ours are {{PRICE_A5}}."
+        ],
+        [
+          "10×10 inches: 25.4 × 25.4 cm",
+          "A square print that keeps an album cover's original shape, so nothing is cropped. Works well in a grid of four or nine. Ours are {{PRICE_10}}."
+        ],
+        [
+          "Where A4 fits in",
+          "A4 (21 × 29.7 cm) sits between the two: an A3 is two A4s, and an A4 is two A5s. We don't make A4."
+        ],
+        [
+          "How to choose",
+          "Measure the space and imagine it filled to about two-thirds. For a gap under 40 cm wide, go A5 or a single 10×10. For 40 to 90 cm, one A3 or a pair of 10×10s. Above that, mix sizes: one A3 with smaller pieces round it."
+        ]
+      ],
+      "faq": [
+        [
+          "Is A3 bigger than A4?",
+          "Yes. A3 is exactly twice the area of A4: 29.7 × 42 cm against 21 × 29.7 cm."
+        ],
+        [
+          "What size is a 12-inch vinyl record?",
+          "About 30.5 cm across. Our upcycled records are that size, with the album art on the centre label."
+        ]
+      ]
+    },
+    "/how-to-hang-vinyl-records-on-a-wall": {
+      "copyFirst": true,
+      "shopHeading": "Records made to hang",
+      "title": "How to Hang Vinyl Records on a Wall (Layouts, Height, Hooks) | PastForward",
+      "desc": "How to hang vinyl records on a wall: what to hang them with, how high, how far apart, three layouts that work, and how to keep them from warping.",
+      "h1": "How to hang vinyl records on a wall.",
+      "sub": "Hooks, height, spacing and layouts, from the people who make records to hang.",
+      "formats": [
+        "vinyl"
+      ],
+      "sections": [
+        [
+          "What to hang it with",
+          "A 12-inch record weighs roughly 120 to 180 grams, so it needs very little. A small nail or a screw with a wall plug, or a removable adhesive hook rated well above that weight, will hold one. Every PastForward record comes with a wall hook in the box."
+        ],
+        [
+          "How high",
+          "Put the centre of the record, or the centre of a group of records, at roughly eye level: about 145 to 150 cm from the floor. Above a bed or sofa, leave about 20 to 25 cm between the furniture and the bottom of the lowest record."
+        ],
+        [
+          "How far apart",
+          "Records are about 30.5 cm across. Leave 5 to 8 cm between them so each one reads as its own piece. Use the same gap everywhere and the wall looks planned."
+        ],
+        [
+          "Three layouts that work",
+          "A straight row of three above a bed or desk. A grid of four or nine for a feature wall, measured out with paper circles taped up first. Or a loose diagonal climbing a staircase wall, keeping the gap between records the same."
+        ],
+        [
+          "Keeping them flat",
+          "Vinyl softens with heat. Keep records off walls that get direct afternoon sun or sit right next to a heater or kitchen stove, and the label print stays brighter too."
+        ]
+      ],
+      "faq": [
+        [
+          "Can I hang a record without drilling?",
+          "Yes. A removable adhesive hook rated for a few hundred grams holds a single record on a smooth painted wall."
+        ],
+        [
+          "Will a hung record still play?",
+          "Ours are made to hang, not to play. The album art is set into the centre label."
+        ]
+      ]
+    },
+    "/poster-wall-ideas-for-bedroom": {
+      "copyFirst": true,
+      "shopHeading": "Pieces for a wall like this",
+      "title": "Poster Wall Ideas for Your Bedroom: 6 Layouts That Work | PastForward",
+      "desc": "Six poster wall layouts for a bedroom, with sizes and spacing: the single statement, the row, the grid, the gallery mix, the polaroid wall, and records with posters.",
+      "h1": "Poster wall ideas for your bedroom.",
+      "sub": "Six layouts, with the sizes and spacing that make each one work.",
+      "formats": [],
+      "cardFormats": [
+        "poster-a3",
+        "print-10",
+        "poster-a5",
+        "polaroid",
+        "vinyl"
+      ],
+      "sections": [
+        [
+          "1. One statement piece",
+          "A single A3 (29.7 × 42 cm) centred above the bed, its bottom edge 20 to 25 cm above the headboard. The simplest wall that still looks finished."
+        ],
+        [
+          "2. The row",
+          "Three A3s or three 10×10 prints in a line, 5 cm apart. Pick three albums from one artist or one era so the row reads as a set."
+        ],
+        [
+          "3. The grid",
+          "Four or nine 10×10 prints in a square, gaps kept identical. Album covers are square to begin with, so a grid of them looks deliberate."
+        ],
+        [
+          "4. The gallery mix",
+          "One A3 as the anchor, with A5s and 10×10s around it. Lay everything out on the floor first, then copy it to the wall with paper templates and removable putty."
+        ],
+        [
+          "5. The polaroid wall",
+          "Fifteen to twenty <a href=\"#/music-polaroids\">polaroid cards</a> in a tight grid, or clipped to a string across the wall. The cheapest way to cover a lot of wall."
+        ],
+        [
+          "6. Records with posters",
+          "An <a href=\"#/vinyl-record-wall-decor\">upcycled record</a> next to the A3 poster of the same album. The round shape breaks up a wall of rectangles."
+        ]
+      ],
+      "faq": [
+        [
+          "How do I put posters up without damaging the wall?",
+          "Removable mounting putty or poster strips. Ordinary tape can lift paint when it comes off."
+        ],
+        [
+          "What size poster goes above a bed?",
+          "An A3 for a single bed, or two or three A3s in a row for a double. See the <a href=\"#/poster-size-guide\">poster size guide</a>."
+        ]
+      ]
     }
   },
 
@@ -572,5 +780,81 @@
   "indexNow": {
     "_note": "Key for IndexNow (Bing, Yandex, Seznam). The build writes docs/<key>.txt; run `python3 indexnow.py` after a deploy to tell them every page changed.",
     "key": "837c23613d17421880f7673328414b2d"
+  },
+
+  "collectionCopy": {
+    "_note": "Words under each collection's pieces, for searches like 'punjabi posters' or 'k-pop posters'. Name only albums in the catalogue.",
+    "desi-lineage": {
+      "sections": [
+        [
+          "Punjabi, Hindi and desi hip-hop on your wall",
+          "Diljit Dosanjh's Don, AP Dhillon's Dil Nu, Karan Aujla's At Peace, Seedhe Maut's Lunch Break / 11K and Anuv Jain's Alag Aasman, as upcycled records, posters and polaroids."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}. Want an Indian album we don't list? Use <a href=\"#/custom\">custom orders</a>."
+        ]
+      ]
+    },
+    "the-classics": {
+      "sections": [
+        [
+          "Classic rock and the records your parents played",
+          "Pink Floyd's The Dark Side of the Moon, Nirvana's Nevermind, Guns N' Roses' Appetite for Destruction, Queen, The Beatles, Billy Joel's The Stranger, ABBA, Arctic Monkeys' AM and The Strokes, as upcycled records, posters and polaroids."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ]
+    },
+    "pop-canon": {
+      "sections": [
+        [
+          "Pop album posters and records",
+          "Taylor Swift's 1989, Lover, Reputation and august, Billie Eilish, Harry Styles' Fine Line, Dua Lipa's Future Nostalgia, Sabrina Carpenter's Espresso, Olivia Rodrigo's GUTS, Post Malone, Ariana Grande, Coldplay and more."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ]
+    },
+    "k-wave": {
+      "sections": [
+        [
+          "K-pop posters and records",
+          "BLACKPINK's The Album, Rosé's APT., Jennie's Mantra, Lisa's Rockstar, NewJeans' Super Shy and RM's Indigo, as upcycled records, posters and polaroids."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}. Want another K-pop album? Use <a href=\"#/custom\">custom orders</a>."
+        ]
+      ]
+    },
+    "three-am": {
+      "sections": [
+        [
+          "Late-night records",
+          "The Weeknd's After Hours, Frank Ocean's Blonde, Lana Del Rey's Ultraviolence and Bluebird, Billie Eilish and Juice WRLD's Goodbye & Good Riddance."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ]
+    },
+    "main-stage": {
+      "sections": [
+        [
+          "EDM and festival records",
+          "Avicii, Martin Garrix's Sentio, Marshmello's Happier and Swedish House Mafia's Don't You Worry Child."
+        ],
+        [
+          "Delivery",
+          "{{SHIPPING_LINE}} Orders reach anywhere in India in {{DELIVERY}}."
+        ]
+      ]
+    }
   }
 }

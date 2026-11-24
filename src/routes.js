@@ -887,6 +887,7 @@ function viewCatalog(category, subType, params) {
 
   return `<div class="wrap sec" style="padding-top:calc(var(--nav-h) + 40px)">
     ${topContentHTML}
+    ${landing && landing.copyFirst ? landingCopyHTML(landing) + `<h2 class="mono-xs dim lcopy__shophead">${esc(landing.shopHeading || 'The pieces')}</h2>` : ''}
     ${category === 'vinyl' ? vinylTabsHTML(subType === 'artists' ? 'artists' : 'all', list) : ''}
     ${category === 'posters' || category === 'polaroids' ? sizeTabsHTML(category === 'polaroids' ? 'polaroid' : (SIZE_TABS.find(t => t.f === routeFormats[0]) || {}).key) : ''}
     <div class="shop">
@@ -918,12 +919,13 @@ function viewCatalog(category, subType, params) {
             <p class="body-s dim" style="margin:8px 0 20px">Loosen a filter.</p>
             <button class="btn btn--secondary" data-clear><span class="btn__mag">Clear all</span></button></div>`}
       </div>
-    </div>${landing ? landingCopyHTML(landing) : ''}</div>`;
+    </div>${landing && !landing.copyFirst ? landingCopyHTML(landing) : ''}${category === 'collections' && (SITE.collectionCopy || {})[subType] ? landingCopyHTML(SITE.collectionCopy[subType]) : ''}</div>`;
 }
 function landingCopyHTML(L) {
+  // guides (copyFirst) read top to bottom above the pieces; shop pages keep their words under the grid
   const secs = (L.sections || []).map(([h, t]) => `<div><h2 class="d-s">${esc(h)}</h2><p class="dim">${t}</p></div>`).join('');
   const faq = (L.faq || []).map(([q, a]) => `<div><h3 class="body-l">${esc(q)}</h3><p class="dim">${a}</p></div>`).join('');
-  return `<section class="lcopy">
+  return `<section class="lcopy${L.copyFirst ? ' lcopy--guide' : ''}">
     ${secs ? `<div class="lcopy__grid">${secs}</div>` : ''}
     ${faq ? `<div class="lcopy__faq"><h2 class="mono-xs dim">Questions</h2>${faq}</div>` : ''}
   </section>`;
