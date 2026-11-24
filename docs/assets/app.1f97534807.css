@@ -443,7 +443,7 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
   background:var(--elevated); color:var(--cream); cursor:pointer; transition:border-color var(--d-micro) var(--e-ui)}
 .filterbtn:hover{border-color:var(--cream)}
 .filterbtn svg{width:14px; height:14px}
-@media(min-width:1024px){.filterbtn{display:none!important}}
+@media(min-width:1024px){.filterbtn{display:none}}
 
 /* ---------- pdp ---------- */
 .pdp{display:grid; gap:clamp(28px, 5vw, 48px); grid-template-columns:minmax(0,1fr)}   /* minmax: the thumbnail strip mustn't widen the column past the screen */
@@ -502,7 +502,7 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
   backdrop-filter:blur(12px); border-top:1px solid var(--border); padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
   display:flex; transform:translateY(110%); transition:transform var(--d-std) var(--e-out-expo)}
 .buybar.is-on{transform:none}
-@media(min-width:1024px){.buybar{display:none!important}}
+@media(min-width:1024px){.buybar{display:none}}
 .scaleview{ position:relative; overflow:hidden}
 .scaleview svg{ display:block; margin-inline:auto}
 .scaleview .dim-line{ fill:none}
@@ -555,8 +555,8 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
 }
 @media(max-width:899px){
   section#picker{
-    min-height:auto!important;
-    padding-top:clamp(20px, 3.5vw, 32px)!important;
+    min-height:auto;
+    padding-top:clamp(20px, 3.5vw, 32px);
   }
   .picker{display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; width:100%; min-width:0}
   .picker__info{display:contents}
@@ -566,12 +566,12 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
   .picker__head p{text-align:center; margin-inline:auto; max-width:34ch; font-size:.94rem; line-height:1.5}
   .picker__disc{order:2; display:flex; justify-content:center; align-items:center; width:100%; margin:6px auto}
   #pickrec{
-    width:min(74vw, 280px)!important;
-    height:min(74vw, 280px)!important;
-    margin-inline:auto!important;
-    max-width:none!important;
+    width:min(74vw, 280px);
+    height:min(74vw, 280px);
+    margin-inline:auto;
+    max-width:none;
   }
-  .picker__active{order:3; text-align:center; margin-inline:auto; margin-top:8px!important}
+  .picker__active{order:3; text-align:center; margin-inline:auto; margin-top:8px}
   .picker__active .card__artist{font-size:.70rem; letter-spacing:.16em; text-align:center}
   .picker__active .d-s{font-size:clamp(1.2rem, 4.5vw, 1.45rem); margin-top:2px; text-align:center}
   .picker .thumbs{
@@ -592,11 +592,11 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
   }
   .picker__cta{
     order:5;
-    justify-content:center!important;
+    justify-content:center;
     text-align:center;
     margin-inline:auto;
-    gap:18px!important;
-    margin-top:10px!important;
+    gap:18px;
+    margin-top:10px;
   }
 }
 /* drag-to-scroll (mountDragScroll, core.js): the strip itself carries the rubber-band
@@ -617,7 +617,7 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
 .scatter{position:relative; min-height:min(78vh,640px)}
 .scatter>*{position:absolute}
 @media(max-width:767px){.scatter{min-height:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px}
-  .scatter>*{position:static!important; width:100%!important; transform:none!important}}
+  .scatter>*{position:static; width:100%; transform:none}}
 .price4{display:grid; gap:16px; grid-template-columns:minmax(0,1fr)}
 @media(min-width:768px){.price4{grid-template-columns:repeat(4,minmax(0,1fr)); align-items:stretch}}
 .pricecard{border:1px solid var(--border); padding:22px; background:transparent;
@@ -670,8 +670,8 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
     margin-inline:auto;
     overflow:visible;
   }
-  .wb{position:absolute!important; display:block!important; opacity:1!important}
-  .wb__tag{display:none!important}
+  .wb{position:absolute; display:block; opacity:1}
+  .wb__tag{display:none}
   .wallbuild__floor{
     position:absolute;
     left:0;
@@ -1096,9 +1096,9 @@ select.sort{appearance:none; -webkit-appearance:none; color:var(--cream);
     background:var(--ember);
     box-shadow:0 0 8px rgba(192,53,63,.8), 0 0 0 2px rgba(192,53,63,.3);
   }
-  .annot__pt:nth-child(1){left:50%!important; top:50%!important}
-  .annot__pt:nth-child(2){left:58%!important; top:50%!important}
-  .annot__pt:nth-child(3){left:70%!important; top:29%!important}
+  .annot__pt:nth-child(1){left:50%; top:50%}
+  .annot__pt:nth-child(2){left:58%; top:50%}
+  .annot__pt:nth-child(3){left:70%; top:29%}
   
   .annot__pt::before{
     content:""; position:absolute; top:50%; height:1px;
@@ -1435,32 +1435,32 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     width:100%;
   }
   .beat3__visual{
-    position:relative!important;
-    width:100%!important;
-    max-width:none!important;
-    margin:0!important;
-    opacity:1!important;
-    display:block!important;
-    transform:none!important;
-    top:auto!important;
-    left:auto!important;
-    pointer-events:auto!important;
+    position:relative;
+    width:100%;
+    max-width:none;
+    margin:0;
+    opacity:1;
+    display:block;
+    transform:none;
+    top:auto;
+    left:auto;
+    pointer-events:auto;
   }
   .beat3__visual .plate{
-    display:block!important;
-    position:relative!important;
-    z-index:1!important;
-    width:52%!important;
-    margin:-14% 0 0 auto!important;
-    right:auto!important;
-    bottom:auto!important;
-    height:auto!important;
-    opacity:1!important;
-    filter:none!important;
+    display:block;
+    position:relative;
+    z-index:1;
+    width:52%;
+    margin:-14% 0 0 auto;
+    right:auto;
+    bottom:auto;
+    height:auto;
+    opacity:1;
+    filter:none;
   }
   .beat3__visual .plate img{
-    border-radius:0!important;
-    border:none!important;
+    border-radius:0;
+    border:none;
   }
   .beat3__copy{
     text-align:left;
@@ -1513,21 +1513,21 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     text-align:center;
   }
   #pickrec, #beat3rec, .pdp-record{
-    max-width:min(var(--size, 320px), calc(100vw - 2 * var(--gutter)))!important;
+    max-width:min(var(--size, 320px), calc(100vw - 2 * var(--gutter)));
     margin-inline:auto;
   }
   form[data-form="custom"] > div[style*="grid-template-columns"],
   form[data-form="contact"] > div[style*="grid-template-columns"]{
-    grid-template-columns:minmax(0,1fr)!important;
-    gap:14px!important;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
   }
   .edge-l, .edge-r{
     margin-inline:calc(-1 * var(--gutter));
-    width:auto!important;
-    max-width:none!important;
+    width:auto;
+    max-width:none;
   }
   .offright{
-    margin-right:0!important;
+    margin-right:0;
   }
   .pdp-wrap{
     padding-bottom:calc(76px + env(safe-area-inset-bottom, 0px));
@@ -1536,11 +1536,11 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
   }
-  .shop__formats-desktop{display:none!important}
-  .shop__formats-mobile{display:block!important; width:100%; max-width:320px}
+  .shop__formats-desktop{display:none}
+  .shop__formats-mobile{display:block; width:100%; max-width:320px}
   /* beat 3: THE OBJECT - mobile single-scroll layout */
   section[data-section="THE OBJECT"]{
-    min-height:auto!important;
+    min-height:auto;
     padding-bottom:clamp(10px, 1.8vh, 18px)!important;
     position:relative;
     overflow:hidden;
@@ -1561,7 +1561,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    min-height:auto!important;
+    min-height:auto;
     padding-block:10px 14px;
     margin-inline:auto;
     text-align:center;
@@ -1585,27 +1585,27 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     opacity:0.85!important;
   }
   .beat3__visual figcaption{
-    display:none!important;
+    display:none;
   }
   .beat3__discwrap{
-    position:relative!important;
-    width:100%!important;
-    height:100%!important;
-    margin:0!important;
-    display:flex!important;
-    justify-content:center!important;
-    align-items:center!important;
+    position:relative;
+    width:100%;
+    height:100%;
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
   }
   #beat3rec{
-    width:100%!important;
-    height:100%!important;
+    width:100%;
+    height:100%;
   }
   #beat3rec .record__grooves{
-    background:repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.13) 0 1px, rgba(0,0,0,0.30) 1px 3.2px)!important;
-    opacity:1!important;
+    background:repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.13) 0 1px, rgba(0,0,0,0.30) 1px 3.2px);
+    opacity:1;
   }
   #beat3rec .record__sheen{
-    opacity:1!important;
+    opacity:1;
     background:conic-gradient(from var(--sheen-a,188deg) at 50% 50%,
       rgba(255,255,255,0) 0deg,
       rgba(255,255,255,.14) 14deg,
@@ -1617,10 +1617,10 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
       rgba(255,255,255,.32) 208deg,
       rgba(255,255,255,.10) 228deg,
       rgba(255,255,255,0) 258deg,
-      rgba(255,255,255,0) 360deg)!important;
+      rgba(255,255,255,0) 360deg);
   }
   .beat3__visual .plate{
-    display:none!important;
+    display:none;
   }
   .beat3__copy{
     position:relative;
@@ -1630,7 +1630,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
     max-width:min(92vw, 380px);
     width:100%;
     padding:10px 8px;
-    background:none!important;
+    background:none;
   }
   .beat3__copy .cap{
     margin-inline:auto;
@@ -1799,7 +1799,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
 .ag__thumb{flex:none; width:42px; height:42px; display:grid; place-items:center; overflow:hidden; background:var(--elevated)}
 .ag__thumb img{width:100%; height:100%; object-fit:cover}
 .ag__thumb--rec{background:none}
-.ag__thumb--rec .record{--size:42px !important; width:42px}
+.ag__thumb--rec .record{--size:42px; width:42px}
 .ag__album{flex:1; min-width:0; font-family:var(--display); font-size:.98rem; line-height:1.2; display:flex; flex-direction:column; gap:3px;}
 .ag__tags{font-family:var(--mono); font-size:.55rem; letter-spacing:.14em; color:var(--muted)}
 .ag__price{color:var(--cream); white-space:nowrap}
@@ -1807,7 +1807,7 @@ html[data-light] #corners{color:rgba(22,19,20,.6); text-shadow:0 1px 10px rgba(2
   cursor:pointer; font-size:1rem; line-height:1; transition:background .2s, border-color .2s}
 .ag__add:hover{background:var(--oxblood); border-color:var(--oxblood)}
 @media(prefers-reduced-motion:reduce){ .ag__drop{transition:none} .ag__head,.ag__chev{transition:none} }
-@media(max-width:767px){ .ag__thumb{width:36px; height:36px} .ag__thumb--rec .record{--size:36px !important; width:36px} .ag__link{gap:9px} }
+@media(max-width:767px){ .ag__thumb{width:36px; height:36px} .ag__thumb--rec .record{--size:36px; width:36px} .ag__link{gap:9px} }
 /* policy pages */
 .policy{margin-top:40px; display:flex; flex-direction:column; gap:30px}
 .policy section{border-top:1px solid var(--border); padding-top:20px}
@@ -2087,7 +2087,7 @@ html{touch-action:manipulation; -webkit-text-size-adjust:100%}
 @media(max-width:767px){
 
 
-  .salesec__tape .tape__t{filter:none !important; box-shadow:none; font-size:1.05rem}
+  .salesec__tape .tape__t{filter:none; box-shadow:none; font-size:1.05rem}
   .salesec__tape--b .tape__t{background:#B8261F}
   .salesec__tape{contain:paint; will-change:transform}
   /* records: lighter shadows when there are dozens on one page */
@@ -2772,7 +2772,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   section[data-section="THE OBJECT"]{padding-top:calc(var(--nav-h) + 22px)!important}
   #beat3 .beat3__visual,#beat3 .beat3__visual.reveal,#beat3 .beat3__visual.reveal.is-in{position:relative!important; top:auto!important; left:auto!important; transform:none!important;
     width:min(60vw,240px)!important; height:min(60vw,240px)!important; margin:0 auto 22px!important; opacity:1!important}
-  #beat3rec{filter:none!important}
+  #beat3rec{filter:none}
   .beat3__copy h1,.beat3__copy h2,.beat3__copy p.measure{text-shadow:none}
   .beat3__copy h1{font-size:clamp(2rem,8vw,2.5rem); margin:12px auto 14px}
   .beat3__copy p.measure{font-size:1rem; line-height:1.55; color:rgba(243,239,232,.82)}
@@ -2804,7 +2804,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 @media(max-width:767px){ .salesec{padding-block:56px 44px} }
 .salesec::before{display:none}
 .salesec__k{font-size:clamp(1.15rem,2.2vw,1.7rem); letter-spacing:.04em; color:var(--cream)}
-.salesec__now{font-size:clamp(4.6rem,11vw,8.5rem); filter:none !important; text-shadow:none !important; margin:6px 0 14px}
+.salesec__now{font-size:clamp(4.6rem,11vw,8.5rem); filter:none; text-shadow:none; margin:6px 0 14px}
 .salesec__was s{text-decoration-color:rgba(243,239,232,.55); text-decoration-thickness:1.5px}
 .card__price .sale{order:1}
 .card__price .mrp{ margin:0;}
@@ -2855,8 +2855,8 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   .posters-hero__content{padding:10px 14px; flex-wrap:nowrap; gap:10px; align-items:flex-end; justify-content:space-between}
   .posters-hero__left{flex:1 1 auto; min-width:0; max-width:none}
   .posters-hero__sub{display:none}
-  .posters-hero__title{font-size:1.4rem!important; line-height:1!important; margin:0!important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 8px rgba(0,0,0,.95)}
-  .posters-hero__badge{font-size:.65rem!important; padding:5px 11px!important; border-color:rgba(243,239,232,.2)}
+  .posters-hero__title{font-size:1.4rem!important; line-height:1!important; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 8px rgba(0,0,0,.95)}
+  .posters-hero__badge{font-size:.65rem!important; padding:5px 11px; border-color:rgba(243,239,232,.2)}
 }
 
 /* 12. Homepage Bundles spotlight */
@@ -3063,7 +3063,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 .card--pol:hover .card__media>.polaroid{transform:rotate(-3deg) scale(1.035)}
 /* a record, close up: the disc runs past the tile so the label is big enough to read */
 .card--rec .card__media,.ag__media:has(.record){padding:0; position:relative}
-.card--rec .card__media .record,.ag__media .record{position:absolute; left:50%; top:50%; width:150% !important; max-width:none !important; margin:0; transform:translate(-50%,-50%)}
+.card--rec .card__media .record,.ag__media .record{position:absolute; left:50%; top:50%; width:150%; max-width:none; margin:0; transform:translate(-50%,-50%)}
 .card--rec:hover .card__media>.record,.ag__head:hover .ag__media .record{transform:translate(-50%,-50%) scale(1.035) rotate(8deg)}
 .card__badge{display:none}
 .card__meta{gap:2px; padding:0 2px}
@@ -3076,7 +3076,7 @@ body.has-cratebar .toasts{bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
 .card__add,.card:hover .card__add{position:absolute; left:auto; right:8px; bottom:8px; top:auto; width:40px; height:40px; padding:0; border:0; border-radius:50%;
   background:var(--cream); color:#141112; display:grid; place-items:center; transform:none; opacity:1; font-size:0; cursor:pointer;
   box-shadow:0 2px 10px rgba(0,0,0,.5); transition:transform .18s var(--e-ui), background .18s}
-.card__add::before{content:none !important}
+.card__add::before{content:none}
 .card__add svg{display:block}
 .card__add:hover{background:#fff; transform:scale(1.07)}
 .card__add:active{transform:scale(.92)}
